@@ -1,6 +1,26 @@
 U-Boot 1.1.4 modification for routers
 ==========
 
+Table of contents
+-----------------
+
+- [Introduction](#introduction)
+- [Supported devices](#supported-devices)
+- [Modifications, changes](#modifications-changes)
+	- [Web server](#web-server)
+	- [Network Console](#network-console)
+	- [Other](#other)
+	- [Supported flash chips](#supported-flash-chips)
+- [How to install it?](#how-to-install-it)
+	- [Cautions, backups](#cautions-backups)
+	- [Using external programmer](#using-external-programmer)
+	- [Using UART, U-Boot console and TFTP server](#using-uart-u-boot-console-and-tftp-server)
+	- [Using OpenWrt](#using-openwrt)
+	- [Using DD-WRT](#using-dd-wrt)
+- [How to use it?](#how-to-use-it)
+- [How to compile the code?](#how-to-compile-the-code)
+- [FAQ](#faq)
+
 Introduction
 ------------
 
@@ -22,25 +42,47 @@ If you like this project, you may [buy me a beer](https://www.paypal.com/cgi-bin
 Supported devices
 -----------------
 
-Currently supported devices (default FLASH/RAM size):
+Currently supported devices:
 
 - **Atheros AR9331**:
-    - (16/64 MiB) [8devices Carambola 2](http://8devices.com/carambola-2) (version with development board!), [photos in my gallery](http://galeria.tech-blog.pl/8devices_Carambola_2/)
-    - (4/32 MiB) [TP-Link TL-MR3020 v1](http://wiki.openwrt.org/toh/tp-link/tl-mr3020), [photos in my gallery](http://galeria.tech-blog.pl/TPLINK_TL-MR3020/)
-    - (4/32 MiB) [TP-Link TL-MR3040 v1 and v2](http://wiki.openwrt.org/toh/tp-link/tl-mr3040)
-    - (4/32 MiB) [TP-Link TL-WR703N v1](http://wiki.openwrt.org/toh/tp-link/tl-wr703n), [photos in my gallery](http://galeria.tech-blog.pl/TPLINK_TL-WR703N/)
-    - (4/32 MiB) [TP-Link TL-WR720N v3](http://wiki.openwrt.org/toh/tp-link/tl-wr720n) (version for Chinese market)
-    - (8/32 MiB) [TP-Link TL-WR710N v1](http://www.tp-link.com/en/products/details/?model=TL-WR710N) (version for European market), [photos in my gallery](http://galeria.tech-blog.pl/TP-Link_TL-WR710N-EU/)
-    - (4/32 MiB) [TP-Link TL-MR10U v1](http://wiki.openwrt.org/toh/tp-link/tl-mr10u), [photos in my gallery](http://galeria.tech-blog.pl/TP-Link_TL-MR10U/)
-    - (4/32 MiB) [TP-Link TL-WR740N v4](http://wiki.openwrt.org/toh/tp-link/tl-wr740n) (and similar, like TL-WR741ND v4)
-    - (4/32 MiB) [TP-Link TL-MR3220 v2](http://wiki.openwrt.org/toh/tp-link/tl-mr3420)
-    - ~~(8/64 MiB) [D-Link DIR-505 H/W ver. A1](http://wiki.openwrt.org/toh/d-link/dir-505)~~, [photos in my gallery](http://galeria.tech-blog.pl/D-Link_DIR-505/)
+  - 8devices Carambola 2 (for version with development board!), [photos in my gallery](http://galeria.tech-blog.pl/8devices_Carambola_2/)
+  - TP-Link TL-MR3020 v1, [photos in my gallery](http://galeria.tech-blog.pl/TPLINK_TL-MR3020/)
+  - TP-Link TL-MR3040 v1 and v2
+  - TP-Link TL-WR703N v1, [photos in my gallery](http://galeria.tech-blog.pl/TPLINK_TL-WR703N/)
+  - TP-Link TL-WR720N v3 (version for Chinese market)
+  - TP-Link TL-WR710N v1 (version for European market), [photos in my gallery](http://galeria.tech-blog.pl/TP-Link_TL-WR710N-EU/)
+  - TP-Link TL-MR10U v1, [photos in my gallery](http://galeria.tech-blog.pl/TP-Link_TL-MR10U/)
+  - TP-Link TL-WR740N v4 (and similar, like TL-WR741ND v4)
+  - TP-Link TL-MR3220 v2
+
+- **Atheros AR1311 (similar to AR9331)**
+  - ~~D-Link DIR-505 H/W ver. A1~~, [photos in my gallery](http://galeria.tech-blog.pl/D-Link_DIR-505/)
 
 - **Atheros AR9344**:
-    - (8/128 MiB) [TP-Link TL-WDR3600 v1](http://wiki.openwrt.org/toh/tp-link/tl-wdr3600)
-    - (8/128 MiB) [TP-Link TL-WDR43x0 v1](http://wiki.openwrt.org/toh/tp-link/tl-wdr4300)
+  - TP-Link TL-WDR3600 v1
+  - TP-Link TL-WDR43x0 v1
 
-I tested this modification on most of these devices, with OpenWrt and OFW firmware. If you are not sure about the version of your device, please contact with me *before* you try to make an upgrade. Changing bootloader to a wrong version will probably damage your router and you will need a serial FLASH programmer to fix it, so please, **be very careful**.
+I tested this modification on most of these devices, with OpenWrt and OFW firmware. If you are not sure about the version of your device, please contact with me **before** you try to make an upgrade. Changing bootloader to a wrong version will probably damage your router and you will need a serial FLASH programmer to fix it, so please, **be very careful**.
+
+More information about supported devices:
+
+| Model | SoC | FLASH | RAM | U-Boot image type | U-Boot environment |
+|:--- | :--- | ---: | ---: | ---: | ---: |
+| [8devices Carambola 2](http://8devices.com/carambola-2) | AR9331 | 16 MiB | 64 MiB DDR2 | 256 KiB, uncompressed | 64 KiB block, R/W |
+| [TP-Link TL-MR3020 v1](http://wiki.openwrt.org/toh/tp-link/tl-mr3020) | AR9331 | 4 MiB | 32 MiB DDR1 | 64 KiB, compressed | embedded, R |
+| [TP-Link TL-MR3040 v1/2](http://wiki.openwrt.org/toh/tp-link/tl-mr3040) | AR9331 | 4 MiB | 32 MiB DDR1 | 64 KiB, compressed | embedded, R |
+| [TP-Link TL-WR703N](http://wiki.openwrt.org/toh/tp-link/tl-wr703n) | AR9331 | 4 MiB | 32 MiB DDR1 | 64 KiB, compressed | embedded, R |
+| [TP-Link TL-WR720N v3](http://wiki.openwrt.org/toh/tp-link/tl-wr720n) | AR9331 | 4 MiB | 32 MiB DDR1 | 64 KiB, compressed | embedded, R |
+| [TP-Link TL-WR710N v1](http://www.tp-link.com/en/products/details/?model=TL-WR710N) | AR9331 | 8 MiB | 32 MiB DDR1 | 64 KiB, compressed | embedded, R |
+| [TP-Link TL-MR10U v1](http://wiki.openwrt.org/toh/tp-link/tl-mr10u) | AR9331 | 4 MiB | 32 MiB DDR1 | 64 KiB, compressed | embedded, R |
+| [TP-Link TL-WR740N v4](http://wiki.openwrt.org/toh/tp-link/tl-wr740n) | AR9331 | 4 MiB | 32 MiB DDR1 | 64 KiB, compressed | embedded, R |
+| [TP-Link TL-MR3220 v2](http://wiki.openwrt.org/toh/tp-link/tl-mr3420) | AR9331 | 4 MiB | 32 MiB DDR1 | 64 KiB, compressed | embedded, R |
+| [TP-Link TL-WDR3600 v1](http://wiki.openwrt.org/toh/tp-link/tl-wdr3600) | AR9344 | 8 MiB | 128 MiB DDR2 | 64 KiB, compressed | embedded, R |
+| [TP-Link TL-WDR43x0 v1](http://wiki.openwrt.org/toh/tp-link/tl-wdr4300) | AR9344 | 8 MiB | 128 MiB DDR2 | 64 KiB, compressed | embedded, R |
+| [D-Link DIR-505 H/W ver. A1](http://wiki.openwrt.org/toh/d-link/dir-505) | AR1311 | 8 MiB | 64 MiB DDR2 | 64 KiB, compressed | embedded, R |
+
+*(R/W) - environment exist in separate flash block which allows you to save it and keep after power down the device.*   
+*(R) - environment is read only, you can change and add new variables only during a runtime. After power down, your changes will be lost.*
 
 Modifications, changes
 ----------------------
@@ -51,7 +93,7 @@ The most important change is an inclusion of a web server, based on **[uIP 0.9 T
 
 Web server contains 7 pages:
 
-1. index.html (allows to upgrade firmware image)
+1. index.html (allows to upgrade firmware image, screenshot below)
 2. uboot.html (allows to upgrade U-Boot image)
 3. art.html (allows to upgrade ART image)
 4. flashing.html
@@ -63,7 +105,7 @@ Web server contains 7 pages:
 
 ### Network Console
 
-Second, very useful modification is a network console. It allows you to communicate with U-Boot console over the Ethernet, using UDP protocol (default UDP port: 6666, router IP: 192.168.1.1).
+Second, very useful modification is a network console (it is a part of original U-Boot sources, but none of the manufacturers included it). It allows you to communicate with U-Boot console over the Ethernet, using UDP protocol (default UDP port: 6666, router IP: 192.168.1.1).
 
 ![](http://www.tech-blog.pl/wordpress/wp-content/uploads/2013/04/u-boot_mod_for_tp-link_with_ar9331_netconsole.jpg)
 
@@ -77,22 +119,22 @@ Moreover:
 - Ethernet MAC is set from flash (no more "No valid address in Flash. Using fixed address")
 - Automatic kernel booting can be interrupted using any key
 - Press and hold reset button to run:
-    - web server (min. 3 seconds)
-    - U-Boot serial console (min. 5 seconds)
-    - U-Boot network console (min. 7 seconds)
+  - Web server (min. 3 seconds)
+  - U-Boot serial console (min. 5 seconds)
+  - U-Boot network console (min. 7 seconds)
 - Additional commands (in comparison to the default version; availability depends on router model):
-    -  httpd
-    -  printmac
-    -  setmac
-    -  printmodel
-    -  printpin
-    -  startnc
-    -  startsc
-    -  eraseenv
-    -  ping
-    -  dhcp
-    -  sntp
-    -  iminfo
+  -  httpd
+  -  printmac
+  -  setmac
+  -  printmodel
+  -  printpin
+  -  startnc
+  -  startsc
+  -  eraseenv
+  -  ping
+  -  dhcp
+  -  sntp
+  -  iminfo
 - Overclocking possibilities (for now, only routers with AR9331)
 
 ### Supported flash chips
@@ -134,14 +176,173 @@ If you want to use other type, please contact with me or make changes in the cod
 How to install it?
 ------------------
 
-### Caution
+### Cautions, backups
 
 **You do so at your own risk!**   
-**If you make any mistake or something goes wrong during upgrade, in worst case your router will not boot again!**
+**If you make any mistake or something goes wrong during upgrade, in worst case, your router will not boot again!**
 
-### Using U-Boot console and TFTP server
+It is a good practice to backup your original U-Boot image/partition (especially for TP-Link devices) **before** you make any changes. For example, using OpenWrt (TP-Link TL-WR703N with 16 MiB flash):
 
-[TODO]
+```
+cat /proc/mtd
+```
+
+This command will show you all **MTD** (Memory Technology Device) partitions:
+
+```
+dev:    size   erasesize  name
+mtd0: 00020000 00010000 "u-boot"
+mtd1: 000eeb70 00010000 "kernel"
+mtd2: 00ee1490 00010000 "rootfs"
+mtd3: 00c60000 00010000 "rootfs_data"
+mtd4: 00010000 00010000 "art"
+mtd5: 00fd0000 00010000 "firmware"
+```
+
+As you can see, `u-boot` partition size is **0x20000** (128 KiB) and my image for this model has size of **0x10000** (64 KiB) - it is very important difference! You should remember about this if you want to use `mtd` utility, to change U-Boot.
+
+To backup `u-boot` partition in RAM, run:
+
+```
+cat /dev/mtd0 > /tmp/uboot_backup.bin
+```
+
+And then connect to your router using `SCP protocol` and download from `/tmp` the `uboot_backup.bin` file.
+
+### Using external programmer
+
+If you have an external flash programmer (all supported devices have **SPI NOR flash** chips), you probably know how to use it. Download package with prebuilt images or compile the code, choose right file for your device and put it on flash at the beginning (offset `0x00000`). Remember to first erase block(s) - with high probability, if you use some kind of automatic mode, the programmer will do it for you.
+
+All prebuilt images are padded with 0xFF, so their size will always be a **multiply of 64 KiB block** and they will not be bigger than the original versions. For example, **TP-Link** uses only first **64 KiB** block to store compressed U-Boot image (in most of their modern devices). In second 64 KiB block they store additional information like MAC address, model number and WPS pin number.
+
+On the other hand, U-Boot image in **Carambola 2** from **8devices** may have up to **256 KiB** (4x 64 KiB block), they use uncompressed version and environment stored in flash. Immediately after the Carambola 2 U-Boot partition is an area which contains U-Boot environment variables (1x 64 KiB block), called `u-boot-env`:
+
+```
+dev:    size   erasesize  name
+mtd0: 00040000 00010000 "u-boot"
+mtd1: 00010000 00010000 "u-boot-env"
+mtd2: 00f90000 00010000 "firmware"
+mtd3: 00e80000 00010000 "rootfs"
+mtd4: 00cc0000 00010000 "rootfs_data"
+mtd5: 00010000 00010000 "nvram"
+mtd6: 00010000 00010000 "art"
+```
+
+### Using UART, U-Boot console and TFTP server
+
+It is probably the most common method to change firmware in case of any problems. Main disadvantage of this approach is the need to connect with device using a serial port (it does not apply to Carambola 2 with development board, which has already built-in USB-UART adapter, based on FTDI FT232RQ).
+
+#### Important notice!
+
+All these devices have an UART interface integrated inside the SoC, operates at TTL 3.3 V (in fact, GPIO pins can work at this voltage, but their real range is < 3 V)!
+
+Please, **do not** connect any RS232 +/- 12 V cable or any adapter without logic level converter, because it may damage your device. It would be the best if you use any USB to UART adapter with integrated 3.3 V logic level converter. And please, remember that **you should connect only RX, TX and GND signals**. **DO NOT** connect together 3.3 V signals from router and from adapter if you do not know what are you doing, because you may burn out your adapter and/or router! Connect the adapter using USB port in your PC and router with original power supply.
+
+For a long time I have been using without any problems small and very cheap (about 1-2 USD) **CP2102** based adapter. Go to [Serial Console article in OpenWrt Wiki](http://wiki.openwrt.org/doc/hardware/port.serial) for more, detailed information.
+
+#### Step by step instruction
+
+1. Install and configure any **TFTP server** on your PC (on Windows, you can use [TFTP32](http://tftpd32.jounin.net)).
+
+2. Set a fixed IP address on your PC (in this tutorial we will use **192.168.1.2** for the PC and **192.168.1.1** for the router) and connect it with the router, using RJ45 network cable (in most case you will need to use one of the available LAN ports, but WAN port should also works).
+
+3. Connect USB to UART adapter to the router and start any application to communicate with it, like [PuTTY](http://www.chiark.greenend.org.uk/~sgtatham/putty/download.html).   
+Configure adapter to use the following settings:
+  * Baud rate: 115200
+  * Data bits: 8
+  * Parity control: none
+  * Stop bits: 1
+  * Handshaking: none
+4. Power on the router, wait for a line like one of the following and interrupt the process of loading a kernel:
+
+  `Autobooting in 1 seconds` (for most **TP-Link** routers, you should enter `tpl` at this point)   
+  `Hit ESC key to stop autoboot:  1` (for **8devices Carambola 2**, use `ESC` key)   
+  `Hit any key to stop autoboot:  1` (for **D-Link DIR-505**, use any key)
+
+5. Set `ipaddr` and `serverip` environment variables:
+
+  ```
+  hornet> setenv ipaddr 192.168.1.1
+  hornet> setenv serverip 192.168.1.2
+  ```
+6. Check the changes:
+
+  ```
+  hornet> printenv ipaddr
+  ipaddr=192.168.1.1
+  hornet> printenv serverip
+  serverip=192.168.1.2
+  ```
+
+7. Download and store in RAM proper image for your router, using `tftpboot` command in U-Boot console (in this example, for **TP-Link TL-MR3020**):
+
+  ```
+  tftpboot 0x80800000 uboot_for_tp-link_tl-mr3020.bin
+
+  eth1 link down
+  Using eth0 device
+  TFTP from server 192.168.1.2; our IP address is 192.168.1.1
+  Filename 'uboot_for_tp-link_tl-mr3020.bin'.
+  Load address: 0x80800000
+  Loading: #############
+  done
+  Bytes transferred = 65536 (10000 hex)
+  hornet>
+  ```
+
+8. Next step is very risky! You are going to delete existing U-Boot image from flash in your device and copy from RAM the new one. If something goes wrong (for example, a power failure), your router, without bootloader, will not boot again!
+
+  You should also note the size of downloaded image. For supported **TP-Link** and **D-Link** routers it will be always **0x10000** (64 KiB), but for Carambola 2 image size is different: **0x40000** (256 KiB). In all cases, the start address of flash is **0x9F000000** and for RAM: **0x80000000** (as you may noticed, I did not use start address of RAM to store image and you should follow this approach).
+
+  Please, do not make any mistake with offsets and sizes during next steps!
+
+9. Erase appropriate flash space for new U-Boot image (this command will remove default U-Boot image!):
+
+  ```
+  hornet> erase 0x9F000000 +0x10000   
+
+  First 0x0 last 0x0 sector size 0x10000
+  0
+  Erased 1 sectors
+  ```
+
+10. Now your router does not have U-Boot, so do not wait and copy to flash the new one, stored earlier in RAM:
+
+  ```
+  hornet> cp.b 0x80800000 0x9F000000 0x10000   
+
+  Copy to Flash... write addr: 9f000000
+  done
+  ```
+
+11. If you want, you can check content of the flash and compare it to the image on your PC, using `md` command in U-Boot console, which prints indicated memory area (press only ENTER after first execution of this command to move further in memory):
+
+  ```
+  hornet> md 0x9F000000
+
+  9f000000: 100000ff 00000000 100000fd 00000000    ................
+  9f000010: 10000222 00000000 10000220 00000000    ..."....... ....
+  9f000020: 1000021e 00000000 1000021c 00000000    ................
+  9f000030: 1000021a 00000000 10000218 00000000    ................
+  9f000040: 10000216 00000000 10000214 00000000    ................
+  9f000050: 10000212 00000000 10000210 00000000    ................
+  9f000060: 1000020e 00000000 1000020c 00000000    ................
+  9f000070: 1000020a 00000000 10000208 00000000    ................
+  9f000080: 10000206 00000000 10000204 00000000    ................
+  9f000090: 10000202 00000000 10000200 00000000    ................
+  9f0000a0: 100001fe 00000000 100001fc 00000000    ................
+  9f0000b0: 100001fa 00000000 100001f8 00000000    ................
+  9f0000c0: 100001f6 00000000 100001f4 00000000    ................
+  9f0000d0: 100001f2 00000000 100001f0 00000000    ................
+  9f0000e0: 100001ee 00000000 100001ec 00000000    ................
+  9f0000f0: 100001ea 00000000 100001e8 00000000    ................
+  ```
+
+12. If you are sure that everything went OK, you may reset the board:
+
+  ```
+  hornet> reset
+  ```
 
 ### Using OpenWrt
 
@@ -168,7 +369,7 @@ You can use one of the free toolchains:
 
 I am using **Sourcery CodeBench Lite Edition for MIPS GNU/Linux** on **Ubuntu 12.04 LTS** (32-bit, virtual machine) and all released binary images were/will be built using this set.
 
-All you need to do, after choosing a toolchain, is to modify [Makefile](Makefile) - change or remove *export MAKECMD* and if need add *export PATH*. For example, to use OpenWrt Toolchain instead of Sourcery CodeBench Lite, download it and extract into *toolchain* folder, inside the top dir and change first lines in [Makefile](Makefile):
+All you need to do, after choosing a toolchain, is to modify [Makefile](Makefile) - change or remove `export MAKECMD` and if need add `export PATH`. For example, to use OpenWrt Toolchain instead of Sourcery CodeBench Lite, download it and extract into `toolchain` folder, inside the top dir and change first lines in [Makefile](Makefile):
 
 ```
 export BUILD_TOPDIR=$(PWD)
