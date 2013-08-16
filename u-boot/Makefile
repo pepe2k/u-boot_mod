@@ -270,200 +270,187 @@ unconfig:
 
 hornet_common_config :
 	@ >include/config.h
-	@echo "#define CONFIG_AR7240					1"	>>include/config.h
-	@echo "#define CONFIG_MACH_HORNET				1"	>>include/config.h
-	@echo "#define CONFIG_HORNET_1_1_WAR			1"	>>include/config.h
-	@echo "#define NEW_DDR_TAP_CAL					1"	>>include/config.h
+	@echo "#define CONFIG_AR7240                        1" >> include/config.h
+	@echo "#define CONFIG_MACH_HORNET                   1" >> include/config.h
+	@echo "#define CONFIG_HORNET_1_1_WAR                1" >> include/config.h
+	@echo "#define NEW_DDR_TAP_CAL                      1" >> include/config.h
 
 ifdef CONFIG_BOOTDELAY
-	@echo "#define CONFIG_BOOTDELAY "$(CONFIG_BOOTDELAY) >>include/config.h
+	@echo "#define CONFIG_BOOTDELAY "$(CONFIG_BOOTDELAY)   >> include/config.h
 endif
 
-	@echo "#define CONFIG_DELAY_TO_AUTORUN_HTTPD		3" >>include/config.h
-	@echo "#define CONFIG_DELAY_TO_AUTORUN_CONSOLE		5" >>include/config.h
-	@echo "#define CONFIG_DELAY_TO_AUTORUN_NETCONSOLE	7" >>include/config.h
-	
+	@echo "#define CONFIG_DELAY_TO_AUTORUN_HTTPD        3" >> include/config.h
+	@echo "#define CONFIG_DELAY_TO_AUTORUN_CONSOLE      5" >> include/config.h
+	@echo "#define CONFIG_DELAY_TO_AUTORUN_NETCONSOLE   7" >> include/config.h
+
 	# max delay time for button pressing
-	@echo "#define CONFIG_MAX_BUTTON_PRESSING			10"	>>include/config.h
-	
+	@echo "#define CONFIG_MAX_BUTTON_PRESSING          10" >> include/config.h
+
 	# don't show info about console (in, out, err...)
-	@echo "#define CFG_CONSOLE_INFO_QUIET"	>>include/config.h
+	@echo "#define CFG_CONSOLE_INFO_QUIET"                 >> include/config.h
 
 	@./mkconfig -a ap121 mips mips ap121 ar7240 ar7240
 
 wr703n_config : unconfig hornet_common_config
 	@echo '======= Configuring for TP-Link TL-WR703N at:' `date` '======='
-	@echo "#define CONFIG_FOR_TPLINK_WR703N_V1		1" >> include/config.h
-	@echo "#define GPIO_SYS_LED_BIT					27" >> include/config.h
-	@echo "#define GPIO_SYS_LED_ON					0" >> include/config.h
-	@echo "#define GPIO_RST_BUTTON_BIT				11" >> include/config.h
-	@echo "#define BOARD_CUSTOM_STRING				\"AP121 (AR9331) U-Boot for TL-WR703N\"" >>include/config.h
-	@echo "#define DEFAULT_FLASH_SIZE_IN_MB			4" >> include/config.h
+	@echo "#define CONFIG_FOR_TPLINK_WR703N_V1          1" >> include/config.h
+	@echo "#define GPIO_SYS_LED_BIT                    27" >> include/config.h
+	@echo "#define GPIO_SYS_LED_ON                      0" >> include/config.h
+	@echo "#define GPIO_RST_BUTTON_BIT                 11" >> include/config.h
+	@echo "#define DEFAULT_FLASH_SIZE_IN_MB             4" >> include/config.h
+	@echo "#define BOARD_CUSTOM_STRING                  \"AP121 (AR9331) U-Boot for TL-WR703N\"" >> include/config.h
 
 wr720n_v3_CH_config : unconfig hornet_common_config
 	@echo '======= Configuring for TP-Link TL-WR720N v3 CH at:' `date` '======='
-	@echo "#define CONFIG_FOR_TPLINK_WR720N_V3		1" >> include/config.h
-	@echo "#define GPIO_SYS_LED_BIT					27" >> include/config.h
-	@echo "#define GPIO_SYS_LED_ON					0" >> include/config.h
-	@echo "#define GPIO_RST_BUTTON_BIT				11" >> include/config.h
-	@echo "#define BOARD_CUSTOM_STRING				\"AP121 (AR9331) U-Boot for TL-WR720N v3 CH\"" >>include/config.h
-	@echo "#define DEFAULT_FLASH_SIZE_IN_MB			4" >> include/config.h
+	@echo "#define CONFIG_FOR_TPLINK_WR720N_V3          1" >> include/config.h
+	@echo "#define GPIO_SYS_LED_BIT                    27" >> include/config.h
+	@echo "#define GPIO_SYS_LED_ON                      0" >> include/config.h
+	@echo "#define GPIO_RST_BUTTON_BIT                 11" >> include/config.h
+	@echo "#define DEFAULT_FLASH_SIZE_IN_MB             4" >> include/config.h
+	@echo "#define BOARD_CUSTOM_STRING                  \"AP121 (AR9331) U-Boot for TL-WR720N v3 CH\"" >> include/config.h
 
 wr710n_config : unconfig hornet_common_config
 	@echo '======= Configuring for TP-Link TL-WR710N at:' `date` '======='
-	@echo "#define CONFIG_FOR_TPLINK_WR710N_V1		1" >> include/config.h
-	@echo "#define GPIO_SYS_LED_BIT					27" >> include/config.h
-	@echo "#define GPIO_SYS_LED_ON					0" >> include/config.h
-	@echo "#define GPIO_RST_BUTTON_BIT				11" >> include/config.h
-	@echo "#define BOARD_CUSTOM_STRING				\"AP121 (AR9331) U-Boot for TL-WR710N\"" >>include/config.h
-	@echo "#define DEFAULT_FLASH_SIZE_IN_MB			8" >> include/config.h
+	@echo "#define CONFIG_FOR_TPLINK_WR710N_V1          1" >> include/config.h
+	@echo "#define GPIO_SYS_LED_BIT                    27" >> include/config.h
+	@echo "#define GPIO_SYS_LED_ON                      0" >> include/config.h
+	@echo "#define GPIO_RST_BUTTON_BIT                 11" >> include/config.h
+	@echo "#define DEFAULT_FLASH_SIZE_IN_MB             8" >> include/config.h
+	@echo "#define BOARD_CUSTOM_STRING                  \"AP121 (AR9331) U-Boot for TL-WR710N\"" >> include/config.h
 
 mr3020_config : unconfig hornet_common_config
 	@echo '======= Configuring for TP-Link TL-MR3020 at:' `date` '======='
-	@echo "#define CONFIG_FOR_TPLINK_MR3020_V1		1" >> include/config.h
-	@echo "#define GPIO_INTERNET_LED_BIT			27" >> include/config.h
-	@echo "#define GPIO_INTERNET_LED_ON				0" >> include/config.h
-	@echo "#define GPIO_WPS_LED_BIT					26" >> include/config.h
-	@echo "#define GPIO_WPS_LED_ON					0" >> include/config.h
-	@echo "#define GPIO_WLAN_LED_BIT				0" >> include/config.h
-	@echo "#define GPIO_WLAN_LED_ON					1" >> include/config.h
-	@echo "#define GPIO_ETH_LED_BIT					17" >> include/config.h
-	@echo "#define GPIO_ETH_LED_ON					0" >> include/config.h
-	@echo "#define GPIO_RST_BUTTON_BIT				11" >> include/config.h
-	@echo "#define BOARD_CUSTOM_STRING				\"AP121 (AR9331) U-Boot for TL-MR3020\"" >>include/config.h
-	@echo "#define DEFAULT_FLASH_SIZE_IN_MB			4" >> include/config.h
+	@echo "#define CONFIG_FOR_TPLINK_MR3020_V1          1" >> include/config.h
+	@echo "#define GPIO_INTERNET_LED_BIT               27" >> include/config.h
+	@echo "#define GPIO_INTERNET_LED_ON                 0" >> include/config.h
+	@echo "#define GPIO_WPS_LED_BIT                    26" >> include/config.h
+	@echo "#define GPIO_WPS_LED_ON                      0" >> include/config.h
+	@echo "#define GPIO_WLAN_LED_BIT                    0" >> include/config.h
+	@echo "#define GPIO_WLAN_LED_ON                     1" >> include/config.h
+	@echo "#define GPIO_ETH_LED_BIT                    17" >> include/config.h
+	@echo "#define GPIO_ETH_LED_ON                      0" >> include/config.h
+	@echo "#define GPIO_RST_BUTTON_BIT                 11" >> include/config.h
+	@echo "#define DEFAULT_FLASH_SIZE_IN_MB             4" >> include/config.h
+	@echo "#define BOARD_CUSTOM_STRING                  \"AP121 (AR9331) U-Boot for TL-MR3020\"" >> include/config.h
 
 mr3040_config : unconfig hornet_common_config
 	@echo '======= Configuring for TP-Link TL-MR3040 at:' `date` '======='
-	@echo "#define CONFIG_FOR_TPLINK_MR3040_V1V2	1" >> include/config.h
-	@echo "#define GPIO_INTERNET_LED_BIT			27" >> include/config.h
-	@echo "#define GPIO_INTERNET_LED_ON				0" >> include/config.h
-	@echo "#define GPIO_WLAN_LED_BIT				26" >> include/config.h
-	@echo "#define GPIO_WLAN_LED_ON					0" >> include/config.h
-	@echo "#define GPIO_ETH_LED_BIT					17" >> include/config.h
-	@echo "#define GPIO_ETH_LED_ON					0" >> include/config.h
-	@echo "#define GPIO_RST_BUTTON_BIT				11" >> include/config.h
-	@echo "#define BOARD_CUSTOM_STRING				\"AP121 (AR9331) U-Boot for TL-MR3040\"" >>include/config.h
-	@echo "#define DEFAULT_FLASH_SIZE_IN_MB			4" >> include/config.h
+	@echo "#define CONFIG_FOR_TPLINK_MR3040_V1V2        1" >> include/config.h
+	@echo "#define GPIO_INTERNET_LED_BIT               27" >> include/config.h
+	@echo "#define GPIO_INTERNET_LED_ON                 0" >> include/config.h
+	@echo "#define GPIO_WLAN_LED_BIT                   26" >> include/config.h
+	@echo "#define GPIO_WLAN_LED_ON                     0" >> include/config.h
+	@echo "#define GPIO_ETH_LED_BIT                    17" >> include/config.h
+	@echo "#define GPIO_ETH_LED_ON                      0" >> include/config.h
+	@echo "#define GPIO_RST_BUTTON_BIT                 11" >> include/config.h
+	@echo "#define DEFAULT_FLASH_SIZE_IN_MB             4" >> include/config.h
+	@echo "#define BOARD_CUSTOM_STRING                  \"AP121 (AR9331) U-Boot for TL-MR3040\"" >> include/config.h
 
 mr10u_config : unconfig hornet_common_config
 	@echo '======= Configuring for TP-Link TL-MR10U at:' `date` '======='
-	@echo "#define CONFIG_FOR_TPLINK_MR10U_V1		1" >> include/config.h
-	@echo "#define GPIO_SYS_LED_BIT					27" >> include/config.h
-	@echo "#define GPIO_SYS_LED_ON					0" >> include/config.h
-	@echo "#define GPIO_RST_BUTTON_BIT				11" >> include/config.h
-	@echo "#define BOARD_CUSTOM_STRING				\"AP121 (AR9331) U-Boot for TL-MR10U\"" >>include/config.h
-	@echo "#define DEFAULT_FLASH_SIZE_IN_MB			4" >> include/config.h
+	@echo "#define CONFIG_FOR_TPLINK_MR10U_V1           1" >> include/config.h
+	@echo "#define GPIO_SYS_LED_BIT                    27" >> include/config.h
+	@echo "#define GPIO_SYS_LED_ON                      0" >> include/config.h
+	@echo "#define GPIO_RST_BUTTON_BIT                 11" >> include/config.h
+	@echo "#define DEFAULT_FLASH_SIZE_IN_MB             4" >> include/config.h
+	@echo "#define BOARD_CUSTOM_STRING                  \"AP121 (AR9331) U-Boot for TL-MR10U\"" >> include/config.h
 
 wr740n_v4_config : unconfig hornet_common_config
 	@echo '======= Configuring for TP-Link TL-WR740N v4 at:' `date` '======='
-	@echo "#define CONFIG_FOR_TPLINK_WR740N_V4		1" >> include/config.h
-	@echo "#define GPIO_SYS_LED_BIT					27" >> include/config.h
-	@echo "#define GPIO_SYS_LED_ON					0" >> include/config.h
-	@echo "#define GPIO_WLAN_LED_BIT				0" >> include/config.h
-	@echo "#define GPIO_WLAN_LED_ON					1" >> include/config.h
-	@echo "#define GPIO_LAN1_LED_BIT				14" >> include/config.h
-	@echo "#define GPIO_LAN1_LED_ON					1" >> include/config.h
-	@echo "#define GPIO_LAN2_LED_BIT				15" >> include/config.h
-	@echo "#define GPIO_LAN2_LED_ON					1" >> include/config.h
-	@echo "#define GPIO_LAN3_LED_BIT				16" >> include/config.h
-	@echo "#define GPIO_LAN3_LED_ON					1" >> include/config.h
-	@echo "#define GPIO_LAN4_LED_BIT				17" >> include/config.h
-	@echo "#define GPIO_LAN4_LED_ON					0" >> include/config.h
-	@echo "#define GPIO_INTERNET_LED_BIT			13" >> include/config.h
-	@echo "#define GPIO_INTERNET_LED_ON				1" >> include/config.h
-	@echo "#define GPIO_QSS_LED_BIT					1" >> include/config.h
-	@echo "#define GPIO_QSS_LED_ON					1" >> include/config.h
-	@echo "#define GPIO_RST_BUTTON_BIT				11" >> include/config.h
-	@echo "#define BOARD_CUSTOM_STRING				\"AP121 (AR9331) U-Boot for TL-WR74xN/D v4\"" >>include/config.h
-	@echo "#define DEFAULT_FLASH_SIZE_IN_MB			4" >> include/config.h
+	@echo "#define CONFIG_FOR_TPLINK_WR740N_V4          1" >> include/config.h
+	@echo "#define GPIO_SYS_LED_BIT                    27" >> include/config.h
+	@echo "#define GPIO_SYS_LED_ON                      0" >> include/config.h
+	@echo "#define GPIO_WLAN_LED_BIT                    0" >> include/config.h
+	@echo "#define GPIO_WLAN_LED_ON                     1" >> include/config.h
+	@echo "#define GPIO_LAN1_LED_BIT                   14" >> include/config.h
+	@echo "#define GPIO_LAN1_LED_ON                     1" >> include/config.h
+	@echo "#define GPIO_LAN2_LED_BIT                   15" >> include/config.h
+	@echo "#define GPIO_LAN2_LED_ON                     1" >> include/config.h
+	@echo "#define GPIO_LAN3_LED_BIT                   16" >> include/config.h
+	@echo "#define GPIO_LAN3_LED_ON                     1" >> include/config.h
+	@echo "#define GPIO_LAN4_LED_BIT                   17" >> include/config.h
+	@echo "#define GPIO_LAN4_LED_ON                     0" >> include/config.h
+	@echo "#define GPIO_INTERNET_LED_BIT               13" >> include/config.h
+	@echo "#define GPIO_INTERNET_LED_ON                 1" >> include/config.h
+	@echo "#define GPIO_QSS_LED_BIT                     1" >> include/config.h
+	@echo "#define GPIO_QSS_LED_ON                      1" >> include/config.h
+	@echo "#define GPIO_RST_BUTTON_BIT                 11" >> include/config.h
+	@echo "#define DEFAULT_FLASH_SIZE_IN_MB             4" >> include/config.h
+	@echo "#define BOARD_CUSTOM_STRING                  \"AP121 (AR9331) U-Boot for TL-WR74xN/D v4\"" >> include/config.h
 
 mr3220_v2_config : unconfig hornet_common_config
 	@echo '======= Configuring for TP-Link TL-MR3220 v2 at:' `date` '======='
-	@echo "#define CONFIG_FOR_TPLINK_MR3220_V2		1" >> include/config.h
-	@echo "#define GPIO_SYS_LED_BIT					27" >> include/config.h
-	@echo "#define GPIO_SYS_LED_ON					0" >> include/config.h
-	@echo "#define GPIO_WLAN_LED_BIT				0" >> include/config.h
-	@echo "#define GPIO_WLAN_LED_ON					1" >> include/config.h
-	@echo "#define GPIO_LAN1_LED_BIT				14" >> include/config.h
-	@echo "#define GPIO_LAN1_LED_ON					1" >> include/config.h
-	@echo "#define GPIO_LAN2_LED_BIT				15" >> include/config.h
-	@echo "#define GPIO_LAN2_LED_ON					1" >> include/config.h
-	@echo "#define GPIO_LAN3_LED_BIT				16" >> include/config.h
-	@echo "#define GPIO_LAN3_LED_ON					1" >> include/config.h
-	@echo "#define GPIO_LAN4_LED_BIT				17" >> include/config.h
-	@echo "#define GPIO_LAN4_LED_ON					0" >> include/config.h
-	@echo "#define GPIO_INTERNET_LED_BIT			13" >> include/config.h
-	@echo "#define GPIO_INTERNET_LED_ON				1" >> include/config.h
-	@echo "#define GPIO_QSS_LED_BIT					1" >> include/config.h
-	@echo "#define GPIO_QSS_LED_ON					1" >> include/config.h
-	@echo "#define GPIO_USB_LED_BIT					26" >> include/config.h
-	@echo "#define GPIO_USB_LED_ON					1" >> include/config.h
-	@echo "#define GPIO_RST_BUTTON_BIT				11" >> include/config.h
-	@echo "#define BOARD_CUSTOM_STRING				\"AP121 (AR9331) U-Boot for TL-MR3220 v2\"" >>include/config.h
-	@echo "#define DEFAULT_FLASH_SIZE_IN_MB			4" >> include/config.h
+	@echo "#define CONFIG_FOR_TPLINK_MR3220_V2          1" >> include/config.h
+	@echo "#define GPIO_SYS_LED_BIT                    27" >> include/config.h
+	@echo "#define GPIO_SYS_LED_ON                      0" >> include/config.h
+	@echo "#define GPIO_WLAN_LED_BIT                    0" >> include/config.h
+	@echo "#define GPIO_WLAN_LED_ON                     1" >> include/config.h
+	@echo "#define GPIO_LAN1_LED_BIT                   14" >> include/config.h
+	@echo "#define GPIO_LAN1_LED_ON                     1" >> include/config.h
+	@echo "#define GPIO_LAN2_LED_BIT                   15" >> include/config.h
+	@echo "#define GPIO_LAN2_LED_ON                     1" >> include/config.h
+	@echo "#define GPIO_LAN3_LED_BIT                   16" >> include/config.h
+	@echo "#define GPIO_LAN3_LED_ON                     1" >> include/config.h
+	@echo "#define GPIO_LAN4_LED_BIT                   17" >> include/config.h
+	@echo "#define GPIO_LAN4_LED_ON                     0" >> include/config.h
+	@echo "#define GPIO_INTERNET_LED_BIT               13" >> include/config.h
+	@echo "#define GPIO_INTERNET_LED_ON                 1" >> include/config.h
+	@echo "#define GPIO_QSS_LED_BIT                     1" >> include/config.h
+	@echo "#define GPIO_QSS_LED_ON                      1" >> include/config.h
+	@echo "#define GPIO_USB_LED_BIT                    26" >> include/config.h
+	@echo "#define GPIO_USB_LED_ON                      1" >> include/config.h
+	@echo "#define GPIO_RST_BUTTON_BIT                 11" >> include/config.h
+	@echo "#define DEFAULT_FLASH_SIZE_IN_MB             4" >> include/config.h
+	@echo "#define BOARD_CUSTOM_STRING                  \"AP121 (AR9331) U-Boot for TL-MR3220 v2\"" >> include/config.h
 
-carambola2_config : unconfig
-	@echo '======= Configuring for 8devices Carambola2 at:' `date` '======='
-	@ >include/config.h
-	@echo "#undef COMPRESSED_UBOOT"					>>include/config.h
-	@echo "#define CONFIG_AR7240 				1"	>>include/config.h
-	@echo "#define CONFIG_MACH_HORNET 			1"	>>include/config.h
-	@echo "#define CONFIG_HORNET_1_1_WAR		1" 	>>include/config.h
-	@echo "#define NEW_DDR_TAP_CAL				1"	>>include/config.h
-	@echo "#define CONFIG_40MHZ_XTAL_SUPPORT	1"	>>include/config.h
+carambola2_config : unconfig hornet_common_config
+	@echo '======= Configuring for 8devices Carambola 2 at:' `date` '======='
+	@echo "#define CONFIG_FOR_8DEVICES_CARAMBOLA2       1" >> include/config.h
 
-ifdef CONFIG_BOOTDELAY
-	@echo "#define CONFIG_BOOTDELAY "$(CONFIG_BOOTDELAY) >>include/config.h
-endif
+	# Carambola 2 uses uncompressed version
+	@echo "#undef COMPRESSED_UBOOT"                        >> include/config.h
 
-	@echo "#define CONFIG_DELAY_TO_AUTORUN_HTTPD		3" >>include/config.h
-	@echo "#define CONFIG_DELAY_TO_AUTORUN_CONSOLE		5" >>include/config.h
-	@echo "#define CONFIG_DELAY_TO_AUTORUN_NETCONSOLE	7" >>include/config.h
+	# Carambola 2 uses 40 MHz oscillator
+	@echo "#define CONFIG_40MHZ_XTAL_SUPPORT            1" >> include/config.h
 
-	# max delay time for button pressing
-	@echo "#define CONFIG_MAX_BUTTON_PRESSING 10" >>include/config.h
+	@echo "#define GPIO_WLAN_LED_BIT                    0" >> include/config.h
+	@echo "#define GPIO_WLAN_LED_ON                     0" >> include/config.h
+	@echo "#define GPIO_RST_BUTTON_BIT                 11" >> include/config.h
 
-	# don't show info about console (in, out, err...)
-	@echo "#define CFG_CONSOLE_INFO_QUIET" >>include/config.h
+	# Carambola 2 development board has RST button pulled up, so it is active at low
+	@echo "#define GPIO_RST_BUTTON_IS_ACTIVE_LOW        1" >> include/config.h
 
-	@./mkconfig -a ap121 mips mips ap121 ar7240 ar7240
-
-	@echo "#define CONFIG_FOR_8DEVICES_CARAMBOLA2	1" >> include/config.h
-	@echo "#define GPIO_WLAN_LED_BIT				0" >> include/config.h
-	@echo "#define GPIO_WLAN_LED_ON					0" >> include/config.h
-	@echo "#define GPIO_RST_BUTTON_BIT				11" >> include/config.h
-	@echo "#define BOARD_CUSTOM_STRING				\"AP121 (AR9331) U-Boot for CARAMBOLA2 v1\"" >>include/config.h
-	@echo "#define DEFAULT_FLASH_SIZE_IN_MB			16" >> include/config.h
+	@echo "#define DEFAULT_FLASH_SIZE_IN_MB            16" >> include/config.h
+	@echo "#define BOARD_CUSTOM_STRING                  \"AP121 (AR9331) U-Boot for CARAMBOLA2 v1\"" >> include/config.h
 
 db12x_config : unconfig
 	@echo '======= Configuring for TP-Link TL-WDR3600/43x0 at:' `date` '======='
 	@ >include/config.h
-	@echo "#define CONFIG_WASP_SUPPORT				1"	>>include/config.h
-	@echo "#undef CFG_ATHRS26_PHY"						>>include/config.h
-	@echo "#define DDR2_32BIT_SUPPORT				1" 	>>include/config.h
-	@echo "#define CONFIG_AG7240_GE0_IS_CONNECTED	1"	>>include/config.h
-	@echo "#define CONFIG_AR7240 					1"	>>include/config.h
-	@echo "#define CONFIG_WASP						1"	>>include/config.h
+	@echo "#define CONFIG_WASP_SUPPORT                  1" >> include/config.h
+	@echo "#undef CFG_ATHRS26_PHY"                         >> include/config.h
+	@echo "#define DDR2_32BIT_SUPPORT                   1" >> include/config.h
+	@echo "#define CONFIG_AG7240_GE0_IS_CONNECTED       1" >> include/config.h
+	@echo "#define CONFIG_AR7240                        1" >> include/config.h
+	@echo "#define CONFIG_WASP                          1" >> include/config.h
 
 ifdef CONFIG_BOOTDELAY
-	@echo "#define CONFIG_BOOTDELAY "$(CONFIG_BOOTDELAY) >>include/config.h
+	@echo "#define CONFIG_BOOTDELAY "$(CONFIG_BOOTDELAY)   >> include/config.h
 endif
 
-	@echo "#define CONFIG_DELAY_TO_AUTORUN_HTTPD		3" >>include/config.h
-	@echo "#define CONFIG_DELAY_TO_AUTORUN_CONSOLE		5" >>include/config.h
-	@echo "#define CONFIG_DELAY_TO_AUTORUN_NETCONSOLE	7" >>include/config.h
-	
-	# max delay time for button pressing
-	@echo "#define CONFIG_MAX_BUTTON_PRESSING 10" >>include/config.h
-	
-	# don't show info about console (in, out, err...)
-	@echo "#define CFG_CONSOLE_INFO_QUIET"		>>include/config.h
+	@echo "#define CONFIG_DELAY_TO_AUTORUN_HTTPD        3" >> include/config.h
+	@echo "#define CONFIG_DELAY_TO_AUTORUN_CONSOLE      5" >> include/config.h
+	@echo "#define CONFIG_DELAY_TO_AUTORUN_NETCONSOLE   7" >> include/config.h
 
-	@echo "#define CONFIG_ATHRS17_PHY		1"	>>include/config.h
-	@echo "#define CFG_AG7240_NMACS			1"	>>include/config.h
-	@echo "#define BOARD_CUSTOM_STRING		\"DB120 (AR9344) U-Boot for TL-WDR3600/43x0\"" >>include/config.h
-	@echo "#define DEFAULT_FLASH_SIZE_IN_MB	8"	>> include/config.h
+	# max delay time for button pressing
+	@echo "#define CONFIG_MAX_BUTTON_PRESSING          10" >> include/config.h
+
+	# don't show info about console (in, out, err...)
+	@echo "#define CFG_CONSOLE_INFO_QUIET"                 >> include/config.h
+
+	@echo "#define CONFIG_ATHRS17_PHY                   1" >> include/config.h
+	@echo "#define CFG_AG7240_NMACS                     1" >> include/config.h
+	@echo "#define DEFAULT_FLASH_SIZE_IN_MB             8" >> include/config.h
+	@echo "#define BOARD_CUSTOM_STRING                  \"DB120 (AR9344) U-Boot for TL-WDR3600/43x0\"" >> include/config.h
 
 	@./mkconfig -a db12x mips mips db12x ar7240 ar7240
 

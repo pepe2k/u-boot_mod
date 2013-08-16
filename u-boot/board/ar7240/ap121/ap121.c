@@ -124,13 +124,13 @@ void all_led_off(void){
 #endif
 int reset_button_status(void){
 	if(ar7240_reg_rd(AR7240_GPIO_IN) & (1 << GPIO_RST_BUTTON_BIT)){
-#if defined(CONFIG_FOR_8DEVICES_CARAMBOLA2)
+#if defined(GPIO_RST_BUTTON_IS_ACTIVE_LOW)
 		return(0);
 #else
 		return(1);
 #endif
 	} else {
-#if defined(CONFIG_FOR_8DEVICES_CARAMBOLA2)
+#if defined(GPIO_RST_BUTTON_IS_ACTIVE_LOW)
 		return(1);
 #else
 		return(0);
