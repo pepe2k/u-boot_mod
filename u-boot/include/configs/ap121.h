@@ -48,6 +48,10 @@
 
 	#define	CONFIG_BOOTARGS	"console=ttyS0,115200 root=31:02 rootfstype=squashfs init=/sbin/init mtdparts=ar7240-nor0:128k(u-boot),1024k(kernel),6912k(rootfs),64k(config),64k(ART)"
 
+#elif defined(CONFIG_FOR_DLINK_DIR505_A1)
+
+	#define	CONFIG_BOOTARGS	"console=ttyS0,115200 root=31:06 rootfstype=squashfs init=/sbin/init mtdparts=ar7240-nor0:64k(u-boot),64k(ART),64k(mac),64k(nvram),256k(language),1024k(uImage),6656k(rootfs)"
+
 #elif defined(CONFIG_FOR_8DEVICES_CARAMBOLA2)
 
 	#define	CONFIG_BOOTARGS "console=ttyS0,115200 root=31:02 rootfstype=squashfs init=/sbin/init mtdparts=ar7240-nor0:256k(u-boot),64k(u-boot-env),16000k(firmware),64k(ART)"
@@ -63,13 +67,17 @@
 #undef CONFIG_LOADADDR
 #define CONFIG_LOADADDR			0x80800000
 
-#if defined(CONFIG_FOR_8DEVICES_CARAMBOLA2)
+#if defined(CONFIG_FOR_DLINK_DIR505_A1)
+	#define	CFG_LOAD_ADDR		0x9F080000
+#elif defined(CONFIG_FOR_8DEVICES_CARAMBOLA2)
 	#define	CFG_LOAD_ADDR		0x9F050000
 #else
 	#define	CFG_LOAD_ADDR		0x9F020000
 #endif
 
-#if defined(CONFIG_FOR_8DEVICES_CARAMBOLA2)
+#if defined(CONFIG_FOR_DLINK_DIR505_A1)
+	#define CONFIG_BOOTCOMMAND "bootm 0x9F080000"
+#elif defined(CONFIG_FOR_8DEVICES_CARAMBOLA2)
 	#define CONFIG_BOOTCOMMAND "bootm 0x9F050000"
 #else
 	#define CONFIG_BOOTCOMMAND "bootm 0x9F020000"
@@ -82,10 +90,6 @@
 #undef CFG_HZ
 #undef CPU_PLL_CONFIG_VAL1
 #undef CPU_CLK_CONTROL_VAL2
-
-#if defined(CONFIG_FOR_8DEVICES_CARAMBOLA2)
-	#define CONFIG_40MHZ_XTAL_SUPPORT 	1	// Carambola 2 has 40 MHz XTAL, TP-Link routers use 25 MHz
-#endif
 
 // CPU-RAM-AHB frequency setting
 #define CFG_PLL_FREQ    CFG_PLL_400_400_200
@@ -434,7 +438,9 @@
 /*
  * Available commands
  */
-#if defined(CONFIG_FOR_8DEVICES_CARAMBOLA2)
+#if defined(CONFIG_FOR_DLINK_DIR505_A1)
+	#define CONFIG_COMMANDS (CFG_CMD_MEMORY | CFG_CMD_FLASH | CFG_CMD_NET | CFG_CMD_PING | CFG_CMD_DATE | CFG_CMD_IMI )
+#elif defined(CONFIG_FOR_8DEVICES_CARAMBOLA2)
 	#define CONFIG_COMMANDS (CFG_CMD_MEMORY | CFG_CMD_DHCP | CFG_CMD_PING | CFG_CMD_ENV | CFG_CMD_FLASH | CFG_CMD_NET | CFG_CMD_RUN | CFG_CMD_DATE | CFG_CMD_IMI | CFG_CMD_SNTP)
 #else
 	#define CONFIG_COMMANDS (CFG_CMD_MEMORY | CFG_CMD_FLASH | CFG_CMD_NET | CFG_CMD_PING )
@@ -482,27 +488,39 @@
  * Web Failsafe configuration
  */
 #define WEBFAILSAFE_UPLOAD_RAM_ADDRESS					CONFIG_LOADADDR
+
+// U-Boot partition size and offset
 #define WEBFAILSAFE_UPLOAD_UBOOT_ADDRESS				CFG_FLASH_BASE
 
-// Firmware partition offset
-#if defined(CONFIG_FOR_8DEVICES_CARAMBOLA2)
-	#define WEBFAILSAFE_UPLOAD_KERNEL_ADDRESS			WEBFAILSAFE_UPLOAD_UBOOT_ADDRESS + 0x50000
-#else
-	#define WEBFAILSAFE_UPLOAD_KERNEL_ADDRESS			WEBFAILSAFE_UPLOAD_UBOOT_ADDRESS + 0x20000
-#endif
-
-// U-Boot partition size
-#if defined(CONFIG_FOR_8DEVICES_CARAMBOLA2)
+#if defined(CONFIG_FOR_DLINK_DIR505_A1)
+	#define WEBFAILSAFE_UPLOAD_UBOOT_SIZE_IN_BYTES		(64 * 1024)
+#elif defined(CONFIG_FOR_8DEVICES_CARAMBOLA2)
 	#define WEBFAILSAFE_UPLOAD_UBOOT_SIZE_IN_BYTES		(256 * 1024)
 #else
 	#define WEBFAILSAFE_UPLOAD_UBOOT_SIZE_IN_BYTES		(64 * 1024)
 #endif
 
-// ART partition size
+// Firmware partition offset
+#if defined(CONFIG_FOR_DLINK_DIR505_A1)
+	#define WEBFAILSAFE_UPLOAD_KERNEL_ADDRESS			WEBFAILSAFE_UPLOAD_UBOOT_ADDRESS + 0x80000
+#elif defined(CONFIG_FOR_8DEVICES_CARAMBOLA2)
+	#define WEBFAILSAFE_UPLOAD_KERNEL_ADDRESS			WEBFAILSAFE_UPLOAD_UBOOT_ADDRESS + 0x50000
+#else
+	#define WEBFAILSAFE_UPLOAD_KERNEL_ADDRESS			WEBFAILSAFE_UPLOAD_UBOOT_ADDRESS + 0x20000
+#endif
+
+// ART partition size and offset
+#if defined(CONFIG_FOR_DLINK_DIR505_A1)
+	#define WEBFAILSAFE_UPLOAD_ART_ADDRESS				WEBFAILSAFE_UPLOAD_UBOOT_ADDRESS + 0x10000
+#endif
+
 #define WEBFAILSAFE_UPLOAD_ART_SIZE_IN_BYTES			(64 * 1024)
 
 // max. firmware size <= (FLASH_SIZE -  WEBFAILSAFE_UPLOAD_LIMITED_AREA_IN_BYTES)
-#if defined(CONFIG_FOR_8DEVICES_CARAMBOLA2)
+#if defined(CONFIG_FOR_DLINK_DIR505_A1)
+	// D-Link DIR-505: 64k(U-Boot),64k(ART),64k(MAC),64k(NVRAM),256k(Language)
+	#define WEBFAILSAFE_UPLOAD_LIMITED_AREA_IN_BYTES	(512 * 1024)
+#elif defined(CONFIG_FOR_8DEVICES_CARAMBOLA2)
 	// Carambola 2: 256k(U-Boot),64k(U-Boot env),64k(ART)
 	#define WEBFAILSAFE_UPLOAD_LIMITED_AREA_IN_BYTES	(384 * 1024)
 #else
@@ -533,7 +551,14 @@
 #define milisecdelay(_x)			udelay((_x) * 1000)
 
 /* MAC address, model and PIN number offsets in FLASH */
-#if defined(CONFIG_FOR_8DEVICES_CARAMBOLA2)
+#if defined(CONFIG_FOR_DLINK_DIR505_A1)
+	// DIR-505 has two MAC addresses inside dedicated MAC partition
+	// They are stored in plain text... TODO: read/write MAC stored as plain text
+	//#define OFFSET_MAC_DATA_BLOCK			0x020000
+	//#define OFFSET_MAC_DATA_BLOCK_LENGTH	0x010000
+	//#define OFFSET_MAC_ADDRESS				0x000004
+	//#define OFFSET_MAC_ADDRESS2				0x000016
+#elif defined(CONFIG_FOR_8DEVICES_CARAMBOLA2)
 	#define OFFSET_MAC_DATA_BLOCK			0xFF0000
 	#define OFFSET_MAC_DATA_BLOCK_LENGTH	0x010000
 	#define OFFSET_MAC_ADDRESS				0x000000	// Carambola 2 has two MAC addresses at the beginning of ART partition
@@ -544,7 +569,8 @@
 	#define OFFSET_MAC_ADDRESS				0x00FC00
 #endif
 
-#if !defined(CONFIG_FOR_8DEVICES_CARAMBOLA2)
+#if !defined(CONFIG_FOR_8DEVICES_CARAMBOLA2) && \
+	!defined(CONFIG_FOR_DLINK_DIR505_A1)
 #define OFFSET_ROUTER_MODEL					0x00FD00
 #endif
 

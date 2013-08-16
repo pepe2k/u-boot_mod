@@ -87,6 +87,15 @@ tplink_wdr3600_43x0:
 	@cp $(BUILD_TOPDIR)/u-boot/tuboot.bin $(BUILD_TOPDIR)/bin/temp.bin
 	@make show_size
 
+dlink_dir505:	export UBOOT_FILE_NAME=uboot_for_d-link_dir-505
+dlink_dir505:	export MAX_UBOOT_SIZE=64
+dlink_dir505:	export COMPRESSED_UBOOT=1
+dlink_dir505:
+	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) dir505_config
+	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) ENDIANNESS=-EB V=1 all
+	@cp $(BUILD_TOPDIR)/u-boot/tuboot.bin $(BUILD_TOPDIR)/bin/temp.bin
+	@make show_size
+
 8devices_carambola2:	export UBOOT_FILE_NAME=uboot_for_8devices_carambola2
 8devices_carambola2:	export MAX_UBOOT_SIZE=256
 8devices_carambola2:

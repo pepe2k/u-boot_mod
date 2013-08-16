@@ -362,7 +362,18 @@ void board_init_r(gd_t *id, ulong dest_addr){
 	env_relocate();
 
 	/* board MAC address */
+#if defined(OFFSET_MAC_ADDRESS)
 	memcpy(buffer, (void *)(CFG_FLASH_BASE + OFFSET_MAC_DATA_BLOCK + OFFSET_MAC_ADDRESS), 6);
+#else
+	// fake MAC
+	// 00-03-7F (Atheros Communications, Inc.)
+	buffer[0] = 0x00;
+	buffer[1] = 0x03;
+	buffer[2] = 0x7f;
+	buffer[3] = 0x09;
+	buffer[4] = 0x0b;
+	buffer[5] = 0xad;
+#endif
 
 	for(i = 0; i < 6; ++i){
 		bd->bi_enetaddr[i] = buffer[i];

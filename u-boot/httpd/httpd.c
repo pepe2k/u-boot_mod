@@ -142,11 +142,17 @@ static int httpd_findandstore_firstchunk(void){
 					printf("Upgrade type: ART\n");
 					webfailsafe_upgrade_type = WEBFAILSAFE_UPGRADE_TYPE_ART;
 
-					// check if have known flash type
+					// if we don't have ART partition offset, it means that it should be
+					// stored on the last 64 KiB block -> in most supported board
+					// the ART partition occupies last 64 KiB block
+#if !defined(WEBFAILSAFE_UPLOAD_ART_ADDRESS)
+					// if we don't know the flash type, we won't allow to update ART,
+					// because we don't know flash size
 					if(info->flash_id == FLASH_CUSTOM){
 						printf("## Error: unknown flash type, can't update ART!\n");
 						webfailsafe_upload_failed = 1;
 					}
+#endif
 
 				} else {
 

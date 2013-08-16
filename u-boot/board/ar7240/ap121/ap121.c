@@ -29,6 +29,8 @@ void led_toggle(void){
 	gpio ^= 1 << GPIO_SYS_LED_BIT;
 #elif defined(CONFIG_FOR_TPLINK_WR740N_V4) || defined(CONFIG_FOR_TPLINK_MR3220_V2)
 	gpio ^= 1 << GPIO_SYS_LED_BIT;
+#elif defined(CONFIG_FOR_DLINK_DIR505_A1)
+	gpio ^= 1 << GPIO_SYS_LED_BIT;
 #elif defined(CONFIG_FOR_8DEVICES_CARAMBOLA2)
 	gpio ^= 1 << GPIO_WLAN_LED_BIT;
 #else
@@ -69,6 +71,8 @@ void all_led_on(void){
 	#ifdef CONFIG_FOR_TPLINK_MR3220_V2
 	SETBITVAL(gpio, GPIO_USB_LED_BIT, GPIO_USB_LED_ON);
 	#endif
+#elif defined(CONFIG_FOR_DLINK_DIR505_A1)
+	SETBITVAL(gpio, GPIO_SYS_LED_BIT, GPIO_SYS_LED_ON);
 #elif defined(CONFIG_FOR_8DEVICES_CARAMBOLA2)
 	SETBITVAL(gpio, GPIO_WLAN_LED_BIT, GPIO_WLAN_LED_ON);
 #else
@@ -109,6 +113,8 @@ void all_led_off(void){
 	#ifdef CONFIG_FOR_TPLINK_MR3220_V2
 	SETBITVAL(gpio, GPIO_USB_LED_BIT, !GPIO_USB_LED_ON);
 	#endif
+#elif defined(CONFIG_FOR_DLINK_DIR505_A1)
+	SETBITVAL(gpio, GPIO_SYS_LED_BIT, !GPIO_SYS_LED_ON);
 #elif defined(CONFIG_FOR_8DEVICES_CARAMBOLA2)
 	SETBITVAL(gpio, GPIO_WLAN_LED_BIT, !GPIO_WLAN_LED_ON);
 #else
@@ -271,6 +277,20 @@ void gpio_config(void){
 	//ar7240_reg_wr (AR7240_GPIO_FUNC, (ar7240_reg_rd(AR7240_GPIO_FUNC) & 0xffe7e07f));
 #elif defined(CONFIG_FOR_8DEVICES_CARAMBOLA2)
 	// TODO: check GPIO config for C2
+#elif defined(CONFIG_FOR_DLINK_DIR505_A1)
+
+	/* LED's GPIOs on DIR-505:
+	 *
+	 * 26	=> RED LED
+	 * 27	=> GREEN LED
+	 *
+	 */
+
+	// set GPIO_OE
+	ar7240_reg_wr(AR7240_GPIO_OE, (ar7240_reg_rd(AR7240_GPIO_OE) | 0xC000000));
+
+	// turn off RED LED, we don't need it
+	ar7240_reg_wr(AR7240_GPIO_OUT, (ar7240_reg_rd(AR7240_GPIO_OUT) | (0x1 << 26)));
 #else
 	#error "Custom GPIO config in gpio_config() not defined!"
 #endif

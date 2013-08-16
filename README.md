@@ -56,7 +56,7 @@ Currently supported devices:
   - TP-Link TL-MR3220 v2
 
 - **Atheros AR1311 (similar to AR9331)**
-  - ~~D-Link DIR-505 H/W ver. A1~~, [photos in my gallery](http://galeria.tech-blog.pl/D-Link_DIR-505/)
+  - D-Link DIR-505 H/W ver. A1, [photos in my gallery](http://galeria.tech-blog.pl/D-Link_DIR-505/)
 
 - **Atheros AR9344**:
   - TP-Link TL-WDR3600 v1

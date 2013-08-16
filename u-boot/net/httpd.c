@@ -14,7 +14,9 @@
 #include "../httpd/uip.h"
 #include "../httpd/uip_arp.h"
 
+#if !defined(WEBFAILSAFE_UPLOAD_ART_ADDRESS)
 extern flash_info_t flash_info[];
+#endif
 
 static int arptimer = 0;
 
@@ -44,7 +46,9 @@ void HttpdStart(void){
 
 int do_http_upgrade(const ulong size, const int upgrade_type){
 	char buf[96];	// erase 0xXXXXXXXX +0xXXXXXXXX; cp.b 0xXXXXXXXX 0xXXXXXXXX 0xXXXXXXXX (68 signs)
+#if !defined(WEBFAILSAFE_UPLOAD_ART_ADDRESS)
 	flash_info_t *info = &flash_info[0];
+#endif
 
 	if(upgrade_type == WEBFAILSAFE_UPGRADE_TYPE_UBOOT){
 
@@ -73,6 +77,15 @@ int do_http_upgrade(const ulong size, const int upgrade_type){
 		// TODO: add option to change ART partition offset,
 		// for those who want to use OFW on router with replaced/bigger FLASH
 		printf("\n\n****************************\n*      ART  UPGRADING      *\n* DO NOT POWER OFF DEVICE! *\n****************************\n\n");
+#if defined(WEBFAILSAFE_UPLOAD_ART_ADDRESS)
+		sprintf(buf,
+				"erase 0x%lX +0x%lX; cp.b 0x%lX 0x%lX 0x%lX",
+				WEBFAILSAFE_UPLOAD_ART_ADDRESS,
+				WEBFAILSAFE_UPLOAD_ART_SIZE_IN_BYTES,
+				WEBFAILSAFE_UPLOAD_RAM_ADDRESS,
+				WEBFAILSAFE_UPLOAD_ART_ADDRESS,
+				WEBFAILSAFE_UPLOAD_ART_SIZE_IN_BYTES);
+#else
 		sprintf(buf,
 				"erase 0x%lX +0x%lX; cp.b 0x%lX 0x%lX 0x%lX",
 				WEBFAILSAFE_UPLOAD_UBOOT_ADDRESS + (info->size - WEBFAILSAFE_UPLOAD_ART_SIZE_IN_BYTES),
@@ -80,6 +93,7 @@ int do_http_upgrade(const ulong size, const int upgrade_type){
 				WEBFAILSAFE_UPLOAD_RAM_ADDRESS,
 				WEBFAILSAFE_UPLOAD_UBOOT_ADDRESS + (info->size - WEBFAILSAFE_UPLOAD_ART_SIZE_IN_BYTES),
 				WEBFAILSAFE_UPLOAD_ART_SIZE_IN_BYTES);
+#endif
 
 	} else {
 		return(-1);

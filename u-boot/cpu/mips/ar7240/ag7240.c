@@ -451,9 +451,9 @@ static void ag7240_halt(struct eth_device *dev) {
  */
 static void ag7240_get_ethaddr(struct eth_device *dev) {
 	unsigned char *mac = dev->enetaddr;
+#ifdef OFFSET_MAC_ADDRESS
 	unsigned char buffer[6];
 
-#ifdef OFFSET_MAC_ADDRESS
 	// get MAC address from flash and check it
 	memcpy(buffer, (void *)(CFG_FLASH_BASE + OFFSET_MAC_DATA_BLOCK + OFFSET_MAC_ADDRESS), 6);
 
@@ -484,7 +484,7 @@ static void ag7240_get_ethaddr(struct eth_device *dev) {
 	mac[3] = 0x09;
 	mac[4] = 0x0b;
 	mac[5] = 0xad;
-	printf("## Error: Using fixed MAC address!\n");
+	printf("## Error: using fixed MAC address!\n");
 #endif
 }
 
