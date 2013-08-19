@@ -283,10 +283,22 @@ pmu_loop2_end:
     set_reg(AR7240_USB_PLL_CONFIG, CPU_PLL_SETTLE_TIME_VAL)
     nop
 
-pll_unlock_handler:
+/* read GPIO_SET register */
+	li  t0, KSEG1ADDR(AR7240_GPIO_IN)
+	lw  t1, 0(t0)
+	and t1, t1, (1 << GPIO_RST_BUTTON_BIT)
+	beq	t1,	(1 << GPIO_RST_BUTTON_BIT), pll_default_unlock_handler
+	nop
 
+pll_unlock_handler:
 /* set nint, frac, refdiv, outdiv, range in CPU PLL configuration resiter */
     set_reg(AR7240_CPU_PLL_CONFIG, CPU_PLL_CONFIG_VAL1)
+    j	wait_loop2
+    nop
+
+pll_default_unlock_handler:
+/* set nint, frac, refdiv, outdiv, range in CPU PLL configuration resiter */
+    set_reg(AR7240_CPU_PLL_CONFIG, CPU_PLL_CONFIG_VAL1_DEFAULT)
     nop
 
 wait_loop2:
@@ -301,9 +313,24 @@ wait_loop2:
     set_reg(AR7240_PCIE_PLL_CONFIG, CPU_PLL_DITHER_FRAC_VAL)
     nop
 
+/* read GPIO_SET register */
+	li  t0, KSEG1ADDR(AR7240_GPIO_IN)
+	lw  t1, 0(t0)
+	and t1, t1, (1 << GPIO_RST_BUTTON_BIT)
+	beq	t1,	(1 << GPIO_RST_BUTTON_BIT), pll_default_lock_handler
+	nop
+
+pll_lock_handler:
 /* clear PLL power down bit in CPU PLLl configuration */
     set_reg(AR7240_CPU_PLL_CONFIG, CPU_PLL_CONFIG_VAL2)
+    j	wait_loop3
     nop
+
+pll_default_lock_handler:
+/* clear PLL power down bit in CPU PLLl configuration */
+    set_reg(AR7240_CPU_PLL_CONFIG, CPU_PLL_CONFIG_VAL2_DEFAULT)
+    nop
+
 wait_loop3:
     li  t6, KSEG1ADDR(AR7240_CPU_PLL_CONFIG)
     lw  t7, 0(t6)

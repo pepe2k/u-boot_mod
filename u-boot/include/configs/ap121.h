@@ -92,7 +92,8 @@
 #undef CPU_CLK_CONTROL_VAL2
 
 // CPU-RAM-AHB frequency setting
-#define CFG_PLL_FREQ    CFG_PLL_400_400_200
+//#define CFG_PLL_FREQ    CFG_PLL_400_400_200
+#define CFG_PLL_FREQ	CFG_PLL_525_525_262	// only for test!
 
 /*
  * MIPS32 24K Processor Core Family Software User's Manual
@@ -186,6 +187,33 @@
  * bits	6		(1bit)	REMAP_DISABLE	(Remaps 4 MB space over unless explicitly disabled by setting this bit to 1. If set to 1, 16 MB is accessible.)
  *
  */
+
+/*
+ * Default values (400/400/200 MHz) for O/C recovery mode
+ */
+
+// CPU_DIV = 1, RAM_DIV = 1, AHB_DIV = 2
+#define CPU_CLK_CONTROL_VAL1_DEFAULT	0x00018004
+#define CPU_CLK_CONTROL_VAL2_DEFAULT	0x00008000
+
+#if CONFIG_40MHZ_XTAL_SUPPORT
+	// DIV_INT	= 20	(40 MHz * 20/2 = 400 MHz)
+	// REFDIV	= 1
+	// RANGE	= 0
+	// OUTDIV	= 1
+	#define CPU_PLL_CONFIG_VAL1_DEFAULT	0x40815000
+	#define CPU_PLL_CONFIG_VAL2_DEFAULT	0x00815000
+#else
+	// DIV_INT	= 32	(25 MHz * 32/2 = 400 MHz)
+	// REFDIV	= 1
+	// RANGE	= 0
+	// OUTDIV	= 1
+	#define CPU_PLL_CONFIG_VAL1_DEFAULT	0x40818000
+	#define CPU_PLL_CONFIG_VAL2_DEFAULT	0x00818000
+#endif
+
+// CLOCK_DIVIDER = 2 (SPI clock = 200 / 6 ~ 33 MHz)
+#define AR7240_SPI_CONTROL_DEFAULT		0x42
 
 #if (CFG_PLL_FREQ == CFG_PLL_400_400_200)
 
@@ -403,6 +431,24 @@
 	// CPU_DIV = 1, RAM_DIV = 2, AHB_DIV = 4
 	#define CPU_CLK_CONTROL_VAL1	0x00018404
 	#define CPU_CLK_CONTROL_VAL2	0x00018400
+
+	// DIV_INT	= 42	(25 MHz * 42/2 = 525 MHz)
+	// REFDIV	= 1
+	// RANGE	= 0
+	// OUTDIV	= 1
+	#define CPU_PLL_CONFIG_VAL1		0x4081A800
+	#define CPU_PLL_CONFIG_VAL2		0x0081A800
+
+	// CLOCK_DIVIDER = 1 (SPI clock = 131 / 4 ~ 32,8 MHz)
+	#define AR7240_SPI_CONTROL		0x41
+
+#elif (CFG_PLL_FREQ == CFG_PLL_525_525_262)
+
+	#define CFG_HZ					(525000000LU/2)
+
+	// CPU_DIV = 1, RAM_DIV = 1, AHB_DIV = 2
+	#define CPU_CLK_CONTROL_VAL1	0x00008004
+	#define CPU_CLK_CONTROL_VAL2	0x00008000
 
 	// DIV_INT	= 42	(25 MHz * 42/2 = 525 MHz)
 	// REFDIV	= 1

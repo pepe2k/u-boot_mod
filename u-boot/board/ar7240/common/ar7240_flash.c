@@ -18,6 +18,7 @@
 
 extern void led_toggle(void);
 extern void all_led_off(void);
+extern int reset_button_status(void);
 
 /*
  * globals
@@ -83,7 +84,14 @@ unsigned long flash_init(void){
 
 	// spi flash clock
 	ar7240_reg_wr(AR7240_SPI_FS,	0x01);
-	ar7240_reg_wr(AR7240_SPI_CLOCK,	AR7240_SPI_CONTROL);
+
+	// if reset button is pressed -> write default CLOCK_DIVIDER for SPI CLOCK
+	if(reset_button_status()){
+		ar7240_reg_wr(AR7240_SPI_CLOCK,	AR7240_SPI_CONTROL_DEFAULT);
+	} else {
+		ar7240_reg_wr(AR7240_SPI_CLOCK,	AR7240_SPI_CONTROL);
+	}
+
 	ar7240_reg_wr(AR7240_SPI_FS,	0x0);
 
 	// get flash id

@@ -48,6 +48,7 @@
 #define CFG_PLL_500_250_250			10
 #define CFG_PLL_562_281_140			11
 #define CFG_PLL_525_262_131			12
+#define CFG_PLL_525_525_262			13
 
 // WASP
 #define CFG_PLL_566_400_200			0x31
