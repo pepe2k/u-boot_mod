@@ -92,8 +92,8 @@
 #undef CPU_CLK_CONTROL_VAL2
 
 // CPU-RAM-AHB frequency setting
-//#define CFG_PLL_FREQ    CFG_PLL_400_400_200
-#define CFG_PLL_FREQ	CFG_PLL_525_525_262	// only for test!
+#define CFG_PLL_FREQ    CFG_PLL_400_400_200
+//#define CFG_PLL_FREQ	CFG_PLL_525_525_262	// only for test!
 
 /*
  * MIPS32 24K Processor Core Family Software User's Manual
