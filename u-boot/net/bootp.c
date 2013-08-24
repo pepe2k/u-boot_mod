@@ -614,21 +614,11 @@ void BootpRequest(void){
 #ifdef CONFIG_BOOTP_RANDOM_DELAY /* Random BOOTP delay */
 	unsigned char bi_enetaddr[6];
 	int reg;
-	char *e,*s;
-	char tmp[64];
 	ulong tst1, tst2, sum, m_mask, m_value = 0;
 
 	if(BootpTry == 0){
 		/* get our mac */
-		reg = getenv_r("ethaddr", tmp, sizeof(tmp));
-		s = (reg > 0) ? tmp : NULL;
-
-		for (reg = 0; reg < 6; ++reg) {
-			bi_enetaddr[reg] = s ? simple_strtoul(s, &e, 16) : 0;
-			if(s){
-				s = (*e) ? e+1 : e;
-			}
-		}
+		memcpy(bi_enetaddr, NetOurEther, 6);
 
 #ifdef DEBUG
 		puts("BootpRequest => Our Mac: ");
@@ -639,8 +629,8 @@ void BootpRequest(void){
 #endif /* DEBUG */
 
 		/* Mac-Manipulation 2 get seed1 */
-		tst1=0;
-		tst2=0;
+		tst1 = 0;
+		tst2 = 0;
 
 		for(reg = 2; reg < 6; reg++){
 			tst1 = tst1 << 8;
@@ -655,7 +645,7 @@ void BootpRequest(void){
 		seed1 = tst1^tst2;
 
 		/* Mirror seed1*/
-		m_mask=0x1;
+		m_mask = 0x1;
 
 		for(reg = 1;reg <= 32; reg++){
 			m_value |= (m_mask & seed1);

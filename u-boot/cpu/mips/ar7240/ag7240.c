@@ -457,7 +457,12 @@ static void ag7240_get_ethaddr(struct eth_device *dev) {
 	// get MAC address from flash and check it
 	memcpy(buffer, (void *)(CFG_FLASH_BASE + OFFSET_MAC_DATA_BLOCK + OFFSET_MAC_ADDRESS), 6);
 
-	// check LSBit and second LCBit in MSByte of vendor part -> both of them should be 0
+	/*
+	 * check first LSBit (I/G bit) and second LSBit (U/L bit) in MSByte of vendor part
+	 * both of them should be 0:
+	 * I/G bit == 0 -> Individual MAC address (unicast address)
+	 * U/L bit == 0 -> Burned-In-Address (BIA) MAC address
+	 */
 	if(CHECK_BIT((buffer[0] & 0xFF), 0) == 0 && CHECK_BIT((buffer[0] & 0xFF), 1) == 0){
 		mac[0] = (buffer[0] & 0xFF);
 		mac[1] = (buffer[1] & 0xFF);
@@ -473,8 +478,6 @@ static void ag7240_get_ethaddr(struct eth_device *dev) {
 		mac[3] = 0x09;
 		mac[4] = 0x0b;
 		mac[5] = 0xad;
-
-		printf("## Error: MAC address stored in flash is invalid!\nUsing fixed address!\n");
 	}
 #else
 	// 00-03-7F (Atheros Communications, Inc.)
@@ -484,7 +487,6 @@ static void ag7240_get_ethaddr(struct eth_device *dev) {
 	mac[3] = 0x09;
 	mac[4] = 0x0b;
 	mac[5] = 0xad;
-	printf("## Error: using fixed MAC address!\n");
 #endif
 }
 

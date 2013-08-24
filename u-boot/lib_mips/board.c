@@ -39,6 +39,8 @@ DECLARE_GLOBAL_DATA_PTR;
 #define	TOTAL_MALLOC_LEN	CFG_MALLOC_LEN
 #endif
 
+#define CHECK_BIT(var,pos)	((var) & (1<<(pos)))
+
 extern ulong uboot_end_data;
 extern ulong uboot_end;
 
@@ -294,7 +296,6 @@ void board_init_r(gd_t *id, ulong dest_addr){
 	extern char * env_name_spec;
 #endif
 	bd_t *bd;
-	int i;
 	char *s;
 	unsigned char buffer[6];
 
@@ -364,20 +365,36 @@ void board_init_r(gd_t *id, ulong dest_addr){
 	/* board MAC address */
 #if defined(OFFSET_MAC_ADDRESS)
 	memcpy(buffer, (void *)(CFG_FLASH_BASE + OFFSET_MAC_DATA_BLOCK + OFFSET_MAC_ADDRESS), 6);
+
+	/*
+	 * check first LSBit (I/G bit) and second LSBit (U/L bit) in MSByte of vendor part
+	 * both of them should be 0:
+	 * I/G bit == 0 -> Individual MAC address (unicast address)
+	 * U/L bit == 0 -> Burned-In-Address (BIA) MAC address
+	 */
+	if(CHECK_BIT((buffer[0] & 0xFF), 0) != 0 || CHECK_BIT((buffer[0] & 0xFF), 1) != 0){
+		// 00-03-7F (Atheros Communications, Inc.)
+		bd->bi_enetaddr[0] = 0x00;
+		bd->bi_enetaddr[1] = 0x03;
+		bd->bi_enetaddr[2] = 0x7f;
+		bd->bi_enetaddr[3] = 0x09;
+		bd->bi_enetaddr[4] = 0x0b;
+		bd->bi_enetaddr[5] = 0xad;
+
+		printf("## Error: MAC is invalid, using fixed!\n\n");
+	}
 #else
 	// fake MAC
 	// 00-03-7F (Atheros Communications, Inc.)
-	buffer[0] = 0x00;
-	buffer[1] = 0x03;
-	buffer[2] = 0x7f;
-	buffer[3] = 0x09;
-	buffer[4] = 0x0b;
-	buffer[5] = 0xad;
-#endif
+	bd->bi_enetaddr[0] = 0x00;
+	bd->bi_enetaddr[1] = 0x03;
+	bd->bi_enetaddr[2] = 0x7f;
+	bd->bi_enetaddr[3] = 0x09;
+	bd->bi_enetaddr[4] = 0x0b;
+	bd->bi_enetaddr[5] = 0xad;
 
-	for(i = 0; i < 6; ++i){
-		bd->bi_enetaddr[i] = buffer[i];
-	}
+	printf("** Warning: using fixed MAC address!\n\n");
+#endif
 
 	/* IP Address */
 	bd->bi_ip_addr = getenv_IPaddr("ipaddr");
