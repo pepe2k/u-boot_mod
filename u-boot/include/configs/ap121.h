@@ -40,7 +40,8 @@
 	defined(CONFIG_FOR_TPLINK_MR3040_V1V2) || \
 	defined(CONFIG_FOR_TPLINK_MR10U_V1) || \
 	defined(CONFIG_FOR_TPLINK_WR740N_V4) || \
-	defined(CONFIG_FOR_TPLINK_MR3220_V2)
+	defined(CONFIG_FOR_TPLINK_MR3220_V2) || \
+	defined(CONFIG_FOR_TPLINK_MR13U_V1)
 
 	#define	CONFIG_BOOTARGS	"console=ttyS0,115200 root=31:02 rootfstype=squashfs init=/sbin/init mtdparts=ar7240-nor0:128k(u-boot),1024k(kernel),2816k(rootfs),64k(config),64k(ART)"
 

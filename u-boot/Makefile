@@ -365,6 +365,18 @@ mr10u_config : unconfig hornet_common_config
 	
 	@./mkconfig -a ap121 mips mips ap121 ar7240 ar7240
 
+mr13u_config : unconfig hornet_common_config
+	@echo '======= Configuring for TP-Link TL-MR13U at:' `date` '======='
+	@echo "#define CONFIG_FOR_TPLINK_MR13U_V1           1" >> include/config.h
+	@echo "#define GPIO_SYS_LED_BIT                    27" >> include/config.h
+	@echo "#define GPIO_SYS_LED_ON                      0" >> include/config.h
+	@echo "#define GPIO_RST_BUTTON_BIT                 11" >> include/config.h
+	@echo "#define DEFAULT_FLASH_SIZE_IN_MB             4" >> include/config.h
+	@echo "#define BOARD_CUSTOM_STRING                  \"AP121 (AR9331) U-Boot for TL-MR13U\"" >> include/config.h
+
+	@./mkconfig -a ap121 mips mips ap121 ar7240 ar7240
+
+
 wr740n_v4_config : unconfig hornet_common_config
 	@echo '======= Configuring for TP-Link TL-WR740N v4 at:' `date` '======='
 	@echo "#define CONFIG_FOR_TPLINK_WR740N_V4          1" >> include/config.h
