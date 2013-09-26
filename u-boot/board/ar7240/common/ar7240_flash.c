@@ -178,7 +178,10 @@ unsigned long flash_init(void){
 			flash_set_geom(SIZE_INBYTES_16MBYTES, 256, SIZE_INBYTES_64KBYTES);
 			puts("Macronix MX25L128 (16 MB)");
 			break;
-
+		case 0x012018:
+ 			flash_set_geom(SIZE_INBYTES_16MBYTES, 256, SIZE_INBYTES_64KBYTES);
+ 			puts("Spansion S25FL127S (16 MB)");
+ 			break;
 			/*
 			 * Unknown flash
 			 */
