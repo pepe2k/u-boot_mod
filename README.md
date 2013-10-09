@@ -4,6 +4,8 @@ U-Boot 1.1.4 modification for routers
 Table of contents
 -----------------
 
+[README w języku polskim/README in Polish language](https://github.com/pepe2k/u-boot_mod/blob/master/READMEPL.md)
+
 - [Introduction](#introduction)
 - [Supported devices](#supported-devices)
 - [Known issues](#known-issues)
@@ -11,16 +13,20 @@ Table of contents
 	- [Web server](#web-server)
 	- [Network Console](#network-console)
 	- [Other](#other)
-	- [Supported flash chips](#supported-flash-chips)
+	- [Supported FLASH chips](#supported-flash-chips)
 - [How to install it?](#how-to-install-it)
 	- [Cautions, backups](#cautions-backups)
 	- [Using external programmer](#using-external-programmer)
 	- [Using UART, U-Boot console and TFTP server](#using-uart-u-boot-console-and-tftp-server)
+		- [Important notice!](#important-notice)
+		- [Step by step instruction](#step-by-step-instruction)
 	- [Using OpenWrt](#using-openwrt)
 	- [Using DD-WRT](#using-dd-wrt)
 - [How to use it?](#how-to-use-it)
 - [How to compile the code?](#how-to-compile-the-code)
 - [FAQ](#faq)
+- [License, outdated sources etc.](#license-outdated-sources-etc)
+- [Credits](#credits)
 
 Introduction
 ------------
@@ -58,7 +64,7 @@ Currently supported devices:
   - TP-Link TL-MR3220 v2
 
 - **Atheros AR1311 (similar to AR9331)**
-  - D-Link DIR-505 H/W ver. A1, [photos in my gallery](http://galeria.tech-blog.pl/D-Link_DIR-505/)
+  - D-Link DIR-505 H/W ver. A1 ([photos in my gallery](http://galeria.tech-blog.pl/D-Link_DIR-505/))
 
 - **Atheros AR9344**:
   - TP-Link TL-WDR3600 v1
@@ -71,22 +77,22 @@ More information about supported devices:
 | Model | SoC | FLASH | RAM | U-Boot image | U-Boot env |
 |:--- | :--- | ---: | ---: | ---: | ---: |
 | [8devices Carambola 2](http://8devices.com/carambola-2) | AR9331 | 16 MiB | 64 MiB DDR2 | 256 KiB | 64 KiB, R/W |
-| [TP-Link TL-MR3020 v1](http://wiki.openwrt.org/toh/tp-link/tl-mr3020) | AR9331 | 4 MiB | 32 MiB DDR1 | 64 KiB, LZMA | E/R |
-| [TP-Link TL-MR3040 v1/2](http://wiki.openwrt.org/toh/tp-link/tl-mr3040) | AR9331 | 4 MiB | 32 MiB DDR1 | 64 KiB, LZMA | E/R |
-| [TP-Link TL-WR703N](http://wiki.openwrt.org/toh/tp-link/tl-wr703n) | AR9331 | 4 MiB | 32 MiB DDR1 | 64 KiB, LZMA | E/R |
-| [TP-Link TL-WR720N v3](http://wiki.openwrt.org/toh/tp-link/tl-wr720n) | AR9331 | 4 MiB | 32 MiB DDR1 | 64 KiB, LZMA | E/R |
-| [TP-Link TL-WR710N v1](http://wiki.openwrt.org/toh/tp-link/tl-wr710n) | AR9331 | 8 MiB | 32 MiB DDR1 | 64 KiB, LZMA | E/R |
-| [TP-Link TL-MR10U v1](http://wiki.openwrt.org/toh/tp-link/tl-mr10u) | AR9331 | 4 MiB | 32 MiB DDR1 | 64 KiB, LZMA | E/R |
-| [TP-Link TL-MR13U v1](http://wiki.openwrt.org/toh/tp-link/tl-mr13u) | AR9331 | 4 MiB | 32 MiB DDR1 | 64 KiB, LZMA | E/R |
-| [TP-Link TL-WR740N v4](http://wiki.openwrt.org/toh/tp-link/tl-wr740n) | AR9331 | 4 MiB | 32 MiB DDR1 | 64 KiB, LZMA | E/R |
-| [TP-Link TL-MR3220 v2](http://wiki.openwrt.org/toh/tp-link/tl-mr3420) | AR9331 | 4 MiB | 32 MiB DDR1 | 64 KiB, LZMA | E/R |
-| [TP-Link TL-WDR3600 v1](http://wiki.openwrt.org/toh/tp-link/tl-wdr3600) | AR9344 | 8 MiB | 128 MiB DDR2 | 64 KiB, LZMA | E/R |
-| [TP-Link TL-WDR43x0 v1](http://wiki.openwrt.org/toh/tp-link/tl-wdr4300) | AR9344 | 8 MiB | 128 MiB DDR2 | 64 KiB, LZMA | E/R |
-| [D-Link DIR-505 H/W ver. A1](http://wiki.openwrt.org/toh/d-link/dir-505) | AR1311 | 8 MiB | 64 MiB DDR2 | 64 KiB, LZMA | E/R |
+| [TP-Link TL-MR3020 v1](http://wiki.openwrt.org/toh/tp-link/tl-mr3020) | AR9331 | 4 MiB | 32 MiB DDR1 | 64 KiB, LZMA | RO |
+| [TP-Link TL-MR3040 v1/2](http://wiki.openwrt.org/toh/tp-link/tl-mr3040) | AR9331 | 4 MiB | 32 MiB DDR1 | 64 KiB, LZMA | RO |
+| [TP-Link TL-WR703N](http://wiki.openwrt.org/toh/tp-link/tl-wr703n) | AR9331 | 4 MiB | 32 MiB DDR1 | 64 KiB, LZMA | RO |
+| [TP-Link TL-WR720N v3](http://wiki.openwrt.org/toh/tp-link/tl-wr720n) | AR9331 | 4 MiB | 32 MiB DDR1 | 64 KiB, LZMA | RO |
+| [TP-Link TL-WR710N v1](http://wiki.openwrt.org/toh/tp-link/tl-wr710n) | AR9331 | 8 MiB | 32 MiB DDR1 | 64 KiB, LZMA | RO |
+| [TP-Link TL-MR10U v1](http://wiki.openwrt.org/toh/tp-link/tl-mr10u) | AR9331 | 4 MiB | 32 MiB DDR1 | 64 KiB, LZMA | RO |
+| [TP-Link TL-MR13U v1](http://wiki.openwrt.org/toh/tp-link/tl-mr13u) | AR9331 | 4 MiB | 32 MiB DDR1 | 64 KiB, LZMA | RO |
+| [TP-Link TL-WR740N v4](http://wiki.openwrt.org/toh/tp-link/tl-wr740n) | AR9331 | 4 MiB | 32 MiB DDR1 | 64 KiB, LZMA | RO |
+| [TP-Link TL-MR3220 v2](http://wiki.openwrt.org/toh/tp-link/tl-mr3420) | AR9331 | 4 MiB | 32 MiB DDR1 | 64 KiB, LZMA | RO |
+| [TP-Link TL-WDR3600 v1](http://wiki.openwrt.org/toh/tp-link/tl-wdr3600) | AR9344 | 8 MiB | 128 MiB DDR2 | 64 KiB, LZMA | RO |
+| [TP-Link TL-WDR43x0 v1](http://wiki.openwrt.org/toh/tp-link/tl-wdr4300) | AR9344 | 8 MiB | 128 MiB DDR2 | 64 KiB, LZMA | RO |
+| [D-Link DIR-505 H/W ver. A1](http://wiki.openwrt.org/toh/d-link/dir-505) | AR1311 | 8 MiB | 64 MiB DDR2 | 64 KiB, LZMA | RO |
 
 *(LZMA) - U-Boot binary image is compressed with LZMA.*  
-*(R/W) - environment exist in separate flash block which allows you to save it and keep after power down.*  
-*(E/R) - environment is read only, you can change and add new variables only during a runtime.*
+*(R/W) - environment exist in separate FLASH block which allows you to save it and keep after power down.*  
+*(RO) - environment is read only, you can change and add new variables only during a runtime.*
 
 Known issues
 ------------
@@ -124,8 +130,8 @@ Moreover:
 
 - Faster boot up
 - Unnecessary information from boot up sequence were removed
-- Flash chip is automatically recognized (using JEDEC ID)
-- Ethernet MAC is set from flash (no more "No valid address in Flash. Using fixed address")
+- FLASH chip is automatically recognized (using JEDEC ID)
+- Ethernet MAC is set from FLASH (no more "No valid address in FLASH. Using fixed address")
 - Automatic kernel booting can be interrupted using any key
 - Press and hold reset button to run:
   - Web server (min. 3 seconds)
@@ -144,15 +150,15 @@ Moreover:
   -  dhcp
   -  sntp
   -  iminfo
-- Overclocking possibilities (for now, only routers with AR9331)
+- Overclocking and underclocking possibilities (for now, only routers with AR9331)
 
-### Supported flash chips
+### Supported FLASH chips
 
-Flash type detection may be very useful for people who has exchanged the flash chip in their routers. You will not need to recompile U-Boot sources, to have access to overall flash space in U-Boot console.
+FLASH type detection may be very useful for people who has exchanged the FLASH chip in their routers. You will not need to recompile U-Boot sources, to have access to overall FLASH space in U-Boot console.
 
-If you use flash type which is not listed below, this version of U-Boot will use default size for your router and, in most supported models, updating the ART image will not be available.
+If you use FLASH type which is not listed below, this version of U-Boot will use default size for your router and, in most supported models, updating the ART image will not be available.
 
-Currently supported flash types:
+Currently supported FLASH types:
 
 **4 MiB**:
 
@@ -191,7 +197,7 @@ How to install it?
 **You do so at your own risk!**   
 **If you make any mistake or something goes wrong during upgrade, in worst case, your router will not boot again!**
 
-It is a good practice to backup your original U-Boot image/partition (especially for TP-Link devices) **before** you make any changes. For example, using OpenWrt (TP-Link TL-WR703N with 16 MiB flash):
+It is a good practice to backup your original U-Boot image/partition (especially for TP-Link devices) **before** you make any changes. For example, using OpenWrt (TP-Link TL-WR703N with 16 MiB FLASH):
 
 ```
 cat /proc/mtd
@@ -221,11 +227,11 @@ And then connect to your router using `SCP protocol` and download from `/tmp` th
 
 ### Using external programmer
 
-If you have an external flash programmer (all supported devices have **SPI NOR flash** chips), you probably know how to use it. Download package with prebuilt images or compile the code, choose right file for your device and put it on flash at the beginning (offset `0x00000`). Remember to first erase block(s) - with high probability, if you use some kind of automatic mode, the programmer will do it for you.
+If you have an external FLASH programmer (all supported devices have **SPI NOR FLASH** chips), you probably know how to use it. Download package with prebuilt images or compile the code, choose right file for your device and put it on FLASH at the beginning (offset `0x00000`). Remember to first erase block(s) - with high probability, if you use some kind of automatic mode, the programmer will do it for you.
 
 All prebuilt images are padded with 0xFF, so their size will always be a **multiply of 64 KiB block** and they will not be bigger than the original versions. For example, **TP-Link** uses only first **64 KiB** block to store compressed U-Boot image (in most of their modern devices). In second 64 KiB block they store additional information like MAC address, model number and WPS pin number.
 
-On the other hand, U-Boot image in **Carambola 2** from **8devices** may have up to **256 KiB** (4x 64 KiB block), they use uncompressed version and environment stored in flash. Immediately after the Carambola 2 U-Boot partition is an area which contains U-Boot environment variables (1x 64 KiB block), called `u-boot-env`:
+On the other hand, U-Boot image in **Carambola 2** from **8devices** may have up to **256 KiB** (4x 64 KiB block), they use uncompressed version and environment stored in FLASH. Immediately after the Carambola 2 U-Boot partition is an area which contains U-Boot environment variables (1x 64 KiB block), called `u-boot-env`:
 
 ```
 dev:    size   erasesize  name
@@ -300,13 +306,13 @@ Configure adapter to use the following settings:
   hornet>
   ```
 
-8. Next step is very risky! You are going to delete existing U-Boot image from flash in your device and copy from RAM the new one. If something goes wrong (for example, a power failure), your router, without bootloader, will not boot again!
+8. Next step is very risky! You are going to delete existing U-Boot image from FLASH in your device and copy from RAM the new one. If something goes wrong (for example, a power failure), your router, without bootloader, will not boot again!
 
-  You should also note the size of downloaded image. For supported **TP-Link** and **D-Link** routers it will be always **0x10000** (64 KiB), but for Carambola 2 image size is different: **0x40000** (256 KiB). In all cases, the start address of flash is **0x9F000000** and for RAM: **0x80000000** (as you may noticed, I did not use start address of RAM to store image and you should follow this approach).
+  You should also note the size of downloaded image. For supported **TP-Link** and **D-Link** routers it will be always **0x10000** (64 KiB), but for Carambola 2 image size is different: **0x40000** (256 KiB). In all cases, the start address of FLASH is **0x9F000000** and for RAM: **0x80000000** (as you may noticed, I did not use start address of RAM to store image and you should follow this approach).
 
   Please, do not make any mistake with offsets and sizes during next steps!
 
-9. Erase appropriate flash space for new U-Boot image (this command will remove default U-Boot image!):
+9. Erase appropriate FLASH space for new U-Boot image (this command will remove default U-Boot image!):
 
   ```
   hornet> erase 0x9F000000 +0x10000   
@@ -316,7 +322,7 @@ Configure adapter to use the following settings:
   Erased 1 sectors
   ```
 
-10. Now your router does not have U-Boot, so do not wait and copy to flash the new one, stored earlier in RAM:
+10. Now your router does not have U-Boot, so do not wait and copy to FLASH the new one, stored earlier in RAM:
 
   ```
   hornet> cp.b 0x80800000 0x9F000000 0x10000   
@@ -325,7 +331,7 @@ Configure adapter to use the following settings:
   done
   ```
 
-11. If you want, you can check content of the flash and compare it to the image on your PC, using `md` command in U-Boot console, which prints indicated memory area (press only ENTER after first execution of this command to move further in memory):
+11. If you want, you can check content of the FLASH and compare it to the image on your PC, using `md` command in U-Boot console, which prints indicated memory area (press only ENTER after first execution of this command to move further in memory):
 
   ```
   hornet> md 0x9F000000
@@ -408,7 +414,7 @@ FAQ
 
 #### 2. I want to overclock my router, how can I do this?
 
-*Currently, this option is available only for TP-Link routers with Atheros AR9331 (please, look at [ap121.h](u-boot/include/configs/ap121.h) file which contains all information about PLL register configuration and an untypical clocks for CPU, RAM and AHB). What more, you will need to compile the code yourself, because I will not publish images with non-default clocks.*
+*Currently, this option is available only for routers with Atheros AR9331 (please, look at [ap121.h](u-boot/include/configs/ap121.h) file which contains all information about PLL register configuration and an untypical clocks for CPU, RAM and AHB). What more, you will need to compile the code yourself, because I will not publish images with non-default clocks.*
 
 *And again, remember that you are doing this only at your own risk!*
 
@@ -422,7 +428,7 @@ FAQ
 
 #### 5. My device does not boot after upgrade!
 
-*I told you... bootloader, in this case the U-Boot, is the most important piece of code inside your device. It is responsible for hardware initialization and booting an OS (kernel in this case). So, if during the upgrade something went wrong, your device will not boot any more. Now you need to remove the flash chip, load proper image using an external programmer and solder it back.*
+*I told you... bootloader, in this case the U-Boot, is the most important piece of code inside your device. It is responsible for hardware initialization and booting an OS (kernel in this case). So, if during the upgrade something went wrong, your device will not boot any more. Now you need to remove the FLASH chip, load proper image using an external programmer and solder it back.*
 
 License, outdated sources etc.
 ------------------------------
@@ -430,3 +436,9 @@ License, outdated sources etc.
 **[U-Boot](http://www.denx.de/wiki/U-Boot/WebHome "U-Boot")** project is Free Software, licensed under version 2 of the **GNU General Public License**. All information about license, contributors etc., are included with sources, inside *u-boot* folder.
 
 You should know, that most routers, especially those based on Atheros SoCs, uses very old versions of U-Boot (1.1.4 is from 2005/2006). So, *these sources are definitely outdated* (do not even try to merge them with official release), but it was easier for me to modify them, than move TP-Link/Atheros changes to the current version. Moreover, lot of unnecessary code fragments and source files were removed for ease of understanding the code.
+
+Credits
+-------
+
+- Thanks to *pupie* from OpenWrt forum for his great help
+- Thanks for all donators and for users who contributed in code development
