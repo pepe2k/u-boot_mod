@@ -59,6 +59,7 @@ tplink_mr10u:
 	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) ENDIANNESS=-EB V=1 all
 	@cp $(BUILD_TOPDIR)/u-boot/tuboot.bin $(BUILD_TOPDIR)/bin/temp.bin
 	@make show_size
+
 tplink_mr13u:   export UBOOT_FILE_NAME=uboot_for_tp-link_tl-mr13u
 tplink_mr13u:   export MAX_UBOOT_SIZE=64
 tplink_mr13u:   export COMPRESSED_UBOOT=1
@@ -67,6 +68,7 @@ tplink_mr13u:
 	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) ENDIANNESS=-EB V=1 all
 	@cp $(BUILD_TOPDIR)/u-boot/tuboot.bin $(BUILD_TOPDIR)/bin/temp.bin
 	@make show_size
+
 tplink_wr740n_v4:	export UBOOT_FILE_NAME=uboot_for_tp-link_tl-wr740n_v4
 tplink_wr740n_v4:	export MAX_UBOOT_SIZE=64
 tplink_wr740n_v4:	export COMPRESSED_UBOOT=1

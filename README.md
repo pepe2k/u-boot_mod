@@ -6,6 +6,7 @@ Table of contents
 
 - [Introduction](#introduction)
 - [Supported devices](#supported-devices)
+- [Known issues](#known-issues)
 - [Modifications, changes](#modifications-changes)
 	- [Web server](#web-server)
 	- [Network Console](#network-console)
@@ -45,13 +46,14 @@ Supported devices
 Currently supported devices:
 
 - **Atheros AR9331**:
-  - 8devices Carambola 2 (for version with development board!), [photos in my gallery](http://galeria.tech-blog.pl/8devices_Carambola_2/)
-  - TP-Link TL-MR3020 v1, [photos in my gallery](http://galeria.tech-blog.pl/TPLINK_TL-MR3020/)
+  - 8devices Carambola 2 (for version with development board, [photos in my gallery](http://galeria.tech-blog.pl/8devices_Carambola_2/))
+  - TP-Link TL-MR3020 v1 ([photos in my gallery](http://galeria.tech-blog.pl/TPLINK_TL-MR3020/))
   - TP-Link TL-MR3040 v1 and v2
-  - TP-Link TL-WR703N v1, [photos in my gallery](http://galeria.tech-blog.pl/TPLINK_TL-WR703N/)
+  - TP-Link TL-WR703N v1, ([photos in my gallery](http://galeria.tech-blog.pl/TPLINK_TL-WR703N/))
   - TP-Link TL-WR720N v3 (version for Chinese market)
-  - TP-Link TL-WR710N v1 (version for European market), [photos in my gallery](http://galeria.tech-blog.pl/TP-Link_TL-WR710N-EU/)
-  - TP-Link TL-MR10U v1, [photos in my gallery](http://galeria.tech-blog.pl/TP-Link_TL-MR10U/)
+  - TP-Link TL-WR710N v1 (version for European market, [photos in my gallery](http://galeria.tech-blog.pl/TP-Link_TL-WR710N-EU/))
+  - TP-Link TL-MR10U v1 ([photos in my gallery](http://galeria.tech-blog.pl/TP-Link_TL-MR10U/))
+  - TP-Link TL-MR13U v1
   - TP-Link TL-WR740N v4 (and similar, like TL-WR741ND v4)
   - TP-Link TL-MR3220 v2
 
@@ -66,23 +68,30 @@ I tested this modification on most of these devices, with OpenWrt and OFW firmwa
 
 More information about supported devices:
 
-| Model | SoC | FLASH | RAM | U-Boot image type | U-Boot environment |
+| Model | SoC | FLASH | RAM | U-Boot image | U-Boot env |
 |:--- | :--- | ---: | ---: | ---: | ---: |
-| [8devices Carambola 2](http://8devices.com/carambola-2) | AR9331 | 16 MiB | 64 MiB DDR2 | 256 KiB, uncompressed | 64 KiB block, R/W |
-| [TP-Link TL-MR3020 v1](http://wiki.openwrt.org/toh/tp-link/tl-mr3020) | AR9331 | 4 MiB | 32 MiB DDR1 | 64 KiB, compressed | embedded, R |
-| [TP-Link TL-MR3040 v1/2](http://wiki.openwrt.org/toh/tp-link/tl-mr3040) | AR9331 | 4 MiB | 32 MiB DDR1 | 64 KiB, compressed | embedded, R |
-| [TP-Link TL-WR703N](http://wiki.openwrt.org/toh/tp-link/tl-wr703n) | AR9331 | 4 MiB | 32 MiB DDR1 | 64 KiB, compressed | embedded, R |
-| [TP-Link TL-WR720N v3](http://wiki.openwrt.org/toh/tp-link/tl-wr720n) | AR9331 | 4 MiB | 32 MiB DDR1 | 64 KiB, compressed | embedded, R |
-| [TP-Link TL-WR710N v1](http://www.tp-link.com/en/products/details/?model=TL-WR710N) | AR9331 | 8 MiB | 32 MiB DDR1 | 64 KiB, compressed | embedded, R |
-| [TP-Link TL-MR10U v1](http://wiki.openwrt.org/toh/tp-link/tl-mr10u) | AR9331 | 4 MiB | 32 MiB DDR1 | 64 KiB, compressed | embedded, R |
-| [TP-Link TL-WR740N v4](http://wiki.openwrt.org/toh/tp-link/tl-wr740n) | AR9331 | 4 MiB | 32 MiB DDR1 | 64 KiB, compressed | embedded, R |
-| [TP-Link TL-MR3220 v2](http://wiki.openwrt.org/toh/tp-link/tl-mr3420) | AR9331 | 4 MiB | 32 MiB DDR1 | 64 KiB, compressed | embedded, R |
-| [TP-Link TL-WDR3600 v1](http://wiki.openwrt.org/toh/tp-link/tl-wdr3600) | AR9344 | 8 MiB | 128 MiB DDR2 | 64 KiB, compressed | embedded, R |
-| [TP-Link TL-WDR43x0 v1](http://wiki.openwrt.org/toh/tp-link/tl-wdr4300) | AR9344 | 8 MiB | 128 MiB DDR2 | 64 KiB, compressed | embedded, R |
-| [D-Link DIR-505 H/W ver. A1](http://wiki.openwrt.org/toh/d-link/dir-505) | AR1311 | 8 MiB | 64 MiB DDR2 | 64 KiB, compressed | embedded, R |
+| [8devices Carambola 2](http://8devices.com/carambola-2) | AR9331 | 16 MiB | 64 MiB DDR2 | 256 KiB | 64 KiB, R/W |
+| [TP-Link TL-MR3020 v1](http://wiki.openwrt.org/toh/tp-link/tl-mr3020) | AR9331 | 4 MiB | 32 MiB DDR1 | 64 KiB, LZMA | E/R |
+| [TP-Link TL-MR3040 v1/2](http://wiki.openwrt.org/toh/tp-link/tl-mr3040) | AR9331 | 4 MiB | 32 MiB DDR1 | 64 KiB, LZMA | E/R |
+| [TP-Link TL-WR703N](http://wiki.openwrt.org/toh/tp-link/tl-wr703n) | AR9331 | 4 MiB | 32 MiB DDR1 | 64 KiB, LZMA | E/R |
+| [TP-Link TL-WR720N v3](http://wiki.openwrt.org/toh/tp-link/tl-wr720n) | AR9331 | 4 MiB | 32 MiB DDR1 | 64 KiB, LZMA | E/R |
+| [TP-Link TL-WR710N v1](http://wiki.openwrt.org/toh/tp-link/tl-wr710n) | AR9331 | 8 MiB | 32 MiB DDR1 | 64 KiB, LZMA | E/R |
+| [TP-Link TL-MR10U v1](http://wiki.openwrt.org/toh/tp-link/tl-mr10u) | AR9331 | 4 MiB | 32 MiB DDR1 | 64 KiB, LZMA | E/R |
+| [TP-Link TL-MR13U v1](http://wiki.openwrt.org/toh/tp-link/tl-mr13u) | AR9331 | 4 MiB | 32 MiB DDR1 | 64 KiB, LZMA | E/R |
+| [TP-Link TL-WR740N v4](http://wiki.openwrt.org/toh/tp-link/tl-wr740n) | AR9331 | 4 MiB | 32 MiB DDR1 | 64 KiB, LZMA | E/R |
+| [TP-Link TL-MR3220 v2](http://wiki.openwrt.org/toh/tp-link/tl-mr3420) | AR9331 | 4 MiB | 32 MiB DDR1 | 64 KiB, LZMA | E/R |
+| [TP-Link TL-WDR3600 v1](http://wiki.openwrt.org/toh/tp-link/tl-wdr3600) | AR9344 | 8 MiB | 128 MiB DDR2 | 64 KiB, LZMA | E/R |
+| [TP-Link TL-WDR43x0 v1](http://wiki.openwrt.org/toh/tp-link/tl-wdr4300) | AR9344 | 8 MiB | 128 MiB DDR2 | 64 KiB, LZMA | E/R |
+| [D-Link DIR-505 H/W ver. A1](http://wiki.openwrt.org/toh/d-link/dir-505) | AR1311 | 8 MiB | 64 MiB DDR2 | 64 KiB, LZMA | E/R |
 
-*(R/W) - environment exist in separate flash block which allows you to save it and keep after power down the device.*   
-*(R) - environment is read only, you can change and add new variables only during a runtime. After power down, your changes will be lost.*
+*(LZMA) - U-Boot binary image is compressed with LZMA.*  
+*(R/W) - environment exist in separate flash block which allows you to save it and keep after power down.*  
+*(E/R) - environment is read only, you can change and add new variables only during a runtime.*
+
+Known issues
+------------
+
+Current release is not loading kernel from some versions of TP-Link's official firmware. If you want to use the so-called OFW in any of supported TP-Link's router, do not use this modification. I am working on a solution for this issue.
 
 Modifications, changes
 ----------------------
@@ -168,6 +177,7 @@ Currently supported flash types:
 
 - Winbond W25Q128 (16 MB, JEDEC ID: EF 4018)*
 - Macronix MX25L128 (16 MB, JEDEC ID: C2 2018, C2 2618)
+- Spansion S25FL127S (16 MB, JEDEC ID: 01 2018)*
 
 (*) tested
 
@@ -404,7 +414,7 @@ FAQ
 
 #### 3. Do you test all prebuilt images before you publish them?
 
-*No, because I don't have all supported devices, only few of them. But, I make tests for every supported SoC types.*
+*No, because I do not have all supported devices, only few of them. But, I make tests for every supported SoC types.*
 
 #### 4. I would like you to add support for device X.
 

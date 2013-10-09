@@ -226,7 +226,7 @@ void gpio_config(void){
 	//ar7240_reg_wr (AR7240_GPIO_FUNC, (ar7240_reg_rd(AR7240_GPIO_FUNC) & 0xffe7e07f));
 #elif defined(CONFIG_FOR_TPLINK_MR10U_V1) || defined(CONFIG_FOR_TPLINK_MR13U_V1)
 
-	/* LED's GPIOs on MR10U:
+	/* LED's GPIOs on MR10U/MR13U:
 	 *
 	 * 27	=> SYS
 	 *
