@@ -184,6 +184,11 @@ unsigned long flash_init(void){
  			puts("Spansion S25FL127S (16 MB)");
  			break;
 
+		case 0x20BA18:
+ 			flash_set_geom(SIZE_INBYTES_16MBYTES, 256, SIZE_INBYTES_64KBYTES);
+ 			puts("Micron N25Q128 (16 MB)");
+ 			break;
+
 			/*
 			 * Unknown flash
 			 */
