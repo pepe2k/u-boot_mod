@@ -97,7 +97,10 @@
 #define S26_ARL_TBL_FUNC_REG0			0x0050
 #define S26_ARL_TBL_FUNC_REG1			0x0054
 #define S26_ARL_TBL_FUNC_REG2			0x0058
+#define S26_FLD_MASK_REG				0x002c
 #define S26_ARL_TBL_CTRL_REG			0x005c
+
+#define S26_ENABLE_CPU_BROADCAST		(1 << 26)
 
 #define sysMsDelay(_x)	udelay((_x) * 1000)
 

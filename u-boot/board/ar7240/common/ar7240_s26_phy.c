@@ -276,6 +276,9 @@ void athrs26_reg_init_lan(void){
 	/* Enable ARP packets to CPU port */
 	athrs26_reg_write(S26_ARL_TBL_CTRL_REG, (athrs26_reg_read(S26_ARL_TBL_CTRL_REG) | 0x100000));
 
+	/* Enable Broadcast packets to CPU port */
+	athrs26_reg_write(S26_FLD_MASK_REG, (athrs26_reg_read(S26_FLD_MASK_REG) | S26_ENABLE_CPU_BROADCAST));
+
 #if S26_PHY_DEBUG
 	rd_val = athrs26_reg_read ( CPU_PORT_REGISTER );
 	printf("S26 CPU_PORT_REGISTER :%x\n",rd_val);
