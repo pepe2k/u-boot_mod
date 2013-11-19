@@ -392,7 +392,8 @@
 #define HORNET_REV_ID_MASK					0xfff
 #define AR9344_REV_ID_MASK					0xfff0	/* Ignore minor id */
 #define HORNET_BOOTSTRAP_SEL_25M_40M_MASK	0x00000001 /* Hornet's bootstrap register */
-#define HORNET_BOOTSTRAP_MEM_TYPE_MASK		0x00003000 /* Hornet's bootstrap register */
+#define HORNET_BOOTSTRAP_MEM_TYPE_SHIFT		12
+#define HORNET_BOOTSTRAP_MEM_TYPE_MASK		(0x3 << HORNET_BOOTSTRAP_MEM_TYPE_SHIFT) /* Hornet's bootstrap register */
 #define HORNET_BOOTSTRAP_MDIO_SLAVE_MASK	0x00020000 /* Hornet's bootstrap register */
 
 // WASP BootStrap Register

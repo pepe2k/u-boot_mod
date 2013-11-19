@@ -34,75 +34,68 @@ static void AthrUartPut(char __ch_data) {
 	uart_reg_write(UARTDATA_ADDRESS, rdata);
 }
 
+/*
+ * Get CPU, RAM and AHB clocks
+ * Based on: Linux/arch/mips/ath79/clock.c
+ */
 void ar7240_sys_frequency(u32 *cpu_freq, u32 *ddr_freq, u32 *ahb_freq) {
-	// TODO: check the following code
-	u32 ref_clock_rate, pll_freq;
-	u32 pllreg, clockreg;
-	u32 nint, refdiv, outdiv;
-	u32 cpu_div, ahb_div, ddr_div;
+	u32 ref_rate, clock_ctrl, cpu_config, freq, t;
 
-	if (ar7240_reg_rd(HORNET_BOOTSTRAP_STATUS) & HORNET_BOOTSTRAP_SEL_25M_40M_MASK) {
-		ref_clock_rate = 40 * 1000000;
+	// determine reference clock (25 or 40 MHz)
+	t = ar7240_reg_rd(HORNET_BOOTSTRAP_STATUS);
+
+	if(t & HORNET_BOOTSTRAP_SEL_25M_40M_MASK){
+		ref_rate = 40000000;
 	} else {
-		ref_clock_rate = 25 * 1000000;
+		ref_rate = 25000000;
 	}
 
-	pllreg = ar7240_reg_rd(AR7240_CPU_PLL_CONFIG);
-	clockreg = ar7240_reg_rd(AR7240_CPU_CLOCK_CONTROL);
+	// read CPU CLock Control Register (CLOCK_CONTROL) value
+	clock_ctrl = ar7240_reg_rd(AR7240_CPU_CLOCK_CONTROL);
 
-	if (clockreg & HORNET_CLOCK_CONTROL_BYPASS_MASK) {
-		/* Bypass PLL */
-		pll_freq = ref_clock_rate;
-		cpu_div = ahb_div = ddr_div = 1;
+	if(clock_ctrl & HORNET_CLOCK_CONTROL_BYPASS_MASK){
+		// PLL is bypassed, so all clocks are == reference clock
+		*cpu_freq = ref_rate;
+		*ddr_freq = ref_rate;
+		*ahb_freq = ref_rate;
 	} else {
-		nint = (pllreg & HORNET_PLL_CONFIG_NINT_MASK) >> HORNET_PLL_CONFIG_NINT_SHIFT;
-		refdiv = (pllreg & HORNET_PLL_CONFIG_REFDIV_MASK) >> HORNET_PLL_CONFIG_REFDIV_SHIFT;
-		outdiv = (pllreg & HORNET_PLL_CONFIG_OUTDIV_MASK) >> HORNET_PLL_CONFIG_OUTDIV_SHIFT;
+		// read CPU PLL Configuration register (CPU_PLL_CONFIG) value
+		cpu_config = ar7240_reg_rd(AR7240_CPU_PLL_CONFIG);
 
-		pll_freq = (ref_clock_rate / refdiv) * nint;
+		// REFDIV
+		t = (cpu_config & HORNET_PLL_CONFIG_REFDIV_MASK) >> HORNET_PLL_CONFIG_REFDIV_SHIFT;
+		freq = ref_rate / t;
 
-		if (outdiv == 1)
-			pll_freq /= 2;
-		else if (outdiv == 2)
-			pll_freq /= 4;
-		else if (outdiv == 3)
-			pll_freq /= 8;
-		else if (outdiv == 4)
-			pll_freq /= 16;
-		else if (outdiv == 5)
-			pll_freq /= 32;
-		else if (outdiv == 6)
-			pll_freq /= 64;
-		else if (outdiv == 7)
-			pll_freq /= 128;
-		else
-			/* outdiv == 0 --> illegal value */
-			pll_freq /= 2;
+		// DIV_INT (multiplier)
+		t = (cpu_config & HORNET_PLL_CONFIG_NINT_MASK) >> HORNET_PLL_CONFIG_NINT_SHIFT;
+		freq *= t;
 
-		cpu_div = (clockreg & HORNET_CLOCK_CONTROL_CPU_POST_DIV_MASK) >> HORNET_CLOCK_CONTROL_CPU_POST_DIV_SHIFT;
-		ddr_div = (clockreg & HORNET_CLOCK_CONTROL_DDR_POST_DIV_MASK) >> HORNET_CLOCK_CONTROL_DDR_POST_DIV_SFIFT;
-		ahb_div = (clockreg & HORNET_CLOCK_CONTROL_AHB_POST_DIV_MASK) >> HORNET_CLOCK_CONTROL_AHB_POST_DIV_SFIFT;
+		// OUTDIV
+		t = (cpu_config & HORNET_PLL_CONFIG_OUTDIV_MASK) >> HORNET_PLL_CONFIG_OUTDIV_SHIFT;
+		if(t == 0){	// value 0 is not allowed
+			t = 1;
+		}
 
-		/*
-		 * b00 : div by 1, b01 : div by 2, b10 : div by 3, b11 : div by 4
-		 */
-		cpu_div++;
-		ddr_div++;
-		ahb_div++;
+		freq >>= t;
+
+		// CPU clock divider
+		t = ((clock_ctrl & HORNET_CLOCK_CONTROL_CPU_POST_DIV_MASK) >> HORNET_CLOCK_CONTROL_CPU_POST_DIV_SHIFT) + 1;
+		*cpu_freq = freq / t;
+
+		// DDR clock divider
+		t = ((clock_ctrl & HORNET_CLOCK_CONTROL_DDR_POST_DIV_MASK) >> HORNET_CLOCK_CONTROL_DDR_POST_DIV_SFIFT) + 1;
+		*ddr_freq = freq / t;
+
+		// AHB clock divider
+		t = ((clock_ctrl & HORNET_CLOCK_CONTROL_AHB_POST_DIV_MASK) >> HORNET_CLOCK_CONTROL_AHB_POST_DIV_SFIFT) + 1;
+		*ahb_freq = freq / t;
 	}
-
-	*cpu_freq = pll_freq / cpu_div;
-	*ddr_freq = pll_freq / ddr_div;
-	*ahb_freq = pll_freq / ahb_div;
 }
 
 int serial_init(void) {
 	u32 rdata;
 	u32 baudRateDivisor, clock_step;
 	u32 fcEnable = 0;
-	u32 ahb_freq, ddr_freq, cpu_freq;
-
-	ar7240_sys_frequency(&cpu_freq, &ddr_freq, &ahb_freq);
 
 	/* GPIO Configuration */
 	ar7240_reg_wr(AR7240_GPIO_OE, 0xcff);

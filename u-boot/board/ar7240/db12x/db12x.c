@@ -125,3 +125,10 @@ int wasp_mem_config(void){
 long int initdram(){
 	return((long int)wasp_mem_config());
 }
+
+/*
+ * TODO: Returns a string with memory type preceded by a space sign
+ */
+const char* print_mem_type(void){
+	return "";
+}

@@ -46,6 +46,11 @@ extern int timer_init(void);
 
 extern void all_led_on(void);
 extern void all_led_off(void);
+extern const char* print_mem_type(void);
+
+#if (BOARD == AP121)
+extern void ar7240_sys_frequency(u32 *cpu_freq, u32 *ddr_freq, u32 *ahb_freq);
+#endif
 
 ulong monitor_flash_len;
 
@@ -90,11 +95,11 @@ static int init_baudrate(void){
 
 #ifndef COMPRESSED_UBOOT
 static int init_func_ram(void){
-	puts("DRAM:  ");
+	puts("DRAM:   ");
 
 	if((gd->ram_size = initdram()) > 0){
-		print_size (gd->ram_size, "\n");
-
+		print_size(gd->ram_size, print_mem_type());
+		puts("\n");
 		return(0);
 	}
 
@@ -176,8 +181,9 @@ void board_init_f(ulong bootflag){
 
 	// count ram size and print it
 	gd->ram_size = bootflag;
-	puts("DRAM:  ");
-	print_size(gd->ram_size, "\n");
+	puts("DRAM:   ");
+	print_size(gd->ram_size, print_mem_type());
+	puts("\n");
 #endif
 
 	/*
@@ -297,6 +303,9 @@ void board_init_r(gd_t *id, ulong dest_addr){
 	int i;
 	char *s;
 	unsigned char buffer[6];
+#if (BOARD == AP121)
+	unsigned int ahb_freq, ddr_freq, cpu_freq;
+#endif
 
 	gd = id;
 	gd->flags |= GD_FLG_RELOC; /* tell others: relocation done */
@@ -342,7 +351,19 @@ void board_init_r(gd_t *id, ulong dest_addr){
 	/* configure available FLASH banks */
 	size = flash_init();
 
-	puts("\n\n");
+#if (BOARD == AP121)
+	/* display clocks */
+	ar7240_sys_frequency(&cpu_freq, &ddr_freq, &ahb_freq);
+
+	// make MHz from Hz
+	cpu_freq /= 1000000;
+	ddr_freq /= 1000000;
+	ahb_freq /= 1000000;
+
+	printf("CLOCKS: %d/%d/%d MHz (CPU/RAM/AHB)\n", cpu_freq, ddr_freq, ahb_freq);
+#endif
+
+	puts("\n");
 
 	bd = gd->bd;
 	bd->bi_flashstart = CFG_FLASH_BASE;

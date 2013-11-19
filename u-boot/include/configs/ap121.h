@@ -145,17 +145,17 @@
  * Values written into CPU Phase Lock Loop Configuration (CPU_PLL_CONFIG)
  *
  * bits 10..15	(6bit)	DIV_INT	(The integer part of the DIV to CPU PLL)			=>	32	(0x20)
- * bits 16..20	(5bit)	REFDIV	(Reference clock divider)							=>	1	(0x1)		[doesn't start at values different than 1 (maybe need to change other dividers?)]
- * bits 21		(1bit)	RANGE	(Determine the VCO frequency range of the CPU PLL)	=>	0	(0x0)		[doesn't have impact on clock values]
- * bits 23..25	(3bit)	OUTDIV	(Define the ratio between VCO output and PLL output	=>	1	(0x1)
+ * bits 16..20	(5bit)	REFDIV	(Reference clock divider)							=>	1	(0x1)	[doesn't start at values different than 1 (maybe need to change other dividers?)]
+ * bits 21		(1bit)	RANGE	(Determine the VCO frequency range of the CPU PLL)	=>	0	(0x0)	[doesn't have impact on clock values]
+ * bits 23..25	(3bit)	OUTDIV	(Define the ratio between VCO output and PLL output	=>	1	(0x1)	[value == 0 is illegal!]
  * 								VCOOUT * (1/2^OUTDIV) = PLLOUT)
  */
 
 /*
- * = PLL CALCULATION (guess) =============
- * PLL = (25 MHz * DIV_INT) / (2 ^ OUTDIV)	// XTAL=25 MHz
+ * = PLL CALCULATION =============
+ * PLL = ((25 MHz / REFDIV) * DIV_INT) / (2 ^ OUTDIV)	// XTAL=25 MHz
  * OR
- * PLL = (40 MHz * DIV_INT) / (2 ^ OUTDIV)	// XTAL=40 MHz
+ * PLL = ((40 MHz / REFDIV) * DIV_INT) / (2 ^ OUTDIV)	// XTAL=40 MHz
  *
  * CPU = PLL / CPU_POST_DIV
  * DDR = PLL / DDR_POST_DIV

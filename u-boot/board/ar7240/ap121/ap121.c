@@ -328,3 +328,30 @@ int checkboard(void){
 	return(0);
 }
 #endif
+
+/*
+ * Returns a string with memory type preceded by a space sign
+ */
+const char* print_mem_type(void){
+	unsigned int reg_val;
+
+	reg_val = (ar7240_reg_rd(HORNET_BOOTSTRAP_STATUS) & HORNET_BOOTSTRAP_MEM_TYPE_MASK) >> HORNET_BOOTSTRAP_MEM_TYPE_SHIFT;
+
+	switch(reg_val){
+		case 0:
+			return " SDRAM";
+			break;
+
+		case 1:
+			return " DDR";
+			break;
+
+		case 2:
+			return " DDR2";
+			break;
+
+		default:
+			return "";
+			break;
+	}
+}

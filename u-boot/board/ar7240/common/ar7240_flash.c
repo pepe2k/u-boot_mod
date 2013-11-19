@@ -97,7 +97,7 @@ unsigned long flash_init(void){
 	// get flash id
 	info->flash_id = read_id();
 
-	puts("FLASH: ");
+	puts("FLASH:  ");
 
 	// fill flash info based on JEDEC ID
 	switch(info->flash_id){
@@ -201,10 +201,12 @@ unsigned long flash_init(void){
 			flash_set_geom(SIZE_INBYTES_16MBYTES, 256, SIZE_INBYTES_64KBYTES);
 			puts("Unknown type (using only 16 MB)\n");
 #endif
-			printf("\nPlease, send request to add support\nfor your flash - JEDEC ID: 0x%06lX", info->flash_id);
+			printf("\nPlease, send request to add support\nfor your flash - JEDEC ID: 0x%06lX\n", info->flash_id);
 			info->flash_id = FLASH_CUSTOM;
 			break;
 	}
+
+	puts("\n");
 
 	return(info->size);
 }
