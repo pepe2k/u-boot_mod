@@ -88,27 +88,12 @@
 
 #undef CFG_PLL_FREQ
 #undef CFG_HZ
-#undef CPU_PLL_CONFIG_VAL1
-#undef CPU_CLK_CONTROL_VAL2
+#undef CPU_PLL_CONFIG_VAL
+#undef CPU_CLK_CONTROL_VAL
 
 // CPU-RAM-AHB frequency setting
 #define CFG_PLL_FREQ    CFG_PLL_400_400_200
 //#define CFG_PLL_FREQ	CFG_PLL_525_525_262	// only for test!
-
-/*
- * MIPS32 24K Processor Core Family Software User's Manual
- *
- * 6.2.9 Count Register (CP0 Register 9, Select 0)
- * The Count register acts as a timer, incrementing at a constant
- * rate, whether or not an instruction is executed, retired, or
- * any forward progress is made through the pipeline.  The counter
- * increments every other clock, if the DC bit in the Cause register
- * is 0.
- *
- * Since the count is incremented every other tick, divide by 2
- * XXX derive this from CFG_PLL_FREQ
- */
-
 
 /*
  * CPU_PLL_DITHER_FRAC_VAL
@@ -127,7 +112,7 @@
  *
  * Value written into CPU Phase Lock Loop Configuration Register 2 (CPU_PLL_CONFIG2)
  *
- * bits	0..11	SETTLE_TIME	=>	580 (0x352)
+ * bits	0..11	SETTLE_TIME	=>	850 (0x352)
  *
  */
 #if CONFIG_40MHZ_XTAL_SUPPORT
@@ -137,11 +122,12 @@
 #endif
 
 /*
- * CPU_CLK_CONTROL_VAL1
- * CPU_CLK_CONTROL_VAL2
+ * CPU_CLK_CONTROL_VAL
+ *
+ * In CPU_CLK_CONTROL_VAL bit 2 is set (BYPASS = 1 -> bypass PLL)
+ * After PLL configuration we nedd to clear this bit
  *
  * Values written into CPU Clock Control Register CLOCK_CONTROL
- * with PLL bypass disabled
  *
  * bits	2		(1bit)	BYPASS (Bypass PLL. This defaults to 1 for test purposes. Software must enable the CPU PLL for normal operation and then set this bit to 0)
  * bits	5..6	(2bit)	CPU_POST_DIV	=>	0	(DEFAULT, Ratio = 1)
@@ -151,18 +137,17 @@
  */
 
 /*
- * CPU_PLL_CONFIG_VAL1
- * CPU_PLL_CONFIG_VAL2
+ * CPU_PLL_CONFIG_VAL
  *
- * In CPU_PLL_CONFIG_VAL1 bit 30 is set (CPU_PLLPWD = 1 -> power down control for CPU PLL)
- * In CPU_PLL_CONFIG_VAL2 bit 30 is unset
+ * In CPU_PLL_CONFIG_VAL bit 30 is set (CPU_PLLPWD = 1 -> power down control for CPU PLL)
+ * After PLL configuration we need to clear this bit
  *
  * Values written into CPU Phase Lock Loop Configuration (CPU_PLL_CONFIG)
  *
  * bits 10..15	(6bit)	DIV_INT	(The integer part of the DIV to CPU PLL)			=>	32	(0x20)
- * bits 16..20	(5bit)	REFDIV	(Reference clock divider)							=>	1	(0x1)		[doesn't start at valuse different than 1 (maybe need to change other dividers?)]
+ * bits 16..20	(5bit)	REFDIV	(Reference clock divider)							=>	1	(0x1)		[doesn't start at values different than 1 (maybe need to change other dividers?)]
  * bits 21		(1bit)	RANGE	(Determine the VCO frequency range of the CPU PLL)	=>	0	(0x0)		[doesn't have impact on clock values]
- * bits 23..25	(3bit)	OUTDIV	(Define the ratio betwee VCO output and PLL output	=>	1	(0x1)
+ * bits 23..25	(3bit)	OUTDIV	(Define the ratio between VCO output and PLL output	=>	1	(0x1)
  * 								VCOOUT * (1/2^OUTDIV) = PLLOUT)
  */
 
@@ -189,54 +174,46 @@
  */
 
 /*
+ * CPU_PLL_CONFIG and CPU_CLK_CONTROL registers values generator
+ */
+#define MAKE_CPU_PLL_CONFIG_VAL(divint, refdiv, outdiv)		(0x40000000 | ((0x3F & divint) << 10) | ((0x1F & refdiv) << 16) | ((0x7 & outdiv) << 23))
+#define MAKE_CPU_CLK_CONTROL_VAL(cpudiv, ddrdiv, ahbdiv)	(0x4 | ((0x3 & (cpudiv - 1)) << 5) | ((0x3 & (ddrdiv - 1)) << 10) | ((0x3 & (ahbdiv - 1)) << 15))
+
+/*
  * Default values (400/400/200 MHz) for O/C recovery mode
  */
 
 // CPU_DIV = 1, RAM_DIV = 1, AHB_DIV = 2
-#define CPU_CLK_CONTROL_VAL1_DEFAULT	0x00018004
-#define CPU_CLK_CONTROL_VAL2_DEFAULT	0x00008000
+#define CPU_CLK_CONTROL_VAL_DEFAULT		MAKE_CPU_CLK_CONTROL_VAL(1, 1, 2)
 
 #if CONFIG_40MHZ_XTAL_SUPPORT
-	// DIV_INT	= 20	(40 MHz * 20/2 = 400 MHz)
-	// REFDIV	= 1
-	// RANGE	= 0
-	// OUTDIV	= 1
-	#define CPU_PLL_CONFIG_VAL1_DEFAULT	0x40815000
-	#define CPU_PLL_CONFIG_VAL2_DEFAULT	0x00815000
+	// DIV_INT = 20 (40 MHz * 20/2 = 400 MHz)
+	// REFDIV = 1, OUTDIV = 1
+	#define CPU_PLL_CONFIG_VAL_DEFAULT	MAKE_CPU_PLL_CONFIG_VAL(20, 1, 1)
 #else
-	// DIV_INT	= 32	(25 MHz * 32/2 = 400 MHz)
-	// REFDIV	= 1
-	// RANGE	= 0
-	// OUTDIV	= 1
-	#define CPU_PLL_CONFIG_VAL1_DEFAULT	0x40818000
-	#define CPU_PLL_CONFIG_VAL2_DEFAULT	0x00818000
+	// DIV_INT = 32 (25 MHz * 32/2 = 400 MHz)
+	// REFDIV = 1, OUTDIV = 1
+	#define CPU_PLL_CONFIG_VAL_DEFAULT	MAKE_CPU_PLL_CONFIG_VAL(32, 1, 1)
 #endif
 
 // CLOCK_DIVIDER = 2 (SPI clock = 200 / 6 ~ 33 MHz)
-#define AR7240_SPI_CONTROL_DEFAULT		0x42
+#define AR7240_SPI_CONTROL_DEFAULT	0x42
 
 #if (CFG_PLL_FREQ == CFG_PLL_400_400_200)
 
-	#define CFG_HZ					(400000000LU/2)
+	#define CFG_HZ	(400000000LU/2)
 
 	// CPU_DIV = 1, RAM_DIV = 1, AHB_DIV = 2
-	#define CPU_CLK_CONTROL_VAL1	0x00018004
-	#define CPU_CLK_CONTROL_VAL2	0x00008000
+	#define CPU_CLK_CONTROL_VAL		MAKE_CPU_CLK_CONTROL_VAL(1, 1, 2)
 
 	#if CONFIG_40MHZ_XTAL_SUPPORT
-		// DIV_INT	= 20	(40 MHz * 20/2 = 400 MHz)
-		// REFDIV	= 1
-		// RANGE	= 0
-		// OUTDIV	= 1
-		#define CPU_PLL_CONFIG_VAL1		0x40815000
-		#define CPU_PLL_CONFIG_VAL2		0x00815000
+		// DIV_INT = 20 (40 MHz * 20/2 = 400 MHz)
+		// REFDIV = 1, OUTDIV = 1
+		#define CPU_PLL_CONFIG_VAL	0x40815000
 	#else
-		// DIV_INT	= 32	(25 MHz * 32/2 = 400 MHz)
-		// REFDIV	= 1
-		// RANGE	= 0
-		// OUTDIV	= 1
-		#define CPU_PLL_CONFIG_VAL1		0x40818000
-		#define CPU_PLL_CONFIG_VAL2		0x00818000
+		// DIV_INT = 32 (25 MHz * 32/2 = 400 MHz)
+		// REFDIV = 1, OUTDIV = 1
+		#define CPU_PLL_CONFIG_VAL	0x40818000
 	#endif
 
 	// CLOCK_DIVIDER = 2 (SPI clock = 200 / 6 ~ 33 MHz)
@@ -244,54 +221,42 @@
 
 #elif (CFG_PLL_FREQ == CFG_PLL_412_412_206)
 
-	#define CFG_HZ					(412500000LU/2)
+	#define CFG_HZ	(412500000LU/2)
 
 	// CPU_DIV = 1, RAM_DIV = 1, AHB_DIV = 2
-	#define CPU_CLK_CONTROL_VAL1	0x00018004
-	#define CPU_CLK_CONTROL_VAL2	0x00008000
+	#define CPU_CLK_CONTROL_VAL		MAKE_CPU_CLK_CONTROL_VAL(1, 1, 2)
 
-	// DIV_INT	= 33	(25 MHz * 33/2 = 412,5 MHz)
-	// REFDIV	= 1
-	// RANGE	= 0
-	// OUTDIV	= 1
-	#define CPU_PLL_CONFIG_VAL1		0x40818400
-	#define CPU_PLL_CONFIG_VAL2		0x00818400
+	// DIV_INT = 33 (25 MHz * 33/2 = 412,5 MHz)
+	// REFDIV = 1, OUTDIV = 1
+	#define CPU_PLL_CONFIG_VAL		0x40818400
 
 	// CLOCK_DIVIDER = 2 (SPI clock = 206,25 / 6 ~ 34,4 MHz)
 	#define AR7240_SPI_CONTROL		0x42
 
 #elif (CFG_PLL_FREQ == CFG_PLL_425_425_212)
 
-	#define CFG_HZ					(425000000LU/2)
+	#define CFG_HZ	(425000000LU/2)
 
 	// CPU_DIV = 1, RAM_DIV = 1, AHB_DIV = 2
-	#define CPU_CLK_CONTROL_VAL1	0x00018004
-	#define CPU_CLK_CONTROL_VAL2	0x00008000
+	#define CPU_CLK_CONTROL_VAL		MAKE_CPU_CLK_CONTROL_VAL(1, 1, 2)
 
-	// DIV_INT	= 34	(25 MHz * 34/2 = 425 MHz)
-	// REFDIV	= 1
-	// RANGE	= 0
-	// OUTDIV	= 1
-	#define CPU_PLL_CONFIG_VAL1		0x40818800
-	#define CPU_PLL_CONFIG_VAL2		0x00818800
+	// DIV_INT = 34 (25 MHz * 34/2 = 425 MHz)
+	// REFDIV = 1, OUTDIV = 1
+	#define CPU_PLL_CONFIG_VAL		0x40818800
 
 	// CLOCK_DIVIDER = 2 (SPI clock = 212,5 / 6 ~ 35,4 MHz)
 	#define AR7240_SPI_CONTROL		0x42
 
 #elif (CFG_PLL_FREQ == CFG_PLL_437_437_218)
 
-	#define CFG_HZ					(437500000LU/2)
+	#define CFG_HZ	(437500000LU/2)
 
 	// CPU_DIV = 1, RAM_DIV = 1, AHB_DIV = 2
-	#define CPU_CLK_CONTROL_VAL1	0x00018004
-	#define CPU_CLK_CONTROL_VAL2	0x00008000
+	#define CPU_CLK_CONTROL_VAL		MAKE_CPU_CLK_CONTROL_VAL(1, 1, 2)
 
-	// DIV_INT	= 35	(25 MHz * 35/2 = 437,5 MHz)
-	// REFDIV	= 1
-	// RANGE	= 0
-	// OUTDIV	= 1
-	#define CPU_PLL_CONFIG_VAL1		0x40818C00
-	#define CPU_PLL_CONFIG_VAL2		0x00818C00
+	// DIV_INT = 35 (25 MHz * 35/2 = 437,5 MHz)
+	// REFDIV = 1, OUTDIV = 1
+	#define CPU_PLL_CONFIG_VAL		0x40818C00
 
 	// CLOCK_DIVIDER = 2 (SPI clock = 218,75 / 6 ~ 36,5 MHz)
 	#define AR7240_SPI_CONTROL		0x42
@@ -299,72 +264,56 @@
 
 #elif (CFG_PLL_FREQ == CFG_PLL_450_450_225)
 
-	#define CFG_HZ					(450000000LU/2)
+	#define CFG_HZ	(450000000LU/2)
 
 	// CPU_DIV = 1, RAM_DIV = 1, AHB_DIV = 2
-	#define CPU_CLK_CONTROL_VAL1	0x00018004
-	#define CPU_CLK_CONTROL_VAL2	0x00008000
+	#define CPU_CLK_CONTROL_VAL		MAKE_CPU_CLK_CONTROL_VAL(1, 1, 2)
 
-	// DIV_INT	= 36	(25 MHz * 36/2 = 450 MHz)
-	// REFDIV	= 1
-	// RANGE	= 0
-	// OUTDIV	= 1
-	#define CPU_PLL_CONFIG_VAL1		0x40819000
-	#define CPU_PLL_CONFIG_VAL2		0x00819000
+	// DIV_INT = 36 (25 MHz * 36/2 = 450 MHz)
+	// REFDIV = 1, OUTDIV = 1
+	#define CPU_PLL_CONFIG_VAL		0x40819000
 
 	// CLOCK_DIVIDER = 3 (SPI clock = 225 / 6 ~ 37,5 MHz)
 	#define AR7240_SPI_CONTROL		0x42
 
 #elif (CFG_PLL_FREQ == CFG_PLL_462_462_231)
 
-	#define CFG_HZ					(462500000LU/2)
+	#define CFG_HZ	(462500000LU/2)
 
 	// CPU_DIV = 1, RAM_DIV = 1, AHB_DIV = 2
-	#define CPU_CLK_CONTROL_VAL1	0x00018004
-	#define CPU_CLK_CONTROL_VAL2	0x00008000
+	#define CPU_CLK_CONTROL_VAL		MAKE_CPU_CLK_CONTROL_VAL(1, 1, 2)
 
-	// DIV_INT	= 37	(25 MHz * 37/2 = 462,5 MHz)
-	// REFDIV	= 1
-	// RANGE	= 0
-	// OUTDIV	= 1
-	#define CPU_PLL_CONFIG_VAL1		0x40819400
-	#define CPU_PLL_CONFIG_VAL2		0x00819400
+	// DIV_INT = 37 (25 MHz * 37/2 = 462,5 MHz)
+	// REFDIV = 1, OUTDIV = 1
+	#define CPU_PLL_CONFIG_VAL		0x40819400
 
 	// CLOCK_DIVIDER = 3 (SPI clock = 231,25 / 6 ~ 38,5 MHz)
 	#define AR7240_SPI_CONTROL		0x42
 
 #elif (CFG_PLL_FREQ == CFG_PLL_475_475_237)
 
-	#define CFG_HZ					(475000000LU/2)
+	#define CFG_HZ	(475000000LU/2)
 
 	// CPU_DIV = 1, RAM_DIV = 1, AHB_DIV = 2
-	#define CPU_CLK_CONTROL_VAL1	0x00018004
-	#define CPU_CLK_CONTROL_VAL2	0x00008000
+	#define CPU_CLK_CONTROL_VAL		MAKE_CPU_CLK_CONTROL_VAL(1, 1, 2)
 
-	// DIV_INT	= 38	(25 MHz * 38/2 = 475 MHz)
-	// REFDIV	= 1
-	// RANGE	= 0
-	// OUTDIV	= 1
-	#define CPU_PLL_CONFIG_VAL1		0x40819800
-	#define CPU_PLL_CONFIG_VAL2		0x00819800
+	// DIV_INT = 38 (25 MHz * 38/2 = 475 MHz)
+	// REFDIV = 1, OUTDIV = 1
+	#define CPU_PLL_CONFIG_VAL		0x40819800
 
 	// CLOCK_DIVIDER = 3 (SPI clock = 237,5 / 6 ~ 39,6 MHz)
 	#define AR7240_SPI_CONTROL		0x42
 
 #elif (CFG_PLL_FREQ == CFG_PLL_487_487_243)
 
-	#define CFG_HZ					(487500000LU/2)
+	#define CFG_HZ	(487500000LU/2)
 
 	// CPU_DIV = 1, RAM_DIV = 1, AHB_DIV = 2
-	#define CPU_CLK_CONTROL_VAL1	0x00018004
-	#define CPU_CLK_CONTROL_VAL2	0x00008000
+	#define CPU_CLK_CONTROL_VAL		MAKE_CPU_CLK_CONTROL_VAL(1, 1, 2)
 
-	// DIV_INT	= 39	(25 MHz * 39/2 = 487,5 MHz)
-	// REFDIV	= 1
-	// RANGE	= 0
-	// OUTDIV	= 1
-	#define CPU_PLL_CONFIG_VAL1		0x40819C00
-	#define CPU_PLL_CONFIG_VAL2		0x00819C00
+	// DIV_INT = 39 (25 MHz * 39/2 = 487,5 MHz)
+	// REFDIV = 1, OUTDIV = 1
+	#define CPU_PLL_CONFIG_VAL		0x40819C00
 
 	// CLOCK_DIVIDER = 3 (SPI clock = 243,75 / 8 ~ 30,5 MHz)
 	#define AR7240_SPI_CONTROL		0x43
@@ -372,90 +321,70 @@
 
 #elif (CFG_PLL_FREQ == CFG_PLL_500_500_250)
 
-	#define CFG_HZ					(500000000LU/2)
+	#define CFG_HZ	(500000000LU/2)
 
 	// CPU_DIV = 1, RAM_DIV = 1, AHB_DIV = 2
-	#define CPU_CLK_CONTROL_VAL1	0x00018004
-	#define CPU_CLK_CONTROL_VAL2	0x00008000
+	#define CPU_CLK_CONTROL_VAL		MAKE_CPU_CLK_CONTROL_VAL(1, 1, 2)
 
-	// DIV_INT	= 40	(25 MHz * 40/2 = 500 MHz)
-	// REFDIV	= 1
-	// RANGE	= 0
-	// OUTDIV	= 1
-	#define CPU_PLL_CONFIG_VAL1		0x4081A000
-	#define CPU_PLL_CONFIG_VAL2		0x0081A000
+	// DIV_INT = 40 (25 MHz * 40/2 = 500 MHz)
+	// REFDIV = 1, OUTDIV = 1
+	#define CPU_PLL_CONFIG_VAL		0x4081A000
 
 	// CLOCK_DIVIDER = 3 (SPI clock = 250 / 8 ~ 31,3 MHz)
 	#define AR7240_SPI_CONTROL		0x43
 
 #elif (CFG_PLL_FREQ == CFG_PLL_500_250_250)
 
-	#define CFG_HZ					(500000000LU/2)
+	#define CFG_HZ	(500000000LU/2)
 
 	// CPU_DIV = 1, RAM_DIV = 2, AHB_DIV = 2
-	#define CPU_CLK_CONTROL_VAL1	0x00018404
-	#define CPU_CLK_CONTROL_VAL2	0x00008400
+	#define CPU_CLK_CONTROL_VAL		MAKE_CPU_CLK_CONTROL_VAL(1, 2, 2)
 
-	// DIV_INT	= 40	(25 MHz * 40/2 = 500 MHz)
-	// REFDIV	= 1
-	// RANGE	= 0
-	// OUTDIV	= 1
-	#define CPU_PLL_CONFIG_VAL1		0x4081A000
-	#define CPU_PLL_CONFIG_VAL2		0x0081A000
+	// DIV_INT = 40 (25 MHz * 40/2 = 500 MHz)
+	// REFDIV = 1, OUTDIV = 1
+	#define CPU_PLL_CONFIG_VAL		0x4081A000
 
 	// CLOCK_DIVIDER = 3 (SPI clock = 250 / 8 ~ 31,3 MHz)
 	#define AR7240_SPI_CONTROL		0x43
 
 #elif (CFG_PLL_FREQ == CFG_PLL_562_281_140)
 
-	#define CFG_HZ					(562500000LU/2)
+	#define CFG_HZ	(562500000LU/2)
 
 	// CPU_DIV = 1, RAM_DIV = 2, AHB_DIV = 4
-	#define CPU_CLK_CONTROL_VAL1	0x00018404
-	#define CPU_CLK_CONTROL_VAL2	0x00018400
+	#define CPU_CLK_CONTROL_VAL		MAKE_CPU_CLK_CONTROL_VAL(1, 2, 4)
 
-	// DIV_INT	= 45	(25 MHz * 45/2 = 562,5 MHz)
-	// REFDIV	= 1
-	// RANGE	= 0
-	// OUTDIV	= 1
-	#define CPU_PLL_CONFIG_VAL1		0x4081B400
-	#define CPU_PLL_CONFIG_VAL2		0x0081B400
+	// DIV_INT = 45 (25 MHz * 45/2 = 562,5 MHz)
+	// REFDIV = 1, OUTDIV = 1
+	#define CPU_PLL_CONFIG_VAL		0x4081B400
 
 	// CLOCK_DIVIDER = 1 (SPI clock = 140,625 / 4 ~ 35,2 MHz)
 	#define AR7240_SPI_CONTROL		0x41
 
 #elif (CFG_PLL_FREQ == CFG_PLL_525_262_131)
 
-	#define CFG_HZ					(525000000LU/2)
+	#define CFG_HZ	(525000000LU/2)
 
 	// CPU_DIV = 1, RAM_DIV = 2, AHB_DIV = 4
-	#define CPU_CLK_CONTROL_VAL1	0x00018404
-	#define CPU_CLK_CONTROL_VAL2	0x00018400
+	#define CPU_CLK_CONTROL_VAL		MAKE_CPU_CLK_CONTROL_VAL(1, 2, 4)
 
-	// DIV_INT	= 42	(25 MHz * 42/2 = 525 MHz)
-	// REFDIV	= 1
-	// RANGE	= 0
-	// OUTDIV	= 1
-	#define CPU_PLL_CONFIG_VAL1		0x4081A800
-	#define CPU_PLL_CONFIG_VAL2		0x0081A800
+	// DIV_INT = 42 (25 MHz * 42/2 = 525 MHz)
+	// REFDIV = 1, OUTDIV = 1
+	#define CPU_PLL_CONFIG_VAL		0x4081A800
 
 	// CLOCK_DIVIDER = 1 (SPI clock = 131 / 4 ~ 32,8 MHz)
 	#define AR7240_SPI_CONTROL		0x41
 
 #elif (CFG_PLL_FREQ == CFG_PLL_525_525_262)
 
-	#define CFG_HZ					(525000000LU/2)
+	#define CFG_HZ	(525000000LU/2)
 
 	// CPU_DIV = 1, RAM_DIV = 1, AHB_DIV = 2
-	#define CPU_CLK_CONTROL_VAL1	0x00008004
-	#define CPU_CLK_CONTROL_VAL2	0x00008000
+	#define CPU_CLK_CONTROL_VAL		MAKE_CPU_CLK_CONTROL_VAL(1, 1, 2)
 
-	// DIV_INT	= 42	(25 MHz * 42/2 = 525 MHz)
-	// REFDIV	= 1
-	// RANGE	= 0
-	// OUTDIV	= 1
-	#define CPU_PLL_CONFIG_VAL1		0x4081A800
-	#define CPU_PLL_CONFIG_VAL2		0x0081A800
+	// DIV_INT = 42 (25 MHz * 42/2 = 525 MHz)
+	// REFDIV = 1, OUTDIV = 1
+	#define CPU_PLL_CONFIG_VAL		0x4081A800
 
 	// CLOCK_DIVIDER = 1 (SPI clock = 131 / 4 ~ 32,8 MHz)
 	#define AR7240_SPI_CONTROL		0x41
