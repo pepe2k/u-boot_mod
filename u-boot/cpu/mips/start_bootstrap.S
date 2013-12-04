@@ -27,8 +27,10 @@
 #include <version.h>
 #include <asm/regdef.h>
 #include <asm/mipsregs.h>
+#include <asm/addrspace.h>
+#include <ar7240_soc.h>
 
-#define AR7100_SPI_CLOCK  0xbf000004
+#define AR7100_SPI_CLOCK  0x1F000004
 
 #ifdef CONFIG_WASP_SUPPORT
 	#define ATH_APB_BASE				0xB8000000  /* KSEG1ADDR(0x18000000) */
@@ -388,9 +390,10 @@ rel_start:
 
 #if defined(CONFIG_AR7100) || defined(CONFIG_AR7240)
 	/* REMAP_DISABLE */
-	// TODO: SPI flash clock?
-	li	a0, AR7100_SPI_CLOCK
-	li	t0, 0x42		// was 0x43
+	// TODO: SPI clock from FLASH?
+	// for now we will use divider = 10 ( (4+1)*2 )
+	li	a0, KSEG1ADDR(AR7100_SPI_CLOCK)
+	li	t0, 0x44
 	sw	t0, 0(a0)
 #endif
 

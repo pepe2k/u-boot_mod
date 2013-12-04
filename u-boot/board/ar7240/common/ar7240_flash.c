@@ -18,6 +18,7 @@
 
 extern void led_toggle(void);
 extern void all_led_off(void);
+extern int reset_button_status(void);
 
 /*
  * globals
@@ -78,18 +79,42 @@ static void flash_set_geom(int size, int sector_count, int sector_size){
 
 unsigned long flash_init(void){
 	flash_info_t *info;
+#if defined(PLL_IN_FLASH_MAGIC_OFFSET)
+	u32 pll_magic, spi_control;
+
+	pll_magic = ar7240_reg_rd(CFG_FLASH_BASE + PLL_IN_FLASH_DATA_BLOCK_OFFSET + PLL_IN_FLASH_MAGIC_OFFSET);
+
+	// read SPI CONTROL Configuration register (SPI_CONTROL) value stored in FLASH (PLL_IN_FLASH_MAGIC_OFFSET + 12)
+	spi_control = ar7240_reg_rd(CFG_FLASH_BASE + PLL_IN_FLASH_DATA_BLOCK_OFFSET + PLL_IN_FLASH_MAGIC_OFFSET + 12);
+#endif
 
 	info = &flash_info[0];
 
 	// spi flash clock
 	ar7240_reg_wr(AR7240_SPI_FS,	0x01);
-	ar7240_reg_wr(AR7240_SPI_CLOCK,	AR7240_SPI_CONTROL);
+
+	// if reset button is pressed -> write default CLOCK_DIVIDER for SPI CLOCK
+	if(reset_button_status()){
+		ar7240_reg_wr(AR7240_SPI_CLOCK,	AR7240_SPI_CONTROL_DEFAULT);
+	} else {
+#if defined(PLL_IN_FLASH_MAGIC_OFFSET)
+		// do we have PLL_MAGIC in FLASH?
+		if(pll_magic == PLL_IN_FLASH_MAGIC){
+			ar7240_reg_wr(AR7240_SPI_CLOCK,	spi_control);
+		} else {
+#endif
+			ar7240_reg_wr(AR7240_SPI_CLOCK,	AR7240_SPI_CONTROL);
+#if defined(PLL_IN_FLASH_MAGIC_OFFSET)
+		}
+#endif
+	}
+
 	ar7240_reg_wr(AR7240_SPI_FS,	0x0);
 
 	// get flash id
 	info->flash_id = read_id();
 
-	puts("FLASH: ");
+	puts("FLASH:  ");
 
 	// fill flash info based on JEDEC ID
 	switch(info->flash_id){
@@ -203,10 +228,12 @@ unsigned long flash_init(void){
 			flash_set_geom(SIZE_INBYTES_16MBYTES, 256, SIZE_INBYTES_64KBYTES);
 			puts("Unknown type (using only 16 MB)\n");
 #endif
-			printf("\nPlease, send request to add support\nfor your flash - JEDEC ID: 0x%06lX", info->flash_id);
+			printf("\nPlease, send request to add support\nfor your flash - JEDEC ID: 0x%06lX\n", info->flash_id);
 			info->flash_id = FLASH_CUSTOM;
 			break;
 	}
+
+	puts("\n");
 
 	return(info->size);
 }

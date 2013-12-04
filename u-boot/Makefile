@@ -279,6 +279,10 @@ ifdef CONFIG_BOOTDELAY
 	@echo "#define CONFIG_BOOTDELAY "$(CONFIG_BOOTDELAY)   >> include/config.h
 endif
 
+ifdef CFG_PLL_FREQ
+	@echo "#define CFG_PLL_FREQ "$(CFG_PLL_FREQ)           >> include/config.h
+endif
+
 	@echo "#define CONFIG_DELAY_TO_AUTORUN_HTTPD        3" >> include/config.h
 	@echo "#define CONFIG_DELAY_TO_AUTORUN_CONSOLE      5" >> include/config.h
 	@echo "#define CONFIG_DELAY_TO_AUTORUN_NETCONSOLE   7" >> include/config.h

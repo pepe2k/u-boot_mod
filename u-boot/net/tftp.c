@@ -14,6 +14,8 @@
 
 #if (CONFIG_COMMANDS & CFG_CMD_NET)
 
+DECLARE_GLOBAL_DATA_PTR;
+
 #define WELL_KNOWN_PORT		69		/* Well known TFTP port # */
 #define TIMEOUT				5		/* Seconds to timeout for a lost pkt */
 
@@ -177,6 +179,7 @@ static void TftpSend(void){
 }
 
 static void TftpHandler(uchar * pkt, unsigned dest, unsigned src, unsigned len){
+	bd_t *bd = gd->bd;
 	ushort proto;
 	ushort *s;
 
@@ -302,6 +305,8 @@ static void TftpHandler(uchar * pkt, unsigned dest, unsigned src, unsigned len){
 }
 
 static void TftpTimeout(void){
+	bd_t *bd = gd->bd;
+
 	if(++TftpTimeoutCount > TIMEOUT_COUNT){
 		puts("\n\n## Error: retry count exceeded, starting again!\n\n");
 		NetStartAgain();
@@ -313,6 +318,8 @@ static void TftpTimeout(void){
 }
 
 void TftpStart(void){
+	bd_t *bd = gd->bd;
+
 #ifdef CONFIG_TFTP_PORT
 	char *ep; /* Environment pointer */
 #endif

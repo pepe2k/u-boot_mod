@@ -30,7 +30,7 @@
 #include <asm/addrspace.h>
 #include <ar7240_soc.h>
 
-#define ATH_SPI_CLOCK	0xbf000004
+#define ATH_SPI_CLOCK	0x1F000004
 
 #define RVECENT(f,n) \
    b f; nop
@@ -326,7 +326,9 @@ rel_start:
 #elif defined(CONFIG_WASP_SUPPORT)
 	li	t0,	0x243
 #else
-	li	t0,	0x43
+	// TODO: SPI clock from FLASH?
+	// for now we will use divider = 10 ( (4+1)*2 )
+	li	t0,	0x44
 #endif
 	sw	t0,	0(a0)
 #endif

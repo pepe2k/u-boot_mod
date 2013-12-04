@@ -29,7 +29,107 @@
 #define         UART16550_READ(y)		ar7240_reg_rd((AR7240_UART_BASE+y))
 #define         UART16550_WRITE(x, z)	ar7240_reg_wr((AR7240_UART_BASE+x), z)
 
+/*
+ * Get CPU, RAM and AHB clocks
+ * Based on: Linux/arch/mips/ath79/clock.c
+ */
 void ar7240_sys_frequency(u32 *cpu_freq, u32 *ddr_freq, u32 *ahb_freq){
+#ifdef CONFIG_WASP
+	u32 ref_rate, pll, out_div, ref_div, nint, nfrac, frac, clk_ctrl, postdiv, cpu_pll, ddr_pll;
+
+	// determine reference clock (25 or 40 MHz)
+	pll = ar7240_reg_rd(RST_BOOTSTRAP_ADDRESS);
+
+	if(pll & 0x10){	// bit 4 == 1 -> REF_CLK == 40 MHz
+		ref_rate = 40000000;
+	} else {
+		ref_rate = 25000000;
+	}
+
+	pll = ar7240_reg_rd(DPLL2_ADDRESS_c4);
+
+	// CPU PLL from SRIF?
+	if(pll & (1 << 30)){
+
+		out_div = (pll >> 13) & 0x7;
+		pll = ar7240_reg_rd(0x181161c0);
+		nint = (pll >> 18) & 0x1ff;
+		//nfrac = pll & 0x0003ffff;
+		ref_div = (pll >> 27) & 0x1f;
+		//frac = 1 << 18;
+
+	} else {
+		// only for tests
+		// TODO: fix me
+		*cpu_freq = 560000000;
+		*ddr_freq = 400000000;
+		*ahb_freq = 200000000;
+		return;
+	}
+
+	cpu_pll = (ref_rate / ref_div) * nint;
+	cpu_pll /= (1 << out_div);
+
+	// DDR PLL from SRIF?
+	pll = ar7240_reg_rd(DPLL2_ADDRESS_44);
+
+	if (pll & (1 << 30)) {
+
+		out_div = (pll >> 13) & 0x7;
+		pll = ar7240_reg_rd(0x18116240);
+		nint = (pll >> 18) & 0x1ff;
+		//nfrac = pll & 0x0003ffff;
+		ref_div = (pll >> 27) & 0x1f;
+		//frac = 1 << 18;
+
+	} else {
+		// only for tests
+		// TODO: fix me
+		*cpu_freq = 560000000;
+		*ddr_freq = 400000000;
+		*ahb_freq = 200000000;
+		return;
+	}
+
+	ddr_pll = (ref_rate / ref_div) * nint;
+	ddr_pll /= (1 << out_div);
+
+	clk_ctrl = ar7240_reg_rd(AR934X_CPU_DDR_CLOCK_CONTROL);
+
+	postdiv = (clk_ctrl >> 5) & 0x1f;
+
+	// CPU CLK
+	if(clk_ctrl & (1 << 2)){			// CPU_PLL_BYPASS
+		*cpu_freq = ref_rate;
+	} else if(clk_ctrl & (1 << 20)){	// CPU CLK is derived from CPU_PLL
+		*cpu_freq = cpu_pll / (postdiv + 1);
+	} else {							// CPU CLK is derived from DDR_PLL
+		*cpu_freq = ddr_pll / (postdiv + 1);
+	}
+
+	postdiv = (clk_ctrl >> 10) & 0x1f;
+
+	// DDR CLK
+	if(clk_ctrl & (1 << 3)){			// DDR_PLL_BYPASS
+		*ddr_freq = ref_rate;
+	} else if(clk_ctrl & (1 << 21)){	// DDR CLK is derived from DDR_PLL
+		*ddr_freq = ddr_pll / (postdiv + 1);
+	} else {							// DDR CLK is derived from CPU_PLL
+		*ddr_freq = cpu_pll / (postdiv + 1);
+	}
+
+	postdiv = (clk_ctrl >> 15) & 0x1f;
+
+	// AHB CLK
+	if(clk_ctrl & (1 << 4)){			// AHB_PLL_BYPASS
+		*ahb_freq = ref_rate;
+	} else if(clk_ctrl & (1 << 24)){	// AHB CLK is derived from DDR_PLL
+		*ahb_freq = ddr_pll / (postdiv + 1);
+	} else {							// AHB CLK is derived from CPU_PLL
+		*ahb_freq = cpu_pll / (postdiv + 1);
+	}
+
+#else
     u32 pll, pll_div, ref_div, ahb_div, ddr_div, freq;
 
     pll = ar7240_reg_rd(AR7240_CPU_PLL_CONFIG);
@@ -52,12 +152,11 @@ void ar7240_sys_frequency(u32 *cpu_freq, u32 *ddr_freq, u32 *ahb_freq){
     if(ahb_freq){
 		*ahb_freq = freq/ahb_div;
 	}
+#endif
 }
 
 int serial_init(void){
 	u32 div, val;
-	u32 ahb_freq, ddr_freq, cpu_freq;
-
 #ifdef CONFIG_WASP
 	val = ar7240_reg_rd(WASP_BOOTSTRAP_REG);
 
@@ -67,6 +166,8 @@ int serial_init(void){
 		div = (40 * 1000000) / (16 * CONFIG_BAUDRATE);
 	}
 #else
+	u32 ahb_freq, ddr_freq, cpu_freq;
+
 	ar7240_sys_frequency(&cpu_freq, &ddr_freq, &ahb_freq);
 
 	div = ahb_freq/(16 * CONFIG_BAUDRATE);

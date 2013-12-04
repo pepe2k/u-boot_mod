@@ -31,6 +31,8 @@
 
 #if (CONFIG_COMMANDS & CFG_CMD_NET)
 
+DECLARE_GLOBAL_DATA_PTR;
+
 #define TIMEOUT		5		/* Seconds before trying BOOTP again */
 #ifndef	CONFIG_NET_RETRY_COUNT
 # define TIMEOUT_COUNT	5		/* # of timeouts before giving up  */
@@ -73,9 +75,9 @@ RarpHandler(uchar * dummi0, unsigned dummi1, unsigned dummi2, unsigned dummi3)
 /*
  *	Timeout on BOOTP request.
  */
-static void
-RarpTimeout(void)
-{
+static void RarpTimeout(void){
+	bd_t *bd = gd->bd;
+
 	if (RarpTry >= TIMEOUT_COUNT) {
 		puts ("\nRetry count exceeded; starting again\n");
 		NetStartAgain ();
@@ -86,9 +88,8 @@ RarpTimeout(void)
 }
 
 
-void
-RarpRequest (void)
-{
+void RarpRequest (void){
+	bd_t *bd = gd->bd;
 	int i;
 	volatile uchar *pkt;
 	ARP_t *	rarp;
