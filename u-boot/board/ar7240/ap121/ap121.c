@@ -129,7 +129,11 @@ void all_led_off(void){
 	#error "GPIO_RST_BUTTON_BIT not defined!"
 #endif
 int reset_button_status(void){
-	if(ar7240_reg_rd(AR7240_GPIO_IN) & (1 << GPIO_RST_BUTTON_BIT)){
+	unsigned int gpio;
+
+	gpio = ar7240_reg_rd(AR7240_GPIO_IN);
+
+	if(gpio & (1 << GPIO_RST_BUTTON_BIT)){
 #if defined(GPIO_RST_BUTTON_IS_ACTIVE_LOW)
 		return(0);
 #else
@@ -343,11 +347,11 @@ const char* print_mem_type(void){
 			break;
 
 		case 1:
-			return " DDR";
+			return " DDR 16-bit";
 			break;
 
 		case 2:
-			return " DDR2";
+			return " DDR2 16-bit";
 			break;
 
 		default:

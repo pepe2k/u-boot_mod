@@ -21,6 +21,9 @@
 #define BOOTP_VENDOR_MAGIC	0x63825363	/* RFC1048 Magic Cookie */
 
 #if (CONFIG_COMMANDS & CFG_CMD_NET)
+
+DECLARE_GLOBAL_DATA_PTR;
+
 #define TIMEOUT				5		/* Seconds before trying BOOTP again */
 
 #ifndef CONFIG_NET_RETRY_COUNT
@@ -391,6 +394,8 @@ static void BootpHandler(uchar * pkt, unsigned dest, unsigned src, unsigned len)
  *	Timeout on BOOTP/DHCP request.
  */
 static void BootpTimeout(void){
+	bd_t *bd = gd->bd;
+
 	if(BootpTry >= TIMEOUT_COUNT){
 		puts("\n## Error: retry count exceeded, starting again!\n\n");
 		NetStartAgain();
@@ -603,6 +608,7 @@ static int BootpExtended(u8 * e){
 #endif	/* CFG_CMD_DHCP */
 
 void BootpRequest(void){
+	bd_t *bd = gd->bd;
 	volatile uchar *pkt, *iphdr;
 	Bootp_t *bp;
 	int ext_len, pktlen, iplen;
@@ -899,6 +905,7 @@ static int DhcpMessageType(unsigned char *popt){
 }
 
 static void DhcpSendRequestPkt(Bootp_t *bp_offer){
+	bd_t *bd = gd->bd;
 	volatile uchar *pkt, *iphdr;
 	Bootp_t *bp;
 	int pktlen, iplen, extlen;
@@ -958,6 +965,7 @@ static void DhcpSendRequestPkt(Bootp_t *bp_offer){
  *	Handle DHCP received packets.
  */
 static void DhcpHandler(uchar * pkt, unsigned dest, unsigned src, unsigned len){
+	bd_t *bd = gd->bd;
 	Bootp_t *bp = (Bootp_t *)pkt;
 	char tmp[22];
 

@@ -542,7 +542,7 @@ static void ag7240_get_ethaddr(struct eth_device *dev){
 		mac[4] = 0x0b;
 		mac[5] = 0xad;
 
-		printf("## Error: MAC address stored in flash is invalid!\nUsing fixed address!\n");
+		printf("## Error: MAC address in FLASH is invalid, using fixed!\n");
 	}
 #else
 	// 00-03-7F (Atheros Communications, Inc.)

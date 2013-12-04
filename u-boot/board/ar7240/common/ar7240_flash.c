@@ -79,6 +79,14 @@ static void flash_set_geom(int size, int sector_count, int sector_size){
 
 unsigned long flash_init(void){
 	flash_info_t *info;
+#if defined(PLL_IN_FLASH_MAGIC_OFFSET)
+	u32 pll_magic, spi_control;
+
+	pll_magic = ar7240_reg_rd(CFG_FLASH_BASE + PLL_IN_FLASH_DATA_BLOCK_OFFSET + PLL_IN_FLASH_MAGIC_OFFSET);
+
+	// read SPI CONTROL Configuration register (SPI_CONTROL) value stored in FLASH (PLL_IN_FLASH_MAGIC_OFFSET + 12)
+	spi_control = ar7240_reg_rd(CFG_FLASH_BASE + PLL_IN_FLASH_DATA_BLOCK_OFFSET + PLL_IN_FLASH_MAGIC_OFFSET + 12);
+#endif
 
 	info = &flash_info[0];
 
@@ -89,7 +97,16 @@ unsigned long flash_init(void){
 	if(reset_button_status()){
 		ar7240_reg_wr(AR7240_SPI_CLOCK,	AR7240_SPI_CONTROL_DEFAULT);
 	} else {
-		ar7240_reg_wr(AR7240_SPI_CLOCK,	AR7240_SPI_CONTROL);
+#if defined(PLL_IN_FLASH_MAGIC_OFFSET)
+		// do we have PLL_MAGIC in FLASH?
+		if(pll_magic == PLL_IN_FLASH_MAGIC){
+			ar7240_reg_wr(AR7240_SPI_CLOCK,	spi_control);
+		} else {
+#endif
+			ar7240_reg_wr(AR7240_SPI_CLOCK,	AR7240_SPI_CONTROL);
+#if defined(PLL_IN_FLASH_MAGIC_OFFSET)
+		}
+#endif
 	}
 
 	ar7240_reg_wr(AR7240_SPI_FS,	0x0);

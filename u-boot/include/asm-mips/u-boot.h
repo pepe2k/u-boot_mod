@@ -32,7 +32,7 @@
 #define _U_BOOT_H_	1
 
 typedef struct bd_info {
-	int				bi_baudrate;	/* serial console baudrate */
+	unsigned int	bi_baudrate;	/* serial console baudrate */
 	unsigned long	bi_ip_addr;		/* IP Address */
 	unsigned char	bi_enetaddr[6];	/* Ethernet adress */
 	unsigned long	bi_arch_number;	/* unique id for this board */
@@ -42,6 +42,7 @@ typedef struct bd_info {
 	unsigned long	bi_flashstart;	/* start of FLASH memory */
 	unsigned long	bi_flashsize;	/* size  of FLASH memory */
 	unsigned long	bi_flashoffset;	/* reserved area for startup monitor */
+	unsigned long	bi_cfg_hz;
 } bd_t;
 
 #define bi_env_data bi_env->data

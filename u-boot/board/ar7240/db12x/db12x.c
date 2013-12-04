@@ -127,8 +127,32 @@ long int initdram(){
 }
 
 /*
- * TODO: Returns a string with memory type preceded by a space sign
+ * Returns a string with memory type preceded by a space sign
  */
 const char* print_mem_type(void){
-	return "";
+	unsigned int reg;
+
+	reg = ar7240_reg_rd(WASP_BOOTSTRAP_REG);
+
+	// if SDRAM is disabled -> we are using DDR
+	if(reg & WASP_BOOTSTRAP_SDRAM_DISABLE_MASK){
+
+		// 1 -> DDR1
+		if(reg & WASP_BOOTSTRAP_DDR_SELECT_MASK){
+			if(reg & WASP_BOOTSTRAP_DDR_WIDTH_MASK){
+				return " DDR 32-bit";
+			} else {
+				return " DDR 16-bit";
+			}
+		} else {
+			if(reg & WASP_BOOTSTRAP_DDR_WIDTH_MASK){
+				return " DDR2 32-bit";
+			} else {
+				return " DDR2 16-bit";
+			}
+		}
+
+	} else {
+		return " SDRAM";
+	}
 }

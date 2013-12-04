@@ -23,11 +23,15 @@
 
 #include <common.h>
 #include <command.h>
+#include <asm/mipsregs.h>
+#include <asm/addrspace.h>
 #include <malloc.h>
 #include <devices.h>
 #include <version.h>
 #include <net.h>
 #include <environment.h>
+#include "ar7240_soc.h"
+#include "../board/ar7240/common/ar7240_flash.h"
 
 DECLARE_GLOBAL_DATA_PTR;
 
@@ -47,10 +51,7 @@ extern int timer_init(void);
 extern void all_led_on(void);
 extern void all_led_off(void);
 extern const char* print_mem_type(void);
-
-#if (BOARD == AP121)
 extern void ar7240_sys_frequency(u32 *cpu_freq, u32 *ddr_freq, u32 *ahb_freq);
-#endif
 
 ulong monitor_flash_len;
 
@@ -84,7 +85,7 @@ void *sbrk(ptrdiff_t increment){
 }
 
 static int display_banner(void){
-	printf("\n\n*****************************************\n*      %s      *\n*****************************************\n\n", version_string);
+	printf("\n\n*********************************************\n*        %s        *\n*********************************************\n\n", version_string);
 	return(0);
 }
 
@@ -303,12 +304,19 @@ void board_init_r(gd_t *id, ulong dest_addr){
 	int i;
 	char *s;
 	unsigned char buffer[6];
-#if (BOARD == AP121)
-	unsigned int ahb_freq, ddr_freq, cpu_freq;
-#endif
+	unsigned int ahb_freq, ddr_freq, cpu_freq, spi_freq;
 
 	gd = id;
 	gd->flags |= GD_FLG_RELOC; /* tell others: relocation done */
+
+	/* bd -> board data */
+	bd = gd->bd;
+
+	/* get CPU/RAM/AHB clocks */
+	ar7240_sys_frequency(&cpu_freq, &ddr_freq, &ahb_freq);
+
+	/* set bi_cfg_hz */
+	bd->bi_cfg_hz = (unsigned long)(cpu_freq >> 1);
 
 #ifdef BOARD_DEBUG
 	printf("Now running in RAM - U-Boot at: %08lX\n", dest_addr);
@@ -351,23 +359,22 @@ void board_init_r(gd_t *id, ulong dest_addr){
 	/* configure available FLASH banks */
 	size = flash_init();
 
-#if (BOARD == AP121)
-	/* display clocks */
-	ar7240_sys_frequency(&cpu_freq, &ddr_freq, &ahb_freq);
+	bd->bi_flashstart = CFG_FLASH_BASE;
+	bd->bi_flashsize = size;
+
+	// calculate SPI clock (we need to set bit 0 to 1 in SPI_FUNC_SELECT to access SPI registers)
+	ar7240_reg_wr(AR7240_SPI_FS, 0x01);
+	spi_freq = ahb_freq / (((ar7240_reg_rd(AR7240_SPI_CLOCK) & 0x3F) + 1) * 2);
+	ar7240_reg_wr(AR7240_SPI_FS, 0x0);
 
 	// make MHz from Hz
 	cpu_freq /= 1000000;
 	ddr_freq /= 1000000;
 	ahb_freq /= 1000000;
+	spi_freq /= 1000000;
 
-	printf("CLOCKS: %d/%d/%d MHz (CPU/RAM/AHB)\n", cpu_freq, ddr_freq, ahb_freq);
-#endif
-
+	printf("CLOCKS: %d/%d/%d/%d MHz (CPU/RAM/AHB/SPI)\n", cpu_freq, ddr_freq, ahb_freq, spi_freq);
 	puts("\n");
-
-	bd = gd->bd;
-	bd->bi_flashstart = CFG_FLASH_BASE;
-	bd->bi_flashsize = size;
 
 #if CFG_MONITOR_BASE == CFG_FLASH_BASE
 	bd->bi_flashoffset = monitor_flash_len; /* reserved area for U-Boot */

@@ -46,6 +46,8 @@ extern int athr_phy_speed(int unit);
 extern void athr_reg_init(void);
 #endif
 
+//#define AG7240_DEBUG
+
 static int ag7240_send(struct eth_device *dev, volatile void *packet, int length) {
 	int i;
 
@@ -474,7 +476,7 @@ static void ag7240_get_ethaddr(struct eth_device *dev) {
 		mac[4] = 0x0b;
 		mac[5] = 0xad;
 
-		printf("## Error: MAC address stored in flash is invalid!\nUsing fixed address!\n");
+		printf("## Error: MAC address in FLASH is invalid, using fixed!\n");
 	}
 #else
 	// 00-03-7F (Atheros Communications, Inc.)
@@ -493,7 +495,9 @@ int ag7240_enet_initialize(bd_t * bis) {
 	u32 mask, mac_h, mac_l;
 	int i;
 
-	//printf("ag7240_enet_initialize...\n");
+#ifdef AG7240_DEBUG
+	printf("ag7240_enet_initialize...\n");
+#endif
 
 	// TODO check this register!
 	ar7240_reg_wr(HORNET_BOOTSTRAP_STATUS, ar7240_reg_rd(HORNET_BOOTSTRAP_STATUS) & ~HORNET_BOOTSTRAP_MDIO_SLAVE_MASK);
@@ -518,12 +522,12 @@ int ag7240_enet_initialize(bd_t * bis) {
 	for (i = 0; i < CFG_AG7240_NMACS; i++) {
 
 		if ((dev[i] = (struct eth_device *) malloc(sizeof(struct eth_device))) == NULL) {
-			puts("malloc failed\n");
+			puts("## Error: malloc failed\n");
 			return 0;
 		}
 
 		if ((ag7240_macs[i] = (ag7240_mac_t *) malloc(sizeof(ag7240_mac_t))) == NULL) {
-			puts("malloc failed\n");
+			puts("## Error: malloc failed\n");
 			return 0;
 		}
 
@@ -587,8 +591,10 @@ int ag7240_enet_initialize(bd_t * bis) {
 			udelay(100 * 1000);
 		}
 
-		//unsigned char *mac = dev[i]->enetaddr;
-		//printf("\nInterface %s MAC address: %02X:%02X:%02X:%02X:%02X:%02X\n", dev[i]->name, mac[0] & 0xff, mac[1] & 0xff, mac[2] & 0xff, mac[3] & 0xff, mac[4] & 0xff, mac[5] & 0xff);
+#ifdef AG7240_DEBUG
+		unsigned char *mac = dev[i]->enetaddr;
+		printf("\nInterface %s MAC address: %02X:%02X:%02X:%02X:%02X:%02X\n", dev[i]->name, mac[0] & 0xff, mac[1] & 0xff, mac[2] & 0xff, mac[3] & 0xff, mac[4] & 0xff, mac[5] & 0xff);
+#endif
 
 		mac_l = (dev[i]->enetaddr[4] << 8) | (dev[i]->enetaddr[5]);
 		mac_h = (dev[i]->enetaddr[0] << 24) | (dev[i]->enetaddr[1] << 16) | (dev[i]->enetaddr[2] << 8) | (dev[i]->enetaddr[3] << 0);
@@ -607,34 +613,49 @@ int ag7240_enet_initialize(bd_t * bis) {
 #endif
 			{
 #ifdef CFG_ATHRS26_PHY
-				//printf("s26 reg init \n");
+	#ifdef AG7240_DEBUG
+				printf("s26 reg init \n");
+	#endif
 				athrs26_reg_init();
 #endif
 #ifdef CFG_ATHRS27_PHY
-				//printf("s27 reg init \n");
+	#ifdef AG7240_DEBUG
+				printf("s27 reg init \n");
+	#endif
 				athrs27_reg_init();
 #endif
 #ifdef CONFIG_F1E_PHY
-				//printf("F1Phy reg init \n");
+	#ifdef AG7240_DEBUG
+				printf("F1Phy reg init \n");
+	#endif
 				athr_reg_init();
 #endif
 			}
 		} else {
 #ifdef CFG_ATHRS26_PHY
-			//printf("athrs26_reg_init_lan\n");
+	#ifdef AG7240_DEBUG
+			printf("athrs26_reg_init_lan\n");
+	#endif
 			athrs26_reg_init_lan();
 #endif
 #ifdef CFG_ATHRS27_PHY
-			//printf("s27 reg init lan \n");
+	#ifdef AG7240_DEBUG
+			printf("s27 reg init lan \n");
+	#endif
 			athrs27_reg_init_lan();
 #endif
 		}
 
-		//printf("ag7240_phy_setup\n");
+#ifdef AG7240_DEBUG
+		printf("ag7240_phy_setup\n");
+#endif
 		//udelay(100*1000);
 
 		ag7240_phy_setup(ag7240_macs[i]->mac_unit);
-		//printf("Interface %s is up\n", dev[i]->name);
+
+#ifdef AG7240_DEBUG
+		printf("Interface %s is up\n", dev[i]->name);
+#endif
 	}
 
 	return 1;
