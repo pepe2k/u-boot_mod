@@ -33,7 +33,7 @@ extern void athrs26_reg_init_lan(void);
 extern int athrs26_mdc_check(void);
 #endif
 
-#ifdef  CONFIG_ATHRS17_PHY
+#ifdef  CFG_ATHRS17_PHY
 extern void athrs17_reg_init(void);
 #endif
 
@@ -145,7 +145,7 @@ void ag7240_mii_setup(ag7240_mac_t *mac){
 		ar7240_reg_wr(AR934X_SWITCH_CLOCK_SPARE, 0x570);
 	}
 
-#if defined(CONFIG_AR7242_S16_PHY) || defined(CONFIG_ATHRS17_PHY)
+#if defined(CONFIG_AR7242_S16_PHY) || defined(CFG_ATHRS17_PHY)
 	if(is_wasp() && mac->mac_unit == 0){
 #ifdef CONFIG_AR7242_S16_PHY
 		//printf("WASP  ----> S16 PHY *\n");
@@ -655,7 +655,7 @@ int ag7240_enet_initialize(bd_t * bis){
 			} else
 #endif
 			{
-#ifdef  CONFIG_ATHRS17_PHY
+#ifdef  CFG_ATHRS17_PHY
 			athrs17_reg_init();
 #endif
 

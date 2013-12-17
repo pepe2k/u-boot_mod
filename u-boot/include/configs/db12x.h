@@ -54,8 +54,14 @@
 #undef CFG_HZ
 
 // CPU-RAM-AHB frequency setting
+#if !defined(CONFIG_AP123)
 #define CFG_PLL_FREQ    			CFG_PLL_560_480_240
 #define CFG_HZ_FALLBACK				(560000000LU/2)
+#else
+#define CFG_PLL_FREQ    			CFG_PLL_533_400_200
+#define CFG_HZ_FALLBACK				(535000000LU/2)
+#endif
+
 #define	CFG_HZ						bd->bi_cfg_hz
 #define AR7240_SPI_CONTROL			0x43
 #define AR7240_SPI_CONTROL_DEFAULT	AR7240_SPI_CONTROL

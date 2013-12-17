@@ -267,13 +267,8 @@ unconfig:
 #########################################################################
 ## MIPS32 AR7100 (24K)
 #########################################################################
-
-hornet_common_config :
+common_config :
 	@ >include/config.h
-	@echo "#define CONFIG_AR7240                        1" >> include/config.h
-	@echo "#define CONFIG_MACH_HORNET                   1" >> include/config.h
-	@echo "#define CONFIG_HORNET_1_1_WAR                1" >> include/config.h
-	@echo "#define NEW_DDR_TAP_CAL                      1" >> include/config.h
 
 ifdef CONFIG_BOOTDELAY
 	@echo "#define CONFIG_BOOTDELAY "$(CONFIG_BOOTDELAY)   >> include/config.h
@@ -292,6 +287,12 @@ endif
 
 	# don't show info about console (in, out, err...)
 	@echo "#define CFG_CONSOLE_INFO_QUIET"                 >> include/config.h
+
+hornet_common_config : common_config
+	@echo "#define CONFIG_AR7240                        1" >> include/config.h
+	@echo "#define CONFIG_MACH_HORNET                   1" >> include/config.h
+	@echo "#define CONFIG_HORNET_1_1_WAR                1" >> include/config.h
+	@echo "#define NEW_DDR_TAP_CAL                      1" >> include/config.h
 
 wr703n_config : unconfig hornet_common_config
 	@echo '======= Configuring for TP-Link TL-WR703N at:' `date` '======='
@@ -469,34 +470,32 @@ carambola2_config : unconfig hornet_common_config
 	
 	@./mkconfig -a ap121 mips mips ap121 ar7240 ar7240
 
-db12x_config : unconfig
-	@echo '======= Configuring for TP-Link TL-WDR3600/43x0 at:' `date` '======='
-	@ >include/config.h
-	@echo "#define CONFIG_WASP_SUPPORT                  1" >> include/config.h
-	@echo "#undef CFG_ATHRS26_PHY"                         >> include/config.h
-	@echo "#define DDR2_32BIT_SUPPORT                   1" >> include/config.h
-	@echo "#define CONFIG_AG7240_GE0_IS_CONNECTED       1" >> include/config.h
+wasp_common_config : common_config
 	@echo "#define CONFIG_AR7240                        1" >> include/config.h
 	@echo "#define CONFIG_WASP                          1" >> include/config.h
+	@echo "#define CONFIG_WASP_SUPPORT                  1" >> include/config.h
 
-ifdef CONFIG_BOOTDELAY
-	@echo "#define CONFIG_BOOTDELAY "$(CONFIG_BOOTDELAY)   >> include/config.h
-endif
-
-	@echo "#define CONFIG_DELAY_TO_AUTORUN_HTTPD        3" >> include/config.h
-	@echo "#define CONFIG_DELAY_TO_AUTORUN_CONSOLE      5" >> include/config.h
-	@echo "#define CONFIG_DELAY_TO_AUTORUN_NETCONSOLE   7" >> include/config.h
-
-	# max delay time for button pressing
-	@echo "#define CONFIG_MAX_BUTTON_PRESSING          10" >> include/config.h
-
-	# don't show info about console (in, out, err...)
-	@echo "#define CFG_CONSOLE_INFO_QUIET"                 >> include/config.h
-
-	@echo "#define CONFIG_ATHRS17_PHY                   1" >> include/config.h
+wdr3600_43x0_config : unconfig wasp_common_config
+	@echo '======= Configuring for TP-Link TL-WDR3600/43x0 at:' `date` '======='
+	@echo "#define CONFIG_FOR_TPLINK_WDR3600_WDR43X0_V1 1" >> include/config.h
+	@echo "#define DDR2_32BIT_SUPPORT                   1" >> include/config.h
+	@echo "#define CFG_ATHRS17_PHY                      1" >> include/config.h
 	@echo "#define CFG_AG7240_NMACS                     1" >> include/config.h
+	@echo "#define CFG_DUAL_PHY_SUPPORT                 1" >> include/config.h
 	@echo "#define DEFAULT_FLASH_SIZE_IN_MB             8" >> include/config.h
 	@echo "#define BOARD_CUSTOM_STRING                  \"DB120 (AR9344) U-Boot for TL-WDR3600/43x0\"" >> include/config.h
+
+	@./mkconfig -a db12x mips mips db12x ar7240 ar7240
+
+wr841n_v8_config : unconfig wasp_common_config
+	@echo '======= Configuring for TP-Link TL-WR841N/D at:' `date` '======='
+	@echo "#define CONFIG_FOR_TPLINK_WR841N_V8          1" >> include/config.h
+	@echo "#define CONFIG_AP123                         1" >> include/config.h
+	@echo "#define DDR2_32BIT_SUPPORT                   1" >> include/config.h
+	@echo "#define CFG_ATHRS27_PHY                      1" >> include/config.h
+	@echo "#define CFG_AG7240_NMACS                     2" >> include/config.h
+	@echo "#define DEFAULT_FLASH_SIZE_IN_MB             4" >> include/config.h
+	@echo "#define BOARD_CUSTOM_STRING                  \"AP123 (AR9341) U-Boot for TL-WR841N/D v8\"" >> include/config.h
 
 	@./mkconfig -a db12x mips mips db12x ar7240 ar7240
 

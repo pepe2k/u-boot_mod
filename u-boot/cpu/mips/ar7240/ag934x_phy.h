@@ -12,7 +12,7 @@ static inline void ag7240_phy_setup(int unit) {
 		athrs16_phy_setup(unit);
 	} else
 #endif
-#ifdef CONFIG_ATHRS17_PHY
+#ifdef CFG_ATHRS17_PHY
     if (unit == 0) {
         athrs17_phy_setup(unit);
     } else
@@ -39,7 +39,7 @@ static inline void ag7240_phy_link(int unit, int *link) {
          *link = athrs16_phy_is_up(unit);
     } else
 #endif
-#ifdef CONFIG_ATHRS17_PHY
+#ifdef CFG_ATHRS17_PHY
     if (unit == 0) {
          *link = athrs17_phy_is_up(unit);
     } else
@@ -66,7 +66,7 @@ static inline void ag7240_phy_duplex(int unit, int *duplex) {
         *duplex = athrs16_phy_is_fdx(unit);
     } else
 #endif
-#ifdef CONFIG_ATHRS17_PHY
+#ifdef CFG_ATHRS17_PHY
     if (unit == 0) {
         *duplex = athrs17_phy_is_fdx(unit);
     } else
@@ -93,7 +93,7 @@ static inline void ag7240_phy_speed(int unit, int *speed) {
         *speed = athrs16_phy_speed(unit);
     } else
 #endif
-#ifdef CONFIG_ATHRS17_PHY
+#ifdef CFG_ATHRS17_PHY
     if (unit == 0) {
         *speed = athrs17_phy_speed(unit);
     } else
