@@ -195,6 +195,7 @@ _start_bootstrap:
 reset:
 
 #ifdef CONFIG_WASP_SUPPORT
+#ifndef CONFIG_AP123
 	/* GPIO Init */
 	li a1, ATH_GPIO_OE
 	lw v1, 0(a1)
@@ -245,6 +246,7 @@ reset:
 	or	v1, v1, v0
 	/* set v1 value to ATH_GPIO_OUT */
 	sw	v1, 0(a1)
+#endif
 #endif
 
 	/*
