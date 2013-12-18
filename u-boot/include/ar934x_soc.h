@@ -1609,9 +1609,6 @@
 
 #define XTAL_ADDRESS                                                 0x18116290
 
-#define GPIO_OE_ADDRESS                                              0x18040000
-
-
 #define PCIE_PHY_REG_1_SERDES_DIS_RXIMP_MSB                          31
 #define PCIE_PHY_REG_1_SERDES_DIS_RXIMP_LSB                          31
 #define PCIE_PHY_REG_1_SERDES_DIS_RXIMP_MASK                         0x80000000
@@ -1752,6 +1749,30 @@
 #define PCIE_PHY_REG_1_S_RESET                                       0xe // 14
 #define PCIE_PHY_REG_1_ADDRESS                                       0x18116cc0
 
+#define AR934X_GPIO_BASE               0x18040000
+#define AR934X_GPIO_OE                 AR934X_GPIO_BASE + 0x0
+#define AR934X_GPIO_IN                 AR934X_GPIO_BASE + 0x4
+#define AR934X_GPIO_OUT                AR934X_GPIO_BASE + 0x8
+#define AR934X_GPIO_SET                AR934X_GPIO_BASE + 0xC
+#define AR934X_GPIO_CLEAR              AR934X_GPIO_BASE + 0x10
+#define AR934X_GPIO_INT                AR934X_GPIO_BASE + 0x14
+#define AR934X_GPIO_INT_TYPE           AR934X_GPIO_BASE + 0x18
+#define AR934X_GPIO_INT_POLARITY       AR934X_GPIO_BASE + 0x1C
+#define AR934X_GPIO_INT_PENDING        AR934X_GPIO_BASE + 0x20
+#define AR934X_GPIO_INT_MASK           AR934X_GPIO_BASE + 0x24
+#define AR934X_GPIO_IN_ETH_SWITCH_LED  AR934X_GPIO_BASE + 0x28
+#define AR934X_GPIO_OUT_FUNCTION0      AR934X_GPIO_BASE + 0x2C
+#define AR934X_GPIO_OUT_FUNCTION1      AR934X_GPIO_BASE + 0x30
+#define AR934X_GPIO_OUT_FUNCTION2      AR934X_GPIO_BASE + 0x34
+#define AR934X_GPIO_OUT_FUNCTION3      AR934X_GPIO_BASE + 0x38
+#define AR934X_GPIO_OUT_FUNCTION4      AR934X_GPIO_BASE + 0x3C
+#define AR934X_GPIO_IN_ENABLE0         AR934X_GPIO_BASE + 0x44
+#define AR934X_GPIO_IN_ENABLE1         AR934X_GPIO_BASE + 0x48
+#define AR934X_GPIO_IN_ENABLE2         AR934X_GPIO_BASE + 0x4C
+#define AR934X_GPIO_IN_ENABLE3         AR934X_GPIO_BASE + 0x50
+#define AR934X_GPIO_IN_ENABLE4         AR934X_GPIO_BASE + 0x54
+#define AR934X_GPIO_IN_ENABLE9         AR934X_GPIO_BASE + 0x68
+#define AR934X_GPIO_FUNCTION           AR934X_GPIO_BASE + 0x6C
 
 #define GPIO_OUT_FUNCTION1_ENABLE_GPIO_7_MSB                         31
 #define GPIO_OUT_FUNCTION1_ENABLE_GPIO_7_LSB                         24
