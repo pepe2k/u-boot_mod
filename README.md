@@ -312,6 +312,17 @@ Configure adapter to use the following settings:
 
   Please, do not make any mistake with offsets and sizes during next steps!
 
+
+8b. If prior to destructively modifying your Flash content you would want to verify whether the new U-Boot binary would actually (at least somewhat) work on your device, then according to [Loading Files With U-Boot via Ethernet and TFTP](http://blackfin.uclinux.org/doku.php?id=bootloaders:u-boot:tftp_loading_files) you should be able to try direct execution of this new U-Boot binary instance via something like
+  ```
+  bfin> tftp 0x1000 u-boot.bin
+  ...
+  bfin> go 0x1000
+  ## Starting application at 0x00001000 ...
+  ```
+
+(after this test it's definitely best to get rid of this running U-Boot test instance by rebooting and thereby then doing the actual flash modification via the device's original U-Boot instance)
+
 9. Erase appropriate FLASH space for new U-Boot image (this command will remove default U-Boot image!):
 
   ```
@@ -331,7 +342,7 @@ Configure adapter to use the following settings:
   done
   ```
 
-11. If you want, you can check content of the FLASH and compare it to the image on your PC, using `md` command in U-Boot console, which prints indicated memory area (press only ENTER after first execution of this command to move further in memory):
+11. If you want, you can check content of the newly written FLASH and compare it to the image on your PC (or better also do such a "legit memory content" comparison prior to writing!), using `md` command in U-Boot console, which prints indicated memory area (press only ENTER after first execution of this command to move further in memory):
 
   ```
   hornet> md 0x9F000000
@@ -428,7 +439,7 @@ FAQ
 
 #### 5. My device does not boot after upgrade!
 
-*I told you... bootloader, in this case the U-Boot, is the most important piece of code inside your device. It is responsible for hardware initialization and booting an OS (kernel in this case). So, if during the upgrade something went wrong, your device will not boot any more. Now you need to remove the FLASH chip, load proper image using an external programmer and solder it back.*
+*I told you... bootloader, in this case U-Boot, is the most important piece of code inside your device. It is responsible for hardware initialization and booting an OS (kernel in this case), i.e. it's the bridge head for delegating to / flashing kernel and rootfs images. So, if during the upgrade something went wrong, your device will not boot any more. The only way to recover from such a situation in a mild way is via a JTAG adapter connection. In case of a lack of JTAG connection, you would even need to remove the FLASH chip, load proper image using an external programmer and solder it back.*
 
 License, outdated sources etc.
 ------------------------------
