@@ -157,10 +157,6 @@
 #define ATHR_QOS_WEIGHTED              ((1 << 31) | (0 << 28)) /* Fixed weight 8,4,2,1 */
 #define ATHR_QOS_MIXED                 ((1 << 31) | (1 << 28)) /* Q3 for managment; Q2,Q1,Q0 - 4,2,1 */
 
-#ifndef BOOL
-#define BOOL    int
-#endif
-
 #define sysMsDelay(_x) udelay((_x) * 1000)
 #define mdelay(_x)      sysMsDelay(_x)
 
