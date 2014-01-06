@@ -32,20 +32,6 @@
 
 #define AR7100_SPI_CLOCK  0x1F000004
 
-#ifdef CONFIG_WASP_SUPPORT
-	#define ATH_APB_BASE				0xB8000000  /* KSEG1ADDR(0x18000000) */
-	#define ATH_GPIO_BASE				ATH_APB_BASE+0x00040000
-	#define ATH_GPIO_OE					ATH_GPIO_BASE+0x0
-	#define ATH_GPIO_OUT				ATH_GPIO_BASE+0x8
-	#define ATH_GPIO_OUT_FUNCTION0		ATH_GPIO_BASE+0x2c
-	#define ATH_GPIO_OUT_FUNCTION1		ATH_GPIO_BASE+0x30
-	#define ATH_GPIO_OUT_FUNCTION2		ATH_GPIO_BASE+0x34
-	#define ATH_GPIO_OUT_FUNCTION3		ATH_GPIO_BASE+0x38
-	#define ATH_GPIO_OUT_FUNCTION4		ATH_GPIO_BASE+0x3c
-	#define ATH_GPIO_OUT_FUNCTION5		ATH_GPIO_BASE+0x40
-#endif
-
-
 #define RVECENT(f,n) \
    b f; nop
 
@@ -194,42 +180,63 @@ _start_bootstrap:
 	.align 4
 reset:
 
-#ifdef CONFIG_WASP_SUPPORT
-	/* GPIO Init */
-	li a1, ATH_GPIO_OE
-	lw v1, 0(a1)
-	/* GPIO 11-15 as output */
-	li  v0, ~((1 << 15) | (1 << 14) | (1 << 13) | (1 << 12) | (1 << 11))
-	and v1, v1, v0
-	/* save GPIO Config Value */
-	sw  v1, 0(a1)
-	lw  v0, 0(a1)
+#if defined(CONFIG_WASP_SUPPORT)
 
-	/* set gpio funtion for gpio11 */
-	li	a1, ATH_GPIO_OUT_FUNCTION2
-	lw	v1, 0(a1)
-	li	v0, 0x00ffffff
+	/*
+	 * Disable JTAG
+	 */
+
+	// Set  BIT 1 to 1 in AR934X_GPIO_FUNCTION
+	li a1, AR934X_GPIO_FUNCTION
+	lw v1, 0(a1)
+	li v0, 0x2
+	or v1, v1, v0
+	sw v1, 0(a1)
+
+#if defined(CONFIG_FOR_TPLINK_WDR3600_WDR43X0_V1)
+	/*
+	 * LED's/Reset GPIOs on WDR3600/WDR43x0 v1:
+	 *
+	 * 11 => USB1
+	 * 12 => USB2
+	 * 13 => WLAN2G
+	 * 14 => SYS
+	 * 15 => QSS
+	 *
+	 * 16 => Reset button
+	 *
+	 * All used GPIOs are active LOW!
+	 */
+
+	// GPIO Init
+	li  a1, AR934X_GPIO_OE
+	lw  v1, 0(a1)
+	li  v0, 0xFFFF07FF
 	and v1, v1, v0
-	/* set v1 value to ATH_GPIO_OUT_FUNCTION2 */
+	sw  v1, 0(a1)
+
+	// Set gpio function for GPIO 11
+	li	a1, AR934X_GPIO_OUT_FUNCTION2
+	lw	v1, 0(a1)
+	li	v0, 0x00FFFFFF
+	and v1, v1, v0
 	sw	v1, 0(a1)
 
-	/* set gpio funtion for gpio12~15 */
-	li	a1, ATH_GPIO_OUT_FUNCTION3
+	// Set gpio function for GPIOs 12~15
+	li	a1, AR934X_GPIO_OUT_FUNCTION3
 	lw	v1, 0(a1)
 	li	v0, 0x0
 	and v1, v1, v0
-	/* set v1 value to ATH_GPIO_OUT_FUNCTION3 */
 	sw	v1, 0(a1)
 
-	/* turn on gpio11-15 */
-	li	a1, ATH_GPIO_OUT
+	// Turn on GPIOs 11~15
+	li	a1, AR934X_GPIO_OUT
 	lw	v1, 0(a1)
-	li	v0, ~((1 << 15) | (1 << 14) | (1 << 13) | (1 << 12) | (1 << 11))
+	li	v0, 0xFFFF07FF
 	and	v1, v1, v0
-	/* set v1 value to ATH_GPIO_OUT */
 	sw	v1, 0(a1)
 
-	/* wait for a while, for leds' bootup blink*/
+	// wait for a while, for leds' bootup blink
 	li a1, 0
 	li v1, 0x70000
 
@@ -238,14 +245,95 @@ reset:
 	bne a1, v1, 1b
 	nop
 
-	/* turn off gpio11-15 */
-	li	a1, ATH_GPIO_OUT
+	// Turn off GPIOs 11~15
+	li	a1, AR934X_GPIO_OUT
 	lw	v1, 0(a1)
-	li	v0, ((1 << 15) | (1 << 14) | (1 << 13) | (1 << 12) | (1 << 11))
+	li	v0, ~(0xFFFF07FF)
 	or	v1, v1, v0
-	/* set v1 value to ATH_GPIO_OUT */
 	sw	v1, 0(a1)
+
+#elif defined(CONFIG_FOR_TPLINK_WR841N_V8)
+	/*
+	 * LED's/Reset GPIOs on WR841N/D v8:
+	 *
+	 * 12 => LAN4
+	 * 13 => WLAN
+	 * 14 => SYS
+	 * 15 => QSS
+	 * 18 => WAN
+	 * 19 => LAN1
+	 * 20 => LAN2
+	 * 21 => LAN3
+	 *
+	 * 16 => Wi-Fi switch
+	 * 17 => Reset button (already set as input)
+	 *
+	 * All used GPIOs are active LOW!
+	 */
+
+	// GPIOs init
+	li  a1, AR934X_GPIO_OE
+	lw  v1, 0(a1)
+	li  v0, 0xFFC30FFF
+	and v1, v1, v0
+	sw  v1, 0(a1)
+
+	// Set gpio function for GPIO 11
+	li	a1, AR934X_GPIO_OUT_FUNCTION2
+	lw	v1, 0(a1)
+	li	v0, 0x00ffffff
+	and v1, v1, v0
+	sw	v1, 0(a1)
+
+	// Set gpio function for GPIOs 12~15
+	li	a1, AR934X_GPIO_OUT_FUNCTION3
+	lw	v1, 0(a1)
+	li	v0, 0x0
+	and v1, v1, v0
+	sw	v1, 0(a1)
+
+	// Turn off GPIOs
+	li  a1, AR934X_GPIO_SET
+	li	v1, 0x3CF000
+	sw	v1, 0(a1)
+
+#elif defined(CONFIG_FOR_TPLINK_WA830RE_V2_WA801ND_V2)
+	/*
+	 * LED's/Reset GPIOs on WR841N/D v8:
+	 *
+	 * 13 => WLAN
+	 * 14 => SYS
+	 * 15 => QSS
+	 * 18 => LAN
+	 *
+	 * 16 => Range Extender
+	 * 17 => Reset button (already set as input)
+	 *
+	 * All used GPIOs are active LOW!
+	 */
+
+	// GPIOs init
+	li  a1, AR934X_GPIO_OE
+	lw  v1, 0(a1)
+	li  v0, 0xFFFB1FFF
+	and v1, v1, v0
+	sw  v1, 0(a1)
+
+	// Set gpio function for GPIOs 13~15
+	li	a1, AR934X_GPIO_OUT_FUNCTION3
+	lw	v1, 0(a1)
+	li	v0, 0xFF
+	and v1, v1, v0
+	sw	v1, 0(a1)
+
+	// Turn off GPIOs
+	li  a1, AR934X_GPIO_SET
+	li	v1, 0x4E000
+	sw	v1, 0(a1)
+
 #endif
+
+#endif /* #if defined(CONFIG_WASP_SUPPORT) */
 
 	/*
 	 * Clearing CP0 registers - This is generally required for the MIPS-24k

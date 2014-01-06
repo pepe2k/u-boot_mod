@@ -584,7 +584,7 @@ int athrs26_phy_speed(int ethUnit){
 				case 2:
 					return(_1000BASET);
 				default:
-					printf("## Error: unkown eth speed!\n");
+					printf("## Error: unknown eth speed!\n");
 			}
 		}
 	}

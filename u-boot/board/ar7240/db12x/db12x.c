@@ -14,54 +14,105 @@ extern int ar7240_ddr_find_size(void);
 void led_toggle(void){
 	unsigned int gpio;
 
-	gpio = ar7240_reg_rd(AR7240_GPIO_OUT);
+	gpio = ar7240_reg_rd(AR934X_GPIO_OUT);
 
-	// SYS LED is connected to GPIO 14
-	gpio ^= 1 << 14;
+#if defined(CONFIG_FOR_TPLINK_WDR3600_WDR43X0_V1) || \
+	defined(CONFIG_FOR_TPLINK_WR841N_V8) || \
+	defined(CONFIG_FOR_TPLINK_WA830RE_V2_WA801ND_V2)
+	gpio ^= 1 << GPIO_SYS_LED_BIT;
+#else
+	#error "Custom GPIO in leg_toggle() not defined!"
+#endif
 
-	ar7240_reg_wr(AR7240_GPIO_OUT, gpio);
+	ar7240_reg_wr(AR934X_GPIO_OUT, gpio);
 }
 
 void all_led_on(void){
 	unsigned int gpio;
 
-	gpio = ar7240_reg_rd(AR7240_GPIO_OUT);
+	gpio = ar7240_reg_rd(AR934X_GPIO_OUT);
 
-	// SYS LED (GPIO 14) and WLAN24 (GPIO 13)
-	SETBITVAL(gpio, 14, 0);
-	SETBITVAL(gpio, 13, 0);
+#if defined(CONFIG_FOR_TPLINK_WDR3600_WDR43X0_V1)
+	SETBITVAL(gpio, GPIO_SYS_LED_BIT,      GPIO_SYS_LED_ON);
+	SETBITVAL(gpio, GPIO_WLAN_2G_LED_BIT,  GPIO_WLAN_2G_LED_ON);
+	SETBITVAL(gpio, GPIO_USB1_LED_BIT,     GPIO_USB1_LED_ON);
+	SETBITVAL(gpio, GPIO_USB2_LED_BIT,     GPIO_USB2_LED_ON);
+	//SETBITVAL(gpio, GPIO_QSS_LED_BIT,      GPIO_QSS_LED_ON);
+#elif defined(CONFIG_FOR_TPLINK_WR841N_V8)
+	SETBITVAL(gpio, GPIO_SYS_LED_BIT,      GPIO_SYS_LED_ON);
+	SETBITVAL(gpio, GPIO_WLAN_LED_BIT,     GPIO_WLAN_LED_ON);
+	SETBITVAL(gpio, GPIO_INTERNET_LED_BIT, GPIO_INTERNET_LED_ON);
+	SETBITVAL(gpio, GPIO_LAN1_LED_BIT,     GPIO_LAN1_LED_ON);
+	SETBITVAL(gpio, GPIO_LAN2_LED_BIT,     GPIO_LAN2_LED_ON);
+	SETBITVAL(gpio, GPIO_LAN3_LED_BIT,     GPIO_LAN3_LED_ON);
+	SETBITVAL(gpio, GPIO_LAN4_LED_BIT,     GPIO_LAN4_LED_ON);
+	SETBITVAL(gpio, GPIO_QSS_LED_BIT,      GPIO_QSS_LED_ON);
+#elif defined(CONFIG_FOR_TPLINK_WA830RE_V2_WA801ND_V2)
+	SETBITVAL(gpio, GPIO_SYS_LED_BIT,      GPIO_SYS_LED_ON);
+	SETBITVAL(gpio, GPIO_LAN_LED_BIT,      GPIO_LAN_LED_ON);
+	SETBITVAL(gpio, GPIO_WLAN_LED_BIT,     GPIO_WLAN_LED_ON);
+	SETBITVAL(gpio, GPIO_QSS_LED_BIT,      GPIO_QSS_LED_ON);
+#else
+	#error "Custom GPIO in all_led_on() not defined!"
+#endif
 
-	ar7240_reg_wr(AR7240_GPIO_OUT, gpio);
+	ar7240_reg_wr(AR934X_GPIO_OUT, gpio);
 }
 
 void all_led_off(void){
 	unsigned int gpio;
 
-	gpio = ar7240_reg_rd(AR7240_GPIO_OUT);
+	gpio = ar7240_reg_rd(AR934X_GPIO_OUT);
 
-	// SYS LED (GPIO 14) and WLAN24 (GPIO 13)
-	SETBITVAL(gpio, 14, 1);
-	SETBITVAL(gpio, 13, 1);
+#if defined(CONFIG_FOR_TPLINK_WDR3600_WDR43X0_V1)
+	SETBITVAL(gpio, GPIO_SYS_LED_BIT,      !GPIO_SYS_LED_ON);
+	SETBITVAL(gpio, GPIO_WLAN_2G_LED_BIT,  !GPIO_WLAN_2G_LED_ON);
+	SETBITVAL(gpio, GPIO_USB1_LED_BIT,     !GPIO_USB1_LED_ON);
+	SETBITVAL(gpio, GPIO_USB2_LED_BIT,     !GPIO_USB2_LED_ON);
+	//SETBITVAL(gpio, GPIO_QSS_LED_BIT,      !GPIO_QSS_LED_ON);
+#elif defined(CONFIG_FOR_TPLINK_WR841N_V8)
+	SETBITVAL(gpio, GPIO_SYS_LED_BIT,      !GPIO_SYS_LED_ON);
+	SETBITVAL(gpio, GPIO_WLAN_LED_BIT,     !GPIO_WLAN_LED_ON);
+	SETBITVAL(gpio, GPIO_INTERNET_LED_BIT, !GPIO_INTERNET_LED_ON);
+	SETBITVAL(gpio, GPIO_LAN1_LED_BIT,     !GPIO_LAN1_LED_ON);
+	SETBITVAL(gpio, GPIO_LAN2_LED_BIT,     !GPIO_LAN2_LED_ON);
+	SETBITVAL(gpio, GPIO_LAN3_LED_BIT,     !GPIO_LAN3_LED_ON);
+	SETBITVAL(gpio, GPIO_LAN4_LED_BIT,     !GPIO_LAN4_LED_ON);
+	SETBITVAL(gpio, GPIO_QSS_LED_BIT,      !GPIO_QSS_LED_ON);
+#elif defined(CONFIG_FOR_TPLINK_WA830RE_V2_WA801ND_V2)
+	SETBITVAL(gpio, GPIO_SYS_LED_BIT,      !GPIO_SYS_LED_ON);
+	SETBITVAL(gpio, GPIO_LAN_LED_BIT,      !GPIO_LAN_LED_ON);
+	SETBITVAL(gpio, GPIO_WLAN_LED_BIT,     !GPIO_WLAN_LED_ON);
+	SETBITVAL(gpio, GPIO_QSS_LED_BIT,      !GPIO_QSS_LED_ON);
+#else
+	#error "Custom GPIO in all_led_off() not defined!"
+#endif
 
-	ar7240_reg_wr(AR7240_GPIO_OUT, gpio);
+	ar7240_reg_wr(AR934X_GPIO_OUT, gpio);
 }
 
 // get button status
+#ifndef GPIO_RST_BUTTON_BIT
+	#error "GPIO_RST_BUTTON_BIT not defined!"
+#endif
 int reset_button_status(void){
-	// RESET BUTTON is connected to GPIO 16
-	if(ar7240_reg_rd(AR7240_GPIO_IN) & (1 << 16)){
-		return 0;
-	} else {
-		return 1;
-	}
-}
+	unsigned int gpio;
 
-void gpio_config(void){
-	/* disable the CLK_OBS on GPIO_4 and set GPIO4 as input */
-	ar7240_reg_rmw_clear(GPIO_OE_ADDRESS, (1 << 4));
-	ar7240_reg_rmw_clear(GPIO_OUT_FUNCTION1_ADDRESS, GPIO_OUT_FUNCTION1_ENABLE_GPIO_4_MASK);
-	ar7240_reg_rmw_set(GPIO_OUT_FUNCTION1_ADDRESS, GPIO_OUT_FUNCTION1_ENABLE_GPIO_4_SET(0x80));
-	ar7240_reg_rmw_set(GPIO_OE_ADDRESS, (1 << 4));
+	gpio = ar7240_reg_rd(AR934X_GPIO_IN);
+
+	if(gpio & (1 << GPIO_RST_BUTTON_BIT)){
+#if defined(GPIO_RST_BUTTON_IS_ACTIVE_LOW)
+		return(0);
+#else
+		return(1);
+#endif
+	} else {
+#if defined(GPIO_RST_BUTTON_IS_ACTIVE_LOW)
+		return(1);
+#else
+		return(0);
+#endif
+	}
 }
 
 void ath_set_tuning_caps(void){
@@ -112,8 +163,6 @@ int wasp_mem_config(void){
 	ar7240_reg_wr_nf(0x18116c44, 0x10380000); /* AR_PHY_PMU2 */
 
 	//wasp_usb_initial_config();
-
-	gpio_config();
 
 	/* Needed here not to mess with Ethernet clocks */
 	ath_set_tuning_caps();
