@@ -297,7 +297,7 @@ reset:
 	li	v1, 0x3CF000
 	sw	v1, 0(a1)
 
-#elif defined(CONFIG_FOR_TPLINK_WA830RE_V2)
+#elif defined(CONFIG_FOR_TPLINK_WA830RE_V2_WA801ND_V2)
 	/*
 	 * LED's/Reset GPIOs on WR841N/D v8:
 	 *
