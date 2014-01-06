@@ -312,17 +312,6 @@ Configure adapter to use the following settings:
 
   Please, do not make any mistake with offsets and sizes during next steps!
 
-
-8b. If prior to destructively modifying your Flash content you would want to verify whether the new U-Boot binary would actually (at least somewhat) work on your device, then according to [Loading Files With U-Boot via Ethernet and TFTP](http://blackfin.uclinux.org/doku.php?id=bootloaders:u-boot:tftp_loading_files) you should be able to try direct execution of this new U-Boot binary instance via something like
-  ```
-  bfin> tftp 0x1000 u-boot.bin
-  ...
-  bfin> go 0x1000
-  ## Starting application at 0x00001000 ...
-  ```
-
-(after this test it's definitely best to get rid of this running U-Boot test instance by rebooting and thereby then doing the actual flash modification via the device's original U-Boot instance)
-
 9. Erase appropriate FLASH space for new U-Boot image (this command will remove default U-Boot image!):
 
   ```
