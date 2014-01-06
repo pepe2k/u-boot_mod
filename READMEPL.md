@@ -38,7 +38,7 @@ Oryginalne wersje źródeł można pobrać z poniższych stron:
 
 Pomysł na tę modyfikację został zaczerpnięty z innego projektu, przeznaczonego dla bardzo popularnego, małego routera mobilnego **TP-Link TL-WR703N**, w którym autor umieścił tryb ratunkowy dostępny przez przeglądarkę: **[wr703n-uboot-with-web-failsafe](http://code.google.com/p/wr703n-uboot-with-web-failsafe/)**. Przez jakiś czas z powodzeniem używałem tej modyfikacji, ale postanowiłem ją ulepszyć, dodać kilka opcji i wsparcie dla innych modeli oraz wszystkich przeglądarek.
 
-Pierwszą wersję mojej modyfikacji zaprezentowałem na forum **OpenWrt**, w [tym wątku](https://forum.openwrt.org/viewtopic.php?id=43237), pod koniec marca 2013 roku. Zawierała ona wsparcie wyłącznie dla modeli TP-Link z układem SoC **Atheros AR9331**. Obecnie, wspierane są również urządzenia innych producentów, w tym z układem SoC **Atheros AR9344** (**TP-Link TL-WDR3600** i **TL-WDR43x0**), a inne (w najbliższych planach jest wsparcie dla routerów z układem **Atheros AR9341**) są w trakcie opracowania.
+Pierwszą wersję mojej modyfikacji zaprezentowałem na forum **OpenWrt**, w [tym wątku](https://forum.openwrt.org/viewtopic.php?id=43237), pod koniec marca 2013 roku. Zawierała ona wsparcie wyłącznie dla modeli TP-Link z układem SoC **Atheros AR9331**. Obecnie, wspierane są również urządzenia innych producentów, w tym z układem SoC **Atheros AR934x** (**TP-Link TL-WDR3600**, **TL-WDR43x0**, **TL-WA830RE v2**), a inne (w najbliższych planach jest wsparcie dla routerów z układami z serii **Qualcomm Atheros QCA955x**) są w trakcie opracowania.
 
 Dodatkowe informacje o niniejszej modyfikacji można znaleźć również na [moim blogu](http://www.tech-blog.pl), w [tym artykule](http://www.tech-blog.pl/2013/03/29/zmodyfikowany-u-boot-dla-routerow-tp-link-z-atheros-ar9331-z-trybem-aktualizacji-oprogramowania-przez-www-i-konsola-sieciowa-netconsole/).
 
@@ -64,6 +64,10 @@ Lista obecnie wspieranych urządzeń:
 - **Atheros AR1311 (bliźniaczy układ AR9331)**
   - D-Link DIR-505 H/W ver. A1 ([zdjęcia w mojej galerii](http://galeria.tech-blog.pl/D-Link_DIR-505/))
 
+- **Atheros AR9341**:
+  - TP-Link TL-WA830RE v2
+  - TP-Link TL-WA801ND v2
+
 - **Atheros AR9344**:
   - TP-Link TL-WDR3600 v1
   - TP-Link TL-WDR43x0 v1
@@ -84,6 +88,8 @@ Dodatkowe informacje o wspieranych urządzeniach:
 | [TP-Link TL-MR13U v1](http://wiki.openwrt.org/toh/tp-link/tl-mr13u) | AR9331 | 4 MiB | 32 MiB DDR1 | 64 KiB, LZMA | RO |
 | [TP-Link TL-WR740N v4](http://wiki.openwrt.org/toh/tp-link/tl-wr740n) | AR9331 | 4 MiB | 32 MiB DDR1 | 64 KiB, LZMA | RO |
 | [TP-Link TL-MR3220 v2](http://wiki.openwrt.org/toh/tp-link/tl-mr3420) | AR9331 | 4 MiB | 32 MiB DDR1 | 64 KiB, LZMA | RO |
+| [TP-Link TL-WA830RE v2](http://wikidevi.com/wiki/TP-LINK_TL-WA830RE_v2) | AR9341 | 4 MiB | 32 MiB DDR1 | 64 KiB, LZMA | RO |
+| [TP-Link TL-WA801ND v2](http://wikidevi.com/wiki/TP-LINK_TL-WA801ND_v2) | AR9341 | 4 MiB | 32 MiB DDR1 | 64 KiB, LZMA | RO |
 | [TP-Link TL-WDR3600 v1](http://wiki.openwrt.org/toh/tp-link/tl-wdr3600) | AR9344 | 8 MiB | 128 MiB DDR2 | 64 KiB, LZMA | RO |
 | [TP-Link TL-WDR43x0 v1](http://wiki.openwrt.org/toh/tp-link/tl-wdr4300) | AR9344 | 8 MiB | 128 MiB DDR2 | 64 KiB, LZMA | RO |
 | [D-Link DIR-505 H/W ver. A1](http://wiki.openwrt.org/toh/d-link/dir-505) | AR1311 | 8 MiB | 64 MiB DDR2 | 64 KiB, LZMA | RO |
