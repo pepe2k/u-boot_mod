@@ -265,6 +265,7 @@ reset:
 	 * 20 => LAN2
 	 * 21 => LAN3
 	 *
+	 * 16 => Wi-Fi switch
 	 * 17 => Reset button (already set as input)
 	 *
 	 * All used GPIOs are active LOW!
@@ -292,11 +293,44 @@ reset:
 	sw	v1, 0(a1)
 
 	// Turn off GPIOs
-	li  a1, AR934X_GPIO_OUT
-	lw  v1, 0(a1)
-	li	v0, ~(0xFFC30FFF)
-	or	v1, v1, v0
+	li  a1, AR934X_GPIO_SET
+	li	v1, 0x3CF000
 	sw	v1, 0(a1)
+
+#elif defined(CONFIG_FOR_TPLINK_WA830RE_V2)
+	/*
+	 * LED's/Reset GPIOs on WR841N/D v8:
+	 *
+	 * 13 => WLAN
+	 * 14 => SYS
+	 * 15 => QSS
+	 * 18 => LAN
+	 *
+	 * 16 => Range Extender
+	 * 17 => Reset button (already set as input)
+	 *
+	 * All used GPIOs are active LOW!
+	 */
+
+	// GPIOs init
+	li  a1, AR934X_GPIO_OE
+	lw  v1, 0(a1)
+	li  v0, 0xFFFB1FFF
+	and v1, v1, v0
+	sw  v1, 0(a1)
+
+	// Set gpio function for GPIOs 13~15
+	li	a1, AR934X_GPIO_OUT_FUNCTION3
+	lw	v1, 0(a1)
+	li	v0, 0xFF
+	and v1, v1, v0
+	sw	v1, 0(a1)
+
+	// Turn off GPIOs
+	li  a1, AR934X_GPIO_SET
+	li	v1, 0x4E000
+	sw	v1, 0(a1)
+
 #endif
 
 #endif /* #if defined(CONFIG_WASP_SUPPORT) */

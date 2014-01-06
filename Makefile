@@ -107,6 +107,16 @@ tplink_wr841n_v8:
 	@cp $(BUILD_TOPDIR)/u-boot/tuboot.bin $(BUILD_TOPDIR)/bin/temp.bin
 	@make show_size
 
+tplink_wa830re_v2:	export UBOOT_FILE_NAME=uboot_for_tp-link_tl-wa830re_v2
+tplink_wa830re_v2:	export MAX_UBOOT_SIZE=64
+tplink_wa830re_v2:	export COMPRESSED_UBOOT=1
+tplink_wa830re_v2:	export ETH_CONFIG=_s27
+tplink_wa830re_v2:
+	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) wa830re_v2_config
+	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) ENDIANNESS=-EB V=1 all
+	@cp $(BUILD_TOPDIR)/u-boot/tuboot.bin $(BUILD_TOPDIR)/bin/temp.bin
+	@make show_size
+
 dlink_dir505:	export UBOOT_FILE_NAME=uboot_for_d-link_dir-505
 dlink_dir505:	export MAX_UBOOT_SIZE=64
 dlink_dir505:	export COMPRESSED_UBOOT=1

@@ -16,9 +16,9 @@ void led_toggle(void){
 
 	gpio = ar7240_reg_rd(AR934X_GPIO_OUT);
 
-#if defined(CONFIG_FOR_TPLINK_WDR3600_WDR43X0_V1)
-	gpio ^= 1 << GPIO_SYS_LED_BIT;
-#elif defined(CONFIG_FOR_TPLINK_WR841N_V8)
+#if defined(CONFIG_FOR_TPLINK_WDR3600_WDR43X0_V1) || \
+	defined(CONFIG_FOR_TPLINK_WR841N_V8) || \
+	defined(CONFIG_FOR_TPLINK_WA830RE_V2)
 	gpio ^= 1 << GPIO_SYS_LED_BIT;
 #else
 	#error "Custom GPIO in leg_toggle() not defined!"
@@ -47,6 +47,11 @@ void all_led_on(void){
 	SETBITVAL(gpio, GPIO_LAN3_LED_BIT,     GPIO_LAN3_LED_ON);
 	SETBITVAL(gpio, GPIO_LAN4_LED_BIT,     GPIO_LAN4_LED_ON);
 	SETBITVAL(gpio, GPIO_QSS_LED_BIT,      GPIO_QSS_LED_ON);
+#elif defined(CONFIG_FOR_TPLINK_WA830RE_V2)
+	SETBITVAL(gpio, GPIO_SYS_LED_BIT,      GPIO_SYS_LED_ON);
+	SETBITVAL(gpio, GPIO_LAN_LED_BIT,      GPIO_LAN_LED_ON);
+	SETBITVAL(gpio, GPIO_WLAN_LED_BIT,     GPIO_WLAN_LED_ON);
+	SETBITVAL(gpio, GPIO_QSS_LED_BIT,      GPIO_QSS_LED_ON);
 #else
 	#error "Custom GPIO in all_led_on() not defined!"
 #endif
@@ -73,6 +78,11 @@ void all_led_off(void){
 	SETBITVAL(gpio, GPIO_LAN2_LED_BIT,     !GPIO_LAN2_LED_ON);
 	SETBITVAL(gpio, GPIO_LAN3_LED_BIT,     !GPIO_LAN3_LED_ON);
 	SETBITVAL(gpio, GPIO_LAN4_LED_BIT,     !GPIO_LAN4_LED_ON);
+	SETBITVAL(gpio, GPIO_QSS_LED_BIT,      !GPIO_QSS_LED_ON);
+#elif defined(CONFIG_FOR_TPLINK_WA830RE_V2)
+	SETBITVAL(gpio, GPIO_SYS_LED_BIT,      !GPIO_SYS_LED_ON);
+	SETBITVAL(gpio, GPIO_LAN_LED_BIT,      !GPIO_LAN_LED_ON);
+	SETBITVAL(gpio, GPIO_WLAN_LED_BIT,     !GPIO_WLAN_LED_ON);
 	SETBITVAL(gpio, GPIO_QSS_LED_BIT,      !GPIO_QSS_LED_ON);
 #else
 	#error "Custom GPIO in all_led_off() not defined!"
