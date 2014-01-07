@@ -182,79 +182,76 @@ reset:
 
 #if defined(CONFIG_WASP_SUPPORT)
 
-	/*
-	 * Disable JTAG
-	 */
-
-	// Set  BIT 1 to 1 in AR934X_GPIO_FUNCTION
-	li a1, AR934X_GPIO_FUNCTION
-	lw v1, 0(a1)
-	li v0, 0x2
-	or v1, v1, v0
-	sw v1, 0(a1)
+	// Disable JTAG (bit 1 set) and ALL clock observation (bit 2~9 reset)
+	li  a1, AR934X_GPIO_FUNCTION
+	li  v1, 0x2
+	sw  v1, 0(a1)
 
 #if defined(CONFIG_FOR_TPLINK_WDR3600_WDR43X0_V1)
 	/*
-	 * LED's/Reset GPIOs on WDR3600/WDR43x0 v1:
+	 * LEDs and buttons GPIOs on WDR3600/WDR43x0 v1:
 	 *
-	 * 11 => USB1
-	 * 12 => USB2
+	 * 11 => USB1 LED
+	 * 12 => USB2 LED
 	 * 13 => WLAN2G
 	 * 14 => SYS
 	 * 15 => QSS
+	 * 21 => USB2 POWER (active high)
+	 * 22 => USB1 POWER (active high)
 	 *
 	 * 16 => Reset button
+	 * 17 => Wi-Fi ON/OFF switch
 	 *
-	 * All used GPIOs are active LOW!
+	 * All OUT GPIOs are active LOW if not stated otherwise
 	 */
 
 	// GPIO Init
 	li  a1, AR934X_GPIO_OE
 	lw  v1, 0(a1)
-	li  v0, 0xFFFF07FF
-	and v1, v1, v0
+	// Set GPIOs 11~15 and 21~22 as outputs
+	and v1, v1, 0xFF9F07FF
+	// Set GPIOs 16~17 as inputs
+	or  v1, v1, 0x30000
 	sw  v1, 0(a1)
 
-	// Set gpio function for GPIO 11
+	// Set GPIO function for GPIO 11
 	li	a1, AR934X_GPIO_OUT_FUNCTION2
 	lw	v1, 0(a1)
-	li	v0, 0x00FFFFFF
-	and v1, v1, v0
+	and v1, v1, 0x00FFFFFF
 	sw	v1, 0(a1)
 
-	// Set gpio function for GPIOs 12~15
+	// Set GPIO function for GPIOs 12~15
 	li	a1, AR934X_GPIO_OUT_FUNCTION3
-	lw	v1, 0(a1)
-	li	v0, 0x0
-	and v1, v1, v0
+	li	v1, 0x0
 	sw	v1, 0(a1)
 
-	// Turn on GPIOs 11~15
-	li	a1, AR934X_GPIO_OUT
-	lw	v1, 0(a1)
-	li	v0, 0xFFFF07FF
-	and	v1, v1, v0
+	// Turn on power on both USB
+	li  a1, AR934X_GPIO_SET
+	li	v1, 0x600000
 	sw	v1, 0(a1)
 
-	// wait for a while, for leds' bootup blink
-	li a1, 0
-	li v1, 0x70000
+	// Turn on all LEDs
+	li  a1, AR934X_GPIO_CLEAR
+	li	v1, 0xF800
+	sw	v1, 0(a1)
+
+	// Wait for a while, for leds bootup blink
+	li  a1, 0
+	li  v1, 0x70000
 
 1:
 	addi a1, a1, 1
-	bne a1, v1, 1b
+	bne  a1, v1, 1b
 	nop
 
-	// Turn off GPIOs 11~15
-	li	a1, AR934X_GPIO_OUT
-	lw	v1, 0(a1)
-	li	v0, ~(0xFFFF07FF)
-	or	v1, v1, v0
+	// Turn off all LEDs
+	li  a1, AR934X_GPIO_SET
+	li	v1, 0xF800
 	sw	v1, 0(a1)
 
 #elif defined(CONFIG_FOR_TPLINK_WR841N_V8)
 	/*
-	 * LED's/Reset GPIOs on WR841N/D v8:
+	 * LEDs and buttons GPIOs on WR841N/D v8:
 	 *
 	 * 12 => LAN4
 	 * 13 => WLAN
@@ -265,41 +262,103 @@ reset:
 	 * 20 => LAN2
 	 * 21 => LAN3
 	 *
-	 * 16 => Wi-Fi switch
-	 * 17 => Reset button (already set as input)
+	 * 16 => Wi-Fi ON/OFF switch
+	 * 17 => Reset button
 	 *
-	 * All used GPIOs are active LOW!
+	 * All OUT GPIOs are active LOW if not stated otherwise
 	 */
 
 	// GPIOs init
 	li  a1, AR934X_GPIO_OE
 	lw  v1, 0(a1)
-	li  v0, 0xFFC30FFF
-	and v1, v1, v0
+	// Set GPIOs 12~15 and 18~21 as outputs
+	and v1, v1, 0xFFC30FFF
+	// Set GPIOs 16~17 as inputs
+	or  v1, v1, 0x30000
 	sw  v1, 0(a1)
-
-	// Set gpio function for GPIO 11
-	li	a1, AR934X_GPIO_OUT_FUNCTION2
-	lw	v1, 0(a1)
-	li	v0, 0x00ffffff
-	and v1, v1, v0
-	sw	v1, 0(a1)
 
 	// Set gpio function for GPIOs 12~15
 	li	a1, AR934X_GPIO_OUT_FUNCTION3
-	lw	v1, 0(a1)
-	li	v0, 0x0
-	and v1, v1, v0
+	li	v1, 0x0
 	sw	v1, 0(a1)
 
-	// Turn off GPIOs
+	// Set GPIO function for GPIOs 18~19
+	li	a1, AR934X_GPIO_OUT_FUNCTION4
+	lw	v1, 0(a1)
+	and v1, v1, 0xFFFF
+	sw	v1, 0(a1)
+
+	// Turn off all LEDs
 	li  a1, AR934X_GPIO_SET
 	li	v1, 0x3CF000
 	sw	v1, 0(a1)
 
+#elif defined(CONFIG_FOR_TPLINK_MR3420_V2)
+	/*
+	 * LEDs and buttons GPIOs on MR3420 v2:
+	 *
+	 * 4  => USB Power (active high)
+	 * 11 => USB/3G LED
+	 * 12 => LAN4
+	 * 13 => WLAN
+	 * 14 => SYS
+	 * 15 => QSS
+	 * 18 => WAN
+	 * 19 => LAN1
+	 * 20 => LAN2
+	 * 21 => LAN3
+	 *
+	 * 16 => WPS button
+	 * 17 => Reset button
+	 *
+	 * All OUT GPIOs are active LOW if not stated otherwise
+	 */
+
+	// GPIOs init
+	li  a1, AR934X_GPIO_OE
+	lw  v1, 0(a1)
+	// Set GPIOs 4, 11~15 and 18~21 as outputs
+	and v1, v1, 0xFFC307EF
+	// Set GPIOs 16~17 as inputs
+	or  v1, v1, 0x30000
+	sw  v1, 0(a1)
+
+	// Set GPIO function for GPIO 4
+	li	a1, AR934X_GPIO_OUT_FUNCTION1
+	lw	v1, 0(a1)
+	and v1, v1, 0xFFFFFF00
+	sw	v1, 0(a1)
+
+	// Set GPIO function for GPIO 11
+	li	a1, AR934X_GPIO_OUT_FUNCTION2
+	lw	v1, 0(a1)
+	and v1, v1, 0x00FFFFFF
+	sw	v1, 0(a1)
+
+	// Set GPIO function for GPIOs 12~15
+	li	a1, AR934X_GPIO_OUT_FUNCTION3
+	li	v1, 0x0
+	sw	v1, 0(a1)
+
+	// Set GPIO function for GPIOs 18~19
+	li	a1, AR934X_GPIO_OUT_FUNCTION4
+	lw	v1, 0(a1)
+	and v1, v1, 0xFFFF
+	sw	v1, 0(a1)
+
+	// Turn on power on USB
+	li  a1, AR934X_GPIO_SET
+	li	v1, 0x10
+	sw	v1, 0(a1)
+
+	// Turn off all LEDs
+	li  a1, AR934X_GPIO_SET
+	li	v1, 0x3CF800
+	sw	v1, 0(a1)
+
 #elif defined(CONFIG_FOR_TPLINK_WA830RE_V2_WA801ND_V2)
 	/*
-	 * LED's/Reset GPIOs on WR841N/D v8:
+	 * LEDs and buttons GPIOs on WA830REv2 and WA801ND v2:
 	 *
 	 * 13 => WLAN
 	 * 14 => SYS
@@ -307,26 +366,33 @@ reset:
 	 * 18 => LAN
 	 *
 	 * 16 => Range Extender
-	 * 17 => Reset button (already set as input)
+	 * 17 => Reset button
 	 *
-	 * All used GPIOs are active LOW!
+	 * All OUT GPIOs are active LOW if not stated otherwise
 	 */
 
 	// GPIOs init
 	li  a1, AR934X_GPIO_OE
 	lw  v1, 0(a1)
-	li  v0, 0xFFFB1FFF
-	and v1, v1, v0
+	// Set GPIOs 13~15 and 18 as outputs
+	and v1, v1, 0xFFFB1FFF
+	// Set GPIOs 16~17 as inputs
+	or  v1, v1, 0x30000
 	sw  v1, 0(a1)
 
-	// Set gpio function for GPIOs 13~15
+	// Set GPIO function for GPIOs 13~15
 	li	a1, AR934X_GPIO_OUT_FUNCTION3
 	lw	v1, 0(a1)
-	li	v0, 0xFF
-	and v1, v1, v0
+	and v1, v1, 0xFF
 	sw	v1, 0(a1)
 
-	// Turn off GPIOs
+	// Set GPIO function for GPIO 18
+	li	a1, AR934X_GPIO_OUT_FUNCTION4
+	lw	v1, 0(a1)
+	and v1, v1, 0xFF00FFFF
+	sw	v1, 0(a1)
+
+	// Turn off all LEDs
 	li  a1, AR934X_GPIO_SET
 	li	v1, 0x4E000
 	sw	v1, 0(a1)
