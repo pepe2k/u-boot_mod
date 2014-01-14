@@ -217,74 +217,321 @@ int do_erase_env(cmd_tbl_t * cmdtp, int flag, int argc, char *argv[]){
 U_BOOT_CMD(eraseenv, 1, 1, do_erase_env, "erase environment sector in flash\n", NULL);
 #endif /* if defined(CONFIG_FOR_8DEVICES_CARAMBOLA2) */
 
-#if defined(CONFIG_MACH_HORNET)
-// TODO: AR9344 support
-/*
- * Show current CPU/RAM/AHB/SPI/REF clocks
- */
-int do_print_clocks(cmd_tbl_t * cmdtp, int flag, int argc, char *argv[]){
-	unsigned int ahb_freq, ddr_freq, cpu_freq, spi_freq;
 #if defined(PLL_IN_FLASH_MAGIC_OFFSET)
-	unsigned int pll, ref, reg;
+
+typedef struct {
+	// Clocks in MHz
+	unsigned short cpu_clock;
+	unsigned short ram_clock;
+	unsigned short ahb_clock;
+	unsigned short spi_clock;
+
+	// Registers values
+	// (more info in includes/configs/ap121.h)
+	unsigned int cpu_clk_control;
+	unsigned int cpu_pll_config;
+	unsigned int spi_control;
+} ar9331_clock_profile;
+
+static const ar9331_clock_profile oc_profiles[] = {
+	{
+	 200, 200, 100, 25,
+	 MAKE_AR9331_CPU_CLK_CONTROL_VAL(1, 1, 2),
+#if defined(CONFIG_40MHZ_XTAL_SUPPORT)
+	 MAKE_AR9331_CPU_PLL_CONFIG_VAL(20, 1, 0, 2),
+#else
+	 MAKE_AR9331_CPU_PLL_CONFIG_VAL(32, 1, 0, 2),
+#endif
+	 MAKE_AR9331_SPI_CONTROL_VAL(4)
+	},
+
+	{
+	 200, 200, 200, 33,
+	 MAKE_AR9331_CPU_CLK_CONTROL_VAL(1, 1, 1),
+#if defined(CONFIG_40MHZ_XTAL_SUPPORT)
+	 MAKE_AR9331_CPU_PLL_CONFIG_VAL(20, 1, 0, 2),
+#else
+	 MAKE_AR9331_CPU_PLL_CONFIG_VAL(32, 1, 0, 2),
+#endif
+	 MAKE_AR9331_SPI_CONTROL_VAL(6)
+	},
+
+#if !defined(CONFIG_40MHZ_XTAL_SUPPORT)
+	{
+	 225, 225, 112, 28,
+	 MAKE_AR9331_CPU_CLK_CONTROL_VAL(1, 1, 2),
+	 MAKE_AR9331_CPU_PLL_CONFIG_VAL(36, 1, 0, 2),
+	 MAKE_AR9331_SPI_CONTROL_VAL(4)
+	},
+
+	{
+	 225, 225, 225, 28,
+	 MAKE_AR9331_CPU_CLK_CONTROL_VAL(1, 1, 1),
+	 MAKE_AR9331_CPU_PLL_CONFIG_VAL(36, 1, 0, 2),
+	 MAKE_AR9331_SPI_CONTROL_VAL(8)
+	},
 #endif
 
-	// read clocks
-	ar7240_sys_frequency(&cpu_freq, &ddr_freq, &ahb_freq);
+	{
+	 250, 250, 125, 31,
+	 MAKE_AR9331_CPU_CLK_CONTROL_VAL(1, 1, 2),
+#if defined(CONFIG_40MHZ_XTAL_SUPPORT)
+	 MAKE_AR9331_CPU_PLL_CONFIG_VAL(25, 1, 0, 2),
+#else
+	 MAKE_AR9331_CPU_PLL_CONFIG_VAL(20, 1, 0, 1),
+#endif
+	 MAKE_AR9331_SPI_CONTROL_VAL(4)
+	},
 
-	// calculate SPI clock (we need to set bit 0 to 1 in SPI_FUNC_SELECT to access SPI registers)
-	ar7240_reg_wr(AR7240_SPI_FS, 0x01);
-	spi_freq = ahb_freq / (((ar7240_reg_rd(AR7240_SPI_CLOCK) & 0x3F) + 1) * 2);
-	ar7240_reg_wr(AR7240_SPI_FS, 0x0);
+	{
+	 250, 250, 250, 31,
+	 MAKE_AR9331_CPU_CLK_CONTROL_VAL(1, 1, 1),
+#if defined(CONFIG_40MHZ_XTAL_SUPPORT)
+	 MAKE_AR9331_CPU_PLL_CONFIG_VAL(25, 1, 0, 2),
+#else
+	 MAKE_AR9331_CPU_PLL_CONFIG_VAL(20, 1, 0, 1),
+#endif
+	 MAKE_AR9331_SPI_CONTROL_VAL(8)
+	},
 
-	// make MHz from Hz
-	cpu_freq /= 1000000;
-	ddr_freq /= 1000000;
-	ahb_freq /= 1000000;
-	spi_freq /= 1000000;
+	{
+	 300, 300, 150, 25,
+	 MAKE_AR9331_CPU_CLK_CONTROL_VAL(1, 1, 2),
+#if defined(CONFIG_40MHZ_XTAL_SUPPORT)
+	 MAKE_AR9331_CPU_PLL_CONFIG_VAL(15, 1, 0, 1),
+#else
+	 MAKE_AR9331_CPU_PLL_CONFIG_VAL(24, 1, 0, 1),
+#endif
+	 MAKE_AR9331_SPI_CONTROL_VAL(6)
+	},
 
-	printf("Current clocks (approximated):\n- CPU: %3d MHz\n", cpu_freq);
-	printf("- RAM: %3d MHz\n", ddr_freq);
-	printf("- AHB: %3d MHz\n", ahb_freq);
-	printf("- SPI: %3d MHz\n", spi_freq);
+#if !defined(CONFIG_40MHZ_XTAL_SUPPORT)
+	{
+	 325, 325, 162, 27,
+	 MAKE_AR9331_CPU_CLK_CONTROL_VAL(1, 1, 2),
+	 MAKE_AR9331_CPU_PLL_CONFIG_VAL(26, 1, 0, 1),
+	 MAKE_AR9331_SPI_CONTROL_VAL(6)
+	},
 
-#if defined(PLL_IN_FLASH_MAGIC_OFFSET)
-	if(ar7240_reg_rd(HORNET_BOOTSTRAP_STATUS) & HORNET_BOOTSTRAP_SEL_25M_40M_MASK){
-		ref = 40000000;
-	} else {
-		ref = 25000000;
-	}
+	{
+	 350, 350, 175, 29,
+	 MAKE_AR9331_CPU_CLK_CONTROL_VAL(1, 1, 2),
+	 MAKE_AR9331_CPU_PLL_CONFIG_VAL(28, 1, 0, 1),
+	 MAKE_AR9331_SPI_CONTROL_VAL(6)
+	},
+#endif
 
-	// do we have PLL_MAGIC in FLASH?
-	reg = ar7240_reg_rd(CFG_FLASH_BASE + PLL_IN_FLASH_DATA_BLOCK_OFFSET + PLL_IN_FLASH_MAGIC_OFFSET);
+	{
+	 360, 360, 180, 30,
+	 MAKE_AR9331_CPU_CLK_CONTROL_VAL(1, 1, 2),
+#if defined(CONFIG_40MHZ_XTAL_SUPPORT)
+	 MAKE_AR9331_CPU_PLL_CONFIG_VAL(18, 1, 0, 1),
+#else
+	 MAKE_AR9331_CPU_PLL_CONFIG_VAL(29, 1, 0, 1),
+#endif
+	 MAKE_AR9331_SPI_CONTROL_VAL(6)
+	},
 
-	if(reg == PLL_IN_FLASH_MAGIC){
-		puts("\nClocks configuration stored in FLASH (approximated):\n");
+#if defined(CONFIG_40MHZ_XTAL_SUPPORT)
+	{
+	 380, 380, 190, 32,
+	 MAKE_AR9331_CPU_CLK_CONTROL_VAL(1, 1, 2),
+	 MAKE_AR9331_CPU_PLL_CONFIG_VAL(19, 1, 0, 1),
+	 MAKE_AR9331_SPI_CONTROL_VAL(6)
+	},
+#endif
 
-		// read CPU PLL Configuration register (CPU_PLL_CONFIG) value stored in FLASH (PLL_IN_FLASH_MAGIC_OFFSET + 4)
-		reg = ar7240_reg_rd(CFG_FLASH_BASE + PLL_IN_FLASH_DATA_BLOCK_OFFSET + PLL_IN_FLASH_MAGIC_OFFSET + 4);
+	{
+	 400, 400, 200, 33,
+	 CPU_CLK_CONTROL_VAL_DEFAULT,
+	 CPU_PLL_CONFIG_VAL_DEFAULT,
+	 AR7240_SPI_CONTROL_DEFAULT
+	},
 
-		// refdiv
-		pll = ref / ((reg & HORNET_PLL_CONFIG_REFDIV_MASK) >> HORNET_PLL_CONFIG_REFDIV_SHIFT);
+#if !defined(CONFIG_40MHZ_XTAL_SUPPORT)
+	{
+	 412, 412, 206, 34,
+	 MAKE_AR9331_CPU_CLK_CONTROL_VAL(1, 1, 2),
+	 MAKE_AR9331_CPU_PLL_CONFIG_VAL(33, 1, 0, 1),
+	 MAKE_AR9331_SPI_CONTROL_VAL(6)
+	},
+#endif
 
-		// div_int
-		pll *= ((reg & HORNET_PLL_CONFIG_NINT_MASK) >> HORNET_PLL_CONFIG_NINT_SHIFT);
+#if defined(CONFIG_40MHZ_XTAL_SUPPORT)
+	{
+	 420, 420, 210, 35,
+	 MAKE_AR9331_CPU_CLK_CONTROL_VAL(1, 1, 2),
+	 MAKE_AR9331_CPU_PLL_CONFIG_VAL(21, 1, 0, 1),
+	 MAKE_AR9331_SPI_CONTROL_VAL(6)
+	},
+#endif
 
-		// outdiv
-		pll >>= ((reg & HORNET_PLL_CONFIG_OUTDIV_MASK) >> HORNET_PLL_CONFIG_OUTDIV_SHIFT);
+#if !defined(CONFIG_40MHZ_XTAL_SUPPORT)
+	{
+	 425, 425, 212, 35,
+	 MAKE_AR9331_CPU_CLK_CONTROL_VAL(1, 1, 2),
+	 MAKE_AR9331_CPU_PLL_CONFIG_VAL(34, 1, 0, 1),
+	 MAKE_AR9331_SPI_CONTROL_VAL(6)
+	},
 
-		// read CLOCK CONTROL Configuration register (CLOCK_CONTROL) value stored in FLASH (PLL_IN_FLASH_MAGIC_OFFSET + 8)
-		reg = ar7240_reg_rd(CFG_FLASH_BASE + PLL_IN_FLASH_DATA_BLOCK_OFFSET + PLL_IN_FLASH_MAGIC_OFFSET + 8);
+	{
+	 437, 437, 218, 27,
+	 MAKE_AR9331_CPU_CLK_CONTROL_VAL(1, 1, 2),
+	 MAKE_AR9331_CPU_PLL_CONFIG_VAL(35, 1, 0, 1),
+	 MAKE_AR9331_SPI_CONTROL_VAL(8)
+	},
+#endif
 
-		// cpu, ram, ahb
-		cpu_freq = pll / (((reg & HORNET_CLOCK_CONTROL_CPU_POST_DIV_MASK) >> HORNET_CLOCK_CONTROL_CPU_POST_DIV_SHIFT) + 1);
-		ddr_freq = pll / (((reg & HORNET_CLOCK_CONTROL_DDR_POST_DIV_MASK) >> HORNET_CLOCK_CONTROL_DDR_POST_DIV_SFIFT) + 1);
-		ahb_freq = pll / (((reg & HORNET_CLOCK_CONTROL_AHB_POST_DIV_MASK) >> HORNET_CLOCK_CONTROL_AHB_POST_DIV_SFIFT) + 1);
+#if defined(CONFIG_40MHZ_XTAL_SUPPORT)
+	{
+	 440, 440, 220, 27,
+	 MAKE_AR9331_CPU_CLK_CONTROL_VAL(1, 1, 2),
+	 MAKE_AR9331_CPU_PLL_CONFIG_VAL(22, 1, 0, 1),
+	 MAKE_AR9331_SPI_CONTROL_VAL(8)
+	},
+#endif
 
-		// read SPI CONTROL Configuration register (SPI_CONTROL) value stored in FLASH (PLL_IN_FLASH_MAGIC_OFFSET + 12)
-		reg = ar7240_reg_rd(CFG_FLASH_BASE + PLL_IN_FLASH_DATA_BLOCK_OFFSET + PLL_IN_FLASH_MAGIC_OFFSET + 12);
+#if !defined(CONFIG_40MHZ_XTAL_SUPPORT)
+	{
+	 450, 450, 225, 28,
+	 MAKE_AR9331_CPU_CLK_CONTROL_VAL(1, 1, 2),
+	 MAKE_AR9331_CPU_PLL_CONFIG_VAL(36, 1, 0, 1),
+	 MAKE_AR9331_SPI_CONTROL_VAL(8)
+	},
+#endif
 
-		// spi
-		spi_freq = ahb_freq / (2 * ((reg & 0x3F) + 1));
+	{
+	 460, 460, 230, 29,
+	 MAKE_AR9331_CPU_CLK_CONTROL_VAL(1, 1, 2),
+#if defined(CONFIG_40MHZ_XTAL_SUPPORT)
+	 MAKE_AR9331_CPU_PLL_CONFIG_VAL(23, 1, 0, 1),
+#else
+	 MAKE_AR9331_CPU_PLL_CONFIG_VAL(37, 1, 0, 1),
+#endif
+	 MAKE_AR9331_SPI_CONTROL_VAL(8)
+	},
+
+#if !defined(CONFIG_40MHZ_XTAL_SUPPORT)
+	{
+	 475, 475, 237, 30,
+	 MAKE_AR9331_CPU_CLK_CONTROL_VAL(1, 1, 2),
+	 MAKE_AR9331_CPU_PLL_CONFIG_VAL(38, 1, 0, 1),
+	 MAKE_AR9331_SPI_CONTROL_VAL(8)
+	},
+#endif
+
+#if defined(CONFIG_40MHZ_XTAL_SUPPORT)
+	{
+	 480, 480, 240, 30,
+	 MAKE_AR9331_CPU_CLK_CONTROL_VAL(1, 1, 2),
+	 MAKE_AR9331_CPU_PLL_CONFIG_VAL(24, 1, 0, 1),
+	 MAKE_AR9331_SPI_CONTROL_VAL(8)
+	},
+#endif
+
+#if !defined(CONFIG_40MHZ_XTAL_SUPPORT)
+	{
+	 487, 487, 243, 30,
+	 MAKE_AR9331_CPU_CLK_CONTROL_VAL(1, 1, 2),
+	 MAKE_AR9331_CPU_PLL_CONFIG_VAL(39, 1, 0, 1),
+	 MAKE_AR9331_SPI_CONTROL_VAL(8)
+	},
+#endif
+
+	{
+	 500, 500, 250, 31,
+	 MAKE_AR9331_CPU_CLK_CONTROL_VAL(1, 1, 2),
+#if defined(CONFIG_40MHZ_XTAL_SUPPORT)
+	 MAKE_AR9331_CPU_PLL_CONFIG_VAL(25, 1, 0, 1),
+#else
+	 MAKE_AR9331_CPU_PLL_CONFIG_VAL(40, 1, 0, 1),
+#endif
+	 MAKE_AR9331_SPI_CONTROL_VAL(8)
+	},
+
+	{
+	 500, 250, 250, 31,
+	 MAKE_AR9331_CPU_CLK_CONTROL_VAL(1, 2, 2),
+#if defined(CONFIG_40MHZ_XTAL_SUPPORT)
+	 MAKE_AR9331_CPU_PLL_CONFIG_VAL(25, 1, 0, 1),
+#else
+	 MAKE_AR9331_CPU_PLL_CONFIG_VAL(40, 1, 0, 1),
+#endif
+	 MAKE_AR9331_SPI_CONTROL_VAL(8)
+	},
+
+#if defined(CONFIG_40MHZ_XTAL_SUPPORT)
+	{
+	 520, 520, 260, 32,
+	 MAKE_AR9331_CPU_CLK_CONTROL_VAL(1, 1, 2),
+	 MAKE_AR9331_CPU_PLL_CONFIG_VAL(26, 1, 0, 1),
+	 MAKE_AR9331_SPI_CONTROL_VAL(8)
+	},
+#endif
+
+#if !defined(CONFIG_40MHZ_XTAL_SUPPORT)
+	{
+	 525, 262, 131, 33,
+	 MAKE_AR9331_CPU_CLK_CONTROL_VAL(1, 2, 4),
+	 MAKE_AR9331_CPU_PLL_CONFIG_VAL(42, 1, 0, 1),
+	 MAKE_AR9331_SPI_CONTROL_VAL(4)
+	},
+#endif
+
+	{
+	 560, 280, 140, 35,
+	 MAKE_AR9331_CPU_CLK_CONTROL_VAL(1, 2, 4),
+#if defined(CONFIG_40MHZ_XTAL_SUPPORT)
+	 MAKE_AR9331_CPU_PLL_CONFIG_VAL(28, 1, 0, 1),
+#else
+	 MAKE_AR9331_CPU_PLL_CONFIG_VAL(45, 1, 0, 1),
+#endif
+	 MAKE_AR9331_SPI_CONTROL_VAL(4)
+	},
+
+#if defined(CONFIG_40MHZ_XTAL_SUPPORT)
+	{
+	 580, 290, 145, 36,
+	 MAKE_AR9331_CPU_CLK_CONTROL_VAL(1, 2, 4),
+	 MAKE_AR9331_CPU_PLL_CONFIG_VAL(29, 1, 0, 1),
+	 MAKE_AR9331_SPI_CONTROL_VAL(4)
+	},
+#endif
+
+	{
+	 600, 300, 200, 33,
+	 MAKE_AR9331_CPU_CLK_CONTROL_VAL(1, 2, 3),
+#if CONFIG_40MHZ_XTAL_SUPPORT
+	 MAKE_AR9331_CPU_PLL_CONFIG_VAL(30, 1, 0, 1),
+#else
+	 MAKE_AR9331_CPU_PLL_CONFIG_VAL(48, 1, 0, 1),
+#endif
+	 MAKE_AR9331_SPI_CONTROL_VAL(6)
+	},
+};
+
+/*
+ * Set and store PLL configuration in FLASH
+ */
+int do_set_clocks(cmd_tbl_t * cmdtp, int flag, int argc, char *argv[]){
+	unsigned int cpu_pll_config_flash, cpu_clock_control_flash, spi_control_flash, reg;
+	unsigned int ahb_freq, ddr_freq, cpu_freq, spi_freq;
+	unsigned int *data_pointer;
+	int i, index, profiles_count;
+	char buf[128];
+
+	profiles_count = sizeof(oc_profiles) / sizeof(ar9331_clock_profile);
+
+	// print all available profiles and current settings
+	if(argc == 1){
+
+		// read clocks
+		ar7240_sys_frequency(&cpu_freq, &ddr_freq, &ahb_freq);
+
+		// calculate SPI clock (we need to set bit 0 to 1 in SPI_FUNC_SELECT to access SPI registers)
+		ar7240_reg_wr(AR7240_SPI_FS, 0x01);
+		spi_freq = ahb_freq / (((ar7240_reg_rd(AR7240_SPI_CLOCK) & 0x3F) + 1) * 2);
+		ar7240_reg_wr(AR7240_SPI_FS, 0x0);
 
 		// make MHz from Hz
 		cpu_freq /= 1000000;
@@ -292,200 +539,108 @@ int do_print_clocks(cmd_tbl_t * cmdtp, int flag, int argc, char *argv[]){
 		ahb_freq /= 1000000;
 		spi_freq /= 1000000;
 
-		printf("- CPU: %3d MHz\n", cpu_freq);
+		printf("Current clocks (approximated):\n- CPU: %3d MHz\n", cpu_freq);
 		printf("- RAM: %3d MHz\n", ddr_freq);
 		printf("- AHB: %3d MHz\n", ahb_freq);
 		printf("- SPI: %3d MHz\n", spi_freq);
-	} else {
-		puts("\nPLL and clocks configuration in FLASH is empty,\nuse 'setclocks' to set them and store in FLASH.\n");
-	}
-#endif
 
-	if(ar7240_reg_rd(HORNET_BOOTSTRAP_STATUS) & HORNET_BOOTSTRAP_SEL_25M_40M_MASK){
-		puts("\nReference clock: 40 MHz\n");
-	} else {
-		puts("\nReference clock: 25 MHz\n");
-	}
-
-	return(0);
-}
-
-U_BOOT_CMD(printclocks, 1, 1, do_print_clocks, "print CPU, RAM, AHB, SPI and REF clocks\n", NULL);
-#endif /* #if defined(CONFIG_MACH_HORNET) */
-
-#if defined(PLL_IN_FLASH_MAGIC_OFFSET)
-/*
- * Set and store PLL configuration in FLASH
- */
-int do_set_clocks(cmd_tbl_t * cmdtp, int flag, int argc, char *argv[]){
-	unsigned int outdiv, range, refdiv, divint, cpu_div, ram_div, ahb_div, spi_div;
-	unsigned int cpu_pll_config_reg_val = 0;
-	unsigned int clock_control_reg_val  = 0;
-	unsigned int spi_control_reg_val    = 0;
-	unsigned char *data_pointer;
-	int i;
-	char buf[128];
-
-	// allow only 9 arg (command name + range refdiv divint outdiv cpu_div ram_div ahb_div spi_div)
-	if(argc != 9){
-		puts("** Notice: you should always make a backup of your device\n           entire FLASH content before making any changes\n\n");
-
-#ifdef CFG_LONGHELP
-		if(cmdtp->help != NULL){
-			printf("Usage:\n%s %s\n", cmdtp->name, cmdtp->help);
+		// reference clock
+		if(ar7240_reg_rd(HORNET_BOOTSTRAP_STATUS) & HORNET_BOOTSTRAP_SEL_25M_40M_MASK){
+			puts("- REF:  40 MHz\n\n");
 		} else {
-			printf("Usage:\n%s %s\n", cmdtp->name, cmdtp->usage);
+			puts("- REF:  25 MHz\n\n");
 		}
-#else
-		printf("Usage:\n%s %s\n", cmdtp->name, cmdtp->usage);
-#endif
-		return(1);
+
+		// do we have PLL_MAGIC in FLASH?
+		reg = ar7240_reg_rd(CFG_FLASH_BASE + PLL_IN_FLASH_DATA_BLOCK_OFFSET + PLL_IN_FLASH_MAGIC_OFFSET);
+
+		// read all register values stored in FLASH
+		cpu_pll_config_flash = ar7240_reg_rd(CFG_FLASH_BASE + PLL_IN_FLASH_DATA_BLOCK_OFFSET + PLL_IN_FLASH_MAGIC_OFFSET + 4);
+		cpu_clock_control_flash = ar7240_reg_rd(CFG_FLASH_BASE + PLL_IN_FLASH_DATA_BLOCK_OFFSET + PLL_IN_FLASH_MAGIC_OFFSET + 8);
+		spi_control_flash = ar7240_reg_rd(CFG_FLASH_BASE + PLL_IN_FLASH_DATA_BLOCK_OFFSET + PLL_IN_FLASH_MAGIC_OFFSET + 12);
+
+		printf("Available PLL and clocks configurations: %d\n\n", profiles_count);
+
+		puts("      | CPU | RAM | AHB | SPI | [ ]\n  ---------------------------------\n");
+
+		for(i = 0; i <  profiles_count; i++){
+			printf("%4d. |%4d |%4d |%4d |%4d | ", i + 1,
+												  oc_profiles[i].cpu_clock,
+												  oc_profiles[i].ram_clock,
+												  oc_profiles[i].ahb_clock,
+												  oc_profiles[i].spi_clock);
+
+			if(reg == PLL_IN_FLASH_MAGIC &&
+			   oc_profiles[i].cpu_pll_config == cpu_pll_config_flash &&
+			   oc_profiles[i].cpu_clk_control == cpu_clock_control_flash &&
+			   oc_profiles[i].spi_control == spi_control_flash){
+				puts("[*]\n");
+			} else {
+				puts("[ ]\n");
+			}
+		}
+
+		puts("\n[*] = currently selected profile (stored in FLASH).\nAll clocks in MHz, run 'setclocks X' to choose one.\n\n");
+		puts("** Notice:\n   you should always make a backup of your device\n   entire FLASH content before making any changes\n\n");
+
+		return(0);
+	} else {
+		// selected index
+		index = simple_strtoul(argv[1], NULL, 10);
+
+		if(index > profiles_count || index < 1){
+			printf("## Error: selected index should be in range 1..%d!\n", profiles_count);
+			return(1);
+		}
+
+		printf("You have selected profile: %d.\n\n", index);
+
+		// array is zero-based indexing
+		index--;
+
+		// backup entire block in which we store PLL/CLK settings
+		data_pointer = (unsigned int *)WEBFAILSAFE_UPLOAD_RAM_ADDRESS;
+
+		if(!data_pointer){
+			puts("## Error: couldn't allocate RAM for data block backup!\n");
+			return(1);
+		}
+
+		memcpy((void *)data_pointer, (void *)(CFG_FLASH_BASE + PLL_IN_FLASH_DATA_BLOCK_OFFSET), PLL_IN_FLASH_DATA_BLOCK_LENGTH);
+
+		// save PLL_IN_FLASH_MAGIC and PLL/clocks registers values
+		data_pointer = (unsigned int *)(WEBFAILSAFE_UPLOAD_RAM_ADDRESS + PLL_IN_FLASH_MAGIC_OFFSET);
+		*data_pointer = PLL_IN_FLASH_MAGIC;
+
+		data_pointer++;
+		*data_pointer = oc_profiles[index].cpu_pll_config;
+
+		data_pointer++;
+		*data_pointer = oc_profiles[index].cpu_clk_control;
+
+		data_pointer++;
+		*data_pointer = oc_profiles[index].spi_control;
+
+		// erase FLASH, copy data from RAM
+		sprintf(buf,
+				"erase 0x%lX +0x%lX; cp.b 0x%lX 0x%lX 0x%lX",
+				CFG_FLASH_BASE + PLL_IN_FLASH_DATA_BLOCK_OFFSET,
+				PLL_IN_FLASH_DATA_BLOCK_LENGTH,
+				WEBFAILSAFE_UPLOAD_RAM_ADDRESS,
+				CFG_FLASH_BASE + PLL_IN_FLASH_DATA_BLOCK_OFFSET,
+				PLL_IN_FLASH_DATA_BLOCK_LENGTH);
+
+		printf("Executing: %s\n\n", buf);
+
+		return(run_command(buf, 0));
 	}
-
-	// range validation
-	range = simple_strtoul(argv[1], NULL, 10);
-
-	if(range != 1 && range != 0){
-		puts("## Error: range should be 0 or 1!\n");
-		return(1);
-	}
-
-	// refdiv validation (5 bits)
-	refdiv = simple_strtoul(argv[2], NULL, 10);
-
-	if(refdiv > 31 || refdiv < 1){
-		puts("## Error: refdiv should be in range 1..31!\n");
-		return(1);
-	}
-
-	// divint validation (6 bits)
-	divint = simple_strtoul(argv[3], NULL, 10);
-
-	if(divint > 63 || divint < 1){
-		puts("## Error: divint should be in range 1..63!\n");
-		return(1);
-	}
-
-	// outdiv validation (3 bits)
-	outdiv = simple_strtoul(argv[4], NULL, 10);
-
-	if(outdiv > 7 || outdiv < 1){
-		puts("## Error: outdiv should be in range 1..7!\n");
-		return(1);
-	}
-
-	// cpu_div validation (2 bits)
-	cpu_div = simple_strtoul(argv[5], NULL, 10);
-
-	if(cpu_div > 4 || cpu_div < 1){
-		puts("## Error: cpu_div should be in range 1..4!\n");
-		return(1);
-	}
-
-	// ram_div validation (2 bits)
-	ram_div = simple_strtoul(argv[6], NULL, 10);
-
-	if(ram_div > 4 || ram_div < 1){
-		puts("## Error: ram_div should be in range 1..4!\n");
-		return(1);
-	}
-
-	// ahb_div validation (2 bits)
-	ahb_div = simple_strtoul(argv[7], NULL, 10);
-
-	if(ahb_div > 4 || ahb_div < 1){
-		puts("## Error: ahb_div should be in range 1..4!\n");
-		return(1);
-	}
-
-	// spi_div validation (6 bits)
-	spi_div = simple_strtoul(argv[8], NULL, 10);
-
-	if(spi_div > 128 || spi_div < 4 || (spi_div % 2)){
-		puts("## Error: spi_div should be even and in range 4..128!\n");
-		return(1);
-	}
-
-	// SPI CLK = (AHB_CLK / ((CLOCK_DIVIDER + 1) * 2)),
-	// spi_div = 2 * (CLOCK_DIVIDER + 1)
-	// we need CLOCK_DIVIDER:
-	spi_div /= 2;
-	spi_div--;
-
-	puts("Calculated registers values:\n");
-
-	// calculate registers values
-	// MAKE_CPU_PLL_CONFIG_VAL(divint, refdiv, range, outdiv)
-	cpu_pll_config_reg_val = (unsigned int)(MAKE_CPU_PLL_CONFIG_VAL(divint, refdiv, range, outdiv));
-	printf("- CPU_PLL_CONFIG: 0x%08X\n", cpu_pll_config_reg_val);
-
-	// MAKE_CPU_CLK_CONTROL_VAL(cpudiv, ddrdiv, ahbdiv)
-	clock_control_reg_val = (unsigned int)(MAKE_CPU_CLK_CONTROL_VAL(cpu_div, ram_div, ahb_div));
-	printf("- CLOCK_CONTROL:  0x%08X\n", clock_control_reg_val);
-
-	// SPI_CONTROL
-	spi_control_reg_val = (unsigned int)(0x40 | spi_div);
-	printf("- SPI_CONTROL:    0x%08X\n\n", spi_control_reg_val);
-
-	// backup entire block in which we store PLL/CLK settings
-	data_pointer = (unsigned char *)WEBFAILSAFE_UPLOAD_RAM_ADDRESS;
-
-	if(!data_pointer){
-		puts("## Error: couldn't allocate RAM for data block backup!\n");
-		return(1);
-	}
-
-	puts("** Notice: you should always make a backup of your device\n           entire FLASH content before making any changes\n\n");
-
-	memcpy((void *)data_pointer, (void *)(CFG_FLASH_BASE + PLL_IN_FLASH_DATA_BLOCK_OFFSET), PLL_IN_FLASH_DATA_BLOCK_LENGTH);
-
-	// save PLL_IN_FLASH_MAGIC
-	for(i = 0; i < 4; i++){
-		data_pointer[PLL_IN_FLASH_MAGIC_OFFSET + i] = 0xFF & (PLL_IN_FLASH_MAGIC >> (8 * (3 - i)));
-	}
-
-	// save CPU_PLL_CONFIG
-	for(i = 0; i < 4; i++){
-		data_pointer[PLL_IN_FLASH_MAGIC_OFFSET + 4 + i] = 0xFF & (cpu_pll_config_reg_val >> (8 * (3 - i)));
-	}
-
-	// save CLOCK_CONTROL
-	for(i = 0; i < 4; i++){
-		data_pointer[PLL_IN_FLASH_MAGIC_OFFSET + 8 + i] = 0xFF & (clock_control_reg_val >> (8 * (3 - i)));
-	}
-
-	// save SPI_CONTROL
-	for(i = 0; i < 4; i++){
-		data_pointer[PLL_IN_FLASH_MAGIC_OFFSET + 12 + i] = 0xFF & (spi_control_reg_val >> (8 * (3 - i)));
-	}
-
-	// erase FLASH, copy data from RAM
-	sprintf(buf,
-			"erase 0x%lX +0x%lX; cp.b 0x%lX 0x%lX 0x%lX",
-			CFG_FLASH_BASE + PLL_IN_FLASH_DATA_BLOCK_OFFSET,
-			PLL_IN_FLASH_DATA_BLOCK_LENGTH,
-			WEBFAILSAFE_UPLOAD_RAM_ADDRESS,
-			CFG_FLASH_BASE + PLL_IN_FLASH_DATA_BLOCK_OFFSET,
-			PLL_IN_FLASH_DATA_BLOCK_LENGTH);
-
-	printf("Executing: %s\n\n", buf);
-
-	return(run_command(buf, 0));
 }
 
-U_BOOT_CMD(setclocks, 9, 0, do_set_clocks, "set PLL and clocks configuration in FLASH\n",
-		"range refdiv divint outdiv cpu_div ram_div ahb_div spi_div\n"
-		"\t- calculates and stores CPU_PLL_CONFIG and CLOCK_CONTROL registers in FLASH\n"
-		"\t- default configuration for 400/400/200/33 MHz:\n"
-		"\t  0 1 32 1 1 1 2 6 (25 MHz ref, PLL -> ((25 / 1) * 32) / (1 / 2 ^ 1) = 400 MHz)\n"
-		"\t  0 1 20 1 1 1 2 6 (40 MHz ref, PLL -> ((40 / 1) * 20) / (1 / 2 ^ 1) = 400 MHz)\n\n"
-		"\t- formulas for PLL and clocks calculations:\n"
-		"\t  PLL = ((ref / refdiv) * divint) / (1 / (2 ^ outdiv))\n"
-		"\t  CPU = PLL / cpu_div\n"
-		"\t  RAM = PLL / ram_div\n"
-		"\t  AHB = PLL / ahb_div\n"
-		"\t  SPI = AHB / spi_div\n\n"
-		"\t  *ref - reference clock (25 or 40 MHz)\n");
+U_BOOT_CMD(setclocks, 2, 0, do_set_clocks, "select clocks configuration from predefined list\n",
+		"index\n"
+		"\t- save 'index' configuration in FLASH\n"
+		"setclocks\n"
+		"\t- prints available clocks configurations and current settings");
 
 /*
  * Remove (clear) PLL and clock settings in FLASH
