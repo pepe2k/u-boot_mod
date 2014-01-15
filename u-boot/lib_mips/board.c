@@ -304,7 +304,9 @@ void board_init_r(gd_t *id, ulong dest_addr){
 #endif
 	bd_t *bd;
 	char *s;
+#if defined(OFFSET_MAC_ADDRESS)
 	unsigned char buffer[6];
+#endif
 	unsigned int ahb_freq, ddr_freq, cpu_freq, spi_freq;
 
 	gd = id;

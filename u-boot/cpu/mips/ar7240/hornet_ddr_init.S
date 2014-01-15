@@ -27,171 +27,220 @@
 #include <version.h>
 #include <asm/regdef.h>
 #include <asm/mipsregs.h>
+#include <asm/addrspace.h>
+#include <ar7240_soc.h>
 
 	.globl hornet_ddr_init
 	.text
 	.align 4
 
-#define set_mem(_mem, _val)                         \
-    li  t9, _mem;                                   \
-    sw  _val, 0(t9);
+#define set_mem(_mem, _val) \
+	li t9,   _mem;          \
+	sw _val, 0(t9);
 
 //============================================
 //   init DDR1 parameter before rel_start
 //===========================================
 hornet_ddr_init:
+	// 0x18000000 (DDR_CONFIG, p. 54)
+	// CFG_DDR_CONFIG_VAL = 0x7fbc8cd0 (ap121.h)
+	li t8, CFG_DDR_CONFIG_VAL;
+	set_mem(0xB8000000, t8);
 
-    //--------DDR_Config_1--------   D.S 0xB8000000 %LONG 0x7fbc8cd0 
-    li t8, CFG_DDR_CONFIG_VAL;
-    set_mem(0xB8000000,t8);
+	// 0x18000004 (DDR_CONFIG2, p. 55)
+	// CFG_DDR_CONFIG2_VAL = 0x99d0e6a8 (ap121.h)
+	li t8, CFG_DDR_CONFIG2_VAL;
+	set_mem(0xB8000004, t8);
 
-    //--------DDR_Config_2--------  D.S 0xB8000004 %LONG 0x99d0e6a8 
-    li t8, CFG_DDR_CONFIG2_VAL;
-    set_mem(0xB8000004,t8);
+mem_type:
+	// TODO: what about SDRAM?
+	// 0x180600AC (BOOT_STRAP, p. 81)
+	li  t8, 0xB80600AC			// load BOOT_STRAP reg address
+	lw  t9, 0(t8)				// and its value
+	li  t8, 0x1000				// 0x1000 -> BIT12 is set
+	and t9, t9, t8
+	bne t9, zero, ddr1_config	// jump if we have DDR1
 
-#if defined(CONFIG_FOR_DLINK_DIR505_A1)
+ddr2_config:
+	// Enable DDR2
+	// 0x1800008C (DDR_DDR2_CONFIG, p. 58)
+	li t8, 0xA59;
+	set_mem(0xB800008C, t8);
 
-    // DDR2 Paramters
+	// Precharge All
+	// 0x18000010 (DDR_CONTROL, p. 56)
+	li t8, 0x8;
+	set_mem(0xB8000010, t8);
 
-    //D.S 0xB800008C %LONG 0xA59         ;      // Enable DDR2
-    li t8, 0xA59;
-    set_mem(0xB800008C,t8);
+	// Disable High Temperature Self-Refresh Rate
+	// 0x18000090 (DDR_EMR2, p. 58)
+	li t8, 0x0;
+	set_mem(0xB8000090, t8);
 
-    //D.S 0xB8000010 %LONG 0x8           ;      // Precharge All
-    li t8,0x8;
-    set_mem(0xB8000010,t8);
+	// Extended Mode Register 2 Set (EMR2S)
+	// 0x18000010 (DDR_CONTROL, p. 56)
+	li t8, 0x10;
+	set_mem(0xB8000010, t8);
 
-    //D.S 0xB8000090 %LONG 0x0           ;      // Disable High Temperature Self-Refresh Rate
-    //D.S 0xB8000010 %LONG 0x10          ;      // Extended Mode Register 2 Set (EMR2S)
-    li t8, 0x0;
-    set_mem(0xB8000090,t8);
-    li t8, 0x10;
-    set_mem(0xB8000010,t8);
+	// 0x18000094 (DDR_EMR3, p. 58)
+	li t8, 0x0;
+	set_mem(0xB8000094, t8);
 
-    //D.S 0xB8000094 %LONG 0x0           ;      //
-    //D.S 0xB8000010 %LONG 0x20          ;      // Extended Mode Register 3 Set (EMR3S)
-    li t8, 0x0;
-    set_mem(0xB8000094,t8);
-    li t8, 0x20;
-    set_mem(0xB8000010,t8);
+	// Extended Mode Register 3 Set (EMR3S)
+	// 0x18000010 (DDR_CONTROL, p. 56)
+	li t8, 0x20;
+	set_mem(0xB8000010, t8);
 
-    //D.S 0xB800000C %LONG 0x0           ;      // Enable DLL
-    //D.S 0xB8000010 %LONG 0x2           ;      // Extended Mode Register Set (EMRS)
-    li t8, 0x0;
-    set_mem(0xB800000C , t8);
-    li t8, 0x2;
-    set_mem(0xB8000010, t8);
+	// Enable DLL
+	// 0x1800000C (DDR_EXTENDED_MODE_REGISTER, p. 55)
+	li t8, 0x0;
+	set_mem(0xB800000C, t8);
 
-    //D.S 0xB8000008 %LONG 0x100         ;      // Reset DLL
-    //D.S 0xB8000010 %LONG 0x1           ;      // Mode Register Set (MRS)
-    li t8, 0x100;
-    set_mem(0xB8000008,t8);
-    li t8, 0x1;
-    set_mem(0xB8000010, t8);
+	// Extended Mode Register Set (EMRS)
+	// 0x18000010 (DDR_CONTROL, p. 56)
+	li t8, 0x2;
+	set_mem(0xB8000010, t8);
 
-    //D.S 0xB8000010 %LONG 0x8           ;      // Precharge All
-    //D.S 0xB8000010 %LONG 0x4           ;      // Auto Refresh
-    //D.S 0xB8000010 %LONG 0x4           ;      // Auto Refresh
-    li t8, 0x8;
-    set_mem(0xB8000010, t8);
-    li t8, 0x4;
-    set_mem(0xB8000010, t8);
-    li t8, 0x4;
-    set_mem(0xB8000010, t8);
+	// Reset DLL
+	// 0x18000008 (DDR_MODE_REGISTER, p. 55)
+	li t8, 0x100;
+	set_mem(0xB8000008, t8);
 
-    //D.S 0xB8000008 %LONG 0xa33         ;      // Write recovery (WR) 6 clock, CAS Latency 3, Burst Length 8
-    //D.S 0xB8000010 %LONG 0x1           ;      // Mode Register Set (MRS)
-    li t8, 0xa33;
-    set_mem( 0xB8000008, t8);
-    li t8, 0x1;
-    set_mem( 0xB8000010, t8);
+	// Mode Register Set (MRS)
+	// 0x18000010 (DDR_CONTROL, p. 56)
+	li t8, 0x1;
+	set_mem(0xB8000010, t8);
 
-    //D.S 0xB800000C %LONG 0x382         ;      // E7,E8,E9 equal to 1(Enable OCD defaults), Enable DLL, Reduced Drive Strength
-    //D.S 0xB8000010 %LONG 0x2           ;      // Extended Mode Register Set (EMRS)
-    li t8, 0x382;
-    set_mem(0xB800000C,t8);
-    li t8, 0x2;
-    set_mem(0xB8000010,t8);
+	// Precharge All
+	// 0x18000010 (DDR_CONTROL, p. 56)
+	li t8, 0x8;
+	set_mem(0xB8000010, t8);
 
-    //D.S 0xB800000C %LONG 0x402         ;      // E7,E8,E9 equal to 0(OCD exit), Enable DLL, Reduced Drive Strength
-    //D.S 0xB8000010 %LONG 0x2           ;      // Extended Mode Register Set (EMRS)
-    li t8, 0x402;
-    set_mem(0xB800000C,t8);
-    li t8, 0x2;
-    set_mem(0xB8000010,t8);
+	// Auto Refresh
+	// 0x18000010 (DDR_CONTROL, p. 56)
+	li t8, 0x4;
+	set_mem(0xB8000010, t8);
 
-    //D.S 0xB8000014 %LONG 0x4960/0x4f10 ;      // Refresh control. Bit 14 is enable. Bits<13:0> Refresh time
-    li t8, CFG_DDR_REFRESH_VAL;
-    set_mem( 0xB8000014, t8);
+	// Auto Refresh
+	// 0x18000010 (DDR_CONTROL, p. 56)
+	li t8, 0x4;
+	set_mem(0xB8000010, t8);
 
-    //D.S 0xB800001C %LONG 0x08          ;       // DQS 0 Tap Control (needs tuning)
-    li t8, CFG_DDR_TAP0_VAL;
-    set_mem( 0xB800001C, t8);
+	// Write recovery (WR) 6 clock, CAS Latency 3, Burst Length 8
+	// 0x18000008 (DDR_MODE_REGISTER, p. 55)
+	li t8, 0xa33;
+	set_mem(0xB8000008, t8);
 
-    //D.S 0xB8000020 %LONG 0x09          ;       // DQS 1 Tap Control (needs tuning)
-    li t8, CFG_DDR_TAP1_VAL;
-    set_mem( 0xB8000020, t8);
+	// Mode Register Set (MRS)
+	// 0x18000010 (DDR_CONTROL, p. 56)
+	li t8, 0x1;
+	set_mem(0xB8000010, t8);
 
-    //D.S 0xB8000018 %LONG 0x00ff        ;      // For 16-bit DDR
-    li t8, 0x00ff;
-    set_mem( 0xB8000018, t8);
+	// E7,E8,E9 equal to 1(Enable OCD defaults), Enable DLL, Reduced Drive Strength
+	// 0x1800000C (DDR_EXTENDED_MODE_REGISTER, p. 55)
+	li t8, 0x382;
+	set_mem(0xB800000C, t8);
 
-#else
+	// Extended Mode Register Set (EMRS)
+	// 0x18000010 (DDR_CONTROL, p. 56)
+	li t8, 0x2;
+	set_mem(0xB8000010, t8);
 
-    // DDR1 Paramters
+	// E7,E8,E9 equal to 0(OCD exit), Enable DLL, Reduced Drive Strength
+	// 0x1800000C (DDR_EXTENDED_MODE_REGISTER, p. 55)
+	li t8, 0x402;
+	set_mem(0xB800000C, t8);
 
-    //D.S 0xB8000010 %LONG 0x8           ;      // precharge
-    li t8,0x8;
-    set_mem(0xB8000010,t8);
+	// Extended Mode Register Set (EMRS)
+	// 0x18000010 (DDR_CONTROL, p. 56)
+	li t8, 0x2;
+	set_mem(0xB8000010, t8);
 
-    //D.S 0xB8000008 %LONG 0x133         ;
-    li t8,CFG_DDR_MODE_VAL_INIT;
-    set_mem(0xB8000008,t8);
+	// Refresh control. Bit 14 is enable. Bits<13:0> Refresh time
+	// 0x18000014 (DDR_REFRESH, p. 56)
+	li t8, CFG_DDR_REFRESH_VAL;
+	set_mem(0xB8000014, t8);
 
-    //D.S 0xB8000010 %LONG 0x1           ;      // Write Mode Word in DDR
-    li t8, 0x1;
-    set_mem( 0xB8000010, t8);
-    
-    //D.S 0xB800000C %LONG 0x2           ;      // Enable DLL, High drive strength from DDR
-    li t8, 0x2;
-    set_mem( 0xB800000C , t8);
+	// DQS 0 Tap Control (needs tuning)
+	// 0x1800001C (TAP_CONTROL_0, p. 56)
+	li t8, CFG_DDR_TAP0_VAL;
+	set_mem(0xB800001C, t8);
 
-    //D.S 0xB8000010 %LONG 0x2           ;      // Write Extended Mode Word of DDR
-    li t8, 0x2;
-    set_mem( 0xB8000010, t8);
+	// DQS 1 Tap Control (needs tuning)
+	// 0x18000020 (TAP_CONTROL_1, p. 57)
+	li t8, CFG_DDR_TAP1_VAL;
+	set_mem(0xB8000020, t8);
 
-    //D.S 0xB8000010 %LONG 0x8           ;      // precharge enabled
-    li t8, 0x8;
-    set_mem( 0xB8000010, t8);
-
-    // D.S 0xB8000008 %LONG 0x33          ;      // dll out of reset CAS Latency 3
-    li t8, CFG_DDR_MODE_VAL;
-    set_mem( 0xB8000008, t8);
-
-    //D.S 0xB8000010 %LONG 0x1           ;      // write mode word
-    li t8, 0x1;
-    set_mem( 0xB8000010, t8);
-
-    //D.S 0xB8000014 %LONG 0x4186/0x4270 ;      // Refresh control. Bit 14 is enable. Bits<13:0> Refresh time
-    li t8, CFG_DDR_REFRESH_VAL;
-    set_mem( 0xB8000014, t8);
-
-    //D.S 0xB800001C %LONG 0x08          ;       // DQS 0 Tap Control (needs tuning)
-    li t8, CFG_DDR_TAP0_VAL;
-    set_mem( 0xB800001C, t8);
-
-    //D.S 0xB8000020 %LONG 0x09          ;       // DQS 1 Tap Control (needs tuning)
-    li t8, CFG_DDR_TAP1_VAL;
-    set_mem( 0xB8000020, t8);
-
-    //D.S 0xB8000018 %LONG 0x00ff        ;      // For 16-bit DDR
-    li t8, 0x00ff;
-    set_mem( 0xB8000018, t8);
-
-#endif
+	// For 16-bit DDR
+	// 0x18000018 (DDR_RD_DATA_THIS_CYCLE, p. 56)
+	li t8, 0x00ff;
+	set_mem(0xB8000018, t8);
 
 	nop
-	jr 	ra
+	jr ra
+
+ddr1_config:
+	// Precharge All
+	// 0x18000010 (DDR_CONTROL, p. 56)
+	li t8, 0x8;
+	set_mem(0xB8000010, t8);
+
+	// 0x18000008 (DDR_MODE_REGISTER, p. 55)
+	li t8,CFG_DDR_MODE_VAL_INIT;
+	set_mem(0xB8000008, t8);
+
+	// Write Mode Word in DDR
+	// 0x18000010 (DDR_CONTROL, p. 56)
+	li t8, 0x1;
+	set_mem(0xB8000010, t8);
+
+	// Enable DLL, High drive strength from DDR
+	// 0x1800000C (DDR_EXTENDED_MODE_REGISTER, p. 55)
+	li t8, 0x2;
+	set_mem(0xB800000C, t8);
+
+	// Write Extended Mode Word of DDR
+	// 0x18000010 (DDR_CONTROL, p. 56)
+	li t8, 0x2;
+	set_mem(0xB8000010, t8);
+
+	// Precharge All
+	// 0x18000010 (DDR_CONTROL, p. 56)
+	li t8, 0x8;
+	set_mem(0xB8000010, t8);
+
+	// DLL out of reset, CAS Latency 3
+	// 0x18000008 (DDR_MODE_REGISTER, p. 55)
+	li t8, CFG_DDR_MODE_VAL;
+	set_mem(0xB8000008, t8);
+
+	// Write mode word
+	// 0x18000010 (DDR_CONTROL, p. 56)
+	li t8, 0x1;
+	set_mem(0xB8000010, t8);
+
+	// Refresh control. Bit 14 is enable. Bits<13:0> Refresh time
+	// 0x18000014 (DDR_REFRESH, p. 56)
+	li t8, CFG_DDR_REFRESH_VAL;
+	set_mem(0xB8000014, t8);
+
+	// DQS 0 Tap Control (needs tuning)
+	// 0x1800001C (TAP_CONTROL_0, p. 56)
+	li t8, CFG_DDR_TAP0_VAL;
+	set_mem(0xB800001C, t8);
+
+	// DQS 1 Tap Control (needs tuning)
+	// 0x18000020 (TAP_CONTROL_1, p. 57)
+	li t8, CFG_DDR_TAP1_VAL;
+	set_mem(0xB8000020, t8);
+
+	// For 16-bit DDR
+	// 0x18000018 (DDR_RD_DATA_THIS_CYCLE, p. 56)
+	li t8, 0x00ff;
+	set_mem(0xB8000018, t8);
+
+	nop
+	jr ra
     
 /*
  * void hornet_ddr_tap_init(void)
