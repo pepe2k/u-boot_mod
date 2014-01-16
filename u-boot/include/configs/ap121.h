@@ -53,6 +53,10 @@
 
 	#define	CONFIG_BOOTARGS	"console=ttyS0,115200 root=31:06 rootfstype=squashfs init=/sbin/init mtdparts=ar7240-nor0:64k(u-boot),64k(ART),64k(mac),64k(nvram),256k(language),1024k(uImage),6656k(rootfs)"
 
+#elif defined(CONFIG_FOR_GS_OOLITE_V1_DEV)
+
+	#define	CONFIG_BOOTARGS	"console=ttyS0,115200 root=31:02 rootfstype=squashfs init=/sbin/init mtdparts=ar7240-nor0:128k(u-boot),1024k(kernel),2816k(rootfs),64k(config),64k(ART)"
+
 #elif defined(CONFIG_FOR_8DEVICES_CARAMBOLA2)
 
 	#define	CONFIG_BOOTARGS "console=ttyS0,115200 root=31:02 rootfstype=squashfs init=/sbin/init mtdparts=ar7240-nor0:256k(u-boot),64k(u-boot-env),16000k(firmware),64k(ART)"
@@ -821,6 +825,9 @@
 #elif defined(CONFIG_FOR_8DEVICES_CARAMBOLA2)
 	// Carambola 2: 256k(U-Boot),64k(U-Boot env),64k(ART)
 	#define WEBFAILSAFE_UPLOAD_LIMITED_AREA_IN_BYTES	(384 * 1024)
+#elif defined (CONFIG_FOR_GS_OOLITE_V1_DEV)
+	// GS-Oolite v1: 128k(U-Boot + MAC),64k(ART)
+	#define WEBFAILSAFE_UPLOAD_LIMITED_AREA_IN_BYTES	(192 * 1024)
 #else
 	// TP-Link: 64k(U-Boot),64k(MAC/model/WPS pin block),64k(ART)
 	#define WEBFAILSAFE_UPLOAD_LIMITED_AREA_IN_BYTES	(192 * 1024)
@@ -861,6 +868,12 @@
 	#define OFFSET_MAC_DATA_BLOCK_LENGTH	0x010000
 	#define OFFSET_MAC_ADDRESS				0x000000	// Carambola 2 has two MAC addresses at the beginning of ART partition
 	#define OFFSET_MAC_ADDRESS2				0x000006
+#elif defined (CONFIG_FOR_GS_OOLITE_V1_DEV)
+	// GS-OOlite has only one MAC, inside second block
+	// It's some kind of TP-Link clone
+	#define OFFSET_MAC_DATA_BLOCK			0x010000
+	#define OFFSET_MAC_DATA_BLOCK_LENGTH	0x010000
+	#define OFFSET_MAC_ADDRESS				0x00FC00
 #else
 	#define OFFSET_MAC_DATA_BLOCK			0x010000
 	#define OFFSET_MAC_DATA_BLOCK_LENGTH	0x010000
@@ -868,7 +881,8 @@
 #endif
 
 #if !defined(CONFIG_FOR_8DEVICES_CARAMBOLA2) && \
-	!defined(CONFIG_FOR_DLINK_DIR505_A1)
+	!defined(CONFIG_FOR_DLINK_DIR505_A1)     && \
+	!defined (CONFIG_FOR_GS_OOLITE_V1_DEV)
 #define OFFSET_ROUTER_MODEL					0x00FD00
 #endif
 
