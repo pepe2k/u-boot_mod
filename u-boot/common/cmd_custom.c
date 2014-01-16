@@ -108,7 +108,7 @@ int do_set_mac(cmd_tbl_t * cmdtp, int flag, int argc, char *argv[]){
 		return(1);
 	}
 
-	puts("** Notice: you should always make a backup of your device\n           entire FLASH content before making any changes\n\n");
+	puts("** Notice:\n   you should always make a backup of your device\n           entire FLASH content before making any changes\n\n");
 
 	memcpy((void *)data_pointer, (void *)(CFG_FLASH_BASE + OFFSET_MAC_DATA_BLOCK), OFFSET_MAC_DATA_BLOCK_LENGTH);
 
