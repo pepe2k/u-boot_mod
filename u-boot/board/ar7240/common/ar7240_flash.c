@@ -136,6 +136,11 @@ unsigned long flash_init(void){
 			puts("EON EN25Q32 (4 MB)");
 			break;
 
+		case 0x1C3116:	// tested
+			flash_set_geom(SIZE_INBYTES_4MBYTES, 64, SIZE_INBYTES_64KBYTES);
+			puts("EON EN25F32 (4 MB)");
+			break;
+
 		case 0x202016:
 			flash_set_geom(SIZE_INBYTES_4MBYTES, 64, SIZE_INBYTES_64KBYTES);
 			puts("Micron M25P32 (4 MB)");
