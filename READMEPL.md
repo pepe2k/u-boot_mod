@@ -173,6 +173,7 @@ Pełna lista obsługiwanych kości FLASH:
 - Spansion S25FL032P (4 MiB, JEDEC ID: 01 0215)*
 - Atmel AT25DF321 (4 MiB, JEDEC ID: 1F 4700)
 - EON EN25Q32 (4 MiB, JEDEC ID: 1C 3016)*
+- EON EN25F32 (4 MiB, JEDEC ID: 1C 3116)*
 - Micron M25P32 (4 MiB, JEDEC ID: 20 2016)
 - Windbond W25Q32 (4 MiB, JEDEC ID: EF 4016)
 - Macronix MX25L320 (4 MiB, JEDEC ID: C2 2016)
