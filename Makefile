@@ -136,6 +136,15 @@ dlink_dir505:
 	@cp $(BUILD_TOPDIR)/u-boot/tuboot.bin $(BUILD_TOPDIR)/bin/temp.bin
 	@make show_size
 
+gs-oolite_v1_dev:	export UBOOT_FILE_NAME=uboot_for_gs-oolite_v1_dev
+gs-oolite_v1_dev:	export MAX_UBOOT_SIZE=64
+gs-oolite_v1_dev:	export COMPRESSED_UBOOT=1
+gs-oolite_v1_dev:
+	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) gs_oolite_v1_dev_config
+	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) ENDIANNESS=-EB V=1 all
+	@cp $(BUILD_TOPDIR)/u-boot/tuboot.bin $(BUILD_TOPDIR)/bin/temp.bin
+	@make show_size
+
 8devices_carambola2:	export UBOOT_FILE_NAME=uboot_for_8devices_carambola2
 8devices_carambola2:	export MAX_UBOOT_SIZE=256
 8devices_carambola2:

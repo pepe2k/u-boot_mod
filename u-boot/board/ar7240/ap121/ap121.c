@@ -31,6 +31,8 @@ void led_toggle(void){
 	gpio ^= 1 << GPIO_SYS_LED_BIT;
 #elif defined(CONFIG_FOR_DLINK_DIR505_A1)
 	gpio ^= 1 << GPIO_SYS_LED_BIT;
+#elif defined(CONFIG_FOR_GS_OOLITE_V1_DEV)
+	gpio ^= 1 << GPIO_SYS_LED_BIT;
 #elif defined(CONFIG_FOR_8DEVICES_CARAMBOLA2)
 	gpio ^= 1 << GPIO_WLAN_LED_BIT;
 #else
@@ -73,6 +75,11 @@ void all_led_on(void){
 	#endif
 #elif defined(CONFIG_FOR_DLINK_DIR505_A1)
 	SETBITVAL(gpio, GPIO_SYS_LED_BIT, GPIO_SYS_LED_ON);
+#elif defined(CONFIG_FOR_GS_OOLITE_V1_DEV)
+	SETBITVAL(gpio, GPIO_SYS_LED_BIT, GPIO_SYS_LED_ON);
+	SETBITVAL(gpio, GPIO_WAN_LED_BIT, GPIO_WAN_LED_ON);
+	SETBITVAL(gpio, GPIO_LAN1_LED_BIT, GPIO_LAN1_LED_ON);
+	SETBITVAL(gpio, GPIO_LAN2_LED_BIT, GPIO_LAN2_LED_ON);
 #elif defined(CONFIG_FOR_8DEVICES_CARAMBOLA2)
 	SETBITVAL(gpio, GPIO_WLAN_LED_BIT, GPIO_WLAN_LED_ON);
 #else
@@ -115,6 +122,11 @@ void all_led_off(void){
 	#endif
 #elif defined(CONFIG_FOR_DLINK_DIR505_A1)
 	SETBITVAL(gpio, GPIO_SYS_LED_BIT, !GPIO_SYS_LED_ON);
+#elif defined(CONFIG_FOR_GS_OOLITE_V1_DEV)
+	SETBITVAL(gpio, GPIO_SYS_LED_BIT, !GPIO_SYS_LED_ON);
+	SETBITVAL(gpio, GPIO_WAN_LED_BIT, !GPIO_WAN_LED_ON);
+	SETBITVAL(gpio, GPIO_LAN1_LED_BIT, !GPIO_LAN1_LED_ON);
+	SETBITVAL(gpio, GPIO_LAN2_LED_BIT, !GPIO_LAN2_LED_ON);
 #elif defined(CONFIG_FOR_8DEVICES_CARAMBOLA2)
 	SETBITVAL(gpio, GPIO_WLAN_LED_BIT, !GPIO_WLAN_LED_ON);
 #else
@@ -295,6 +307,40 @@ void gpio_config(void){
 
 	// turn off RED LED, we don't need it
 	ar7240_reg_wr(AR7240_GPIO_OUT, (ar7240_reg_rd(AR7240_GPIO_OUT) | (0x1 << 26)));
+#elif defined(CONFIG_FOR_GS_OOLITE_V1_DEV)
+
+	/* LED's GPIOs on GS-Oolite v1 with development board:
+	 *
+	 * 13	=> LAN2
+	 * 15	=> LAN1
+	 * 17	=> WAN
+	 * 27	=> SYS LED (green on dev board, red on module)
+	 *
+	 * I/O on development board:
+	 * 0	=> RED LED (active low)
+	 * 1	=> RED LED (active low)
+	 * 6	=> Switch 8
+	 * 7	=> Switch 7
+	 * 8	=> USB power
+	 * 11	=> Reset switch
+	 * 14	=> RED LED (active low)
+	 * 16	=> RED LED (active low)
+	 * 18	=> RED LED (active low)
+	 * 19	=> RED LED (active low)
+	 * 20	=> RED LED (active low)
+	 * 21	=> RED LED (active low)
+	 * 22	=> RED LED (active low)
+	 * 23	=> Relay 1
+	 * 24	=> Relay 2
+	 * 26	=> RED LED (active low)
+	 *
+	 */
+
+	// set GPIO_OE
+	ar7240_reg_wr(AR7240_GPIO_OE, (ar7240_reg_rd(AR7240_GPIO_OE) | 0xDFFE103));
+
+	// turn on power on USB and turn off RED LEDs
+	ar7240_reg_wr(AR7240_GPIO_SET, 0x47D4103);
 #else
 	#error "Custom GPIO config in gpio_config() not defined!"
 #endif

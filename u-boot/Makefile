@@ -448,6 +448,23 @@ dir505_config : unconfig hornet_common_config
 	
 	@./mkconfig -a ap121 mips mips ap121 ar7240 ar7240
 
+gs_oolite_v1_dev_config : unconfig hornet_common_config
+	@echo '======= Configuring for GS-Oolite v1 with dev board at:' `date` '======='
+	@echo "#define CONFIG_FOR_GS_OOLITE_V1_DEV          1" >> include/config.h
+	@echo "#define GPIO_SYS_LED_BIT                    27" >> include/config.h
+	@echo "#define GPIO_SYS_LED_ON                      0" >> include/config.h
+	@echo "#define GPIO_WAN_LED_BIT                    17" >> include/config.h
+	@echo "#define GPIO_WAN_LED_ON                      0" >> include/config.h
+	@echo "#define GPIO_LAN1_LED_BIT                   13" >> include/config.h
+	@echo "#define GPIO_LAN1_LED_ON                     0" >> include/config.h
+	@echo "#define GPIO_LAN2_LED_BIT                   15" >> include/config.h
+	@echo "#define GPIO_LAN2_LED_ON                     0" >> include/config.h
+	@echo "#define GPIO_RST_BUTTON_BIT                 11" >> include/config.h
+	@echo "#define DEFAULT_FLASH_SIZE_IN_MB            16" >> include/config.h
+	@echo "#define BOARD_CUSTOM_STRING                  \"AP121 (AR9331) U-Boot for GS-Oolite v1\"" >> include/config.h
+	
+	@./mkconfig -a ap121 mips mips ap121 ar7240 ar7240
+
 carambola2_config : unconfig hornet_common_config
 	@echo '======= Configuring for 8devices Carambola 2 at:' `date` '======='
 	@echo "#define CONFIG_FOR_8DEVICES_CARAMBOLA2       1" >> include/config.h
