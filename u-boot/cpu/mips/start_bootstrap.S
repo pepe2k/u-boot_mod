@@ -249,6 +249,63 @@ reset:
 	li	v1, 0xF800
 	sw	v1, 0(a1)
 
+#elif defined(CONFIG_FOR_TPLINK_WDR3500_V1)
+	/*
+	 * LEDs and buttons GPIOs on WDR3500 v1:
+	 *
+	 * 11 => USB LED
+	 * 12 => USB POWER (active high)
+	 * 13 => WLAN2G
+	 * 14 => SYS
+	 * 15 => QSS
+	 * 18 => WAN
+	 * 19 => LAN1
+	 * 20 => LAN2
+	 * 21 => LAN3
+	 * 22 => LAN4
+	 *
+	 * 16 => Reset button
+	 * 17 => Wi-Fi ON/OFF switch
+	 *
+	 * All OUT GPIOs are active LOW if not stated otherwise
+	 */
+
+	// GPIO Init
+	li  a1, AR934X_GPIO_OE
+	lw  v1, 0(a1)
+	// Set GPIOs 11~15 and 18~22 as outputs
+	and v1, v1, 0xFF8307FF
+	// Set GPIOs 16~17 as inputs
+	or  v1, v1, 0x30000
+	sw  v1, 0(a1)
+
+	// Set GPIO function for GPIO 11
+	li	a1, AR934X_GPIO_OUT_FUNCTION2
+	lw	v1, 0(a1)
+	and v1, v1, 0x00FFFFFF
+	sw	v1, 0(a1)
+
+	// Set GPIO function for GPIOs 12~15
+	li	a1, AR934X_GPIO_OUT_FUNCTION3
+	li	v1, 0x0
+	sw	v1, 0(a1)
+
+	// Set GPIO function for GPIOs 18~19
+	li	a1, AR934X_GPIO_OUT_FUNCTION4
+	lw	v1, 0(a1)
+	and v1, v1, 0xFFFF
+	sw	v1, 0(a1)
+
+	// Turn on power on USB
+	li  a1, AR934X_GPIO_SET
+	li	v1, 0x1000
+	sw	v1, 0(a1)
+
+	// Turn off all LEDs
+	li  a1, AR934X_GPIO_SET
+	li	v1, 0x7CF800
+	sw	v1, 0(a1)
+
 #elif defined(CONFIG_FOR_TPLINK_WR841N_V8)
 	/*
 	 * LEDs and buttons GPIOs on WR841N/D v8:

@@ -516,6 +516,37 @@ wdr3600_43x0_config : unconfig wasp_common_config
 
 	@./mkconfig -a db12x mips mips db12x ar7240 ar7240
 
+wdr3500_config : unconfig wasp_common_config
+	@echo '======= Configuring for TP-Link TL-WDR3500 at:' `date` '======='
+	@echo "#define CONFIG_FOR_TPLINK_WDR3500_V1         1" >> include/config.h
+	@echo "#define DDR2_32BIT_SUPPORT                   1" >> include/config.h
+	@echo "#define CFG_ATHRS27_PHY                      1" >> include/config.h
+	@echo "#define CFG_AG7240_NMACS                     2" >> include/config.h
+	@echo "#define GPIO_SYS_LED_BIT                    14" >> include/config.h
+	@echo "#define GPIO_SYS_LED_ON                      0" >> include/config.h
+	@echo "#define GPIO_WLAN_2G_LED_BIT                13" >> include/config.h
+	@echo "#define GPIO_WLAN_2G_LED_ON                  0" >> include/config.h
+	@echo "#define GPIO_LAN1_LED_BIT                   19" >> include/config.h
+	@echo "#define GPIO_LAN1_LED_ON                     0" >> include/config.h
+	@echo "#define GPIO_LAN2_LED_BIT                   20" >> include/config.h
+	@echo "#define GPIO_LAN2_LED_ON                     0" >> include/config.h
+	@echo "#define GPIO_LAN3_LED_BIT                   21" >> include/config.h
+	@echo "#define GPIO_LAN3_LED_ON                     0" >> include/config.h
+	@echo "#define GPIO_LAN4_LED_BIT                   22" >> include/config.h
+	@echo "#define GPIO_LAN4_LED_ON                     0" >> include/config.h
+	@echo "#define GPIO_INTERNET_LED_BIT               18" >> include/config.h
+	@echo "#define GPIO_INTERNET_LED_ON                 0" >> include/config.h
+	@echo "#define GPIO_QSS_LED_BIT                    15" >> include/config.h
+	@echo "#define GPIO_QSS_LED_ON                      0" >> include/config.h
+	@echo "#define GPIO_USB_LED_BIT                    11" >> include/config.h
+	@echo "#define GPIO_USB_LED_ON                      0" >> include/config.h
+	@echo "#define GPIO_RST_BUTTON_BIT                 16" >> include/config.h
+	@echo "#define GPIO_RST_BUTTON_IS_ACTIVE_LOW        1" >> include/config.h
+	@echo "#define DEFAULT_FLASH_SIZE_IN_MB             8" >> include/config.h
+	@echo "#define BOARD_CUSTOM_STRING                  \"DB120 (AR9344) U-Boot for TL-WDR3500\"" >> include/config.h
+
+	@./mkconfig -a db12x mips mips db12x ar7240 ar7240
+
 mr3420_v2_config : unconfig wasp_common_config
 	@echo '======= Configuring for TP-Link TL-MR3420 v2 at:' `date` '======='
 	@echo "#define CONFIG_FOR_TPLINK_MR3420_V2          1" >> include/config.h

@@ -74,6 +74,7 @@ Lista obecnie wspieranych urządzeń:
 - **Atheros AR9344**:
   - TP-Link TL-WDR3600 v1
   - TP-Link TL-WDR43x0 v1
+  - TP-Link TL-WDR3500 v1
 
 Przetestowałem swoją modyfikację na większości z wymienionych powyżej urządzeń, z obrazami OpenWrt i oficjalnym firmware producenta. Jeżeli nie jesteś pewien wersji sprzętowej swojego urządzenia, proszę skontaktuj się ze mną **zanim** dokonasz wymiany obrazu bootloadera. Zmiana na niewłaściwą wersję najprawdopodobniej doprowadzi do uszkodzenia Twojego urządzenia i jedyną możliwością jego ponownego uruchomienia będzie przeprogramowanie kości FLASH w zewnętrznym programatorze.
 
@@ -98,6 +99,7 @@ Dodatkowe informacje o wspieranych urządzeniach:
 | [TP-Link TL-WA801ND v2](http://wikidevi.com/wiki/TP-LINK_TL-WA801ND_v2) | AR9341 | 4 MiB | 32 MiB DDR1 | 64 KiB, LZMA | RO |
 | [TP-Link TL-WDR3600 v1](http://wiki.openwrt.org/toh/tp-link/tl-wdr3600) | AR9344 | 8 MiB | 128 MiB DDR2 | 64 KiB, LZMA | RO |
 | [TP-Link TL-WDR43x0 v1](http://wiki.openwrt.org/toh/tp-link/tl-wdr4300) | AR9344 | 8 MiB | 128 MiB DDR2 | 64 KiB, LZMA | RO |
+| [TP-Link TL-WDR3500 v1](http://wiki.openwrt.org/toh/tp-link/tl-wdr3500) | AR9344 | 8 MiB | 128 MiB DDR2 | 64 KiB, LZMA | RO |
 | [D-Link DIR-505 H/W ver. A1](http://wiki.openwrt.org/toh/d-link/dir-505) | AR1311 | 8 MiB | 64 MiB DDR2 | 64 KiB, LZMA | RO |
 
 *(LZMA) - obraz binarny U-Boot został dodatkowo skompresowany przy pomocy LZMA.*  
