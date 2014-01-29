@@ -32,7 +32,7 @@
  * Default bootargs
  */
 #undef CONFIG_BOOTARGS
-#if defined(CONFIG_FOR_TPLINK_WDR3600_WDR43X0_V1)
+#if defined(CONFIG_FOR_TPLINK_WDR3600_WDR43X0_V1) || defined (CONFIG_FOR_TPLINK_WDR3500_V1)
 #define	CONFIG_BOOTARGS	"console=ttyS0,115200 root=31:02 rootfstype=squashfs init=/sbin/init mtdparts=ath-nor0:256k(u-boot),64k(u-boot-env),6336k(rootfs),1408k(uImage),64k(mib0),64k(ART)"
 #else
 #define	CONFIG_BOOTARGS	"console=ttyS0,115200 root=31:02 rootfstype=squashfs init=/sbin/init mtdparts=ath-nor0:128k(u-boot),1024k(kernel),2816k(rootfs),64k(config),64k(art)"

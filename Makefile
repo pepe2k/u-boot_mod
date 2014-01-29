@@ -97,6 +97,16 @@ tplink_wdr3600_43x0:
 	@cp $(BUILD_TOPDIR)/u-boot/tuboot.bin $(BUILD_TOPDIR)/bin/temp.bin
 	@make show_size
 
+tplink_wdr3500:	export UBOOT_FILE_NAME=uboot_for_tp-link_tl-wdr3500
+tplink_wdr3500:	export MAX_UBOOT_SIZE=64
+tplink_wdr3500:	export COMPRESSED_UBOOT=1
+tplink_wdr3500:	export ETH_CONFIG=_s27
+tplink_wdr3500:
+	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) wdr3500_config
+	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) ENDIANNESS=-EB V=1 all
+	@cp $(BUILD_TOPDIR)/u-boot/tuboot.bin $(BUILD_TOPDIR)/bin/temp.bin
+	@make show_size
+
 tplink_mr3420_v2:	export UBOOT_FILE_NAME=uboot_for_tp-link_tl-mr3420_v2
 tplink_mr3420_v2:	export MAX_UBOOT_SIZE=64
 tplink_mr3420_v2:	export COMPRESSED_UBOOT=1
