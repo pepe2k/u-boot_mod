@@ -142,12 +142,12 @@ init_ahb_pll:
 #if !defined(CONFIG_AP123)
 	/*		refdiv		nint		nfrac */
 	li	t4,	((0x8 << 27) | (112 << 18) | 0);// cpu freq = (40 MHz refclk/refdiv 8) * Nint
-	li	t5,	((0x8 << 27) | (96 << 18) | 0);	// ddr freq = (40 MHz refclk/refdiv 8) * Nint
+	li	t5,	((0x8 << 27) | (90 << 18) | 0);	// ddr freq = (40 MHz refclk/refdiv 8) * Nint
 	j	2f
 	nop
 1:
-	li	t4,	((0x5 << 27) | (112 << 18) | 0);// cpu freq = (25 MHz refclk/refdiv 8) * Nint
-	li	t5,	((0x5 << 27) | (96 << 18) | 0);	// ddr freq = (25 MHz refclk/refdiv 8) * Nint
+	li	t4,	((0x5 << 27) | (112 << 18) | 0);// cpu freq = (25 MHz refclk/refdiv 5) * Nint
+	li	t5,	((0x5 << 27) | (90 << 18) | 0);	// ddr freq = (25 MHz refclk/refdiv 5) * Nint
 	j	2f
 	nop
 #else	/* defined(CONFIG_AP123) */
@@ -157,8 +157,8 @@ init_ahb_pll:
 	j	2f
 	nop
 1:
-	li	t4,	((0x5 << 27) | (107 << 18) | 0);// cpu freq = (25 MHz refclk/refdiv 8) * Nint
-	li	t5,	((0x5 << 27) | (160 << 18) | 0);// ddr freq = (25 MHz refclk/refdiv 8) * Nint
+	li	t4,	((0x5 << 27) | (107 << 18) | 0);// cpu freq = (25 MHz refclk/refdiv 5) * Nint
+	li	t5,	((0x5 << 27) | (160 << 18) | 0);// ddr freq = (25 MHz refclk/refdiv 5) * Nint
 	j	2f
 	nop
 #endif	/* !defined(CONFIG_AP123) */
