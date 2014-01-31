@@ -25,11 +25,11 @@
 vendor_dir=${1:-general}
 
 # Temporary files
-files_content_tmp=".files_content"
-files_list_tmp=".files_list"
+files_content_tmp="vendors/.files_content"
+files_list_tmp="vendors/.files_list"
 
 # YUI Compressor path (should be in the same dir)
-yui_compressor=`ls -t *.jar 2> /dev/null | tail --lines=1`
+yui_compressor=`ls -t vendors/*.jar 2> /dev/null | tail --lines=1`
 
 # Previous fsdata_file var name
 prev_fsdata_struct="NULL"
@@ -115,16 +115,16 @@ function print_data_struct() {
 
 # === Main loop ===
 
-if [ -d "$vendor_dir"  ]; then # If vendor dir exists
+if [ -d vendors/"$vendor_dir"  ]; then # If vendor dir exists
 	# Remove old fsdata.c
-	if [ -a "../fsdata.c" ]; then
-		`rm "../fsdata.c"`
+	if [ -a "fsdata.c" ]; then
+		`rm "fsdata.c"`
 	fi
 
 	`touch "$files_content_tmp" "$files_list_tmp"`
 
 	# Loop through all files in vendor dir
-	for file in "$vendor_dir"/*; do # For all found files
+	for file in vendors/"$vendor_dir"/*; do # For all found files
 		print_data_array $file
 		print_data_struct $file
 		files_counter=$((files_counter+1))
@@ -135,12 +135,12 @@ if [ -d "$vendor_dir"  ]; then # If vendor dir exists
 	`echo "#define FS_NUMFILES "$files_counter"" >> "$files_list_tmp"`
 
 	# Generate new fsdata.c
-	`touch "../fsdata.c"`
+	`touch "fsdata.c"`
 
-	`cat "$files_content_tmp" > "../fsdata.c"`
-	`cat "$files_list_tmp" >> "../fsdata.c"`
+	`cat "$files_content_tmp" > "fsdata.c"`
+	`cat "$files_list_tmp" >> "fsdata.c"`
 
 	`rm "$files_content_tmp" "$files_list_tmp"`
 else
-	echo "Error! Vendor specific directory doesn't exist!"
+	echo "Error! Vendor specific directory (vendors/"$vendor_dir") doesn't exist!"
 fi

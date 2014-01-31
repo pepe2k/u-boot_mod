@@ -9,6 +9,11 @@ OBJS += uip.o uip_arch.o uip_arp.o httpd.o fs.o
 
 all:    $(LIB)
 
+fs.c:   fsdata.c
+
+fsdata.c:
+	    ./vendors/makefsdatac $(DEVICE_VENDOR)
+
 $(LIB): $(START) $(OBJS)
 	    $(AR) crv $@ $(OBJS)
 
