@@ -186,7 +186,7 @@ ddr1_config:
 	set_mem(0xB8000010, t8);
 
 	// 0x18000008 (DDR_MODE_REGISTER, p. 55)
-	li t8,CFG_DDR_MODE_VAL_INIT;
+	li t8, CFG_DDR_MODE_VAL_INIT;
 	set_mem(0xB8000008, t8);
 
 	// Write Mode Word in DDR
