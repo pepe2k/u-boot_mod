@@ -487,6 +487,25 @@ carambola2_config : unconfig hornet_common_config
 	
 	@./mkconfig -a ap121 mips mips ap121 ar7240 ar7240
 
+dragino_v2_ms14_config : unconfig hornet_common_config
+	@echo '======= Configuring for Dragino Dragino v2 (MS14) at:' `date` '======='
+	@echo "#define CONFIG_FOR_DRAGINO_V2                1" >> include/config.h
+	@echo "#undef  COMPRESSED_UBOOT"                       >> include/config.h
+	@echo "#define GPIO_WLAN_LED_BIT                    0" >> include/config.h
+	@echo "#define GPIO_WLAN_LED_ON                     1" >> include/config.h
+	@echo "#define GPIO_WAN_LED_BIT                    17" >> include/config.h
+	@echo "#define GPIO_WAN_LED_ON                      0" >> include/config.h
+	@echo "#define GPIO_LAN_LED_BIT                    13" >> include/config.h
+	@echo "#define GPIO_LAN_LED_ON                      0" >> include/config.h
+	@echo "#define GPIO_INTERNET_LED_BIT               28" >> include/config.h
+	@echo "#define GPIO_INTERNET_LED_ON                 1" >> include/config.h
+	@echo "#define GPIO_RST_BUTTON_BIT                 11" >> include/config.h
+	@echo "#define GPIO_RST_BUTTON_IS_ACTIVE_LOW        1" >> include/config.h
+	@echo "#define DEFAULT_FLASH_SIZE_IN_MB            16" >> include/config.h
+	@echo "#define BOARD_CUSTOM_STRING                  \"AP121 (AR9331) U-Boot for Dragino v2 MS14\"" >> include/config.h
+	
+	@./mkconfig -a ap121 mips mips ap121 ar7240 ar7240
+
 wasp_common_config : common_config
 	@echo "#define CONFIG_AR7240                        1" >> include/config.h
 	@echo "#define CONFIG_WASP                          1" >> include/config.h

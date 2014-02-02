@@ -195,13 +195,15 @@ int	autoscript (ulong addr);
  * use different (simply) image header
  */
 #if !defined(CONFIG_FOR_8DEVICES_CARAMBOLA2) && \
-	!defined(CONFIG_FOR_DLINK_DIR505_A1)
+	!defined(CONFIG_FOR_DLINK_DIR505_A1)     && \
+	!defined(CONFIG_FOR_DRAGINO_V2)
 #include "tpLinuxTag.h"
 #endif
 
 /* common/cmd_bootm.c */
 #if defined(CONFIG_FOR_8DEVICES_CARAMBOLA2) || \
-	defined(CONFIG_FOR_DLINK_DIR505_A1)
+	defined(CONFIG_FOR_DLINK_DIR505_A1)     || \
+	defined(CONFIG_FOR_DRAGINO_V2)
 void print_image_hdr(image_header_t *hdr);
 #else
 void print_image_hdr(tplink_image_header_t *hdr);
