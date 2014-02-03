@@ -356,7 +356,6 @@ int	dcache_status (void);
 void	dcache_enable (void);
 void	dcache_disable(void);
 void	relocate_code (ulong, gd_t *, ulong);
-void 	ar7240_ddr_tap_init(void);
 ulong	get_endaddr   (void);
 void	trap_init     (ulong);
 #if defined (CONFIG_4xx)	|| \

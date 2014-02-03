@@ -6,9 +6,10 @@
 #include <version.h>
 #include "ar7240_soc.h"
 
-#ifndef COMPRESSED_UBOOT
-extern void	ar7240_ddr_initial_config(uint32_t refresh);
+#if !defined(COMPRESSED_UBOOT)
+extern void	hornet_ddr_init(void);
 #endif
+
 extern int ar7240_ddr_find_size(void);
 extern void hornet_ddr_tap_init(void);
 
@@ -374,7 +375,7 @@ void gpio_config(void){
 
 int ar7240_mem_config(void){
 #ifndef COMPRESSED_UBOOT
-	ar7240_ddr_initial_config(CFG_DDR_REFRESH_VAL);
+	hornet_ddr_init();
 #endif
 
 	/* Default tap values for starting the tap_init*/
@@ -384,11 +385,7 @@ int ar7240_mem_config(void){
 	gpio_config();
 	all_led_off();
 
-#ifndef COMPRESSED_UBOOT
-	ar7240_ddr_tap_init();
-#else
 	hornet_ddr_tap_init();
-#endif
 
 	// return memory size
 	return(ar7240_ddr_find_size());
