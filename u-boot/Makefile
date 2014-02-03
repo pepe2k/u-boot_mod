@@ -292,7 +292,6 @@ hornet_common_config : common_config
 	@echo "#define CONFIG_AR7240                        1" >> include/config.h
 	@echo "#define CONFIG_MACH_HORNET                   1" >> include/config.h
 	@echo "#define CONFIG_HORNET_1_1_WAR                1" >> include/config.h
-	@echo "#define NEW_DDR_TAP_CAL                      1" >> include/config.h
 
 wr703n_config : unconfig hornet_common_config
 	@echo '======= Configuring for TP-Link TL-WR703N at:' `date` '======='
