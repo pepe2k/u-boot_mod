@@ -61,6 +61,10 @@
 
 	#define	CONFIG_BOOTARGS "console=ttyS0,115200 root=31:02 rootfstype=squashfs init=/sbin/init mtdparts=ar7240-nor0:256k(u-boot),64k(u-boot-env),16000k(firmware),64k(ART)"
 
+#elif defined(CONFIG_FOR_DRAGINO_V2)
+
+	#define	CONFIG_BOOTARGS "console=ttyS0,115200 root=31:02 rootfstype=squashfs init=/sbin/init mtdparts=ar7240-nor0:192k(u-boot),64k(u-boot-env),16064k(firmware),64k(ART)"
+
 #endif
 
 /*
@@ -76,6 +80,8 @@
 	#define	CFG_LOAD_ADDR		0x9F080000
 #elif defined(CONFIG_FOR_8DEVICES_CARAMBOLA2)
 	#define	CFG_LOAD_ADDR		0x9F050000
+#elif defined(CONFIG_FOR_DRAGINO_V2)
+	#define	CFG_LOAD_ADDR		0x9F040000
 #else
 	#define	CFG_LOAD_ADDR		0x9F020000
 #endif
@@ -84,12 +90,24 @@
 	#define CONFIG_BOOTCOMMAND "bootm 0x9F080000"
 #elif defined(CONFIG_FOR_8DEVICES_CARAMBOLA2)
 	#define CONFIG_BOOTCOMMAND "bootm 0x9F050000"
+#elif defined(CONFIG_FOR_DRAGINO_V2)
+	#define CONFIG_BOOTCOMMAND "bootm 0x9F040000"
 #else
 	#define CONFIG_BOOTCOMMAND "bootm 0x9F020000"
 #endif
 
 #define CONFIG_IPADDR		192.168.1.1
 #define CONFIG_SERVERIP		192.168.1.2
+
+/*
+ * Dragino 2 uses different prompt
+ */
+#if defined(CONFIG_FOR_DRAGINO_V2)
+	#if defined(CFG_PROMPT)
+		#undef CFG_PROMPT
+	#endif
+	#define	CFG_PROMPT "dr_boot> "
+#endif
 
 #undef	CFG_HZ
 #define	CFG_HZ				bd->bi_cfg_hz
@@ -726,7 +744,8 @@
 /*
  * Address and size of Primary Environment Sector
  */
-#if defined(CONFIG_FOR_8DEVICES_CARAMBOLA2)
+#if defined(CONFIG_FOR_8DEVICES_CARAMBOLA2) || \
+	defined(CONFIG_FOR_DRAGINO_V2)
 	#define	CFG_ENV_IS_IN_FLASH	1
 	#undef CFG_ENV_IS_NOWHERE
 #else
@@ -734,15 +753,22 @@
 	#define CFG_ENV_IS_NOWHERE	1
 #endif
 
-#define CFG_ENV_ADDR			0x9F040000
-#define CFG_ENV_SIZE			0x10000
+#if defined(CONFIG_FOR_DRAGINO_V2)
+	#define CFG_ENV_ADDR		0x9F030000
+	#define CFG_ENV_SIZE		0x8000
+	#define CFG_ENV_SECT_SIZE	0x10000
+#else
+	#define CFG_ENV_ADDR		0x9F040000
+	#define CFG_ENV_SIZE		0x10000
+#endif
 
 /*
  * Available commands
  */
 #if defined(CONFIG_FOR_DLINK_DIR505_A1)
 	#define CONFIG_COMMANDS (CFG_CMD_MEMORY | CFG_CMD_DHCP | CFG_CMD_PING | CFG_CMD_FLASH | CFG_CMD_NET | CFG_CMD_RUN | CFG_CMD_DATE | CFG_CMD_IMI | CFG_CMD_SNTP )
-#elif defined(CONFIG_FOR_8DEVICES_CARAMBOLA2)
+#elif defined(CONFIG_FOR_8DEVICES_CARAMBOLA2) || \
+      defined(CONFIG_FOR_DRAGINO_V2)
 	#define CONFIG_COMMANDS	(CFG_CMD_MEMORY | CFG_CMD_DHCP | CFG_CMD_PING | CFG_CMD_ENV | CFG_CMD_FLASH | CFG_CMD_NET | CFG_CMD_RUN | CFG_CMD_DATE | CFG_CMD_IMI | CFG_CMD_SNTP)
 #else
 	#define CONFIG_COMMANDS (CFG_CMD_MEMORY | CFG_CMD_DHCP | CFG_CMD_PING | CFG_CMD_FLASH | CFG_CMD_NET | CFG_CMD_RUN | CFG_CMD_DATE | CFG_CMD_SNTP )
@@ -798,6 +824,8 @@
 	#define WEBFAILSAFE_UPLOAD_UBOOT_SIZE_IN_BYTES		(64 * 1024)
 #elif defined(CONFIG_FOR_8DEVICES_CARAMBOLA2)
 	#define WEBFAILSAFE_UPLOAD_UBOOT_SIZE_IN_BYTES		(256 * 1024)
+#elif defined(CONFIG_FOR_DRAGINO_V2)
+	#define WEBFAILSAFE_UPLOAD_UBOOT_SIZE_IN_BYTES		(192 * 1024)
 #else
 	#define WEBFAILSAFE_UPLOAD_UBOOT_SIZE_IN_BYTES		(64 * 1024)
 #endif
@@ -807,6 +835,8 @@
 	#define WEBFAILSAFE_UPLOAD_KERNEL_ADDRESS			WEBFAILSAFE_UPLOAD_UBOOT_ADDRESS + 0x80000
 #elif defined(CONFIG_FOR_8DEVICES_CARAMBOLA2)
 	#define WEBFAILSAFE_UPLOAD_KERNEL_ADDRESS			WEBFAILSAFE_UPLOAD_UBOOT_ADDRESS + 0x50000
+#elif defined(CONFIG_FOR_DRAGINO_V2)
+	#define WEBFAILSAFE_UPLOAD_KERNEL_ADDRESS			WEBFAILSAFE_UPLOAD_UBOOT_ADDRESS + 0x40000
 #else
 	#define WEBFAILSAFE_UPLOAD_KERNEL_ADDRESS			WEBFAILSAFE_UPLOAD_UBOOT_ADDRESS + 0x20000
 #endif
@@ -825,7 +855,10 @@
 #elif defined(CONFIG_FOR_8DEVICES_CARAMBOLA2)
 	// Carambola 2: 256k(U-Boot),64k(U-Boot env),64k(ART)
 	#define WEBFAILSAFE_UPLOAD_LIMITED_AREA_IN_BYTES	(384 * 1024)
-#elif defined (CONFIG_FOR_GS_OOLITE_V1_DEV)
+#elif defined(CONFIG_FOR_DRAGINO_V2)
+	// Dragino 2: 192k(U-Boot),64k(U-Boot env),64k(ART)
+	#define WEBFAILSAFE_UPLOAD_LIMITED_AREA_IN_BYTES	(320 * 1024)
+#elif defined(CONFIG_FOR_GS_OOLITE_V1_DEV)
 	// GS-Oolite v1: 128k(U-Boot + MAC),64k(ART)
 	#define WEBFAILSAFE_UPLOAD_LIMITED_AREA_IN_BYTES	(192 * 1024)
 #else
@@ -863,12 +896,14 @@
 	//#define OFFSET_MAC_DATA_BLOCK_LENGTH	0x010000
 	//#define OFFSET_MAC_ADDRESS				0x000004
 	//#define OFFSET_MAC_ADDRESS2				0x000016
-#elif defined(CONFIG_FOR_8DEVICES_CARAMBOLA2)
+#elif defined(CONFIG_FOR_8DEVICES_CARAMBOLA2) || \
+      defined(CONFIG_FOR_DRAGINO_V2)
+	// Carambola 2 and Dragino 2 have two MAC addresses at the beginning of ART partition
 	#define OFFSET_MAC_DATA_BLOCK			0xFF0000
 	#define OFFSET_MAC_DATA_BLOCK_LENGTH	0x010000
-	#define OFFSET_MAC_ADDRESS				0x000000	// Carambola 2 has two MAC addresses at the beginning of ART partition
+	#define OFFSET_MAC_ADDRESS				0x000000
 	#define OFFSET_MAC_ADDRESS2				0x000006
-#elif defined (CONFIG_FOR_GS_OOLITE_V1_DEV)
+#elif defined(CONFIG_FOR_GS_OOLITE_V1_DEV)
 	// GS-OOlite has only one MAC, inside second block
 	// It's some kind of TP-Link clone
 	#define OFFSET_MAC_DATA_BLOCK			0x010000
@@ -882,7 +917,8 @@
 
 #if !defined(CONFIG_FOR_8DEVICES_CARAMBOLA2) && \
 	!defined(CONFIG_FOR_DLINK_DIR505_A1)     && \
-	!defined (CONFIG_FOR_GS_OOLITE_V1_DEV)
+	!defined(CONFIG_FOR_GS_OOLITE_V1_DEV)    && \
+	!defined(CONFIG_FOR_DRAGINO_V2)
 #define OFFSET_ROUTER_MODEL					0x00FD00
 #endif
 
@@ -922,6 +958,16 @@
 	 * be bigger than 192 KiB!
 	 *
 	 * TODO: fix me
+	 */
+	#define PLL_IN_FLASH_MAGIC				0x504C4C73
+	#define PLL_IN_FLASH_DATA_BLOCK_OFFSET	0x00030000
+	#define PLL_IN_FLASH_DATA_BLOCK_LENGTH	0x00010000
+	#define PLL_IN_FLASH_MAGIC_OFFSET		0x0000FFF0	// last 16 bytes
+#elif defined(CONFIG_FOR_DRAGINO_V2)
+	/*
+	 * We will store PLL and CLOCK registers
+	 * configuration at the end of environment
+	 * sector (64 KB, environment uses only half!)
 	 */
 	#define PLL_IN_FLASH_MAGIC				0x504C4C73
 	#define PLL_IN_FLASH_DATA_BLOCK_OFFSET	0x00030000

@@ -119,6 +119,11 @@ void do_bootm_linux(cmd_tbl_t * cmdtp, int flag, int argc, char *argv[]){
 	wasp_set_cca();
 #endif
 
+#if defined(CONFIG_FOR_DRAGINO_V2)
+	// Restore WAN/LAN LEDs (BIT 3 and 7 in GPIO_FUNCTION_1)
+	ar7240_reg_wr(AR7240_GPIO_FUNC, (ar7240_reg_rd(AR7240_GPIO_FUNC) | 0x88));
+#endif
+
 #if defined(CONFIG_AR7100) || defined(CONFIG_AR7240)
 	// Pass the flash size as expected by current Linux kernel for AR7100
 	flash_size_mbytes = gd->bd->bi_flashsize/(1024 * 1024);

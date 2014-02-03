@@ -163,6 +163,15 @@ gs-oolite_v1_dev:
 	@cp $(BUILD_TOPDIR)/u-boot/u-boot.bin $(BUILD_TOPDIR)/bin/temp.bin
 	@make show_size
 
+dragino_v2_ms14:	export UBOOT_FILE_NAME=uboot_for_dragino_v2_ms14
+dragino_v2_ms14:	export MAX_UBOOT_SIZE=192
+dragino_v2_ms14:	export DEVICE_VENDOR=dragino
+dragino_v2_ms14:
+	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) dragino_v2_ms14_config
+	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) ENDIANNESS=-EB V=1 all
+	@cp $(BUILD_TOPDIR)/u-boot/u-boot.bin $(BUILD_TOPDIR)/bin/temp.bin
+	@make show_size
+
 show_size:
 	@echo -e "\n======= Preparing $(MAX_UBOOT_SIZE)KB file filled with 0xFF... ======="
 	@`tr "\000" "\377" < /dev/zero | dd ibs=1k count=$(MAX_UBOOT_SIZE) of=$(BUILD_TOPDIR)/bin/$(UBOOT_FILE_NAME).bin`
@@ -182,8 +191,10 @@ clean:
 	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) clean
 	@rm -f $(BUILD_TOPDIR)/bin/*.bin
 	@rm -f $(BUILD_TOPDIR)/bin/*.md5
+	@rm -f $(BUILD_TOPDIR)/u-boot/httpd/fsdata.c
 
 clean_all:
 	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) distclean
 	@rm -f $(BUILD_TOPDIR)/bin/*.bin
 	@rm -f $(BUILD_TOPDIR)/bin/*.md5
+	@rm -f $(BUILD_TOPDIR)/u-boot/httpd/fsdata.c

@@ -61,6 +61,7 @@ Lista obecnie wspieranych urządzeń:
   - TP-Link TL-WR740N v4 (i podobne, jak na przykład TL-WR741ND v4)
   - TP-Link TL-MR3220 v2
   - Moduł GS-Oolite/Elink EL-M150 na płytce developerskiej ([zdjęcia w mojej galerii](http://galeria.tech-blog.pl/Elink_EL-M150_Development-Board/))
+  - Dragino 2 (MS14)
 
 - **Atheros AR1311 (bliźniaczy układ AR9331)**
   - D-Link DIR-505 H/W ver. A1 ([zdjęcia w mojej galerii](http://galeria.tech-blog.pl/D-Link_DIR-505/))
@@ -93,6 +94,7 @@ Dodatkowe informacje o wspieranych urządzeniach:
 | [TP-Link TL-WR740N v4](http://wiki.openwrt.org/toh/tp-link/tl-wr740n) | AR9331 | 4 MiB | 32 MiB DDR1 | 64 KiB, LZMA | RO |
 | [TP-Link TL-MR3220 v2](http://wiki.openwrt.org/toh/tp-link/tl-mr3420) | AR9331 | 4 MiB | 32 MiB DDR1 | 64 KiB, LZMA | RO |
 | GS-Oolite/Elink EL-M150 module | AR9331 | 4/8/16 MiB | 64 MiB DDR2 | 64 KiB, LZMA | RO |
+| [Dragino 2 (MS14)](http://wiki.openwrt.org/toh/dragino/ms14) | AR9331 | 16 MiB | 64 MiB DDR1 | 192 KiB | R/W |
 | [TP-Link TL-MR3420 v2](http://wikidevi.com/wiki/TP-LINK_TL-MR3420_v2) | AR9341 | 4 MiB | 32 MiB DDR1 | 64 KiB, LZMA | RO |
 | [TP-Link TL-WR841N/D v8](http://wiki.openwrt.org/toh/tp-link/tl-wr841nd) | AR9341 | 4 MiB | 32 MiB DDR1 | 64 KiB, LZMA | RO |
 | [TP-Link TL-WA830RE v2](http://wikidevi.com/wiki/TP-LINK_TL-WA830RE_v2) | AR9341 | 4 MiB | 32 MiB DDR1 | 64 KiB, LZMA | RO |

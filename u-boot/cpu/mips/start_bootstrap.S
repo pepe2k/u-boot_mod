@@ -583,13 +583,6 @@ normal_path:
 	jalr    t9
 	nop
 	nop
-
-#if 0
-	la      t9, hornet_ddr_tap_init
-	jalr    t9
-	nop
-#endif
-
 #endif
 
 	la	t0, rel_start

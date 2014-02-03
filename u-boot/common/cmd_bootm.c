@@ -68,7 +68,8 @@ image_header_t header;
 ulong load_addr = CFG_LOAD_ADDR; /* default load address */
 
 #if !defined(CONFIG_FOR_8DEVICES_CARAMBOLA2) && \
-	!defined(CONFIG_FOR_DLINK_DIR505_A1)
+	!defined(CONFIG_FOR_DLINK_DIR505_A1)     && \
+	!defined(CONFIG_FOR_DRAGINO_V2)
 void fake_image_header(image_header_t *hdr, tplink_image_header_t *tpl_hdr){
 	memset(hdr, 0, sizeof(image_header_t));
 
@@ -87,7 +88,7 @@ void fake_image_header(image_header_t *hdr, tplink_image_header_t *tpl_hdr){
 
 	strncpy((char *)hdr->ih_name, (char *)tpl_hdr->signiture_1, IH_NMLEN);
 }
-#endif /* if !defined(CONFIG_FOR_8DEVICES_CARAMBOLA2) && !defined(CONFIG_FOR_DLINK_DIR505_A1) */
+#endif /* if !defined(CONFIG_FOR_8DEVICES_CARAMBOLA2) && !defined(CONFIG_FOR_DLINK_DIR505_A1) && !defined(CONFIG_FOR_DRAGINO_V2) */
 
 int do_bootm(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[]){
 	ulong addr, data, len;
@@ -95,7 +96,8 @@ int do_bootm(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[]){
 	int i;
 	image_header_t *hdr = &header;
 #if !defined(CONFIG_FOR_8DEVICES_CARAMBOLA2) && \
-	!defined(CONFIG_FOR_DLINK_DIR505_A1)
+	!defined(CONFIG_FOR_DLINK_DIR505_A1)     && \
+	!defined(CONFIG_FOR_DRAGINO_V2)
 	tplink_image_header_t *fileTag;
 #endif
 
@@ -108,7 +110,8 @@ int do_bootm(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[]){
 	printf("Booting image at: 0x%08lX\n", addr);
 
 #if defined(CONFIG_FOR_8DEVICES_CARAMBOLA2) || \
-	defined(CONFIG_FOR_DLINK_DIR505_A1)
+	defined(CONFIG_FOR_DLINK_DIR505_A1)     || \
+	defined(CONFIG_FOR_DRAGINO_V2)
 	memmove(&header, (char *)addr, sizeof(image_header_t));
 	print_image_hdr(hdr);
 
@@ -214,7 +217,8 @@ static void fixup_silent_linux(){
 #endif /* CONFIG_SILENT_CONSOLE */
 
 #if defined(CONFIG_FOR_8DEVICES_CARAMBOLA2) || \
-	defined(CONFIG_FOR_DLINK_DIR505_A1)
+	defined(CONFIG_FOR_DLINK_DIR505_A1)     || \
+	defined(CONFIG_FOR_DRAGINO_V2)
 static void print_type(image_header_t *hdr){
 	char *os, *arch, *type, *comp;
 
@@ -391,7 +395,7 @@ void print_image_hdr(tplink_image_header_t *hdr){
 	print_size(ntohl(hdr->kernelLen), "\n");
 	printf("   Load address: 0x%08X\n   Entry point:  0x%08X\n\n", ntohl(hdr->kernelTextAddr), ntohl(hdr->kernelEntryPoint));
 }
-#endif /* defined(CONFIG_FOR_8DEVICES_CARAMBOLA2) || defined(CONFIG_FOR_DLINK_DIR505_A1) */
+#endif /* defined(CONFIG_FOR_8DEVICES_CARAMBOLA2) || defined(CONFIG_FOR_DLINK_DIR505_A1) || defined(CONFIG_FOR_DRAGINO_V2) */
 
 #if (CONFIG_COMMANDS & CFG_CMD_IMI)
 int do_iminfo(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[]){

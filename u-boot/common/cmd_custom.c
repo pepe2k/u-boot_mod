@@ -197,7 +197,8 @@ U_BOOT_CMD(startsc, 1, 0, do_start_sc, "start serial console\n", NULL);
 
 #endif /* if defined(CONFIG_NETCONSOLE) */
 
-#if defined(CONFIG_FOR_8DEVICES_CARAMBOLA2)
+#if defined(CONFIG_FOR_8DEVICES_CARAMBOLA2) || \
+    defined(CONFIG_FOR_DRAGINO_V2)
 /*
  * Erase environment sector
  */
@@ -215,7 +216,7 @@ int do_erase_env(cmd_tbl_t * cmdtp, int flag, int argc, char *argv[]){
 }
 
 U_BOOT_CMD(eraseenv, 1, 1, do_erase_env, "erase environment sector in flash\n", NULL);
-#endif /* if defined(CONFIG_FOR_8DEVICES_CARAMBOLA2) */
+#endif /* if defined(CONFIG_FOR_8DEVICES_CARAMBOLA2) || defined(CONFIG_FOR_DRAGINO_V2) */
 
 #if defined(PLL_IN_FLASH_MAGIC_OFFSET)
 

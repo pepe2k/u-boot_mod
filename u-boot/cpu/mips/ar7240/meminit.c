@@ -53,16 +53,6 @@
 #include <asm/addrspace.h>
 #include "ar7240_soc.h"
 
-uint8_t tap_settings[] = {0x40, 0x41, 0x10, 0x12, 0x13, 0x15, 0x1a, 0x1c, 0x1f, 0x2f, 0x3f};
-uint16_t tap_pattern[] = {0xa5, 0xb6, 0xc7, 0xd8};
-
-void ar7240_ddr_tap_set(uint8_t set){
-	ar7240_reg_wr_nf(AR7240_DDR_TAP_CONTROL0, set);
-	ar7240_reg_wr_nf(AR7240_DDR_TAP_CONTROL1, set);
-	ar7240_reg_wr_nf(AR7240_DDR_TAP_CONTROL2, set);
-	ar7240_reg_wr_nf(AR7240_DDR_TAP_CONTROL3, set);
-}
-
 // We check for size in 16M increments
 #define AR7240_DDR_SIZE_INCR	(16*1024*1024)
 int ar7240_ddr_find_size(void){
@@ -82,74 +72,7 @@ int ar7240_ddr_find_size(void){
 	return(i * AR7240_DDR_SIZE_INCR);
 }
 
-#ifndef CONFIG_WASP
-void ar7240_ddr_initial_config(uint32_t refresh){
-	int ddr2 = 0;
-	int ddr_config;
-	int ddr_config2, ext_mod, ddr2_ext_mod;
-	int mod_val, mod_val_init;
-
-	ddr2 = ((ar7240_reg_rd(0xb8050020) & 0x1) == 0);
-
-	ddr_config = CFG_DDR_CONFIG_VAL;
-	ddr_config2 = CFG_DDR_CONFIG2_VAL;
-	ext_mod = CFG_DDR_EXT_MODE_VAL;
-	ddr2_ext_mod = CFG_DDR2_EXT_MODE_VAL;
-	mod_val_init = CFG_DDR_MODE_VAL_INIT;
-	mod_val = CFG_DDR_MODE_VAL;
-
-	if(ddr2){
-		ar7240_reg_wr_nf(0xb800008c, 0xA59);
-		udelay(100);
-
-		ar7240_reg_wr_nf(AR7240_DDR_CONTROL, 0x10);
-		udelay(10);
-
-		ar7240_reg_wr_nf(AR7240_DDR_CONTROL, 0x20);
-		udelay(10);
-	}
-
-	ar7240_reg_wr_nf(AR7240_DDR_CONFIG, ddr_config);
-	udelay(100);
-
-	ar7240_reg_wr_nf(AR7240_DDR_CONFIG2, ddr_config2 | 0x80);
-	udelay(100);
-
-	ar7240_reg_wr_nf(AR7240_DDR_CONTROL, 0x8);
-	udelay(10);
-
-	ar7240_reg_wr_nf(AR7240_DDR_MODE, mod_val_init);
-	udelay(1000);
-
-	ar7240_reg_wr_nf(AR7240_DDR_CONTROL, 0x1);
-	udelay(10);
-
-	if(ddr2){
-		ar7240_reg_wr_nf(AR7240_DDR_EXT_MODE, ddr2_ext_mod);
-	} else {
-		ar7240_reg_wr_nf(AR7240_DDR_EXT_MODE, ext_mod);
-	}
-	udelay(100);
-
-	ar7240_reg_wr_nf(AR7240_DDR_CONTROL, 0x2);
-	udelay(10);
-
-	ar7240_reg_wr_nf(AR7240_DDR_CONTROL, 0x8);
-	udelay(10);
-
-	ar7240_reg_wr_nf(AR7240_DDR_MODE, mod_val);
-	udelay(100);
-
-	ar7240_reg_wr_nf(AR7240_DDR_CONTROL, 0x1);
-	udelay(10);
-
-	ar7240_reg_wr_nf(AR7240_DDR_REFRESH, refresh);
-	udelay(100);
-
-	ar7240_reg_wr_nf(AR7240_DDR_RD_DATA_THIS_CYCLE, CFG_DDR_RD_DATA_THIS_CYCLE_VAL);
-	udelay(100);
-}
-#else
+#if defined(CONFIG_WASP)
 int wasp_ddr_initial_config(uint32_t refresh){
 	int ddr_config, ddr_config2, ext_mod, mod_val, mod_val_init, cycle_val, tap_val, type;
 

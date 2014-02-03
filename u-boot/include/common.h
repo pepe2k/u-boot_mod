@@ -195,13 +195,15 @@ int	autoscript (ulong addr);
  * use different (simply) image header
  */
 #if !defined(CONFIG_FOR_8DEVICES_CARAMBOLA2) && \
-	!defined(CONFIG_FOR_DLINK_DIR505_A1)
+	!defined(CONFIG_FOR_DLINK_DIR505_A1)     && \
+	!defined(CONFIG_FOR_DRAGINO_V2)
 #include "tpLinuxTag.h"
 #endif
 
 /* common/cmd_bootm.c */
 #if defined(CONFIG_FOR_8DEVICES_CARAMBOLA2) || \
-	defined(CONFIG_FOR_DLINK_DIR505_A1)
+	defined(CONFIG_FOR_DLINK_DIR505_A1)     || \
+	defined(CONFIG_FOR_DRAGINO_V2)
 void print_image_hdr(image_header_t *hdr);
 #else
 void print_image_hdr(tplink_image_header_t *hdr);
@@ -354,7 +356,6 @@ int	dcache_status (void);
 void	dcache_enable (void);
 void	dcache_disable(void);
 void	relocate_code (ulong, gd_t *, ulong);
-void 	ar7240_ddr_tap_init(void);
 ulong	get_endaddr   (void);
 void	trap_init     (ulong);
 #if defined (CONFIG_4xx)	|| \
