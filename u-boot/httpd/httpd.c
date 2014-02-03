@@ -129,16 +129,22 @@ static int httpd_findandstore_firstchunk(void){
 			end = (char *)strstr((char *)start, "name=\"uboot\"");
 
 			if(end){
-
+#if defined(WEBFAILSAFE_DISABLE_UBOOT_UPGRADE)
+				printf("## Error: U-Boot upgrade is not allowed on this board!\n");
+				webfailsafe_upload_failed = 1;
+#else
 				webfailsafe_upgrade_type = WEBFAILSAFE_UPGRADE_TYPE_UBOOT;
 				printf("Upgrade type: U-Boot\n");
-
+#endif /* if defined(WEBFAILSAFE_DISABLE_UBOOT_UPGRADE) */
 			} else {
 
 				end = (char *)strstr((char *)start, "name=\"art\"");
 
 				if(end){
-
+#if defined(WEBFAILSAFE_DISABLE_ART_UPGRADE)
+					printf("## Error: U-Boot upgrade is not allowed on this board!\n");
+					webfailsafe_upload_failed = 1;
+#else
 					printf("Upgrade type: ART\n");
 					webfailsafe_upgrade_type = WEBFAILSAFE_UPGRADE_TYPE_ART;
 
@@ -153,7 +159,7 @@ static int httpd_findandstore_firstchunk(void){
 						webfailsafe_upload_failed = 1;
 					}
 #endif
-
+#endif /* if defined(WEBFAILSAFE_DISABLE_ART_UPGRADE) */
 				} else {
 
 					printf("## Error: input name not found!\n");
