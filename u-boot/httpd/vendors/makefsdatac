@@ -1,0 +1,146 @@
+#!/bin/bash
+
+# This script generates "fsdata.c" file for uIP 0.9 stack.
+# It takes one argument - name of vendor directory,
+# which should contains all www files, at least:
+# - index.html (with: <input type="file" name="firmware">)
+# - 404.html
+# - flashing.hmtl
+# - fail.html
+#
+# All other files are optional. If you want to allow also
+# ART and/or U-Boot image update, add the following files,
+# with appropriate inputs in form:
+# - art.html (<input type="file" name="art">)
+# - uboot.html (<input type="file" name="uboot">)
+#
+# HTML and CSS files are compressed before placing them
+# inside "fsdata.c".
+#
+# You SHOULDN'T embed addresses of any external
+# files in "flashing.html" file, because web server,
+# after receive POST data, returns this page and stops.
+
+# Vendor specific directory (default: "general")
+vendor_dir=${1:-general}
+
+# Temporary files
+files_content_tmp="vendors/.files_content"
+files_list_tmp="vendors/.files_list"
+
+# YUI Compressor path (should be in the same dir)
+yui_compressor=`ls -t vendors/*.jar 2> /dev/null | tail --lines=1`
+
+# Previous fsdata_file var name
+prev_fsdata_struct="NULL"
+
+# Files counter
+files_counter=0
+
+# Change ASCII to bytes, comma separated (e.g. "0x01, 0x02, 0x03...")
+function ascii_to_bytes() {
+	echo -ne $1 | od -A n -t x1 | tr -d '\r\n' | sed 's/ /0x/;s/ /, 0x/g;s/.\{102\}/&\n/g'
+}
+
+# $1 -> file path
+function print_data_array() {
+	local _file_ext="${1##*.}"
+	local _file_name="${1##*/}"
+	local _file_name_no_ext="${_file_name%\.*}"
+	local _file_content=""
+
+	# Open variable declaration
+	`echo -ne "static const char data_"$_file_name_no_ext"_"$_file_ext"[] = {\n" >> "$files_content_tmp"`
+	`echo -ne "/* HTTP Header */\n" >> "$files_content_tmp"`
+
+	# HTTP header (200 OK or 404 Not Found)
+	if [ "$_file_name_no_ext" == "404"  ]; then
+		`ascii_to_bytes "HTTP/1.0 404 File not found\r\n" >> "$files_content_tmp"`
+	else
+		`ascii_to_bytes "HTTP/1.0 200 OK\r\n" >> "$files_content_tmp"`
+	fi
+
+	# Server type
+	`echo "," >> "$files_content_tmp"`
+	`ascii_to_bytes "Server: uIP/0.9\r\n" >> "$files_content_tmp"`
+	`echo "," >> "$files_content_tmp"`
+
+	# Content
+	if [ "$_file_ext" == "css"  ]; then
+		if [ -e "$yui_compressor" ]; then
+			_file_content=`java -jar "$yui_compressor" --charset utf-8 "$1" | od -A n -t x1 | tr -d '\r\n' | sed 's/ /0x/;s/ /, 0x/g;s/.\{102\}/&\n/g'`
+		else
+			_file_content=`cat "$1" | tr -d '\r\n\t' | od -A n -t x1 | tr -d '\r\n' | sed 's/ /0x/;s/ /, 0x/g;s/.\{102\}/&\n/g'`
+		fi
+		`ascii_to_bytes "Content-type: text/css; charset=UTF-8\r\n\r\n" >> "$files_content_tmp"`
+	elif [ "$_file_ext" == "png"  ]; then
+		_file_content=`od -A n -t x1 < "$1" | tr -d '\r\n' | sed 's/ /0x/;s/ /, 0x/g;s/.\{102\}/&\n/g'`
+		`ascii_to_bytes "Content-Type: image/png\r\n\r\n" >> "$files_content_tmp"`
+	elif [ "$_file_ext" == "jpg" -o "$_file_ext" == "jpeg"  ]; then
+		_file_content=`od -A n -t x1 < "$1" | tr -d '\r\n' | sed 's/ /0x/;s/ /, 0x/g;s/.\{102\}/&\n/g'`
+		`ascii_to_bytes "Content-Type: image/jpeg\r\n\r\n" >> "$files_content_tmp"`
+	elif [ "$_file_ext" == "gif"  ]; then
+		_file_content=`od -A n -t x1 < "$1" | tr -d '\r\n' | sed 's/ /0x/;s/ /, 0x/g;s/.\{102\}/&\n/g'`
+		`ascii_to_bytes "Content-Type: image/gif\r\n\r\n" >> "$files_content_tmp"`
+	else
+		_file_content=`cat "$1" | tr -d '\t\r\n' | od -A n -t x1 | tr -d '\r\n' | sed 's/ /0x/;s/ /, 0x/g;s/.\{102\}/&\n/g'`
+		`ascii_to_bytes "Content-type: text/html; charset=UTF-8\r\n\r\n" >> "$files_content_tmp"`
+	fi
+
+	`echo "," >> "$files_content_tmp"`
+
+	# File content
+	`echo -ne "/* Page/File content */\n" >> "$files_content_tmp"`
+	`echo -ne "$_file_content" >> "$files_content_tmp"`
+
+	# And close declaration
+	`echo -ne ", 0 };\n\n" >> "$files_content_tmp"`
+}
+
+# $1 -> file path
+function print_data_struct() {
+	local _file_ext="${1##*.}"
+	local _file_name="${1##*/}"
+	local _file_name_no_ext="${_file_name%\.*}"
+
+	`echo -ne "const struct fsdata_file file_"$_file_name_no_ext"_"$_file_ext"[] = {{\n" >> "$files_list_tmp"`
+	`echo -ne "\t"$prev_fsdata_struct",\n" >> "$files_list_tmp"`
+	`echo -ne "\t\"/$_file_name_no_ext.$_file_ext\",\n" >> "$files_list_tmp"`
+	`echo -ne "\tdata_"$_file_name_no_ext"_"$_file_ext",\n" >> "$files_list_tmp"`
+	`echo -ne "\t(int)sizeof(data_"$_file_name_no_ext"_"$_file_ext") - 1\n" >> "$files_list_tmp"`
+	`echo -ne "}};\n\n" >> "$files_list_tmp"`
+
+	prev_fsdata_struct="file_"$_file_name_no_ext"_"$_file_ext""
+}
+
+# === Main loop ===
+
+if [ -d vendors/"$vendor_dir"  ]; then # If vendor dir exists
+	# Remove old fsdata.c
+	if [ -a "fsdata.c" ]; then
+		`rm "fsdata.c"`
+	fi
+
+	`touch "$files_content_tmp" "$files_list_tmp"`
+
+	# Loop through all files in vendor dir
+	for file in vendors/"$vendor_dir"/*; do # For all found files
+		print_data_array $file
+		print_data_struct $file
+		files_counter=$((files_counter+1))
+	done
+
+	# Add required defines
+	`echo "#define FS_ROOT "$prev_fsdata_struct"" >> "$files_list_tmp"`
+	`echo "#define FS_NUMFILES "$files_counter"" >> "$files_list_tmp"`
+
+	# Generate new fsdata.c
+	`touch "fsdata.c"`
+
+	`cat "$files_content_tmp" > "fsdata.c"`
+	`cat "$files_list_tmp" >> "fsdata.c"`
+
+	`rm "$files_content_tmp" "$files_list_tmp"`
+else
+	echo "Error! Vendor specific directory (vendors/"$vendor_dir") doesn't exist!"
+fi

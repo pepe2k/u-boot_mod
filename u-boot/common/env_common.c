@@ -194,7 +194,7 @@ void env_relocate(void){
 		//puts("Using default environment\n\n");
 #else
 		puts("** Warning: bad env CRC, using default,\n"
-			 "   use 'saveenv' to save it in flash\n\n");
+			 "   use 'saveenv' to save it in FLASH\n\n");
 #endif
 
 		if(sizeof(default_environment) > ENV_SIZE){

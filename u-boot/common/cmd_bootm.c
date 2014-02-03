@@ -366,7 +366,7 @@ void print_image_hdr(image_header_t *hdr){
 	printf("\n   Data size:    %d Bytes = ", ntohl(hdr->ih_size));
 	print_size(ntohl(hdr->ih_size), "\n");
 
-	printf("   Load address: %08X\n   Entry point:  %08X\n", ntohl(hdr->ih_load), ntohl(hdr->ih_ep));
+	printf("   Load address: 0x%08X\n   Entry point:  0x%08X\n", ntohl(hdr->ih_load), ntohl(hdr->ih_ep));
 
 	if(hdr->ih_type == IH_TYPE_MULTI){
 		int i;

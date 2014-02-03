@@ -220,7 +220,7 @@ void ArpRequest(void){
 
 	if((NetArpWaitPacketIP & NetOurSubnetMask) != (NetOurIP & NetOurSubnetMask)){
 		if(NetOurGatewayIP == 0){
-			puts("## Warning: gatewayip needed but not set\n");
+			puts("** Warning: gatewayip needed but not set\n");
 			NetArpWaitReplyIP = NetArpWaitPacketIP;
 		} else {
 			NetArpWaitReplyIP = NetOurGatewayIP;
@@ -235,6 +235,7 @@ void ArpRequest(void){
 
 void ArpTimeoutCheck(void){
 	ulong t;
+	bd_t *bd = gd->bd;
 
 	if(!NetArpWaitPacketIP){
 		return;
@@ -542,6 +543,7 @@ static void startAgainHandler(uchar * pkt, unsigned dest, unsigned src, unsigned
 void NetStartAgain(void){
 	char *nretry;
 	int noretry = 0, once = 0;
+	bd_t *bd = gd->bd;
 
 	if((nretry = getenv("netretry")) != NULL){
 		noretry = (strcmp(nretry, "no") == 0);
@@ -730,6 +732,7 @@ static void PingHandler(uchar * pkt, unsigned dest, unsigned src, unsigned len){
 }
 
 static void PingStart(void){
+	bd_t *bd = gd->bd;
 #if defined(CONFIG_NET_MULTI)
 	printf("Using %s device\n", eth_get_name());
 #endif	/* CONFIG_NET_MULTI */

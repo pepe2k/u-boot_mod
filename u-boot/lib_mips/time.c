@@ -23,6 +23,8 @@
 
 #include <common.h>
 
+DECLARE_GLOBAL_DATA_PTR;
+
 static inline void mips_compare_set(u32 v){
 	asm volatile ("mtc0 %0, $11" : : "r" (v));
 }
@@ -35,7 +37,7 @@ static inline u32 mips_count_get(void){
 	u32 count;
 
 	asm volatile ("mfc0 %0, $9" : "=r" (count) :);
-	return count;
+	return(count);
 }
 
 /*
@@ -45,18 +47,28 @@ int timer_init(void){
 	mips_compare_set(0);
 	mips_count_set(0);
 
-	return 0;
+	return(0);
 }
 
 ulong get_timer(ulong base){
-	return mips_count_get() - base;
+	return(mips_count_get() - base);
 }
 
 void udelay(unsigned long usec){
 	ulong tmo;
 	ulong start = get_timer(0);
+	bd_t *bd = gd->bd;
 
-	tmo = usec * (CFG_HZ / 1000000);
+	/*
+	 * We don't have filled the bd->bi_cfg_hz
+	 * before relocation to RAM (bd is read only before that),
+	 */
+	if((gd->flags & GD_FLG_RELOC) == 0){
+		tmo = usec * (CFG_HZ_FALLBACK / 1000000);
+	} else {
+		tmo = usec * (CFG_HZ / 1000000);
+	}
+
 	while ((ulong)((mips_count_get() - start)) < tmo)
 		/*NOP*/;
 }

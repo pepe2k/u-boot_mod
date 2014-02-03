@@ -1,18 +1,41 @@
 #ifndef _AG7240_PHY_H
 #define _AG7240_PHY_H
 
-int		athrs17_phy_is_up(int unit);
-int		athrs17_phy_is_fdx(int unit);
-int		athrs17_phy_speed(int unit);
-int		athrs17_phy_setup(int unit);
+#ifdef CONFIG_AR7242_S16_PHY
+extern int athrs16_phy_is_up(int unit);
+extern int athrs16_phy_is_fdx(int unit);
+extern int athrs16_phy_speed(int unit);
+extern int athrs16_phy_setup(int unit);
+#endif
 
-static inline void ag7240_phy_setup(int unit) {
+#ifdef CFG_ATHRS17_PHY
+extern int athrs17_phy_is_up(int unit);
+extern int athrs17_phy_is_fdx(int unit);
+extern int athrs17_phy_speed(int unit);
+extern int athrs17_phy_setup(int unit);
+#endif
+
+#ifdef CFG_ATHRS26_PHY
+extern int athrs26_phy_is_up(int unit);
+extern int athrs26_phy_speed(int unit);
+extern int athrs26_phy_setup(int unit);
+extern int athrs26_phy_is_fdx(int unit);
+#endif
+
+#ifdef CFG_ATHRS27_PHY
+extern int athrs27_phy_is_up(int unit);
+extern int athrs27_phy_speed(int unit);
+extern int athrs27_phy_setup(int unit);
+extern int athrs27_phy_is_fdx(int unit);
+#endif
+
+static inline void ag7240_phy_setup(int unit){
 #ifdef CONFIG_AR7242_S16_PHY
 	if ((is_ar7242() || is_wasp()) && (unit==0)) {
 		athrs16_phy_setup(unit);
 	} else
 #endif
-#ifdef CONFIG_ATHRS17_PHY
+#ifdef CFG_ATHRS17_PHY
     if (unit == 0) {
         athrs17_phy_setup(unit);
     } else
@@ -33,13 +56,13 @@ static inline void ag7240_phy_setup(int unit) {
     }
 }
 
-static inline void ag7240_phy_link(int unit, int *link) {
+static inline void ag7240_phy_link(int unit, int *link){
 #ifdef CONFIG_AR7242_S16_PHY
     if ((is_ar7242() || is_wasp()) && (unit==0)) {
          *link = athrs16_phy_is_up(unit);
     } else
 #endif
-#ifdef CONFIG_ATHRS17_PHY
+#ifdef CFG_ATHRS17_PHY
     if (unit == 0) {
          *link = athrs17_phy_is_up(unit);
     } else
@@ -60,13 +83,13 @@ static inline void ag7240_phy_link(int unit, int *link) {
     }
 }
 
-static inline void ag7240_phy_duplex(int unit, int *duplex) {
+static inline void ag7240_phy_duplex(int unit, int *duplex){
 #ifdef CONFIG_AR7242_S16_PHY
     if ((is_ar7242() || is_wasp()) && (unit==0)) {
         *duplex = athrs16_phy_is_fdx(unit);
     } else
 #endif
-#ifdef CONFIG_ATHRS17_PHY
+#ifdef CFG_ATHRS17_PHY
     if (unit == 0) {
         *duplex = athrs17_phy_is_fdx(unit);
     } else
@@ -87,13 +110,13 @@ static inline void ag7240_phy_duplex(int unit, int *duplex) {
     }
 }
 
-static inline void ag7240_phy_speed(int unit, int *speed) {
+static inline void ag7240_phy_speed(int unit, int *speed){
 #ifdef CONFIG_AR7242_S16_PHY
     if ((is_ar7242() || is_wasp()) && (unit==0)) {
         *speed = athrs16_phy_speed(unit);
     } else
 #endif
-#ifdef CONFIG_ATHRS17_PHY
+#ifdef CFG_ATHRS17_PHY
     if (unit == 0) {
         *speed = athrs17_phy_speed(unit);
     } else

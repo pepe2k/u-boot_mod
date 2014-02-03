@@ -61,11 +61,19 @@
 	.align 4
 	
 lowlevel_init:
-	set_bb_pll(DPLL2_ADDRESS_c4, 0x13210f00);
-	set_bb_pll(DPLL3_ADDRESS_c8, 0x03000000);
-	set_bb_pll(DPLL2_ADDRESS_44, 0x13210f00);
-	set_bb_pll(DPLL3_ADDRESS_48, 0x03000000);
-	set_bb_pll(DPLL3_ADDRESS_88, 0x03000000);
+	set_bb_pll(DPLL2_ADDRESS_c4, 0x13210f00);	// 0x181161c4 (AR934X_SRIF_CPU_DPLL2_REG)
+	set_bb_pll(DPLL3_ADDRESS_c8, 0x03000000);	// 0x181161c8 (AR934X_SRIF_CPU_DPLL3_REG)
+	set_bb_pll(DPLL2_ADDRESS_44, 0x13210f00);	// 0x18116244 (AR934X_SRIF_DDR_DPLL2_REG)
+	set_bb_pll(DPLL3_ADDRESS_48, 0x03000000);	// 0x18116248 (AR934X_SRIF_DDR_DPLL3_REG)
+	set_bb_pll(DPLL3_ADDRESS_88, 0x03000000);	// 0x18116188 (??)
+
+ref_recognition:
+	li	t5,	KSEG1ADDR(WASP_BOOTSTRAP_REG);
+	li	t6,	WASP_REF_CLK_25
+	lw	t7,	0(t5);
+	and	t6,	t7,	t6
+	beq	zero,	t6,	setup_ref25_val
+	nop
 
 setup_ref40_val:
 	li	t5,	CPU_PLL_CONFIG_NINT_VAL_40
@@ -74,6 +82,12 @@ setup_ref40_val:
 	li	t9,	DDR_PLL_NFRAC_40
 	b	1f
 	nop
+
+setup_ref25_val:
+	li	t5,	CPU_PLL_CONFIG_NINT_VAL_25
+	li	t6,	DDR_PLL_CONFIG_NINT_VAL_25
+	li	t7,	CPU_PLL_NFRAC_25
+	li	t9,	DDR_PLL_NFRAC_25
 
 1:
 	li	t4,	(CPU_PLL_DITHER_DITHER_EN_SET(0) | CPU_PLL_DITHER_NFRAC_STEP_SET(1) | CPU_PLL_DITHER_UPDATE_COUNT_SET(0xf));
@@ -117,10 +131,37 @@ init_ahb_pll:
 			CPU_DDR_CLOCK_CONTROL_DDR_PLL_BYPASS_SET(1) | \
 			CPU_DDR_CLOCK_CONTROL_AHB_PLL_BYPASS_SET(1));
 	sw	t8,	0(t7);
-	li	t4,	0x41c00000;
-	li	t5,	0x41680000;
+
+	/* Use built in values, based on ref clock */
+	li	t5,	KSEG1ADDR(WASP_BOOTSTRAP_REG);
+	li	t6,	WASP_REF_CLK_25
+	lw	t7,	0(t5);
+	and	t6,	t7,	t6
+	beq	zero,	t6,	1f
+	nop
+#if !defined(CONFIG_AP123)
+	/*		refdiv		nint		nfrac */
+	li	t4,	((0x8 << 27) | (112 << 18) | 0);// cpu freq = (40 MHz refclk/refdiv 8) * Nint
+	li	t5,	((0x8 << 27) | (90 << 18) | 0);	// ddr freq = (40 MHz refclk/refdiv 8) * Nint
 	j	2f
 	nop
+1:
+	li	t4,	((0x5 << 27) | (112 << 18) | 0);// cpu freq = (25 MHz refclk/refdiv 5) * Nint
+	li	t5,	((0x5 << 27) | (90 << 18) | 0);	// ddr freq = (25 MHz refclk/refdiv 5) * Nint
+	j	2f
+	nop
+#else	/* defined(CONFIG_AP123) */
+	/*		refdiv		nint		nfrac */
+	li	t4,	((0x8 << 27) | (107 << 18) | 0);// cpu freq = (40 MHz refclk/refdiv 8) * Nint
+	li	t5,	((0x8 << 27) | (160 << 18) | 0);// ddr freq = (40 MHz refclk/refdiv 8) * Nint
+	j	2f
+	nop
+1:
+	li	t4,	((0x5 << 27) | (107 << 18) | 0);// cpu freq = (25 MHz refclk/refdiv 5) * Nint
+	li	t5,	((0x5 << 27) | (160 << 18) | 0);// ddr freq = (25 MHz refclk/refdiv 5) * Nint
+	j	2f
+	nop
+#endif	/* !defined(CONFIG_AP123) */
 
 /* CPU */
 2:
@@ -178,11 +219,20 @@ cpu_read_sqsum_dvc:
 
 ddr_pll_is_not_locked:
 	inc_loop_count(ATH_DDR_COUNT_LOC)
+#if !defined(CONFIG_AP123)
 	set_srif_pll(0xb8116244, (0x4 << 26) | (0x10 << 19) | (0x1e << 7) | (1 << 16));
 	set_srif_pll_reg(0xb8116240, t5);
 	set_srif_pll(0xb8116244, (0x3 << 30) | (0x4 << 26) | (0x10 << 19) | (0x1e << 7) | (1 << 16));
 	set_srif_pll(0xb8116248, (6 << 23));
 	set_srif_pll(0xb8116244, (0x3 << 30) | (0x4 << 26) | (0x10 << 19) | (0x1e << 7));
+#else /* defined(CONFIG_AP123) */
+	/* AP123 uses outdiv = 1 for ddr pll */
+	set_srif_pll(0xb8116244, (0x4 << 26) | (0x10 << 19) | (1 << 13) | (0x1e << 7) | (1 << 16));
+	set_srif_pll_reg(0xb8116240, t5);
+	set_srif_pll(0xb8116244, (0x1 << 30) | (0x4 << 26) | (0x10 << 19) | (1 << 13) | (0x1e << 7) | (1 << 16));
+	set_srif_pll(0xb8116248, (6 << 23));
+	set_srif_pll(0xb8116244, (0x1 << 30) | (0x4 << 26) | (0x10 << 19) | (1 << 13) | (0x1e << 7));
+#endif /* !defined(CONFIG_AP123) */
 
 ddr_clear_do_meas1:
 	li	t7,	KSEG1ADDR(DDR_DPLL3_ADDRESS)

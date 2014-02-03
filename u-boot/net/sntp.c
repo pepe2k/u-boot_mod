@@ -12,6 +12,8 @@
 
 #if ((CONFIG_COMMANDS & CFG_CMD_NET) && (CONFIG_COMMANDS & CFG_CMD_SNTP))
 
+DECLARE_GLOBAL_DATA_PTR;
+
 //#define	DEBUG
 
 #define SNTP_TIMEOUT	10
@@ -80,6 +82,7 @@ static void SntpHandler(uchar *pkt, unsigned dest, unsigned src, unsigned len){
 }
 
 void SntpStart(void){
+	bd_t *bd = gd->bd;
 #ifdef DEBUG
 	printf("%s\n", __FUNCTION__);
 #endif

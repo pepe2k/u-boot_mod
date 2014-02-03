@@ -38,9 +38,9 @@ You can download original sources from the following pages:
 - [TP-Link GPL Code Center](http://www.tp-link.com/en/support/gpl/ "TP-Link GPL Code Center")
 - [D-Link GPL Source Code Support](http://tsd.dlink.com.tw/GPL.asp "D-Link GPL Source Code Support")
 
-The concept for this project came from another U-Boot modification, dedicated to small and very popular TP-Link router - model **TL-WR703N**, which includes web fail safe mode: **[wr703n-uboot-with-web-failsafe](http://code.google.com/p/wr703n-uboot-with-web-failsafe/)**. I was using it and decided to make my own version, which could have some improvements, additional capabilities, support for different models and work with all modern web browsers.
+The concept for this project came from another U-Boot modification, dedicated to a small and very popular TP-Link router - model **TL-WR703N**, which includes web fail safe mode: **[wr703n-uboot-with-web-failsafe](http://code.google.com/p/wr703n-uboot-with-web-failsafe/)**. I was using it and decided to make my own version, which could have some improvements, additional capabilities, support for different models and work with all modern web browsers.
 
-First version of this modification was introduced on **OpenWrt** forum in [this thread](https://forum.openwrt.org/viewtopic.php?id=43237), at the end of March 2013 and was dedicated only for TP-Link routers with **Atheros AR9331** SoC. Now, it supports also models from different manufacturers, devices with **Atheros AR9344** (like **TP-Link TL-WDR3600** and **TL-WDR43x0**) and other (in the near future **Atheros AR9341**) are under development.
+First version of this modification was introduced on **OpenWrt** forum in [this thread](https://forum.openwrt.org/viewtopic.php?id=43237), at the end of March 2013 and was dedicated only for TP-Link routers with **Atheros AR9331** SoC. Now, it supports also models from different manufacturers, devices with **Atheros AR934x** (like **TP-Link TL-WDR3600**, **TL-WDR43x0**, **TL-WR841N/D v8**, **TL-WA830RE v2**) and other (in the near future **Qualcomm Atheros QCA955x**) are under development.
 
 You can find some information about previous versions of this project also on my [blog](http://www.tech-blog.pl), in [this article](http://www.tech-blog.pl/2013/03/29/zmodyfikowany-u-boot-dla-routerow-tp-link-z-atheros-ar9331-z-trybem-aktualizacji-oprogramowania-przez-www-i-konsola-sieciowa-netconsole/). It is in Polish, but [Google Translator](http://translate.google.com/translate?hl=pl&sl=pl&tl=en&u=http%3A%2F%2Fwww.tech-blog.pl%2F2013%2F03%2F29%2Fzmodyfikowany-u-boot-dla-routerow-tp-link-z-atheros-ar9331-z-trybem-aktualizacji-oprogramowania-przez-www-i-konsola-sieciowa-netconsole%2F&sandbox=1) will help you to understand it.
 
@@ -62,15 +62,23 @@ Currently supported devices:
   - TP-Link TL-MR13U v1
   - TP-Link TL-WR740N v4 (and similar, like TL-WR741ND v4)
   - TP-Link TL-MR3220 v2
+  - GS-Oolite/Elink EL-M150 module with dev board ([photos in my gallery](http://galeria.tech-blog.pl/Elink_EL-M150_Development-Board/))
 
 - **Atheros AR1311 (similar to AR9331)**
   - D-Link DIR-505 H/W ver. A1 ([photos in my gallery](http://galeria.tech-blog.pl/D-Link_DIR-505/))
 
+- **Atheros AR9341**:
+  - TP-Link TL-MR3420 v2
+  - TP-Link TL-WR841N/D v8
+  - TP-Link TL-WA830RE v2
+  - TP-Link TL-WA801ND v2
+
 - **Atheros AR9344**:
   - TP-Link TL-WDR3600 v1
   - TP-Link TL-WDR43x0 v1
+  - TP-Link TL-WDR3500 v1
 
-I tested this modification on most of these devices, with OpenWrt and OFW firmware. If you are not sure about the version of your device, please contact with me **before** you try to make an upgrade. Changing bootloader to a wrong version will probably damage your router and you will need a serial FLASH programmer to fix it, so please, **be very careful**.
+I tested this modification on most of these devices, with OpenWrt and OFW firmware. If you are not sure about the version of your device, please contact with me **before** you try to make an upgrade. Changing bootloader to a wrong version will probably damage your router and you will need special hardware to fix it, so please, **be very careful**.
 
 More information about supported devices:
 
@@ -86,13 +94,19 @@ More information about supported devices:
 | [TP-Link TL-MR13U v1](http://wiki.openwrt.org/toh/tp-link/tl-mr13u) | AR9331 | 4 MiB | 32 MiB DDR1 | 64 KiB, LZMA | RO |
 | [TP-Link TL-WR740N v4](http://wiki.openwrt.org/toh/tp-link/tl-wr740n) | AR9331 | 4 MiB | 32 MiB DDR1 | 64 KiB, LZMA | RO |
 | [TP-Link TL-MR3220 v2](http://wiki.openwrt.org/toh/tp-link/tl-mr3420) | AR9331 | 4 MiB | 32 MiB DDR1 | 64 KiB, LZMA | RO |
+| GS-Oolite/Elink EL-M150 module | AR9331 | 4/8/16 MiB | 64 MiB DDR2 | 64 KiB, LZMA | RO |
+| [TP-Link TL-MR3420 v2](http://wikidevi.com/wiki/TP-LINK_TL-MR3420_v2) | AR9341 | 4 MiB | 32 MiB DDR1 | 64 KiB, LZMA | RO |
+| [TP-Link TL-WR841N/D v8](http://wiki.openwrt.org/toh/tp-link/tl-wr841nd) | AR9341 | 4 MiB | 32 MiB DDR1 | 64 KiB, LZMA | RO |
+| [TP-Link TL-WA830RE v2](http://wikidevi.com/wiki/TP-LINK_TL-WA830RE_v2) | AR9341 | 4 MiB | 32 MiB DDR1 | 64 KiB, LZMA | RO |
+| [TP-Link TL-WA801ND v2](http://wikidevi.com/wiki/TP-LINK_TL-WA801ND_v2) | AR9341 | 4 MiB | 32 MiB DDR1 | 64 KiB, LZMA | RO |
 | [TP-Link TL-WDR3600 v1](http://wiki.openwrt.org/toh/tp-link/tl-wdr3600) | AR9344 | 8 MiB | 128 MiB DDR2 | 64 KiB, LZMA | RO |
 | [TP-Link TL-WDR43x0 v1](http://wiki.openwrt.org/toh/tp-link/tl-wdr4300) | AR9344 | 8 MiB | 128 MiB DDR2 | 64 KiB, LZMA | RO |
+| [TP-Link TL-WDR3500 v1](http://wiki.openwrt.org/toh/tp-link/tl-wdr3500) | AR9344 | 8 MiB | 128 MiB DDR2 | 64 KiB, LZMA | RO |
 | [D-Link DIR-505 H/W ver. A1](http://wiki.openwrt.org/toh/d-link/dir-505) | AR1311 | 8 MiB | 64 MiB DDR2 | 64 KiB, LZMA | RO |
 
 *(LZMA) - U-Boot binary image is compressed with LZMA.*  
-*(R/W) - environment exist in separate FLASH block which allows you to save it and keep after power down.*  
-*(RO) - environment is read only, you can change and add new variables only during a runtime.*
+*(R/W) - environment exists in separate FLASH block which allows you to save it and keep after power down.*
+*(RO) - environment is read only, you can change and add new variables only during runtime.*
 
 Known issues
 ------------
@@ -165,6 +179,7 @@ Currently supported FLASH types:
 - Spansion S25FL032P (4 MiB, JEDEC ID: 01 0215)*
 - Atmel AT25DF321 (4 MiB, JEDEC ID: 1F 4700)
 - EON EN25Q32 (4 MiB, JEDEC ID: 1C 3016)*
+- EON EN25F32 (4 MiB, JEDEC ID: 1C 3116)*
 - Micron M25P32 (4 MiB, JEDEC ID: 20 2016)
 - Windbond W25Q32 (4 MiB, JEDEC ID: EF 4016)
 - Macronix MX25L320 (4 MiB, JEDEC ID: C2 2016)
@@ -215,7 +230,7 @@ mtd4: 00010000 00010000 "art"
 mtd5: 00fd0000 00010000 "firmware"
 ```
 
-As you can see, `u-boot` partition size is **0x20000** (128 KiB) and my image for this model has size of **0x10000** (64 KiB) - it is very important difference! You should remember about this if you want to use `mtd` utility, to change U-Boot.
+As you can see, `u-boot` partition size is **0x20000** (128 KiB) and my image for this model has size of **0x10000** (64 KiB) - it is a very important difference! You should remember about this if you want to use `mtd` utility, to change U-Boot.
 
 To backup `u-boot` partition in RAM, run:
 
@@ -229,7 +244,7 @@ And then connect to your router using `SCP protocol` and download from `/tmp` th
 
 If you have an external FLASH programmer (all supported devices have **SPI NOR FLASH** chips), you probably know how to use it. Download package with prebuilt images or compile the code, choose right file for your device and put it on FLASH at the beginning (offset `0x00000`). Remember to first erase block(s) - with high probability, if you use some kind of automatic mode, the programmer will do it for you.
 
-All prebuilt images are padded with 0xFF, so their size will always be a **multiply of 64 KiB block** and they will not be bigger than the original versions. For example, **TP-Link** uses only first **64 KiB** block to store compressed U-Boot image (in most of their modern devices). In second 64 KiB block they store additional information like MAC address, model number and WPS pin number.
+All prebuilt images are padded with 0xFF, so their size will always be a **multiple of 64 KiB block** and they will not be bigger than the original versions. For example, **TP-Link** uses only first **64 KiB** block to store compressed U-Boot image (in most of their modern devices). In the second 64 KiB block they store additional information like MAC address, model number and WPS pin number.
 
 On the other hand, U-Boot image in **Carambola 2** from **8devices** may have up to **256 KiB** (4x 64 KiB block), they use uncompressed version and environment stored in FLASH. Immediately after the Carambola 2 U-Boot partition is an area which contains U-Boot environment variables (1x 64 KiB block), called `u-boot-env`:
 
@@ -246,21 +261,21 @@ mtd6: 00010000 00010000 "art"
 
 ### Using UART, U-Boot console and TFTP server
 
-It is probably the most common method to change firmware in case of any problems. Main disadvantage of this approach is the need to connect with device using a serial port (it does not apply to Carambola 2 with development board, which has already built-in USB-UART adapter, based on FTDI FT232RQ).
+It is probably the most common method to change firmware in case of any problems. Main disadvantage of this approach is the need to connect with device using a serial port (this does not apply to Carambola 2 with development board, which already has a built-in USB-UART adapter, based on FTDI FT232RQ).
 
 #### Important notice!
 
-All these devices have an UART interface integrated inside the SoC, operates at TTL 3.3 V (in fact, GPIO pins can work at this voltage, but their real range is < 3 V)!
+All these devices have an UART interface integrated inside the SoC, which operates at TTL 3.3 V (in fact, GPIO pins can work at this voltage, but their real range is < 3 V)!
 
 Please, **do not** connect any RS232 +/- 12 V cable or any adapter without logic level converter, because it may damage your device. It would be the best if you use any USB to UART adapter with integrated 3.3 V logic level converter. And please, remember that **you should connect only RX, TX and GND signals**. **DO NOT** connect together 3.3 V signals from router and from adapter if you do not know what are you doing, because you may burn out your adapter and/or router! Connect the adapter using USB port in your PC and router with original power supply.
 
-For a long time I have been using without any problems small and very cheap (about 1-2 USD) **CP2102** based adapter. Go to [Serial Console article in OpenWrt Wiki](http://wiki.openwrt.org/doc/hardware/port.serial) for more, detailed information.
+For a long time I have been using without any problems a small and very cheap (about 1-2 USD) **CP2102** based adapter. Go to [Serial Console article in OpenWrt Wiki](http://wiki.openwrt.org/doc/hardware/port.serial) for more, detailed information.
 
 #### Step by step instruction
 
 1. Install and configure any **TFTP server** on your PC (on Windows, you can use [TFTP32](http://tftpd32.jounin.net)).
 
-2. Set a fixed IP address on your PC (in this tutorial we will use **192.168.1.2** for the PC and **192.168.1.1** for the router) and connect it with the router, using RJ45 network cable (in most case you will need to use one of the available LAN ports, but WAN port should also works).
+2. Set a fixed IP address on your PC (in this tutorial we will use **192.168.1.2** for the PC and **192.168.1.1** for the router) and connect it to the router, using RJ45 network cable (in most case you will need to use one of the available LAN ports, but WAN port should also work).
 
 3. Connect USB to UART adapter to the router and start any application to communicate with it, like [PuTTY](http://www.chiark.greenend.org.uk/~sgtatham/putty/download.html).   
 Configure adapter to use the following settings:
@@ -331,7 +346,7 @@ Configure adapter to use the following settings:
   done
   ```
 
-11. If you want, you can check content of the FLASH and compare it to the image on your PC, using `md` command in U-Boot console, which prints indicated memory area (press only ENTER after first execution of this command to move further in memory):
+11. If you want, you can check content of the newly written FLASH and compare it to the image on your PC (or better also do such a "legit memory content" comparison prior to writing!), using `md` command in U-Boot console, which prints indicated memory area (press only ENTER after first execution of this command to move further in memory):
 
   ```
   hornet> md 0x9F000000
@@ -385,7 +400,7 @@ You can use one of the free toolchains:
 
 I am using **Sourcery CodeBench Lite Edition for MIPS GNU/Linux** on **Ubuntu 12.04 LTS** (32-bit, virtual machine) and all released binary images were/will be built using this set.
 
-All you need to do, after choosing a toolchain, is to modify [Makefile](Makefile) - change or remove `export MAKECMD` and if need add `export PATH`. For example, to use OpenWrt Toolchain instead of Sourcery CodeBench Lite, download it and extract into `toolchain` folder, inside the top dir and change first lines in [Makefile](Makefile):
+All you need to do, after choosing a toolchain, is to modify [Makefile](Makefile) - change or remove `export MAKECMD` and if needed add `export PATH`. For example, to use OpenWrt Toolchain instead of Sourcery CodeBench Lite, download it and extract into `toolchain` folder, inside the top dir and change first lines in [Makefile](Makefile):
 
 ```
 export BUILD_TOPDIR=$(PWD)
@@ -428,7 +443,7 @@ FAQ
 
 #### 5. My device does not boot after upgrade!
 
-*I told you... bootloader, in this case the U-Boot, is the most important piece of code inside your device. It is responsible for hardware initialization and booting an OS (kernel in this case). So, if during the upgrade something went wrong, your device will not boot any more. Now you need to remove the FLASH chip, load proper image using an external programmer and solder it back.*
+*I told you... bootloader, in this case U-Boot, is the most important piece of code inside your device. It is responsible for hardware initialization and booting an OS (kernel in this case), i.e. it's the bridge head for delegating to / flashing kernel and rootfs images. So, if during the upgrade something went wrong, your device will not boot any more. The only way to recover from such a situation in a mild way is via a JTAG adapter connection. In case of a lack of JTAG connection, you would even need to remove the FLASH chip, load proper image using an external programmer and solder it back.*
 
 License, outdated sources etc.
 ------------------------------

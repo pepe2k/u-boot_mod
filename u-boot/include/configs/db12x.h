@@ -32,7 +32,11 @@
  * Default bootargs
  */
 #undef CONFIG_BOOTARGS
+#if defined(CONFIG_FOR_TPLINK_WDR3600_WDR43X0_V1) || defined (CONFIG_FOR_TPLINK_WDR3500_V1)
 #define	CONFIG_BOOTARGS	"console=ttyS0,115200 root=31:02 rootfstype=squashfs init=/sbin/init mtdparts=ath-nor0:256k(u-boot),64k(u-boot-env),6336k(rootfs),1408k(uImage),64k(mib0),64k(ART)"
+#else
+#define	CONFIG_BOOTARGS	"console=ttyS0,115200 root=31:02 rootfstype=squashfs init=/sbin/init mtdparts=ath-nor0:128k(u-boot),1024k(kernel),2816k(rootfs),64k(config),64k(art)"
+#endif
 
 /*
  * Other env default values
@@ -54,9 +58,17 @@
 #undef CFG_HZ
 
 // CPU-RAM-AHB frequency setting
-#define CFG_PLL_FREQ    	CFG_PLL_560_480_240
-#define CFG_HZ          	(560000000LU/2)
-#define AR7240_SPI_CONTROL	0x42
+#if !defined(CONFIG_AP123)
+#define CFG_PLL_FREQ    			CFG_PLL_560_480_240
+#define CFG_HZ_FALLBACK				(560000000LU/2)
+#else
+#define CFG_PLL_FREQ    			CFG_PLL_533_400_200
+#define CFG_HZ_FALLBACK				(535000000LU/2)
+#endif
+
+#define	CFG_HZ						bd->bi_cfg_hz
+#define AR7240_SPI_CONTROL			0x43
+#define AR7240_SPI_CONTROL_DEFAULT	AR7240_SPI_CONTROL
 /*
  * MIPS32 24K Processor Core Family Software User's Manual
  *
@@ -88,14 +100,11 @@
 /*
  * Available commands
  */
-#define CONFIG_COMMANDS (CFG_CMD_MEMORY | CFG_CMD_FLASH | CFG_CMD_NET)
+#define CONFIG_COMMANDS (CFG_CMD_MEMORY | CFG_CMD_DHCP | CFG_CMD_PING | CFG_CMD_FLASH | CFG_CMD_NET | CFG_CMD_RUN | CFG_CMD_DATE | CFG_CMD_SNTP )
 
 // Enable NetConsole and custom NetConsole port
 #define CONFIG_NETCONSOLE
 #define CONFIG_NETCONSOLE_PORT	6666
-
-/* DDR init values */
-#define CONFIG_NR_DRAM_BANKS	2
 
 /* DDR settings for WASP */
 #define CFG_DDR_REFRESH_VAL     0x4270
