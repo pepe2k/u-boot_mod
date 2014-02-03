@@ -165,6 +165,7 @@ gs-oolite_v1_dev:
 
 dragino_v2_ms14:	export UBOOT_FILE_NAME=uboot_for_dragino_v2_ms14
 dragino_v2_ms14:	export MAX_UBOOT_SIZE=192
+dragino_v2_ms14:	export DEVICE_VENDOR=dragino
 dragino_v2_ms14:
 	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) dragino_v2_ms14_config
 	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) ENDIANNESS=-EB V=1 all
