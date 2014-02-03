@@ -858,7 +858,7 @@
 #elif defined(CONFIG_FOR_DRAGINO_V2)
 	// Dragino 2: 192k(U-Boot),64k(U-Boot env),64k(ART)
 	#define WEBFAILSAFE_UPLOAD_LIMITED_AREA_IN_BYTES	(320 * 1024)
-#elif defined (CONFIG_FOR_GS_OOLITE_V1_DEV)
+#elif defined(CONFIG_FOR_GS_OOLITE_V1_DEV)
 	// GS-Oolite v1: 128k(U-Boot + MAC),64k(ART)
 	#define WEBFAILSAFE_UPLOAD_LIMITED_AREA_IN_BYTES	(192 * 1024)
 #else
@@ -903,7 +903,7 @@
 	#define OFFSET_MAC_DATA_BLOCK_LENGTH	0x010000
 	#define OFFSET_MAC_ADDRESS				0x000000
 	#define OFFSET_MAC_ADDRESS2				0x000006
-#elif defined (CONFIG_FOR_GS_OOLITE_V1_DEV)
+#elif defined(CONFIG_FOR_GS_OOLITE_V1_DEV)
 	// GS-OOlite has only one MAC, inside second block
 	// It's some kind of TP-Link clone
 	#define OFFSET_MAC_DATA_BLOCK			0x010000
@@ -917,7 +917,7 @@
 
 #if !defined(CONFIG_FOR_8DEVICES_CARAMBOLA2) && \
 	!defined(CONFIG_FOR_DLINK_DIR505_A1)     && \
-	!defined (CONFIG_FOR_GS_OOLITE_V1_DEV)   && \
+	!defined(CONFIG_FOR_GS_OOLITE_V1_DEV)    && \
 	!defined(CONFIG_FOR_DRAGINO_V2)
 #define OFFSET_ROUTER_MODEL					0x00FD00
 #endif
