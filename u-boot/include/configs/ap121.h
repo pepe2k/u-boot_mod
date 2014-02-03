@@ -755,10 +755,12 @@
 
 #if defined(CONFIG_FOR_DRAGINO_V2)
 	#define CFG_ENV_ADDR		0x9F030000
+	#define CFG_ENV_SIZE		0x8000
+	#define CFG_ENV_SECT_SIZE	0x10000
 #else
 	#define CFG_ENV_ADDR		0x9F040000
+	#define CFG_ENV_SIZE		0x10000
 #endif
-#define CFG_ENV_SIZE			0x10000
 
 /*
  * Available commands
