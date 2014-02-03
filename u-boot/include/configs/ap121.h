@@ -963,6 +963,16 @@
 	#define PLL_IN_FLASH_DATA_BLOCK_OFFSET	0x00030000
 	#define PLL_IN_FLASH_DATA_BLOCK_LENGTH	0x00010000
 	#define PLL_IN_FLASH_MAGIC_OFFSET		0x0000FFF0	// last 16 bytes
+#elif defined(CONFIG_FOR_DRAGINO_V2)
+	/*
+	 * We will store PLL and CLOCK registers
+	 * configuration at the end of environment
+	 * sector (64 KB, environment uses only half!)
+	 */
+	#define PLL_IN_FLASH_MAGIC				0x504C4C73
+	#define PLL_IN_FLASH_DATA_BLOCK_OFFSET	0x00030000
+	#define PLL_IN_FLASH_DATA_BLOCK_LENGTH	0x00010000
+	#define PLL_IN_FLASH_MAGIC_OFFSET		0x0000FFF0	// last 16 bytes
 #else
 	/*
 	 * All TP-Link routers have a lot of unused space
