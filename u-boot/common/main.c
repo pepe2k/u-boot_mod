@@ -64,37 +64,39 @@ static __inline__ int abortboot(int bootdelay){
 	}
 #endif
 
+	if(bootdelay > 0){
 #ifdef CONFIG_MENUPROMPT
-	printf(CONFIG_MENUPROMPT, bootdelay);
+		printf(CONFIG_MENUPROMPT, bootdelay);
 #else
-	printf("Hit any key to stop autoboot: %d ", bootdelay);
+		printf("Hit any key to stop autoboot: %d ", bootdelay);
 #endif
 
-	while((bootdelay > 0) && (!abort)){
-		int i;
+		while((bootdelay > 0) && (!abort)){
+			int i;
 
-		--bootdelay;
+			--bootdelay;
 
-		/* delay 100 * 10ms */
-		for(i = 0; !abort && i < 100; ++i){
+			/* delay 100 * 10ms */
+			for(i = 0; !abort && i < 100; ++i){
 
-			/* we got a key press	*/
-			if(tstc()){
-				/* don't auto boot	*/
-				abort = 1;
-				/* no more delay	*/
-				bootdelay = 0;
-				/* consume input	*/
-				(void) getc();
-				break;
+				/* we got a key press	*/
+				if(tstc()){
+					/* don't auto boot	*/
+					abort = 1;
+					/* no more delay	*/
+					bootdelay = 0;
+					/* consume input	*/
+					(void) getc();
+					break;
+				}
+				udelay(10000);
 			}
-			udelay(10000);
+
+			printf("\b\b%d ", bootdelay);
 		}
 
-		printf("\b\b%d ", bootdelay);
+		printf("\n\n");
 	}
-
-	printf("\n\n");
 
 #ifdef CONFIG_SILENT_CONSOLE
 	if(abort){
