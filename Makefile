@@ -188,13 +188,10 @@ show_size:
     fi;
 
 clean:
-	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) clean
-	@rm -f $(BUILD_TOPDIR)/bin/*.bin
-	@rm -f $(BUILD_TOPDIR)/bin/*.md5
+	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) distclean
 	@rm -f $(BUILD_TOPDIR)/u-boot/httpd/fsdata.c
 
-clean_all:
-	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) distclean
+clean_all:	clean
+	@echo Removing all binary images
 	@rm -f $(BUILD_TOPDIR)/bin/*.bin
 	@rm -f $(BUILD_TOPDIR)/bin/*.md5
-	@rm -f $(BUILD_TOPDIR)/u-boot/httpd/fsdata.c
