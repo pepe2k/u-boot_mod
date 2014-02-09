@@ -194,7 +194,6 @@ Currently supported FLASH types:
 - Micron M25P64 (8 MiB, JEDEC ID: 20 2017)
 - Windbond W25Q64 (8 MiB, JEDEC ID: EF 4017)*
 - Macronix MX25L64 (8 MiB, JEDEC ID: C2 2017, C2 2617)
-- SST 25VF064C (8 MiB, JEDEC ID: BF 254B)
 
 **16 MiB**:
 
