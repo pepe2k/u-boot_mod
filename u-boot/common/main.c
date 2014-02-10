@@ -146,6 +146,17 @@ void main_loop(void){
 	// are we going to run web failsafe mode, U-Boot console, U-Boot netconsole or just boot command?
 	if(reset_button_status()){
 
+#ifdef CONFIG_SILENT_CONSOLE
+		if(gd->flags & GD_FLG_SILENT){
+			/* Restore serial console */
+			console_assign(stdout, "serial");
+			console_assign(stderr, "serial");
+		}
+
+		/* enable normal console output */
+		gd->flags &= ~(GD_FLG_SILENT);
+#endif
+
 		// wait 0,5s
 		milisecdelay(500);
 

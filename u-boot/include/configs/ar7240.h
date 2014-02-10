@@ -33,6 +33,10 @@
 #define CFG_MEMTEST_END		0x83800000
 #define CFG_RX_ETH_BUFFER   16
 
+#if defined(CONFIG_SILENT_CONSOLE)
+	#define CONFIG_EXTRA_ENV_SETTINGS	"silent=1\0"
+#endif
+
 /*
  ** PLL Config for different CPU/DDR/AHB frequencies
  */

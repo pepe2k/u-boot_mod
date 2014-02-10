@@ -6,6 +6,9 @@ export MAKECMD=make --silent ARCH=mips CROSS_COMPILE=mips-linux-gnu-
 # boot delay (time to autostart boot command)
 export CONFIG_BOOTDELAY=1
 
+# uncomment following line, to disable output in U-Boot console
+#export DISABLE_CONSOLE_OUTPUT=1
+
 tplink_mr3020:	export UBOOT_FILE_NAME=uboot_for_tp-link_tl-mr3020
 tplink_mr3020:	export MAX_UBOOT_SIZE=64
 tplink_mr3020:	export COMPRESSED_UBOOT=1
