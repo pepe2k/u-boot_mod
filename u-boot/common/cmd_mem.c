@@ -37,6 +37,9 @@
 						CFG_CMD_ITEST	| \
 						CFG_CMD_PCI		| \
 						CMD_CMD_PORTIO) )
+
+DECLARE_GLOBAL_DATA_PTR;
+
 /*
  * Check for a size specification .b, .w or .l.
  */
@@ -325,6 +328,7 @@ int do_mem_cp(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[]){
  * interrupted by ctrl-c or by a failure of one of the sub-tests.
  */
 int do_mem_mtest(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[]){
+	bd_t *bd = gd->bd;
 	vu_long *addr, *start, *end;
 	ulong val;
 	ulong readback;
@@ -370,14 +374,26 @@ int do_mem_mtest(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[]){
 	if(argc > 2){
 		end = (ulong *)simple_strtoul(argv[2], NULL, 16);
 	} else {
-		end = (ulong *)(CFG_MEMTEST_END);
+		end = (ulong *)CFG_MEMTEST_END;
 	}
 
+	if((uint)start >= (uint)end){
+		puts("## Error: end address must be bigger than start address!\n");
+		return(1);
+	}
+
+	if(((uint)start < (uint)CFG_MEMTEST_START) || ((uint)end > (uint)CFG_MEMTEST_END)){
+		printf("## Error: start and end addresses should be in 0x%08X...0x%08X range!\n", (uint)CFG_MEMTEST_START, (uint)CFG_MEMTEST_END);
+		return(1);
+	}
+
+#if !defined(CFG_ALT_MEMTEST)
 	if(argc > 3){
 		pattern = (ulong)simple_strtoul(argv[3], NULL, 16);
 	} else {
 		pattern = 0;
 	}
+#endif
 
 #if defined(CFG_ALT_MEMTEST)
 	printf("Testing RAM 0x%08X...0x%08X:\n", (uint)start, (uint)end);
@@ -709,7 +725,11 @@ U_BOOT_CMD(md, 3, 1, do_mem_md, "memory display\n", "[.b, .w, .l] address [# of 
 U_BOOT_CMD(mm, 2, 1, do_mem_mm, "memory modify (auto-incrementing)\n", "[.b, .w, .l] address\n\t- memory modify, auto increment address\n");
 U_BOOT_CMD(nm, 2, 1, do_mem_nm, "memory modify (constant address)\n", "[.b, .w, .l] address\n\t- memory modify, read and keep address\n");
 U_BOOT_CMD(mw, 4, 1, do_mem_mw, "memory write (fill)\n", "[.b, .w, .l] address value [count]\n\t- write memory\n");
+#if defined(CFG_ALT_MEMTEST)
+U_BOOT_CMD(mtest, 3, 1, do_mem_mtest, "RAM test\n", "[start [end]]\n\t- complete, alternative RAM test\n");
+#else
 U_BOOT_CMD(mtest, 4, 1, do_mem_mtest, "simple RAM test\n", "[start [end [pattern]]]\n\t- simple RAM read/write test\n");
+#endif
 U_BOOT_CMD(cp, 4, 1, do_mem_cp, "memory copy\n", "[.b, .w, .l] source target count\n\t- copy memory\n");
 
 #endif	/* CFG_CMD_MEMORY */

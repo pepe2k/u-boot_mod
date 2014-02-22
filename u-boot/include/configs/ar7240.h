@@ -21,16 +21,16 @@
  * Miscellaneous configurable options
  */
 #define CFG_ALT_MEMTEST
-#define	CFG_LONGHELP											/* undef to save memory      */
-#define	CFG_PROMPT			"uboot> "							/* Monitor Command Prompt    */
-#define	CFG_CBSIZE			1024								/* Console I/O Buffer Size   */
-#define	CFG_PBSIZE			(CFG_CBSIZE+sizeof(CFG_PROMPT)+16)	/* Print Buffer Size, was: def + 16 */
-#define	CFG_MAXARGS			16									/* max number of command */
-#define CFG_MALLOC_LEN		512*1024							// def: 128*1024
-#define CFG_BOOTPARAMS_LEN	512*1024							// def: 128
-#define CFG_SDRAM_BASE		0x80000000							/* Cached addr */
-#define CFG_MEMTEST_START	0x80200000
-#define CFG_MEMTEST_END		0x83800000
+#define	CFG_LONGHELP														/* undef to save memory      */
+#define	CFG_PROMPT			"uboot> "										/* Monitor Command Prompt    */
+#define	CFG_CBSIZE			1024											/* Console I/O Buffer Size   */
+#define	CFG_PBSIZE			(CFG_CBSIZE+sizeof(CFG_PROMPT)+16)				/* Print Buffer Size, was: def + 16 */
+#define	CFG_MAXARGS			16												/* max number of command */
+#define CFG_MALLOC_LEN		512*1024										/* def: 128*1024 */
+#define CFG_BOOTPARAMS_LEN	512*1024										/* def: 128 */
+#define CFG_SDRAM_BASE		0x80000000										/* Cached addr */
+#define CFG_MEMTEST_START	(CFG_SDRAM_BASE + 0x200000)						/* RAM test start = CFG_SDRAM_BASE + 2 MB */
+#define CFG_MEMTEST_END		(CFG_SDRAM_BASE + bd->bi_memsize - 0x200001)	/* RAM test end   = CFG_SDRAM_BASE + RAM size - 2 MB - 1 Byte */
 #define CFG_RX_ETH_BUFFER   16
 
 #if defined(CONFIG_SILENT_CONSOLE)
