@@ -45,7 +45,8 @@ COBJS	= main.o \
 		  exports.o \
 		  flash.o \
 		  lists.o \
-		  env_flash.o
+		  env_flash.o \
+		  hush.o
 
 OBJS	= $(AOBJS) $(COBJS)
 
