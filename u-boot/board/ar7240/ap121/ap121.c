@@ -406,6 +406,13 @@ int checkboard(void){
  * Returns a string with memory type preceded by a space sign
  */
 const char* print_mem_type(void){
+/*
+ * WR720N v3 (CH version) has wrong bootstrap configuration,
+ * so the memory type cannot be recognized automatically
+ */
+#if defined(CONFIG_FOR_TPLINK_WR720N_V3)
+	return " DDR 16-bit";
+#else
 	unsigned int reg_val;
 
 	reg_val = (ar7240_reg_rd(HORNET_BOOTSTRAP_STATUS) & HORNET_BOOTSTRAP_MEM_TYPE_MASK) >> HORNET_BOOTSTRAP_MEM_TYPE_SHIFT;
@@ -427,4 +434,5 @@ const char* print_mem_type(void){
 			return "";
 			break;
 	}
+#endif /* defined(CONFIG_FOR_TPLINK_WR720N_V3) */
 }
