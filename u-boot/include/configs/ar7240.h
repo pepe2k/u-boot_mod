@@ -21,8 +21,10 @@
  * Miscellaneous configurable options
  */
 #define CFG_ALT_MEMTEST
+#define CFG_HUSH_PARSER
 #define	CFG_LONGHELP														/* undef to save memory      */
 #define	CFG_PROMPT			"uboot> "										/* Monitor Command Prompt    */
+#define CFG_PROMPT_HUSH_PS2	"> "
 #define	CFG_CBSIZE			1024											/* Console I/O Buffer Size   */
 #define	CFG_PBSIZE			(CFG_CBSIZE+sizeof(CFG_PROMPT)+16)				/* Print Buffer Size, was: def + 16 */
 #define	CFG_MAXARGS			16												/* max number of command */
