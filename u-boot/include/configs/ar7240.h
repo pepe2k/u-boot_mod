@@ -36,7 +36,9 @@
 #define CFG_RX_ETH_BUFFER   16
 
 #if defined(CONFIG_SILENT_CONSOLE)
-	#define CONFIG_EXTRA_ENV_SETTINGS	"silent=1\0"
+	#define SILENT_ENV_VARIABLE	"silent=1\0"
+#else
+	#define SILENT_ENV_VARIABLE	""
 #endif
 
 /*

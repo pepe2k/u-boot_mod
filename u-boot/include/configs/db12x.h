@@ -47,8 +47,9 @@
 #undef CONFIG_LOADADDR
 #define CONFIG_LOADADDR		0x80800000
 
-#define	CFG_LOAD_ADDR		0x9F020000
-#define CONFIG_BOOTCOMMAND "bootm 0x9F020000"
+#define	CFG_LOAD_ADDR			 0x9F020000
+#define UPDATE_SCRIPT_FW_ADDR	"0x9F020000"
+#define CONFIG_BOOTCOMMAND 		"bootm 0x9F020000"
 
 
 #define CONFIG_IPADDR		192.168.1.1
@@ -161,6 +162,7 @@
 
 // U-Boot partition size
 #define WEBFAILSAFE_UPLOAD_UBOOT_SIZE_IN_BYTES		(64 * 1024)
+#define UPDATE_SCRIPT_UBOOT_SIZE_IN_BYTES			"0x10000"
 
 // ART partition size
 #define WEBFAILSAFE_UPLOAD_ART_SIZE_IN_BYTES		(64 * 1024)
@@ -182,6 +184,38 @@
 #define WEBFAILSAFE_UPGRADE_TYPE_ART			2
 
 /*-----------------------------------------------------------------------*/
+
+/*
+ * Additional environment variables for simple upgrades
+ */
+#define CONFIG_EXTRA_ENV_SETTINGS	"uboot_addr=0x9F000000\0" \
+									"uboot_name=uboot.bin\0" \
+									"uboot_size=" UPDATE_SCRIPT_UBOOT_SIZE_IN_BYTES "\0" \
+									"uboot_upg=" \
+										"if ping $serverip; then " \
+											"tftp $loadaddr $uboot_name && " \
+											"if itest.l $filesize == $uboot_size; then " \
+												"erase $uboot_addr +$filesize && " \
+												"cp.b $loadaddr $uboot_addr $filesize && " \
+												"echo OK!; " \
+											"else " \
+												"echo ERROR! Wrong file size!; " \
+											"fi; " \
+										"else " \
+											"ERROR! Server not reachable!; " \
+										"fi\0" \
+									"firmware_addr=" UPDATE_SCRIPT_FW_ADDR "\0" \
+									"firmware_name=firmware.bin\0" \
+									"firmware_upg=" \
+										"if ping $serverip; then " \
+											"tftp $loadaddr $firmware_name && " \
+											"erase $firmware_addr +$filesize && " \
+											"cp.b $loadaddr $firmware_addr $filesize && " \
+											"echo OK!; " \
+										"else " \
+											"ERROR! Server not reachable!; " \
+										"fi\0" \
+									SILENT_ENV_VARIABLE
 
 /* For Merlin, both PCI, PCI-E interfaces are valid */
 #define AR7240_ART_PCICFG_OFFSET	12
