@@ -36,6 +36,10 @@
 
 DECLARE_GLOBAL_DATA_PTR;
 
+#ifdef CFG_HUSH_PARSER
+#include <hush.h>
+#endif
+
 /* cmd_boot.c */
 extern int do_reset(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[]);
 
@@ -396,6 +400,28 @@ void print_image_hdr(tplink_image_header_t *hdr){
 	printf("   Load address: 0x%08X\n   Entry point:  0x%08X\n\n", ntohl(hdr->kernelTextAddr), ntohl(hdr->kernelEntryPoint));
 }
 #endif /* defined(CONFIG_FOR_8DEVICES_CARAMBOLA2) || defined(CONFIG_FOR_DLINK_DIR505_A1) || defined(CONFIG_FOR_DRAGINO_V2) */
+
+#if (CONFIG_COMMANDS & CFG_CMD_BOOTD)
+int do_bootd(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[]){
+	int rcode = 0;
+#ifndef CFG_HUSH_PARSER
+	if(run_command (getenv ("bootcmd"), flag) < 0){
+		rcode = 1;
+	}
+#else
+	if(parse_string_outer(getenv("bootcmd"), FLAG_PARSE_SEMICOLON | FLAG_EXIT_FROM_LOOP) != 0){
+		rcode = 1;
+	}
+#endif
+	return(rcode);
+}
+
+U_BOOT_CMD(boot, 1, 1, do_bootd, "boot default, i.e., run 'bootcmd'\n", NULL);
+
+/* keep old command name "bootd" for backward compatibility */
+U_BOOT_CMD(bootd, 1, 1, do_bootd, "boot default, i.e., run 'bootcmd'\n", NULL);
+
+#endif /* CONFIG_COMMANDS & CFG_CMD_BOOTD */
 
 #if (CONFIG_COMMANDS & CFG_CMD_IMI)
 int do_iminfo(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[]){

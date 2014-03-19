@@ -26,6 +26,10 @@
 #include <common.h>
 #include <command.h>
 
+#ifdef CFG_HUSH_PARSER
+#include <hush.h>
+#endif
+
 #ifdef CONFIG_SILENT_CONSOLE
 DECLARE_GLOBAL_DATA_PTR;
 #endif
@@ -116,16 +120,24 @@ static __inline__ int abortboot(int bootdelay){
 /****************************************************************************/
 
 void main_loop(void){
+#ifndef CFG_HUSH_PARSER
 	static char lastcommand[CFG_CBSIZE] = { 0, };
 	int len;
 	int rc = 1;
 	int flag;
+#endif
 	int counter = 0;
 
 #if defined(CONFIG_BOOTDELAY) && (CONFIG_BOOTDELAY >= 0)
 	char *s;
 	int bootdelay;
+#endif /* defined(CONFIG_BOOTDELAY) && (CONFIG_BOOTDELAY >= 0) */
 
+#ifdef CFG_HUSH_PARSER
+	u_boot_hush_start();
+#endif
+
+#if defined(CONFIG_BOOTDELAY) && (CONFIG_BOOTDELAY >= 0)
 	// get boot delay (seconds)
 	s = getenv("bootdelay");
 	bootdelay = s ? (int)simple_strtol(s, NULL, 10) : CONFIG_BOOTDELAY;
@@ -220,7 +232,11 @@ void main_loop(void){
 	if(bootdelay >= 0 && s && !abortboot(bootdelay)){
 
 		// try to boot
-		run_command(s, 0);
+#ifndef CFG_HUSH_PARSER
+			run_command(s, 0);
+#else
+			parse_string_outer(s, FLAG_PARSE_SEMICOLON | FLAG_EXIT_FROM_LOOP);
+#endif
 
 		// something goes wrong!
 		printf("\n## Error: failed to execute 'bootcmd'!\nHTTP server is starting for firmware update...\n\n");
@@ -231,6 +247,11 @@ void main_loop(void){
 	/*
 	 * Main Loop for Monitor Command Processing
 	 */
+#ifdef CFG_HUSH_PARSER
+	parse_file_outer();
+	/* This point is never reached */
+	for (;;);
+#else
 	for(;;){
 		len = readline(CFG_PROMPT);
 
@@ -252,6 +273,7 @@ void main_loop(void){
 			lastcommand[0] = 0;
 		}
 	}
+#endif /* CFG_HUSH_PARSER */
 }
 
 /****************************************************************************/
@@ -654,10 +676,15 @@ int do_run(cmd_tbl_t * cmdtp, int flag, int argc, char *argv[]){
 			printf("## Error: \"%s\" not defined\n", argv[i]);
 			return(1);
 		}
-
+#ifndef CFG_HUSH_PARSER
 		if(run_command(arg, flag) == -1){
 			return(1);
 		}
+#else
+		if (parse_string_outer(arg, FLAG_PARSE_SEMICOLON | FLAG_EXIT_FROM_LOOP) != 0){
+			return(1);
+		}
+#endif /* CFG_HUSH_PARSER */
 	}
 
 	return(0);
