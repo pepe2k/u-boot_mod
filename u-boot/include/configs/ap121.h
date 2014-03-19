@@ -766,12 +766,48 @@
  * Available commands
  */
 #if defined(CONFIG_FOR_DLINK_DIR505_A1)
-	#define CONFIG_COMMANDS (CFG_CMD_MEMORY | CFG_CMD_DHCP | CFG_CMD_PING | CFG_CMD_FLASH | CFG_CMD_NET | CFG_CMD_RUN | CFG_CMD_DATE | CFG_CMD_IMI | CFG_CMD_SNTP )
+
+	#define CONFIG_COMMANDS (CFG_CMD_MEMORY | \
+							 CFG_CMD_DHCP   | \
+							 CFG_CMD_PING   | \
+							 CFG_CMD_FLASH  | \
+							 CFG_CMD_NET    | \
+							 CFG_CMD_RUN    | \
+							 CFG_CMD_DATE   | \
+							 CFG_CMD_SNTP   | \
+							 CFG_CMD_ECHO   | \
+							 CFG_CMD_BOOTD  | \
+							 CFG_CMD_IMI)
+
 #elif defined(CONFIG_FOR_8DEVICES_CARAMBOLA2) || \
       defined(CONFIG_FOR_DRAGINO_V2)
-	#define CONFIG_COMMANDS	(CFG_CMD_MEMORY | CFG_CMD_DHCP | CFG_CMD_PING | CFG_CMD_ENV | CFG_CMD_FLASH | CFG_CMD_NET | CFG_CMD_RUN | CFG_CMD_DATE | CFG_CMD_IMI | CFG_CMD_SNTP)
+
+	#define CONFIG_COMMANDS (CFG_CMD_MEMORY | \
+							 CFG_CMD_DHCP   | \
+							 CFG_CMD_PING   | \
+							 CFG_CMD_FLASH  | \
+							 CFG_CMD_NET    | \
+							 CFG_CMD_RUN    | \
+							 CFG_CMD_DATE   | \
+							 CFG_CMD_SNTP   | \
+							 CFG_CMD_ECHO   | \
+							 CFG_CMD_BOOTD  | \
+							 CFG_CMD_IMI    | \
+							 CFG_CMD_ENV)
+
 #else
-	#define CONFIG_COMMANDS (CFG_CMD_MEMORY | CFG_CMD_DHCP | CFG_CMD_PING | CFG_CMD_FLASH | CFG_CMD_NET | CFG_CMD_RUN | CFG_CMD_DATE | CFG_CMD_SNTP )
+
+	#define CONFIG_COMMANDS (CFG_CMD_MEMORY | \
+							 CFG_CMD_DHCP   | \
+							 CFG_CMD_PING   | \
+							 CFG_CMD_FLASH  | \
+							 CFG_CMD_NET    | \
+							 CFG_CMD_RUN    | \
+							 CFG_CMD_DATE   | \
+							 CFG_CMD_SNTP   | \
+							 CFG_CMD_ECHO   | \
+							 CFG_CMD_BOOTD)
+
 #endif
 
 // Enable NetConsole and custom NetConsole port
