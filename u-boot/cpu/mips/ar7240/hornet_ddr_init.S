@@ -52,6 +52,11 @@ hornet_ddr_init:
 	li t8, CFG_DDR_CONFIG2_VAL;
 	set_mem(0xB8000004, t8);
 
+/*
+ * WR720N v3 (CH version) has wrong bootstrap configuration,
+ * so the memory type cannot be recognized automatically
+ */
+#if !defined(CONFIG_FOR_TPLINK_WR720N_V3)
 mem_type:
 	// TODO: what about SDRAM?
 	// 0x180600AC (BOOT_STRAP, p. 81)
@@ -178,6 +183,7 @@ ddr2_config:
 
 	nop
 	jr ra
+#endif /* !defined(CONFIG_FOR_TPLINK_WR720N_V3) */
 
 ddr1_config:
 	// Precharge All
