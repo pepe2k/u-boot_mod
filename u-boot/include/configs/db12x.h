@@ -109,7 +109,8 @@
 						 CFG_CMD_DATE   | \
 						 CFG_CMD_SNTP   | \
 						 CFG_CMD_ECHO   | \
-						 CFG_CMD_BOOTD)
+						 CFG_CMD_BOOTD  | \
+						 CFG_CMD_ITEST)
 
 // Enable NetConsole and custom NetConsole port
 #define CONFIG_NETCONSOLE

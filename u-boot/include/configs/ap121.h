@@ -777,6 +777,7 @@
 							 CFG_CMD_SNTP   | \
 							 CFG_CMD_ECHO   | \
 							 CFG_CMD_BOOTD  | \
+							 CFG_CMD_ITEST  | \
 							 CFG_CMD_IMI)
 
 #elif defined(CONFIG_FOR_8DEVICES_CARAMBOLA2) || \
@@ -792,6 +793,7 @@
 							 CFG_CMD_SNTP   | \
 							 CFG_CMD_ECHO   | \
 							 CFG_CMD_BOOTD  | \
+							 CFG_CMD_ITEST  | \
 							 CFG_CMD_IMI    | \
 							 CFG_CMD_ENV)
 
@@ -806,7 +808,8 @@
 							 CFG_CMD_DATE   | \
 							 CFG_CMD_SNTP   | \
 							 CFG_CMD_ECHO   | \
-							 CFG_CMD_BOOTD)
+							 CFG_CMD_BOOTD  | \
+							 CFG_CMD_ITEST)
 
 #endif
 
