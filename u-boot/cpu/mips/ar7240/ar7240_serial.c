@@ -30,6 +30,19 @@
 #define         UART16550_WRITE(x, z)	ar7240_reg_wr((AR7240_UART_BASE+x), z)
 
 /*
+ * This is taken from [Linux]/include/linux/kernel.h
+ * Keep the name unchanged here
+ * When this project decides to include that kernel.h some time,
+ * this would be found "automatically" and be removed hopefully
+ */
+#define DIV_ROUND_CLOSEST(x, divisor)(			\
+{							\
+	typeof(divisor) __divisor = divisor;		\
+	(((x) + ((__divisor) / 2)) / (__divisor));	\
+}							\
+)
+
+/*
  * Get CPU, RAM and AHB clocks
  * Based on: Linux/arch/mips/ath79/clock.c
  */
@@ -161,16 +174,16 @@ int serial_init(void){
 	val = ar7240_reg_rd(WASP_BOOTSTRAP_REG);
 
 	if((val & WASP_REF_CLK_25) == 0){
-		div = (25 * 1000000) / (16 * CONFIG_BAUDRATE);
+		div = DIV_ROUND_CLOSEST((25 * 1000000), (16 * CONFIG_BAUDRATE));
 	} else {
-		div = (40 * 1000000) / (16 * CONFIG_BAUDRATE);
+		div = DIV_ROUND_CLOSEST((40 * 1000000), (16 * CONFIG_BAUDRATE));
 	}
 #else
 	u32 ahb_freq, ddr_freq, cpu_freq;
 
 	ar7240_sys_frequency(&cpu_freq, &ddr_freq, &ahb_freq);
 
-	div = ahb_freq/(16 * CONFIG_BAUDRATE);
+	div = DIV_ROUND_CLOSEST(ahb_freq, (16 * CONFIG_BAUDRATE));
 
 	MY_WRITE(0xb8040000, 0xcff);
 	MY_WRITE(0xb8040008, 0x3b);
