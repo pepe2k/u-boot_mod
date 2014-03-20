@@ -761,6 +761,10 @@
 	#define CFG_ENV_ADDR		0x9F030000
 	#define CFG_ENV_SIZE		0x8000
 	#define CFG_ENV_SECT_SIZE	0x10000
+#elif defined(CONFIG_FOR_8DEVICES_CARAMBOLA2)
+	#define CFG_ENV_ADDR		0x9F040000
+	#define CFG_ENV_SIZE		0x8000
+	#define CFG_ENV_SECT_SIZE	0x10000
 #else
 	#define CFG_ENV_ADDR		0x9F040000
 	#define CFG_ENV_SIZE		0x10000
@@ -1031,15 +1035,11 @@
 #elif defined(CONFIG_FOR_8DEVICES_CARAMBOLA2)
 	/*
 	 * We will store PLL and CLOCK registers
-	 * configuration at the end of U-Boot
-	 * image (4th 64 KiB block)
-	 * It implies that binary image can't
-	 * be bigger than 192 KiB!
-	 *
-	 * TODO: fix me
+	 * configuration at the end of environment
+	 * sector (64 KB, environment uses only half!)
 	 */
 	#define PLL_IN_FLASH_MAGIC				0x504C4C73
-	#define PLL_IN_FLASH_DATA_BLOCK_OFFSET	0x00030000
+	#define PLL_IN_FLASH_DATA_BLOCK_OFFSET	0x00040000
 	#define PLL_IN_FLASH_DATA_BLOCK_LENGTH	0x00010000
 	#define PLL_IN_FLASH_MAGIC_OFFSET		0x0000FFF0	// last 16 bytes
 #elif defined(CONFIG_FOR_DRAGINO_V2)
