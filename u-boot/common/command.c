@@ -259,8 +259,6 @@ int do_help(cmd_tbl_t * cmdtp, int flag, int argc, char *argv[]){
 			}
 		}
 
-		max_len++;
-
 		/* print short help (usage) */
 		for(i = 0; i < cmd_items; i++){
 			const char *usage = cmd_array[i]->usage;
