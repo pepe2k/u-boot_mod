@@ -234,7 +234,7 @@ int do_default_env(cmd_tbl_t * cmdtp, int flag, int argc, char *argv[]){
 	return(rcode);
 }
 
-U_BOOT_CMD(defenv, 1, 1, do_default_env, "reset environment variables to their default values\n", NULL);
+U_BOOT_CMD(defenv, 1, 0, do_default_env, "reset environment variables to their default values\n", NULL);
 #endif /* if defined(CONFIG_FOR_8DEVICES_CARAMBOLA2) || defined(CONFIG_FOR_DRAGINO_V2) */
 
 #if defined(PLL_IN_FLASH_MAGIC_OFFSET)
