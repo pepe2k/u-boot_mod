@@ -43,7 +43,7 @@ int do_print_mac(cmd_tbl_t * cmdtp, int flag, int argc, char *argv[]){
 	memcpy(buffer,  (void *)(CFG_FLASH_BASE + OFFSET_MAC_DATA_BLOCK + OFFSET_MAC_ADDRESS),  6);
 	memcpy(buffer2, (void *)(CFG_FLASH_BASE + OFFSET_MAC_DATA_BLOCK + OFFSET_MAC_ADDRESS2), 6);
 
-	puts("Current MAC addresses stored in flash:\n");
+	puts("Current MAC addresses stored in FLASH:\n");
 	printf("MAC1 at 0x%X: %02X:%02X:%02X:%02X:%02X:%02X\n", CFG_FLASH_BASE + OFFSET_MAC_DATA_BLOCK + OFFSET_MAC_ADDRESS,
 															buffer[0] & 0xFF, buffer[1] & 0xFF, buffer[2] & 0xFF, buffer[3] & 0xFF, buffer[4] & 0xFF, buffer[5] & 0xFF);
 
@@ -53,7 +53,7 @@ int do_print_mac(cmd_tbl_t * cmdtp, int flag, int argc, char *argv[]){
 	// get MAC address from flash and print it
 	memcpy(buffer, (void *)(CFG_FLASH_BASE + OFFSET_MAC_DATA_BLOCK + OFFSET_MAC_ADDRESS), 6);
 
-	printf("Current MAC address stored in flash at offset 0x%X: ", CFG_FLASH_BASE + OFFSET_MAC_DATA_BLOCK + OFFSET_MAC_ADDRESS);
+	printf("Current MAC address stored in FLASH at offset 0x%X: ", CFG_FLASH_BASE + OFFSET_MAC_DATA_BLOCK + OFFSET_MAC_ADDRESS);
 	printf("%02X:%02X:%02X:%02X:%02X:%02X\n\n", buffer[0] & 0xFF, buffer[1] & 0xFF, buffer[2] & 0xFF, buffer[3] & 0xFF, buffer[4] & 0xFF, buffer[5] & 0xFF);
 #endif
 
@@ -61,9 +61,9 @@ int do_print_mac(cmd_tbl_t * cmdtp, int flag, int argc, char *argv[]){
 }
 
 #if defined(OFFSET_MAC_ADDRESS2)
-U_BOOT_CMD(printmac, 1, 1, do_print_mac, "print MAC addresses stored in flash\n", NULL);
+U_BOOT_CMD(printmac, 1, 1, do_print_mac, "print MAC addresses stored in FLASH\n", NULL);
 #else
-U_BOOT_CMD(printmac, 1, 1, do_print_mac, "print MAC address stored in flash\n", NULL);
+U_BOOT_CMD(printmac, 1, 1, do_print_mac, "print MAC address stored in FLASH\n", NULL);
 #endif
 
 /*
@@ -131,7 +131,7 @@ int do_set_mac(cmd_tbl_t * cmdtp, int flag, int argc, char *argv[]){
 	return(run_command(buf, 0));
 }
 
-U_BOOT_CMD(setmac, 2, 0, do_set_mac, "save new MAC address in flash\n", "xx:xx:xx:xx:xx:xx\n\t- change MAC address stored in flash (xx - value in hex format)\n");
+U_BOOT_CMD(setmac, 2, 0, do_set_mac, "save new MAC address in FLASH\n", "xx:xx:xx:xx:xx:xx\n\t- change MAC address stored in FLASH (xx - value in hex format)\n");
 
 #endif /* if defined(OFFSET_MAC_ADDRESS) */
 
@@ -145,13 +145,13 @@ int do_print_model(cmd_tbl_t * cmdtp, int flag, int argc, char *argv[]){
 	// get router model from flash and print it
 	memcpy(buffer, (void *)(CFG_FLASH_BASE + OFFSET_MAC_DATA_BLOCK + OFFSET_ROUTER_MODEL), 8);
 
-	printf("Router model stored in flash at offset 0x%X: ", CFG_FLASH_BASE + OFFSET_MAC_DATA_BLOCK + OFFSET_ROUTER_MODEL);
+	printf("Router model stored in FLASH at offset 0x%X: ", CFG_FLASH_BASE + OFFSET_MAC_DATA_BLOCK + OFFSET_ROUTER_MODEL);
 	printf("%02X%02X%02X%02X%02X%02X%02X%02X\n\n", buffer[0] & 0xFF, buffer[1] & 0xFF, buffer[2] & 0xFF, buffer[3] & 0xFF, buffer[4] & 0xFF, buffer[5] & 0xFF, buffer[6] & 0xFF, buffer[7] & 0xFF);
 
 	return(0);
 }
 
-U_BOOT_CMD(printmodel, 1, 1, do_print_model, "print router model stored in flash\n", NULL);
+U_BOOT_CMD(printmodel, 1, 1, do_print_model, "print router model stored in FLASH\n", NULL);
 
 #endif /* if defined(OFFSET_ROUTER_MODEL) */
 
@@ -166,13 +166,13 @@ int do_print_pin(cmd_tbl_t * cmdtp, int flag, int argc, char *argv[]){
 	memcpy(buffer, (void *)(CFG_FLASH_BASE + OFFSET_MAC_DATA_BLOCK + OFFSET_PIN_NUMBER), 8);
 	buffer[8] = 0;
 
-	printf("Router pin number stored in flash at offset 0x%X: ", CFG_FLASH_BASE + OFFSET_MAC_DATA_BLOCK + OFFSET_PIN_NUMBER);
+	printf("Router pin number stored in FLASH at offset 0x%X: ", CFG_FLASH_BASE + OFFSET_MAC_DATA_BLOCK + OFFSET_PIN_NUMBER);
 	printf("%s\n\n", buffer);
 
 	return(0);
 }
 
-U_BOOT_CMD(printpin, 1, 1, do_print_pin, "print WPS pin stored in flash\n", NULL);
+U_BOOT_CMD(printpin, 1, 1, do_print_pin, "print WPS pin stored in FLASH\n", NULL);
 
 #endif /* if defined(OFFSET_PIN_NUMBER) */
 

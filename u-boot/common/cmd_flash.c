@@ -180,7 +180,7 @@ static int addr_spec(char *arg1, char *arg2, ulong *addr_first, ulong *addr_last
 
 		if(!found){
 			/* error, addres not in flash */
-			printf("## Error: end address (0x%08lx) not in flash!\n", *addr_last);
+			printf("## Error: end address (0x%08lx) not in FLASH!\n", *addr_last);
 			return(-1);
 		}
 
@@ -291,7 +291,7 @@ int do_flerase(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[]){
 	// erase whole flash?
 	if(strcmp(argv[1], "all") == 0){
 		for(bank = 1; bank <= CFG_MAX_FLASH_BANKS; ++bank){
-			printf("Erase flash bank #%ld ", bank);
+			printf("Erase FLASH bank #%ld ", bank);
 			info = &flash_info[bank - 1];
 			rcode = flash_erase(info, 0, info->sector_count - 1);
 		}
@@ -303,7 +303,7 @@ int do_flerase(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[]){
 			puts("## Error: bad sector spec\n");
 			return(1);
 		}
-		printf("Erase flash sectors %d-%d in bank #%d ", sect_first, sect_last, (info - flash_info) + 1);
+		printf("Erase FLASH sectors %d-%d in bank #%d ", sect_first, sect_last, (info - flash_info) + 1);
 		rcode = flash_erase(info, sect_first, sect_last);
 		return(rcode);
 	}
@@ -325,11 +325,11 @@ int do_flerase(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[]){
 		bank = simple_strtoul(argv[2], NULL, 16);
 
 		if((bank < 1) || (bank > CFG_MAX_FLASH_BANKS)){
-			printf("## Error: only flash banks #1...#%d supported\n", CFG_MAX_FLASH_BANKS);
+			printf("## Error: only FLASH banks #1...#%d supported\n", CFG_MAX_FLASH_BANKS);
 			return(1);
 		}
 
-		printf("Erase flash bank #%ld ", bank);
+		printf("Erase FLASH bank #%ld ", bank);
 		info = &flash_info[bank - 1];
 		rcode = flash_erase(info, 0, info->sector_count - 1);
 		return(rcode);
@@ -371,7 +371,7 @@ int flash_sect_erase(ulong addr_first, ulong addr_last){
 		for(bank = 0, info = &flash_info[0]; (bank < CFG_MAX_FLASH_BANKS) && (rcode == 0); ++bank, ++info){
 			if(s_first[bank] >= 0){
 				erased += s_last[bank] - s_first[bank] + 1;
-				printf("Erase flash from 0x%08lX to 0x%08lX in bank #%ld\n", info->start[s_first[bank]], (s_last[bank] == info->sector_count - 1) ? info->start[0] + info->size - 1 : info->start[s_last[bank] + 1] - 1, bank + 1);
+				printf("Erase FLASH from 0x%08lX to 0x%08lX in bank #%ld\n", info->start[s_first[bank]], (s_last[bank] == info->sector_count - 1) ? info->start[0] + info->size - 1 : info->start[s_last[bank] + 1] - 1, bank + 1);
 				rcode = flash_erase(info, s_first[bank], s_last[bank]);
 			}
 		}
@@ -429,7 +429,7 @@ int do_protect(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[]){
 				continue;
 			}
 
-			printf("%sProtecting flash bank #%ld\n", p ? "" : "Un-", bank);
+			printf("%sProtecting FLASH bank #%ld\n", p ? "" : "Un-", bank);
 
 			for(i = 0; i < info->sector_count; ++i){
 				info->protect[i] = p;
@@ -445,7 +445,7 @@ int do_protect(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[]){
 			return(1);
 		}
 
-		printf("%sProtecting flash sectors: %d-%d in bank #%d\n", p ? "" : "Un-", sect_first, sect_last, (info-flash_info)+1);
+		printf("%sProtecting FLASH sectors: %d-%d in bank #%d\n", p ? "" : "Un-", sect_first, sect_last, (info-flash_info)+1);
 
 		for(i = sect_first; i <= sect_last; i++){
 			info->protect[i] = p;
@@ -471,15 +471,15 @@ int do_protect(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[]){
 		bank = simple_strtoul(argv[3], NULL, 16);
 
 		if((bank < 1) || (bank > CFG_MAX_FLASH_BANKS)){
-			printf("## Error: only flash banks #1...#%d supported\n", CFG_MAX_FLASH_BANKS);
+			printf("## Error: only FLASH banks #1...#%d supported\n", CFG_MAX_FLASH_BANKS);
 			return(1);
 		}
 
-		printf("%sProtecting flash bank #%ld\n", p ? "" : "Un-", bank);
+		printf("%sProtecting FLASH bank #%ld\n", p ? "" : "Un-", bank);
 		info = &flash_info[bank-1];
 
 		if(info->flash_id == FLASH_UNKNOWN){
-			puts("## Error: missing or unknown flash type\n");
+			puts("## Error: missing or unknown FLASH type\n");
 			return(1);
 		}
 

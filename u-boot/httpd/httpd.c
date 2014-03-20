@@ -155,7 +155,7 @@ static int httpd_findandstore_firstchunk(void){
 					// if we don't know the flash type, we won't allow to update ART,
 					// because we don't know flash size
 					if(info->flash_id == FLASH_CUSTOM){
-						printf("## Error: unknown flash type, can't update ART!\n");
+						printf("## Error: unknown FLASH type, can't update ART!\n");
 						webfailsafe_upload_failed = 1;
 					}
 #endif

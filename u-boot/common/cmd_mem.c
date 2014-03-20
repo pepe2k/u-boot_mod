@@ -293,7 +293,7 @@ int do_mem_cp(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[]){
 	if(addr2info(dest) != NULL){
 		int rc;
 
-		puts("Copying to flash...\n");
+		puts("Copying to FLASH...\n");
 
 		rc = flash_write((char *)addr, dest, count * size);
 

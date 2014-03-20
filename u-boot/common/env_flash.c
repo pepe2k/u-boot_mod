@@ -53,7 +53,7 @@ DECLARE_GLOBAL_DATA_PTR;
 	#endif
 #endif
 
-char *env_name_spec = "flash";
+const char *env_name_spec = "FLASH";
 
 #ifdef ENV_IS_EMBEDDED
 
