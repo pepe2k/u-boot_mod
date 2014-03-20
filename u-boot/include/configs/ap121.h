@@ -100,8 +100,16 @@
 	#define CONFIG_BOOTCOMMAND "bootm 0x9F020000"
 #endif
 
-#define CONFIG_IPADDR		192.168.1.1
-#define CONFIG_SERVERIP		192.168.1.2
+/*
+ * Dragino 2 uses different IP addresses
+ */
+#if defined(CONFIG_FOR_DRAGINO_V2)
+	#define CONFIG_IPADDR		192.168.255.1
+	#define CONFIG_SERVERIP		192.168.255.2
+#else
+	#define CONFIG_IPADDR		192.168.1.1
+	#define CONFIG_SERVERIP		192.168.1.2
+#endif
 
 /*
  * Dragino 2 uses different prompt
