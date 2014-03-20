@@ -226,7 +226,7 @@ static inline void debug_printf(const char *format, ...) {
 #define final_printf debug_printf
 
 static void syntax_err(void) {
-	printf("syntax error\n");
+	printf("## Error: syntax error!\n");
 }
 
 static void *xmalloc(size_t size);
@@ -571,14 +571,13 @@ static int run_pipe_real(struct pipe *pi) {
 		 * "help;flinfo" must not execute
 		 */
 		if (strchr(child->argv[i], ';')) {
-			printf("Unknown command '%s' - try 'help' or use 'run' command\n",
-					child->argv[i]);
+			printf("## Error: unknown command '%s' - try 'help' or use 'run' command\n", child->argv[i]);
 			return -1;
 		}
 
 		/* Look up command in command table */
 		if ((cmdtp = find_cmd(child->argv[i])) == NULL) {
-			printf("Unknown command '%s' - try 'help'\n", child->argv[i]);
+			printf("## Error: unknown command '%s' - try 'help'\n", child->argv[i]);
 			return -1; /* give up after bad command */
 		} else {
 			int rcode;
@@ -588,7 +587,7 @@ static int run_pipe_real(struct pipe *pi) {
 			/* avoid "bootd" recursion */
 			if (cmdtp->cmd == do_bootd) {
 				if (flag & CMD_FLAG_BOOTD) {
-					printf ("'bootd' recursion detected\n");
+					printf ("## Error: 'bootd' recursion detected!\n");
 					return -1;
 				} else {
 					flag |= CMD_FLAG_BOOTD;
@@ -597,7 +596,15 @@ static int run_pipe_real(struct pipe *pi) {
 #endif	/* CFG_CMD_BOOTD */
 			/* found - check max args */
 			if ((child->argc - i) > cmdtp->maxargs) {
-				printf("Usage:\n%s\n", cmdtp->usage);
+#ifdef CFG_LONGHELP
+		if(cmdtp->help != NULL){
+			printf("Usage:\n%s %s\n", cmdtp->name, cmdtp->help);
+		} else {
+			printf("Usage:\n%s %s\n", cmdtp->name, cmdtp->usage);
+		}
+#else
+		printf("Usage:\n%s %s\n", cmdtp->name, cmdtp->usage);
+#endif
 				return -1;
 			}
 			child->argv += i; /* XXX horrible hack */
@@ -834,8 +841,7 @@ static int set_local_var(const char *s, int flg_export) {
 	name = strdup(s);
 
 	if (getenv(name) != NULL) {
-		printf(
-				"## Error: there is a global environment variable with the same name.\n");
+		printf("## Error: there is a global environment variable with the same name!\n");
 		free(name);
 		return -1;
 	}
@@ -1363,7 +1369,7 @@ int parse_stream_outer(struct in_str *inp, int flag) {
 				code = 0;
 				/* XXX hackish way to not allow exit from main loop */
 				if (inp->peek == file_peek) {
-					printf("exit not allowed from main input shell.\n");
+					printf("## Error: exit not allowed from main input shell!\n");
 					continue;
 				}
 				break;
@@ -1446,7 +1452,7 @@ static void *xmalloc(size_t size) {
 	void *p = NULL;
 
 	if (!(p = malloc(size))) {
-		printf("## Error: memory not allocated\n");
+		printf("## Error: memory not allocated!\n");
 		for (;;)
 			;
 	}
@@ -1457,7 +1463,7 @@ static void *xrealloc(void *ptr, size_t size) {
 	void *p = NULL;
 
 	if (!(p = realloc(ptr, size))) {
-		printf("## Error: memory not allocated\n");
+		printf("## Error: memory not allocated!\n");
 		for (;;)
 			;
 	}
