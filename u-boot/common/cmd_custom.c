@@ -581,7 +581,7 @@ int do_set_clocks(cmd_tbl_t * cmdtp, int flag, int argc, char *argv[]){
 			}
 		}
 
-		puts("\n[*] = currently selected profile (stored in FLASH).\nAll clocks in MHz, run 'setclocks X' to choose one.\n\n");
+		puts("\n[*] = currently selected profile (stored in FLASH).\nAll clocks in MHz, run 'setclk X' to choose one.\n\n");
 		puts("** Notice:\n   you should always make a backup of your device\n   entire FLASH content before making any changes\n\n");
 
 		return(0);
@@ -637,10 +637,10 @@ int do_set_clocks(cmd_tbl_t * cmdtp, int flag, int argc, char *argv[]){
 	}
 }
 
-U_BOOT_CMD(setclocks, 2, 0, do_set_clocks, "select clocks configuration from predefined list\n",
+U_BOOT_CMD(setclk, 2, 0, do_set_clocks, "select clocks configuration from predefined list\n",
 		"index\n"
 		"\t- save 'index' configuration in FLASH\n"
-		"setclocks\n"
+		"setclk\n"
 		"\t- prints available clocks configurations and current settings");
 
 /*
@@ -689,5 +689,5 @@ int do_clear_clocks(cmd_tbl_t * cmdtp, int flag, int argc, char *argv[]){
 	}
 }
 
-U_BOOT_CMD(clearclocks, 1, 0, do_clear_clocks, "remove PLL and clocks configuration from FLASH\n", NULL);
+U_BOOT_CMD(clearclk, 1, 0, do_clear_clocks, "remove PLL and clocks configuration from FLASH\n", NULL);
 #endif /* #if defined(PLL_IN_FLASH_MAGIC_OFFSET) */
