@@ -77,13 +77,17 @@
 #define CONFIG_LOADADDR			0x80800000
 
 #if defined(CONFIG_FOR_DLINK_DIR505_A1)
-	#define	CFG_LOAD_ADDR		0x9F080000
+	#define	CFG_LOAD_ADDR			 0x9F080000
+	#define UPDATE_SCRIPT_FW_ADDR	"0x9F080000"
 #elif defined(CONFIG_FOR_8DEVICES_CARAMBOLA2)
-	#define	CFG_LOAD_ADDR		0x9F050000
+	#define	CFG_LOAD_ADDR			 0x9F050000
+	#define UPDATE_SCRIPT_FW_ADDR	"0x9F050000"
 #elif defined(CONFIG_FOR_DRAGINO_V2)
-	#define	CFG_LOAD_ADDR		0x9F040000
+	#define	CFG_LOAD_ADDR			 0x9F040000
+	#define UPDATE_SCRIPT_FW_ADDR	"0x9F040000"
 #else
-	#define	CFG_LOAD_ADDR		0x9F020000
+	#define	CFG_LOAD_ADDR			 0x9F020000
+	#define UPDATE_SCRIPT_FW_ADDR	"0x9F020000"
 #endif
 
 #if defined(CONFIG_FOR_DLINK_DIR505_A1)
@@ -766,12 +770,51 @@
  * Available commands
  */
 #if defined(CONFIG_FOR_DLINK_DIR505_A1)
-	#define CONFIG_COMMANDS (CFG_CMD_MEMORY | CFG_CMD_DHCP | CFG_CMD_PING | CFG_CMD_FLASH | CFG_CMD_NET | CFG_CMD_RUN | CFG_CMD_DATE | CFG_CMD_IMI | CFG_CMD_SNTP )
+
+	#define CONFIG_COMMANDS (CFG_CMD_MEMORY | \
+							 CFG_CMD_DHCP   | \
+							 CFG_CMD_PING   | \
+							 CFG_CMD_FLASH  | \
+							 CFG_CMD_NET    | \
+							 CFG_CMD_RUN    | \
+							 CFG_CMD_DATE   | \
+							 CFG_CMD_SNTP   | \
+							 CFG_CMD_ECHO   | \
+							 CFG_CMD_BOOTD  | \
+							 CFG_CMD_ITEST  | \
+							 CFG_CMD_IMI)
+
 #elif defined(CONFIG_FOR_8DEVICES_CARAMBOLA2) || \
       defined(CONFIG_FOR_DRAGINO_V2)
-	#define CONFIG_COMMANDS	(CFG_CMD_MEMORY | CFG_CMD_DHCP | CFG_CMD_PING | CFG_CMD_ENV | CFG_CMD_FLASH | CFG_CMD_NET | CFG_CMD_RUN | CFG_CMD_DATE | CFG_CMD_IMI | CFG_CMD_SNTP)
+
+	#define CONFIG_COMMANDS (CFG_CMD_MEMORY | \
+							 CFG_CMD_DHCP   | \
+							 CFG_CMD_PING   | \
+							 CFG_CMD_FLASH  | \
+							 CFG_CMD_NET    | \
+							 CFG_CMD_RUN    | \
+							 CFG_CMD_DATE   | \
+							 CFG_CMD_SNTP   | \
+							 CFG_CMD_ECHO   | \
+							 CFG_CMD_BOOTD  | \
+							 CFG_CMD_ITEST  | \
+							 CFG_CMD_IMI    | \
+							 CFG_CMD_ENV)
+
 #else
-	#define CONFIG_COMMANDS (CFG_CMD_MEMORY | CFG_CMD_DHCP | CFG_CMD_PING | CFG_CMD_FLASH | CFG_CMD_NET | CFG_CMD_RUN | CFG_CMD_DATE | CFG_CMD_SNTP )
+
+	#define CONFIG_COMMANDS (CFG_CMD_MEMORY | \
+							 CFG_CMD_DHCP   | \
+							 CFG_CMD_PING   | \
+							 CFG_CMD_FLASH  | \
+							 CFG_CMD_NET    | \
+							 CFG_CMD_RUN    | \
+							 CFG_CMD_DATE   | \
+							 CFG_CMD_SNTP   | \
+							 CFG_CMD_ECHO   | \
+							 CFG_CMD_BOOTD  | \
+							 CFG_CMD_ITEST)
+
 #endif
 
 // Enable NetConsole and custom NetConsole port
@@ -822,12 +865,16 @@
 
 #if defined(CONFIG_FOR_DLINK_DIR505_A1)
 	#define WEBFAILSAFE_UPLOAD_UBOOT_SIZE_IN_BYTES		(64 * 1024)
+	#define UPDATE_SCRIPT_UBOOT_SIZE_IN_BYTES			"0x10000"
 #elif defined(CONFIG_FOR_8DEVICES_CARAMBOLA2)
 	#define WEBFAILSAFE_UPLOAD_UBOOT_SIZE_IN_BYTES		(256 * 1024)
+	#define UPDATE_SCRIPT_UBOOT_SIZE_IN_BYTES			"0x40000"
 #elif defined(CONFIG_FOR_DRAGINO_V2)
 	#define WEBFAILSAFE_UPLOAD_UBOOT_SIZE_IN_BYTES		(192 * 1024)
+	#define UPDATE_SCRIPT_UBOOT_SIZE_IN_BYTES			"0x30000"
 #else
 	#define WEBFAILSAFE_UPLOAD_UBOOT_SIZE_IN_BYTES		(64 * 1024)
+	#define UPDATE_SCRIPT_UBOOT_SIZE_IN_BYTES			"0x10000"
 #endif
 
 // Firmware partition offset
@@ -879,6 +926,38 @@
 #define WEBFAILSAFE_UPGRADE_TYPE_ART			2
 
 /*-----------------------------------------------------------------------*/
+
+/*
+ * Additional environment variables for simple upgrades
+ */
+#define CONFIG_EXTRA_ENV_SETTINGS	"uboot_addr=0x9F000000\0" \
+									"uboot_name=uboot.bin\0" \
+									"uboot_size=" UPDATE_SCRIPT_UBOOT_SIZE_IN_BYTES "\0" \
+									"uboot_upg=" \
+										"if ping $serverip; then " \
+											"tftp $loadaddr $uboot_name && " \
+											"if itest.l $filesize == $uboot_size; then " \
+												"erase $uboot_addr +$filesize && " \
+												"cp.b $loadaddr $uboot_addr $filesize && " \
+												"echo OK!; " \
+											"else " \
+												"echo ERROR! Wrong file size!; " \
+											"fi; " \
+										"else " \
+											"ERROR! Server not reachable!; " \
+										"fi\0" \
+									"firmware_addr=" UPDATE_SCRIPT_FW_ADDR "\0" \
+									"firmware_name=firmware.bin\0" \
+									"firmware_upg=" \
+										"if ping $serverip; then " \
+											"tftp $loadaddr $firmware_name && " \
+											"erase $firmware_addr +$filesize && " \
+											"cp.b $loadaddr $firmware_addr $filesize && " \
+											"echo OK!; " \
+										"else " \
+											"ERROR! Server not reachable!; " \
+										"fi\0" \
+									SILENT_ENV_VARIABLE
 
 #define CFG_ATHRS26_PHY				1
 #define CFG_AG7240_NMACS			2
