@@ -203,16 +203,35 @@ U_BOOT_CMD(startsc, 1, 0, do_start_sc, "start serial console\n", NULL);
  * Erase environment sector
  */
 int do_default_env(cmd_tbl_t * cmdtp, int flag, int argc, char *argv[]){
-	char buf[64];
+	int	rc, rcode = 0;
+#if defined(CFG_ENV_SECT_SIZE) && (CFG_ENV_SECT_SIZE > CFG_ENV_SIZE)
+	unsigned char env_buffer[CFG_ENV_SECT_SIZE];
+#endif
 
-	sprintf(buf,
-			"erase 0x%lX +0x%lX",
-			CFG_ENV_ADDR,
-			CFG_ENV_SIZE);
+#if defined(CFG_ENV_SECT_SIZE) && (CFG_ENV_SECT_SIZE > CFG_ENV_SIZE)
+	/* copy whole env sector to temporary buffer */
+	memcpy(env_buffer, (void *)CFG_ENV_ADDR, CFG_ENV_SECT_SIZE);
 
-	printf("Executing: %s\n\n", buf);
+	/* clear env part */
+	memset(env_buffer, 0xFF, CFG_ENV_SIZE);
+#endif
 
-	return(run_command(buf, 0));
+	/* erase whole env sector */
+	if(flash_sect_erase(CFG_ENV_ADDR, CFG_ENV_ADDR + CFG_ENV_SECT_SIZE - 1)){
+		rcode = 1;
+	}
+
+#if defined(CFG_ENV_SECT_SIZE) && (CFG_ENV_SECT_SIZE > CFG_ENV_SIZE)
+	/* restore data from buffer in FLASH */
+	rc = flash_write((char *)env_buffer, CFG_ENV_ADDR, CFG_ENV_SECT_SIZE);
+
+	if(rc != 0){
+		flash_perror(rc);
+		rcode = 1;
+	}
+#endif
+
+	return(rcode);
 }
 
 U_BOOT_CMD(defenv, 1, 1, do_default_env, "reset environment variables to their default values\n", NULL);
