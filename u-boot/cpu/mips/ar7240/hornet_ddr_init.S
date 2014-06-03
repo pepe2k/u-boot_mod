@@ -62,9 +62,9 @@ mem_type:
 	// 0x180600AC (BOOT_STRAP, p. 81)
 	li  t8, 0xB80600AC			// load BOOT_STRAP reg address
 	lw  t9, 0(t8)				// and its value
-	li  t8, 0x1000				// 0x1000 -> BIT12 is set
+	li  t8, 0x2000				// 0x2000 -> BIT13 is set
 	and t9, t9, t8
-	bne t9, zero, ddr1_config	// jump if we have DDR1
+	beq t9, zero, ddr1_config	// jump if we have DDR1
 
 ddr2_config:
 	// Enable DDR2
