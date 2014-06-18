@@ -272,7 +272,7 @@ Please, **do not** connect any RS232 +/- 12 V cable or any adapter without logic
 
 For a long time I have been using without any problems a small and very cheap (about 1-2 USD) **CP2102** based adapter. Go to [Serial Console article in OpenWrt Wiki](http://wiki.openwrt.org/doc/hardware/port.serial) for more, detailed information.
 
-#### Step by step instruction
+#### Step by step instructions
 
 1. Install and configure any **TFTP server** on your PC (on Windows, you can use [TFTP32](http://tftpd32.jounin.net)).
 
