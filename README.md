@@ -386,7 +386,7 @@ Configure adapter to use the following settings:
 
 Tutorial untested and taken from [here](http://zhujunsan.net/index.php/2013/08/install-web-failsafe-u-boot-for-wr703n/).
 
-1. Copy the following, and save to a shell script on your local computer(e.g. makeu.sh)
+1. Copy the following, and save to a shell script on your local computer (e.g. makeu.sh)
 
     ```bash
     #! /bin/sh
@@ -395,7 +395,7 @@ Tutorial untested and taken from [here](http://zhujunsan.net/index.php/2013/08/i
     UBOOT_NAME=wr703n_tuboot_test_2012_06_06.bin
     MD5SUM_SHOULD_BE="623dc0bba6fab68c22e5fb2f329d7d09"
     
-    # need check the md5sum,any one byte in bootloader shoud right ...
+    # need check the md5sum, any one byte in bootloader shoud right ...
     CURRENT_MD5SUM_VAL=$( md5sum $UBOOT_NAME |awk '{print $1 }' )
     echo "$UBOOT_NAME md5sum : $CURRENT_MD5SUM_VAL"
 
@@ -413,7 +413,7 @@ Tutorial untested and taken from [here](http://zhujunsan.net/index.php/2013/08/i
     dd if=/dev/zero of=pad.bin bs=1 count=$NEED_PAD_LEN
     cat $UBOOT_NAME pad.bin >tuboot_0x1fc00.bin
     
-    echo "Backup some config first,just like MAC address ..."
+    echo "Backup some config first, just like MAC address ..."
     dd if=/dev/mtd0 of=./config.bin bs=1 skip=$((0x1fc00))
     cat ./tuboot_0x1fc00.bin ./config.bin >uboot_0x20000.bin
     ```
@@ -453,6 +453,7 @@ Tutorial untested and taken from [here](http://zhujunsan.net/index.php/2013/08/i
     ```bash
     ./makeu.sh
     ```
+    
     You must get output similar to:
 
     ```ShellSession
@@ -490,9 +491,11 @@ Tutorial untested and taken from [here](http://zhujunsan.net/index.php/2013/08/i
     ```
 
 8. Check the name of your mtd0 partition:
+
     ```bash
     cat /proc/mtd
     ```
+
 e.g.:
 
     ```ShellSession
@@ -508,9 +511,11 @@ e.g.:
     mtd7: 00020000 00010000 "fullboot"
     root@superhornet:/tmp/superhornet#
     ```
+    
     The one you want is mtd0. In some devices it may be labeled "u-boot", instead of "RedBoot". As long as the size reads 00020000(128KB), you are ok.
 
 9. (Point of no return step!) Flash the created image onto your mtd0. Invoke:
+
     ```bash
     mtd write uboot_0x20000.bin RedBoot
     ```
@@ -524,7 +529,7 @@ e.g.:
     
     If flashing completes with no errors, you may issue a **reboot** to reboot your router. It should start as normal.
   
-    If the U-Boot partition is broken, and the device is restarted, it becomes a superbrick(especially true for devices like tlwr740 that don't have JTAG).
+**Warning**: if the U-Boot partition is broken and the device is restarted, it becomes a superbrick (especially true for devices like tlwr740 that don't have JTAG).
 
 How to use it?
 --------------
