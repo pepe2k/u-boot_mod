@@ -382,7 +382,7 @@ Configure adapter to use the following settings:
 
 ### Using DD-WRT
 
-#### Step by step instruction
+#### Step by step instructions
 
 Tutorial untested and taken from [here](http://zhujunsan.net/index.php/2013/08/install-web-failsafe-u-boot-for-wr703n/).
 
