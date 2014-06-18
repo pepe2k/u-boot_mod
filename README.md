@@ -496,7 +496,7 @@ Tutorial untested and taken from [here](http://zhujunsan.net/index.php/2013/08/i
     cat /proc/mtd
     ```
 
-e.g.:
+    e.g.:
 
     ```ShellSession
     root@superhornet:/tmp/superhornet# cat /proc/mtd
