@@ -140,6 +140,11 @@ Second, very useful modification is a network console (it is a part of original 
 
 ![](http://www.tech-blog.pl/wordpress/wp-content/uploads/2013/04/u-boot_mod_for_tp-link_with_ar9331_netconsole.jpg)
 
+You could also use netcat instead of Hercules utility on Mac/Linux:
+```
+# nc -u -p 6666 192.168.1.1 6666
+```
+
 ### Other
 
 Moreover:
