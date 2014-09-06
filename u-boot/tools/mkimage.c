@@ -619,13 +619,13 @@ print_header (image_header_t *hdr)
 	timestamp = (time_t)ntohl(hdr->ih_time);
 	size = ntohl(hdr->ih_size);
 
-	printf ("Image Name:   %.*s\n", IH_NMLEN, hdr->ih_name);
-	printf ("Created:      %s", ctime(&timestamp));
-	printf ("Image Type:   "); print_type(hdr);
-	printf ("Data Size:    %d Bytes = %.2f kB = %.2f MB\n",
+	printf ("    Image Name: %.*s\n", IH_NMLEN, hdr->ih_name);
+	printf ("       Created: %s", ctime(&timestamp));
+	printf ("    Image Type: "); print_type(hdr);
+	printf ("     Data Size: %d Bytes = %.2f kB = %.2f MB\n",
 		size, (double)size / 1.024e3, (double)size / 1.048576e6 );
-	printf ("Load Address: 0x%08X\n", ntohl(hdr->ih_load));
-	printf ("Entry Point:  0x%08X\n", ntohl(hdr->ih_ep));
+	printf ("  Load Address: 0x%08X\n", ntohl(hdr->ih_load));
+	printf ("   Entry Point: 0x%08X\n", ntohl(hdr->ih_ep));
 
 	if (hdr->ih_type == IH_TYPE_MULTI || hdr->ih_type == IH_TYPE_SCRIPT) {
 		int i, ptrs;
