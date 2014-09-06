@@ -169,6 +169,7 @@ u-boot.bin:	u-boot
 		$(OBJCOPY) ${OBJCFLAGS} -O binary $< $@
 
 u-boot.img:	u-boot.bin
+		@/bin/echo -e "\n\e[32m> Preparing U-Boot image...\e[0m"
 		./tools/mkimage -A $(ARCH) -T firmware -C none \
 		-a $(TEXT_BASE) -e 0 \
 		-n $(shell sed -n -e 's/.*U_BOOT_VERSION//p' $(VERSION_FILE) | \
@@ -201,6 +202,7 @@ u-boot.lzimg: $(obj)u-boot.bin System.map
 		@rm -rf u-boot.bin.lzma
 		#$(LZMA) e $(obj)u-boot.bin u-boot.bin.lzma
 		$(LZMA) --best --keep $(obj)u-boot.bin
+		@/bin/echo -e "\n\e[32m> Preparing U-Boot image...\e[0m"
 		./tools/mkimage -A mips -T firmware -C lzma \
 		-a 0x$(shell grep "T _start" $(TOPDIR)/System.map | awk '{ printf "%s", $$1 }') \
 		-e 0x$(shell grep "T _start" $(TOPDIR)/System.map | awk '{ printf "%s", $$1 }') \
@@ -298,7 +300,7 @@ hornet_common_config : common_config
 	@echo "#define CONFIG_HORNET_1_1_WAR                1" >> include/config.h
 
 wr703n_config : unconfig hornet_common_config
-	@echo '======= Configuring for TP-Link TL-WR703N at:' `date` '======='
+	@/bin/echo -e '\e[32m> Configuring for TP-Link TL-WR703N at:' `date` '\e[0m'
 	@echo "#define CONFIG_FOR_TPLINK_WR703N_V1          1" >> include/config.h
 	@echo "#define GPIO_SYS_LED_BIT                    27" >> include/config.h
 	@echo "#define GPIO_SYS_LED_ON                      0" >> include/config.h
@@ -309,7 +311,7 @@ wr703n_config : unconfig hornet_common_config
 	@./mkconfig -a ap121 mips mips ap121 ar7240 ar7240
 
 wr720n_v3_CH_config : unconfig hornet_common_config
-	@echo '======= Configuring for TP-Link TL-WR720N v3 CH at:' `date` '======='
+	@/bin/echo -e '\e[32m> Configuring for TP-Link TL-WR720N v3 CH at:' `date` '\e[0m'
 	@echo "#define CONFIG_FOR_TPLINK_WR720N_V3          1" >> include/config.h
 	@echo "#define GPIO_SYS_LED_BIT                    27" >> include/config.h
 	@echo "#define GPIO_SYS_LED_ON                      0" >> include/config.h
@@ -320,7 +322,7 @@ wr720n_v3_CH_config : unconfig hornet_common_config
 	@./mkconfig -a ap121 mips mips ap121 ar7240 ar7240
 
 wr710n_config : unconfig hornet_common_config
-	@echo '======= Configuring for TP-Link TL-WR710N at:' `date` '======='
+	@/bin/echo -e '\e[32m> Configuring for TP-Link TL-WR710N at:' `date` '\e[0m'
 	@echo "#define CONFIG_FOR_TPLINK_WR710N_V1          1" >> include/config.h
 	@echo "#define GPIO_SYS_LED_BIT                    27" >> include/config.h
 	@echo "#define GPIO_SYS_LED_ON                      0" >> include/config.h
@@ -331,7 +333,7 @@ wr710n_config : unconfig hornet_common_config
 	@./mkconfig -a ap121 mips mips ap121 ar7240 ar7240
 
 mr3020_config : unconfig hornet_common_config
-	@echo '======= Configuring for TP-Link TL-MR3020 at:' `date` '======='
+	@/bin/echo -e '\e[32m> Configuring for TP-Link TL-MR3020 at:' `date`.'\e[0m'
 	@echo "#define CONFIG_FOR_TPLINK_MR3020_V1          1" >> include/config.h
 	@echo "#define GPIO_INTERNET_LED_BIT               27" >> include/config.h
 	@echo "#define GPIO_INTERNET_LED_ON                 0" >> include/config.h
@@ -348,7 +350,7 @@ mr3020_config : unconfig hornet_common_config
 	@./mkconfig -a ap121 mips mips ap121 ar7240 ar7240
 
 mr3040_config : unconfig hornet_common_config
-	@echo '======= Configuring for TP-Link TL-MR3040 at:' `date` '======='
+	@/bin/echo -e '\e[32m> Configuring for TP-Link TL-MR3040 at:' `date` '\e[0m'
 	@echo "#define CONFIG_FOR_TPLINK_MR3040_V1V2        1" >> include/config.h
 	@echo "#define GPIO_INTERNET_LED_BIT               27" >> include/config.h
 	@echo "#define GPIO_INTERNET_LED_ON                 0" >> include/config.h
@@ -363,7 +365,7 @@ mr3040_config : unconfig hornet_common_config
 	@./mkconfig -a ap121 mips mips ap121 ar7240 ar7240
 
 mr10u_config : unconfig hornet_common_config
-	@echo '======= Configuring for TP-Link TL-MR10U at:' `date` '======='
+	@/bin/echo -e '\e[32m> Configuring for TP-Link TL-MR10U at:' `date` '\e[0m'
 	@echo "#define CONFIG_FOR_TPLINK_MR10U_V1           1" >> include/config.h
 	@echo "#define GPIO_SYS_LED_BIT                    27" >> include/config.h
 	@echo "#define GPIO_SYS_LED_ON                      0" >> include/config.h
@@ -374,7 +376,7 @@ mr10u_config : unconfig hornet_common_config
 	@./mkconfig -a ap121 mips mips ap121 ar7240 ar7240
 
 mr13u_config : unconfig hornet_common_config
-	@echo '======= Configuring for TP-Link TL-MR13U at:' `date` '======='
+	@/bin/echo -e '\e[32m> Configuring for TP-Link TL-MR13U at:' `date` '\e[0m'
 	@echo "#define CONFIG_FOR_TPLINK_MR13U_V1           1" >> include/config.h
 	@echo "#define GPIO_SYS_LED_BIT                    27" >> include/config.h
 	@echo "#define GPIO_SYS_LED_ON                      0" >> include/config.h
@@ -385,7 +387,7 @@ mr13u_config : unconfig hornet_common_config
 	@./mkconfig -a ap121 mips mips ap121 ar7240 ar7240
 
 wr740n_v4_config : unconfig hornet_common_config
-	@echo '======= Configuring for TP-Link TL-WR740N v4 at:' `date` '======='
+	@/bin/echo -e '\e[32m> Configuring for TP-Link TL-WR740N v4 at:' `date` '\e[0m'
 	@echo "#define CONFIG_FOR_TPLINK_WR740N_V4          1" >> include/config.h
 	@echo "#define GPIO_SYS_LED_BIT                    27" >> include/config.h
 	@echo "#define GPIO_SYS_LED_ON                      0" >> include/config.h
@@ -410,7 +412,7 @@ wr740n_v4_config : unconfig hornet_common_config
 	@./mkconfig -a ap121 mips mips ap121 ar7240 ar7240
 
 mr3220_v2_config : unconfig hornet_common_config
-	@echo '======= Configuring for TP-Link TL-MR3220 v2 at:' `date` '======='
+	@/bin/echo -e '\e[32m> Configuring for TP-Link TL-MR3220 v2 at:' `date` '\e[0m'
 	@echo "#define CONFIG_FOR_TPLINK_MR3220_V2          1" >> include/config.h
 	@echo "#define GPIO_SYS_LED_BIT                    27" >> include/config.h
 	@echo "#define GPIO_SYS_LED_ON                      0" >> include/config.h
@@ -437,7 +439,7 @@ mr3220_v2_config : unconfig hornet_common_config
 	@./mkconfig -a ap121 mips mips ap121 ar7240 ar7240
 
 dir505_config : unconfig hornet_common_config
-	@echo '======= Configuring for D-Link DIR-505 at:' `date` '======='
+	@/bin/echo -e '\e[32m> Configuring for D-Link DIR-505 at:' `date` '\e[0m'
 	@echo "#define CONFIG_FOR_DLINK_DIR505_A1           1" >> include/config.h
 	@echo "#define GPIO_SYS_LED_BIT                    27" >> include/config.h
 	@echo "#define GPIO_SYS_LED_ON                      0" >> include/config.h
@@ -452,7 +454,7 @@ dir505_config : unconfig hornet_common_config
 	@./mkconfig -a ap121 mips mips ap121 ar7240 ar7240
 
 gs_oolite_v1_dev_config : unconfig hornet_common_config
-	@echo '======= Configuring for GS-Oolite v1 with dev board at:' `date` '======='
+	@/bin/echo -e '\e[32m> Configuring for GS-Oolite v1 with dev board at:' `date` '\e[0m'
 	@echo "#define CONFIG_FOR_GS_OOLITE_V1_DEV          1" >> include/config.h
 	@echo "#define GPIO_SYS_LED_BIT                    27" >> include/config.h
 	@echo "#define GPIO_SYS_LED_ON                      0" >> include/config.h
@@ -469,7 +471,7 @@ gs_oolite_v1_dev_config : unconfig hornet_common_config
 	@./mkconfig -a ap121 mips mips ap121 ar7240 ar7240
 
 carambola2_config : unconfig hornet_common_config
-	@echo '======= Configuring for 8devices Carambola 2 at:' `date` '======='
+	@/bin/echo -e '\e[32m> Configuring for 8devices Carambola 2 at:' `date` '\e[0m'
 	@echo "#define CONFIG_FOR_8DEVICES_CARAMBOLA2       1" >> include/config.h
 
 	# Carambola 2 uses uncompressed version
@@ -491,7 +493,7 @@ carambola2_config : unconfig hornet_common_config
 	@./mkconfig -a ap121 mips mips ap121 ar7240 ar7240
 
 dragino_v2_ms14_config : unconfig hornet_common_config
-	@echo '======= Configuring for Dragino Dragino v2 (MS14) at:' `date` '======='
+	@/bin/echo -e '\e[32m> Configuring for Dragino Dragino v2 (MS14) at:' `date` '\e[0m'
 	@echo "#define CONFIG_FOR_DRAGINO_V2                1" >> include/config.h
 	@echo "#undef  COMPRESSED_UBOOT"                       >> include/config.h
 	@echo "#define GPIO_WLAN_LED_BIT                    0" >> include/config.h
@@ -517,7 +519,7 @@ wasp_common_config : common_config
 	@echo "#define CONFIG_WASP_SUPPORT                  1" >> include/config.h
 
 wdr3600_43x0_config : unconfig wasp_common_config
-	@echo '======= Configuring for TP-Link TL-WDR3600/43x0 at:' `date` '======='
+	@/bin/echo -e '\e[32m> Configuring for TP-Link TL-WDR3600/43x0 at:' `date` '\e[0m'
 	@echo "#define CONFIG_FOR_TPLINK_WDR3600_WDR43X0_V1 1" >> include/config.h
 	@echo "#define DDR2_32BIT_SUPPORT                   1" >> include/config.h
 	@echo "#define CFG_ATHRS17_PHY                      1" >> include/config.h
@@ -541,7 +543,7 @@ wdr3600_43x0_config : unconfig wasp_common_config
 	@./mkconfig -a db12x mips mips db12x ar7240 ar7240
 
 wdr3500_config : unconfig wasp_common_config
-	@echo '======= Configuring for TP-Link TL-WDR3500 at:' `date` '======='
+	@/bin/echo -e '\e[32m> Configuring for TP-Link TL-WDR3500 at:' `date` '\e[0m'
 	@echo "#define CONFIG_FOR_TPLINK_WDR3500_V1         1" >> include/config.h
 	@echo "#define DDR2_32BIT_SUPPORT                   1" >> include/config.h
 	@echo "#define CFG_ATHRS27_PHY                      1" >> include/config.h
@@ -572,7 +574,7 @@ wdr3500_config : unconfig wasp_common_config
 	@./mkconfig -a db12x mips mips db12x ar7240 ar7240
 
 mr3420_v2_config : unconfig wasp_common_config
-	@echo '======= Configuring for TP-Link TL-MR3420 v2 at:' `date` '======='
+	@/bin/echo -e '\e[32m> Configuring for TP-Link TL-MR3420 v2 at:' `date` '\e[0m'
 	@echo "#define CONFIG_FOR_TPLINK_MR3420_V2          1" >> include/config.h
 	@echo "#define CONFIG_AP123                         1" >> include/config.h
 	@echo "#define DDR2_32BIT_SUPPORT                   1" >> include/config.h
@@ -604,7 +606,7 @@ mr3420_v2_config : unconfig wasp_common_config
 	@./mkconfig -a db12x mips mips db12x ar7240 ar7240
 
 wr841n_v8_config : unconfig wasp_common_config
-	@echo '======= Configuring for TP-Link TL-WR841N/D v8 at:' `date` '======='
+	@/bin/echo -e '\e[32m> Configuring for TP-Link TL-WR841N/D v8 at:' `date` '\e[0m'
 	@echo "#define CONFIG_FOR_TPLINK_WR841N_V8          1" >> include/config.h
 	@echo "#define CONFIG_AP123                         1" >> include/config.h
 	@echo "#define DDR2_32BIT_SUPPORT                   1" >> include/config.h
@@ -634,7 +636,7 @@ wr841n_v8_config : unconfig wasp_common_config
 	@./mkconfig -a db12x mips mips db12x ar7240 ar7240
 
 wa830re_v2_wa801nd_v2_config : unconfig wasp_common_config
-	@echo '======= Configuring for TP-Link TL-WA830RE/TL-WA801ND v2 at:' `date` '======='
+	@/bin/echo -e '\e[32m> Configuring for TP-Link TL-WA830RE/TL-WA801ND v2 at:' `date` '\e[0m'
 	@echo "#define CONFIG_FOR_TPLINK_WA830RE_V2_WA801ND_V2 1" >> include/config.h
 	@echo "#define CONFIG_AP123                            1" >> include/config.h
 	@echo "#define DDR2_32BIT_SUPPORT                      1" >> include/config.h
@@ -660,7 +662,7 @@ wa830re_v2_wa801nd_v2_config : unconfig wasp_common_config
 #########################################################################
 
 clean:
-	@echo Making $@
+	@/bin/echo -e "\e[32m> Making $@...\e[0m"
 	@find . -type f \
 		\( -name 'core' -o -name '*.bak' -o -name '*~' \
 		-o -name '*.o'  -o -name '*.a' -o -name .depend \) -print \
@@ -671,7 +673,7 @@ clean:
 	@rm -f bootstrap bootstrap.bin tuboot.bin u-boot.lzimg u-boot.bin.lzma bootstrap.map
 
 clobber:	clean
-	@echo Making $@
+	@/bin/echo -e "\e[32m> Making $@...\e[0m"
 	@find . -type f \( -name .depend \
 		-o -name '*.srec' -o -name '*.bin' -o -name u-boot.img \) \
 		-print0 \
