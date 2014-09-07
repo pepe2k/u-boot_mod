@@ -190,6 +190,7 @@ void ath_set_tuning_caps(void){
 }
 
 int wasp_mem_config(void){
+#ifndef CONFIG_SKIP_LOWLEVEL_INIT
 	unsigned int reg32;
 
 	wasp_ddr_initial_config(CFG_DDR_REFRESH_VAL);
@@ -208,7 +209,8 @@ int wasp_mem_config(void){
 
 	/* Needed here not to mess with Ethernet clocks */
 	ath_set_tuning_caps();
-	
+
+#endif
 	// return memory size
 	return(ar7240_ddr_find_size());
 }
@@ -216,6 +218,13 @@ int wasp_mem_config(void){
 long int initdram(){
 	return((long int)wasp_mem_config());
 }
+
+#ifndef COMPRESSED_UBOOT
+int checkboard(void){
+	printf(BOARD_CUSTOM_STRING"\n\n");
+	return(0);
+}
+#endif
 
 /*
  * Returns a string with memory type preceded by a space sign

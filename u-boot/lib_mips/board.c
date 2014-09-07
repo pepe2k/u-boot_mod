@@ -57,7 +57,7 @@ extern void ar7240_sys_frequency(u32 *cpu_freq, u32 *ddr_freq, u32 *ahb_freq);
 
 ulong monitor_flash_len;
 
-const char version_string[] = U_BOOT_VERSION"  (" __DATE__ ")";
+const char version_string[] = U_BOOT_VERSION"  (" __DATE__ ", " __TIME__ ")";
 
 // Begin and End of memory area for malloc(), and current "brk"
 static ulong mem_malloc_start;
@@ -87,7 +87,15 @@ void *sbrk(ptrdiff_t increment){
 }
 
 static int display_banner(void){
-	printf("\n\n*********************************************\n*        %s        *\n*********************************************\n\n", version_string);
+#ifndef CONFIG_SKIP_LOWLEVEL_INIT
+	printf("\n\n*********************************************\n*   %s   *\n*********************************************\n\n", version_string);
+#else
+	printf("\n\n*********************************************\n");
+	printf("*                                           *\n");
+	printf("*                RAM VERSION                *\n");
+	printf("*                                           *\n");
+	printf("*********************************************\n*   %s   *\n*********************************************\n\n", version_string);
+#endif
 	return(0);
 }
 
@@ -101,7 +109,12 @@ static int init_func_ram(void){
 	puts("DRAM:   ");
 
 	if((gd->ram_size = initdram()) > 0){
+#ifndef CONFIG_SKIP_LOWLEVEL_INIT
 		print_size(gd->ram_size, print_mem_type());
+#else
+		// TODO: fix me!
+		print_size(gd->ram_size + 1024*1024, print_mem_type());
+#endif
 		puts("\n");
 		return(0);
 	}

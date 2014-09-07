@@ -68,8 +68,13 @@ int ar7240_ddr_find_size(void){
 			break;
 		}
 	}
-
+#ifndef CONFIG_SKIP_LOWLEVEL_INIT
 	return(i * AR7240_DDR_SIZE_INCR);
+#else
+	// TODO: something is wrong with relocation,
+	// need to fix it for boards with > 32M of RAM
+	return((i * AR7240_DDR_SIZE_INCR) - 1024*1024);
+#endif
 }
 
 #if defined(CONFIG_WASP)

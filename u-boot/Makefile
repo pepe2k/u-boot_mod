@@ -49,9 +49,11 @@ VENDOR=
 TOPDIR	:= $(shell if [ "$$PWD" != "" ]; then echo $$PWD; else pwd; fi)
 export	TOPDIR
 
-ifeq ($(COMPRESSED_UBOOT),1)
+ifdef COMPRESSED_UBOOT
+	ifndef CONFIG_SKIP_LOWLEVEL_INIT
 COMPRESSED_UBOOT = 1
 export export COMPRESSED_UBOOT
+	endif
 endif
 
 ifeq (include/config.mk,$(wildcard include/config.mk))
@@ -106,8 +108,10 @@ include $(TOPDIR)/config.mk
 # U-Boot objects....order is important (i.e. start must be first)
 OBJS  = cpu/$(CPU)/start.o
 
-ifeq ($(COMPRESSED_UBOOT),1)
+ifdef COMPRESSED_UBOOT
+	ifndef CONFIG_SKIP_LOWLEVEL_INIT
 OBJS_BOOTSTRAP  = cpu/$(CPU)/start_bootstrap.o
+	endif
 endif
 
 LIBS  = lib_generic/libgeneric.a
@@ -126,17 +130,21 @@ LIBS += rtc/librtc.a
 LIBS += httpd/libhttpd.a
 LIBS += $(BOARDLIBS)
 
-ifeq ($(COMPRESSED_UBOOT),1)
+ifdef COMPRESSED_UBOOT
+	ifndef CONFIG_SKIP_LOWLEVEL_INIT
 LIBS_BOOTSTRAP = lib_bootstrap/libbootstrap.a 
 LIBS_BOOTSTRAP += board/$(BOARDDIR)/lib$(BOARD).a 
 LIBS_BOOTSTRAP += cpu/$(CPU)/lib$(CPU).a
 LIBS_BOOTSTRAP += cpu/$(CPU)/$(SOC)/lib$(SOC).a
+	endif
 endif
 
 .PHONY : $(LIBS)
 
-ifeq ($(COMPRESSED_UBOOT),1)
+ifdef COMPRESSED_UBOOT
+	ifndef CONFIG_SKIP_LOWLEVEL_INIT
 .PHONY : $(LIBS_BOOTSTRAP)
+	endif
 endif
 
 # Add GCC lib
@@ -153,101 +161,106 @@ SUBDIRS	= tools
 
 ALL = u-boot.srec u-boot.bin System.map
 
-ifeq ($(COMPRESSED_UBOOT),1)
-all:		$(ALL) tuboot.bin
+ifdef COMPRESSED_UBOOT
+ifndef CONFIG_SKIP_LOWLEVEL_INIT
+all:	$(ALL) tuboot.bin
 else
-all:		$(ALL)
+all:	$(ALL) u-boot.img
+endif
+else
+all:	$(ALL) u-boot.img
 endif
 
 u-boot.hex:	u-boot
-		$(OBJCOPY) ${OBJCFLAGS} -O ihex $< $@
+	$(OBJCOPY) ${OBJCFLAGS} -O ihex $< $@
 
 u-boot.srec:	u-boot
-		$(OBJCOPY) ${OBJCFLAGS} -O srec $< $@
+	$(OBJCOPY) ${OBJCFLAGS} -O srec $< $@
 
 u-boot.bin:	u-boot
-		$(OBJCOPY) ${OBJCFLAGS} -O binary $< $@
+	$(OBJCOPY) ${OBJCFLAGS} -O binary $< $@
 
 u-boot.img:	u-boot.bin
-		@/bin/echo -e "\n\e[32m> Preparing U-Boot image...\e[0m"
-		./tools/mkimage -A $(ARCH) -T firmware -C none \
+	@/bin/echo -e "\e[32m> Preparing U-Boot image \"u-boot.img\"...\e[0m"
+	./tools/mkimage -A $(ARCH) -T firmware -C none \
 		-a $(TEXT_BASE) -e 0 \
 		-n $(shell sed -n -e 's/.*U_BOOT_VERSION//p' $(VERSION_FILE) | \
-			sed -e 's/"[	 ]*$$/ for $(BOARD) board"/') \
+		sed -e 's/"[	 ]*$$/ for $(BOARD) board"/') \
 		-d $< $@
 
 u-boot.dis:	u-boot
-		$(OBJDUMP) -d $< > $@
+	$(OBJDUMP) -d $< > $@
 
-u-boot:		depend version $(SUBDIRS) $(OBJS) $(LIBS) $(LDSCRIPT)
-		UNDEF_SYM=`$(OBJDUMP) -x $(LIBS) |sed  -n -e 's/.*\(__u_boot_cmd_.*\)/-u\1/p'|sort|uniq`;\
+u-boot:	depend version $(SUBDIRS) $(OBJS) $(LIBS) $(LDSCRIPT)
+	UNDEF_SYM=`$(OBJDUMP) -x $(LIBS) |sed  -n -e 's/.*\(__u_boot_cmd_.*\)/-u\1/p'|sort|uniq`;\
 		$(LD) $(LDFLAGS) $$UNDEF_SYM $(OBJS) \
-			--start-group $(LIBS) --end-group $(PLATFORM_LIBS) \
-			-Map u-boot.map -o u-boot
+		--start-group $(LIBS) --end-group $(PLATFORM_LIBS) \
+		-Map u-boot.map -o u-boot
 
 $(LIBS):
-		$(MAKE) -C `dirname $@`
+	$(MAKE) -C `dirname $@`
 
 $(SUBDIRS):
-		$(MAKE) -C $@ all
+	$(MAKE) -C $@ all
 
-ifeq ($(COMPRESSED_UBOOT),1)
+ifdef COMPRESSED_UBOOT
+ifndef CONFIG_SKIP_LOWLEVEL_INIT
 LZMA = $(BUILD_TOPDIR)/host_util/lzma
 
 tuboot.bin:	System.map bootstrap.bin u-boot.lzimg	
-		@cat bootstrap.bin > $@
-		@cat u-boot.lzimg >> $@
+	@cat bootstrap.bin > $@
+	@cat u-boot.lzimg >> $@
 
 u-boot.lzimg: $(obj)u-boot.bin System.map
-		@rm -rf u-boot.bin.lzma
-		#$(LZMA) e $(obj)u-boot.bin u-boot.bin.lzma
-		$(LZMA) --best --keep $(obj)u-boot.bin
-		@/bin/echo -e "\n\e[32m> Preparing U-Boot image...\e[0m"
-		./tools/mkimage -A mips -T firmware -C lzma \
+	@rm -rf u-boot.bin.lzma
+	$(LZMA) --best --keep $(obj)u-boot.bin
+	@/bin/echo -e "\e[32m> Preparing compressed U-Boot image \"u-boot.lzimg\"...\e[0m"
+	./tools/mkimage -A mips -T firmware -C lzma \
 		-a 0x$(shell grep "T _start" $(TOPDIR)/System.map | awk '{ printf "%s", $$1 }') \
 		-e 0x$(shell grep "T _start" $(TOPDIR)/System.map | awk '{ printf "%s", $$1 }') \
 		-n 'u-boot image' -d $(obj)u-boot.bin.lzma $@
 
 bootstrap.bin:	bootstrap
-		$(OBJCOPY) ${OBJCFLAGS} -O binary $< $@
+	$(OBJCOPY) ${OBJCFLAGS} -O binary $< $@
 
 bootstrap:	depend version $(SUBDIRS) $(OBJS_BOOTSTRAP) $(LIBS_BOOTSTRAP) $(LDSCRIPT_BOOTSTRAP)
-		UNDEF_SYM=`$(OBJDUMP) -x $(LIBS_BOOTSTRAP) |sed  -n -e 's/.*\(__u_boot_cmd_.*\)/-u\1/p'|sort|uniq`;\
+	UNDEF_SYM=`$(OBJDUMP) -x $(LIBS_BOOTSTRAP) |sed  -n -e 's/.*\(__u_boot_cmd_.*\)/-u\1/p'|sort|uniq`;\
 		$(LD) $(LDFLAGS_BOOTSTRAP) $$UNDEF_SYM $(OBJS_BOOTSTRAP) \
-			--start-group $(LIBS_BOOTSTRAP) --end-group $(PLATFORM_LIBS) \
-			-Map bootstrap.map -o bootstrap
+		--start-group $(LIBS_BOOTSTRAP) --end-group $(PLATFORM_LIBS) \
+		-Map bootstrap.map -o bootstrap
 
 $(LIBS_BOOTSTRAP):
-		$(MAKE) -C `dirname $@`
+	$(MAKE) -C `dirname $@`
+endif
 endif
 
 version:
-		@echo -n "#define U_BOOT_VERSION \"U-Boot " > $(VERSION_FILE); \
+	@echo -n "#define U_BOOT_VERSION \"U-Boot " > $(VERSION_FILE); \
 		echo -n "$(U_BOOT_VERSION)" >> $(VERSION_FILE); \
 		echo "\"" >> $(VERSION_FILE)
 
 gdbtools:
-		$(MAKE) -C tools/gdb || exit 1
+	$(MAKE) -C tools/gdb || exit 1
 
 depend dep:
-		@for dir in $(SUBDIRS) ; do $(MAKE) -C $$dir .depend ; done
+	@for dir in $(SUBDIRS) ; do $(MAKE) -C $$dir .depend ; done
 
 tags:
-		ctags -w `find $(SUBDIRS) include \
-				lib_generic board/$(BOARDDIR) cpu/$(CPU) lib_$(ARCH) \
-				fs/cramfs fs/fat fs/fdos fs/jffs2 \
-				net disk rtc dtt drivers drivers/sk98lin common \
-			\( -name CVS -prune \) -o \( -name '*.[ch]' -print \)`
+	ctags -w `find $(SUBDIRS) include \
+		lib_generic board/$(BOARDDIR) cpu/$(CPU) lib_$(ARCH) \
+		fs/cramfs fs/fat fs/fdos fs/jffs2 \
+		net disk rtc dtt drivers drivers/sk98lin common \
+		\( -name CVS -prune \) -o \( -name '*.[ch]' -print \)`
 
 etags:
-		etags -a `find $(SUBDIRS) include \
-				lib_generic board/$(BOARDDIR) cpu/$(CPU) lib_$(ARCH) \
-				fs/cramfs fs/fat fs/fdos fs/jffs2 \
-				net disk rtc dtt drivers drivers/sk98lin common \
-			\( -name CVS -prune \) -o \( -name '*.[ch]' -print \)`
+	etags -a `find $(SUBDIRS) include \
+		lib_generic board/$(BOARDDIR) cpu/$(CPU) lib_$(ARCH) \
+		fs/cramfs fs/fat fs/fdos fs/jffs2 \
+		net disk rtc dtt drivers drivers/sk98lin common \
+		\( -name CVS -prune \) -o \( -name '*.[ch]' -print \)`
 
 System.map:	u-boot
-		@$(NM) $< | \
+	@$(NM) $< | \
 		grep -v '\(compiled\)\|\(\.o$$\)\|\( [aUw] \)\|\(\.\.ng$$\)\|\(LASH[RL]DI\)' | \
 		sort > System.map
 
@@ -282,6 +295,11 @@ endif
 
 ifdef DISABLE_CONSOLE_OUTPUT
 	@echo "#define CONFIG_SILENT_CONSOLE                1" >> include/config.h
+endif
+
+ifdef CONFIG_SKIP_LOWLEVEL_INIT
+	@echo "#define CONFIG_SKIP_LOWLEVEL_INIT            1" >> include/config.h
+	@echo "#undef COMPRESSED_UBOOT"                        >> include/config.h
 endif
 
 	@echo "#define CONFIG_DELAY_TO_AUTORUN_HTTPD        3" >> include/config.h

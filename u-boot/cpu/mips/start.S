@@ -184,6 +184,276 @@ _start:
 
 	.align 4
 reset:
+
+#if defined(CONFIG_WASP_SUPPORT)
+
+	// Disable JTAG (bit 1 set) and ALL clock observation (bit 2~9 reset)
+	// Do not do this in RAM version!
+	li  a1, AR934X_GPIO_FUNCTION
+#ifndef CONFIG_SKIP_LOWLEVEL_INIT
+	li  v1, 0x2
+#else
+	li  v1, 0x0
+#endif
+	sw  v1, 0(a1)
+
+#if defined(CONFIG_FOR_TPLINK_WDR3600_WDR43X0_V1)
+	/*
+	 * LEDs and buttons GPIOs on WDR3600/WDR43x0 v1:
+	 *
+	 * 11 => USB1 LED
+	 * 12 => USB2 LED
+	 * 13 => WLAN2G
+	 * 14 => SYS
+	 * 15 => QSS
+	 * 21 => USB2 POWER (active high)
+	 * 22 => USB1 POWER (active high)
+	 *
+	 * 16 => Reset button
+	 * 17 => Wi-Fi ON/OFF switch
+	 *
+	 * All OUT GPIOs are active LOW if not stated otherwise
+	 */
+
+	// GPIO Init
+	li  a1, AR934X_GPIO_OE
+	lw  v1, 0(a1)
+	// Set GPIOs 11~15 and 21~22 as outputs
+	and v1, v1, 0xFF9F07FF
+	// Set GPIOs 16~17 as inputs
+	or  v1, v1, 0x30000
+	sw  v1, 0(a1)
+
+	// Set GPIO function for GPIO 11
+	li	a1, AR934X_GPIO_OUT_FUNCTION2
+	lw	v1, 0(a1)
+	and v1, v1, 0x00FFFFFF
+	sw	v1, 0(a1)
+
+	// Set GPIO function for GPIOs 12~15
+	li	a1, AR934X_GPIO_OUT_FUNCTION3
+	li	v1, 0x0
+	sw	v1, 0(a1)
+
+	// Turn on power on both USB
+	li  a1, AR934X_GPIO_SET
+	li	v1, 0x600000
+	sw	v1, 0(a1)
+
+	// Turn off all LEDs
+	li  a1, AR934X_GPIO_SET
+	li	v1, 0xF800
+	sw	v1, 0(a1)
+
+#elif defined(CONFIG_FOR_TPLINK_WDR3500_V1)
+	/*
+	 * LEDs and buttons GPIOs on WDR3500 v1:
+	 *
+	 * 11 => USB LED
+	 * 12 => USB POWER (active high)
+	 * 13 => WLAN2G
+	 * 14 => SYS
+	 * 15 => QSS
+	 * 18 => WAN
+	 * 19 => LAN1
+	 * 20 => LAN2
+	 * 21 => LAN3
+	 * 22 => LAN4
+	 *
+	 * 16 => Reset button
+	 * 17 => Wi-Fi ON/OFF switch
+	 *
+	 * All OUT GPIOs are active LOW if not stated otherwise
+	 */
+
+	// GPIO Init
+	li  a1, AR934X_GPIO_OE
+	lw  v1, 0(a1)
+	// Set GPIOs 11~15 and 18~22 as outputs
+	and v1, v1, 0xFF8307FF
+	// Set GPIOs 16~17 as inputs
+	or  v1, v1, 0x30000
+	sw  v1, 0(a1)
+
+	// Set GPIO function for GPIO 11
+	li	a1, AR934X_GPIO_OUT_FUNCTION2
+	lw	v1, 0(a1)
+	and v1, v1, 0x00FFFFFF
+	sw	v1, 0(a1)
+
+	// Set GPIO function for GPIOs 12~15
+	li	a1, AR934X_GPIO_OUT_FUNCTION3
+	li	v1, 0x0
+	sw	v1, 0(a1)
+
+	// Set GPIO function for GPIOs 18~19
+	li	a1, AR934X_GPIO_OUT_FUNCTION4
+	lw	v1, 0(a1)
+	and v1, v1, 0xFFFF
+	sw	v1, 0(a1)
+
+	// Turn on power on USB
+	li  a1, AR934X_GPIO_SET
+	li	v1, 0x1000
+	sw	v1, 0(a1)
+
+	// Turn off all LEDs
+	li  a1, AR934X_GPIO_SET
+	li	v1, 0x7CF800
+	sw	v1, 0(a1)
+
+#elif defined(CONFIG_FOR_TPLINK_WR841N_V8)
+	/*
+	 * LEDs and buttons GPIOs on WR841N/D v8:
+	 *
+	 * 12 => LAN4
+	 * 13 => WLAN
+	 * 14 => SYS
+	 * 15 => QSS
+	 * 18 => WAN
+	 * 19 => LAN1
+	 * 20 => LAN2
+	 * 21 => LAN3
+	 *
+	 * 16 => Wi-Fi ON/OFF switch
+	 * 17 => Reset button
+	 *
+	 * All OUT GPIOs are active LOW if not stated otherwise
+	 */
+
+	// GPIOs init
+	li  a1, AR934X_GPIO_OE
+	lw  v1, 0(a1)
+	// Set GPIOs 12~15 and 18~21 as outputs
+	and v1, v1, 0xFFC30FFF
+	// Set GPIOs 16~17 as inputs
+	or  v1, v1, 0x30000
+	sw  v1, 0(a1)
+
+	// Set gpio function for GPIOs 12~15
+	li	a1, AR934X_GPIO_OUT_FUNCTION3
+	li	v1, 0x0
+	sw	v1, 0(a1)
+
+	// Set GPIO function for GPIOs 18~19
+	li	a1, AR934X_GPIO_OUT_FUNCTION4
+	lw	v1, 0(a1)
+	and v1, v1, 0xFFFF
+	sw	v1, 0(a1)
+
+	// Turn off all LEDs
+	li  a1, AR934X_GPIO_SET
+	li	v1, 0x3CF000
+	sw	v1, 0(a1)
+
+#elif defined(CONFIG_FOR_TPLINK_MR3420_V2)
+	/*
+	 * LEDs and buttons GPIOs on MR3420 v2:
+	 *
+	 * 4  => USB Power (active high)
+	 * 11 => USB/3G LED
+	 * 12 => LAN4
+	 * 13 => WLAN
+	 * 14 => SYS
+	 * 15 => QSS
+	 * 18 => WAN
+	 * 19 => LAN1
+	 * 20 => LAN2
+	 * 21 => LAN3
+	 *
+	 * 16 => WPS button
+	 * 17 => Reset button
+	 *
+	 * All OUT GPIOs are active LOW if not stated otherwise
+	 */
+
+	// GPIOs init
+	li  a1, AR934X_GPIO_OE
+	lw  v1, 0(a1)
+	// Set GPIOs 4, 11~15 and 18~21 as outputs
+	and v1, v1, 0xFFC307EF
+	// Set GPIOs 16~17 as inputs
+	or  v1, v1, 0x30000
+	sw  v1, 0(a1)
+
+	// Set GPIO function for GPIO 4
+	li	a1, AR934X_GPIO_OUT_FUNCTION1
+	lw	v1, 0(a1)
+	and v1, v1, 0xFFFFFF00
+	sw	v1, 0(a1)
+
+	// Set GPIO function for GPIO 11
+	li	a1, AR934X_GPIO_OUT_FUNCTION2
+	lw	v1, 0(a1)
+	and v1, v1, 0x00FFFFFF
+	sw	v1, 0(a1)
+
+	// Set GPIO function for GPIOs 12~15
+	li	a1, AR934X_GPIO_OUT_FUNCTION3
+	li	v1, 0x0
+	sw	v1, 0(a1)
+
+	// Set GPIO function for GPIOs 18~19
+	li	a1, AR934X_GPIO_OUT_FUNCTION4
+	lw	v1, 0(a1)
+	and v1, v1, 0xFFFF
+	sw	v1, 0(a1)
+
+	// Turn on power on USB
+	li  a1, AR934X_GPIO_SET
+	li	v1, 0x10
+	sw	v1, 0(a1)
+
+	// Turn off all LEDs
+	li  a1, AR934X_GPIO_SET
+	li	v1, 0x3CF800
+	sw	v1, 0(a1)
+
+#elif defined(CONFIG_FOR_TPLINK_WA830RE_V2_WA801ND_V2)
+	/*
+	 * LEDs and buttons GPIOs on WA830REv2 and WA801ND v2:
+	 *
+	 * 13 => WLAN
+	 * 14 => SYS
+	 * 15 => QSS
+	 * 18 => LAN
+	 *
+	 * 16 => Range Extender
+	 * 17 => Reset button
+	 *
+	 * All OUT GPIOs are active LOW if not stated otherwise
+	 */
+
+	// GPIOs init
+	li  a1, AR934X_GPIO_OE
+	lw  v1, 0(a1)
+	// Set GPIOs 13~15 and 18 as outputs
+	and v1, v1, 0xFFFB1FFF
+	// Set GPIOs 16~17 as inputs
+	or  v1, v1, 0x30000
+	sw  v1, 0(a1)
+
+	// Set GPIO function for GPIOs 13~15
+	li	a1, AR934X_GPIO_OUT_FUNCTION3
+	lw	v1, 0(a1)
+	and v1, v1, 0xFF
+	sw	v1, 0(a1)
+
+	// Set GPIO function for GPIO 18
+	li	a1, AR934X_GPIO_OUT_FUNCTION4
+	lw	v1, 0(a1)
+	and v1, v1, 0xFF00FFFF
+	sw	v1, 0(a1)
+
+	// Turn off all LEDs
+	li  a1, AR934X_GPIO_SET
+	li	v1, 0x4E000
+	sw	v1, 0(a1)
+
+#endif
+
+#endif /* #if defined(CONFIG_WASP_SUPPORT) */
+
 	/*
 	 * Clearing CP0 registers - This is generally required for the MIPS-24k
 	 * core used by Atheros.
@@ -206,22 +476,19 @@ reset:
 	mtc0	zero, $14
 	mtc0	zero, $15
 	mtc0	zero, $16
-#if !defined(CONFIG_WASP_SUPPORT)
 	mtc0	zero, $17
-#endif
 	mtc0	zero, $18
 	mtc0	zero, $19
-#if !defined(CONFIG_WASP_SUPPORT)
 	mtc0	zero, $20
 	mtc0	zero, $21
 	mtc0	zero, $22
-#endif
 	mtc0	zero, $23
 	mtc0	zero, $24
 	mtc0	zero, $25
 	mtc0	zero, $26
 	mtc0	zero, $27
 	mtc0	zero, $28
+
 #ifdef CONFIG_WASP_SUPPORT
 	mtc0	zero, $29	# C0_TagHi
 	mtc0	zero, $28, 2	# C0_DTagLo
@@ -249,9 +516,11 @@ reset:
 	mtc0	zero, CP0_COUNT
 	mtc0	zero, CP0_COMPARE
 
+#ifndef CONFIG_SKIP_LOWLEVEL_INIT
 	/* CONFIG0 register */
 	li	t0, CONF_CM_UNCACHED
 	mtc0	t0, CP0_CONFIG
+#endif /* #ifndef CONFIG_SKIP_LOWLEVEL_INIT */
 
 #endif /* #ifndef COMPRESSED_UBOOT */
 
@@ -266,6 +535,7 @@ reset:
 
 #ifndef COMPRESSED_UBOOT
 
+#ifndef CONFIG_SKIP_LOWLEVEL_INIT
 #if defined(CONFIG_MACH_HORNET) && defined(CONFIG_HORNET_1_1_WAR)
 /**************************************************************************/
 /*
@@ -293,11 +563,13 @@ do_reset:
 
 normal_path:
 #endif /* CONFIG_MACH_HORNET */
+#endif
 
 /**************************************************************************/
 
 	/* Initialize any external memory.
 	 */
+#ifndef CONFIG_SKIP_LOWLEVEL_INIT
 #if defined(CONFIG_AR7100) || defined(CONFIG_AR7240) || defined(CONFIG_ATHEROS)
 	la      t9, lowlevel_init
 	jalr    t9
@@ -315,6 +587,7 @@ normal_path:
 	j	t0
 	nop
 #endif
+#endif /* #ifndef CONFIG_SKIP_LOWLEVEL_INIT */
 
 rel_start:
 
@@ -333,6 +606,7 @@ rel_start:
 	sw	t0,	0(a0)
 #endif
 
+#ifndef CONFIG_SKIP_LOWLEVEL_INIT
 	/* Initialize caches...
 	 */
 	la      t9, simple_mips_cache_reset
@@ -370,6 +644,7 @@ rel_start:
     jalr    t9
     nop
 #endif
+#endif /* #ifndef CONFIG_SKIP_LOWLEVEL_INIT */
 
 #endif /* #ifndef COMPRESSED_UBOOT */
 

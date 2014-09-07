@@ -205,8 +205,10 @@ void gpio_config(void){
 
 	ar7240_reg_wr(AR7240_GPIO_FUNC, (ar7240_reg_rd(AR7240_GPIO_FUNC) & 0xEF84E0FB));
 
+#ifndef CONFIG_SKIP_LOWLEVEL_INIT
 	/* Disable EJTAG functionality to enable GPIO functionality */
 	ar7240_reg_wr(AR7240_GPIO_FUNC, (ar7240_reg_rd(AR7240_GPIO_FUNC) | 0x8001));
+#endif
 
 	/* Set HORNET_BOOTSTRAP_STATUS BIT18 to ensure that software can control GPIO26 and GPIO27 */
 	ar7240_reg_wr(HORNET_BOOTSTRAP_STATUS, (ar7240_reg_rd(HORNET_BOOTSTRAP_STATUS) | (0x1<<18)));
@@ -374,18 +376,22 @@ void gpio_config(void){
 }
 
 int ar7240_mem_config(void){
-#ifndef COMPRESSED_UBOOT
+#ifndef CONFIG_SKIP_LOWLEVEL_INIT
+	#ifndef COMPRESSED_UBOOT
 	hornet_ddr_init();
-#endif
+	#endif
 
 	/* Default tap values for starting the tap_init*/
 	ar7240_reg_wr(AR7240_DDR_TAP_CONTROL0, CFG_DDR_TAP0_VAL);
 	ar7240_reg_wr(AR7240_DDR_TAP_CONTROL1, CFG_DDR_TAP1_VAL);
+#endif
 
 	gpio_config();
 	all_led_off();
 
+#ifndef CONFIG_SKIP_LOWLEVEL_INIT
 	hornet_ddr_tap_init();
+#endif
 
 	// return memory size
 	return(ar7240_ddr_find_size());
