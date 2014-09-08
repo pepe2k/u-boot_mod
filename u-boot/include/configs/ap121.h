@@ -41,7 +41,8 @@
 	defined(CONFIG_FOR_TPLINK_MR10U_V1) || \
 	defined(CONFIG_FOR_TPLINK_WR740N_V4) || \
 	defined(CONFIG_FOR_TPLINK_MR3220_V2) || \
-	defined(CONFIG_FOR_TPLINK_MR13U_V1)
+	defined(CONFIG_FOR_TPLINK_MR13U_V1) || \
+	defined(CONFIG_FOR_GL_INET)
 
 	#define	CONFIG_BOOTARGS	"console=ttyS0,115200 root=31:02 rootfstype=squashfs init=/sbin/init mtdparts=ar7240-nor0:128k(u-boot),1024k(kernel),2816k(rootfs),64k(config),64k(ART)"
 
@@ -1009,7 +1010,8 @@
 #if !defined(CONFIG_FOR_8DEVICES_CARAMBOLA2) && \
 	!defined(CONFIG_FOR_DLINK_DIR505_A1)     && \
 	!defined(CONFIG_FOR_GS_OOLITE_V1_DEV)    && \
-	!defined(CONFIG_FOR_DRAGINO_V2)
+	!defined(CONFIG_FOR_DRAGINO_V2)          && \
+	!defined(CONFIG_FOR_GL_INET)
 #define OFFSET_ROUTER_MODEL					0x00FD00
 #endif
 

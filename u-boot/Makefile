@@ -531,6 +531,19 @@ dragino_v2_ms14_config : unconfig hornet_common_config
 	
 	@./mkconfig -a ap121 mips mips ap121 ar7240 ar7240
 
+gl-inet_config : unconfig hornet_common_config
+	@/bin/echo -e '\e[32m> Configuring for GL.iNet at:' `date` '\e[0m'
+	@echo "#define CONFIG_FOR_GL_INET                   1" >> include/config.h
+	@echo "#define GPIO_WLAN_LED_BIT                    0" >> include/config.h
+	@echo "#define GPIO_WLAN_LED_ON                     1" >> include/config.h
+	@echo "#define GPIO_LAN_LED_BIT                    13" >> include/config.h
+	@echo "#define GPIO_LAN_LED_ON                      1" >> include/config.h
+	@echo "#define GPIO_RST_BUTTON_BIT                 11" >> include/config.h
+	@echo "#define DEFAULT_FLASH_SIZE_IN_MB             8" >> include/config.h
+	@echo "#define BOARD_CUSTOM_STRING                  \"AP121 (AR9331) U-Boot for GL.iNet\"" >> include/config.h
+
+	@./mkconfig -a ap121 mips mips ap121 ar7240 ar7240
+
 wasp_common_config : common_config
 	@echo "#define CONFIG_AR7240                        1" >> include/config.h
 	@echo "#define CONFIG_WASP                          1" >> include/config.h

@@ -192,6 +192,16 @@ dragino_v2_ms14:
 	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) ENDIANNESS=-EB V=1 all
 	@make --no-print-directory show_size
 
+gl-inet:	export UBOOT_FILE_NAME=uboot_for_gl-inet
+gl-inet:	export MAX_UBOOT_SIZE=64
+ifndef CONFIG_SKIP_LOWLEVEL_INIT
+gl-inet:	export COMPRESSED_UBOOT=1
+endif
+gl-inet:
+	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) gl-inet_config
+	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) ENDIANNESS=-EB V=1 all
+	@make --no-print-directory show_size
+
 ifdef CONFIG_SKIP_LOWLEVEL_INIT
 show_size:	export UBOOT_FILE_NAME_SUFFIX=__RAM
 endif
