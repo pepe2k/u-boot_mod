@@ -192,6 +192,14 @@ dragino_v2_ms14:
 	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) ENDIANNESS=-EB V=1 all
 	@make --no-print-directory show_size
 
+villagetelco_mp2:	export UBOOT_FILE_NAME=uboot_for_villagetelco_mp2
+villagetelco_mp2:	export MAX_UBOOT_SIZE=192
+villagetelco_mp2:	export DEVICE_VENDOR=villagetelco
+villagetelco_mp2:
+	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) villagetelco_mp2_config
+	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) ENDIANNESS=-EB V=1 all
+	@make --no-print-directory show_size
+
 gl-inet:	export UBOOT_FILE_NAME=uboot_for_gl-inet
 gl-inet:	export MAX_UBOOT_SIZE=64
 ifndef CONFIG_SKIP_LOWLEVEL_INIT

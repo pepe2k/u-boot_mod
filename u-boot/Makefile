@@ -531,6 +531,27 @@ dragino_v2_ms14_config : unconfig hornet_common_config
 	
 	@./mkconfig -a ap121 mips mips ap121 ar7240 ar7240
 
+villagetelco_mp2_config : unconfig hornet_common_config
+	@/bin/echo -e '\e[32m> Configuring for Village Telco Mesh Potato 2 at:' `date` '\e[0m'
+	@echo "#define CONFIG_FOR_MESH_POTATO_V2            1" >> include/config.h
+	@echo "#undef  COMPRESSED_UBOOT"                       >> include/config.h
+	@echo "#define GPIO_WLAN_LED_BIT                    0" >> include/config.h
+	@echo "#define GPIO_WLAN_LED_ON                     1" >> include/config.h
+	@echo "#define GPIO_WAN_LED_BIT                    17" >> include/config.h
+	@echo "#define GPIO_WAN_LED_ON                      0" >> include/config.h
+	@echo "#define GPIO_LAN_LED_BIT                    13" >> include/config.h
+	@echo "#define GPIO_LAN_LED_ON                      0" >> include/config.h
+	@echo "#define GPIO_INTERNET_LED_BIT               28" >> include/config.h
+	@echo "#define GPIO_INTERNET_LED_ON                 1" >> include/config.h
+	@echo "#define GPIO_RST_BUTTON_BIT                 11" >> include/config.h
+	@echo "#define GPIO_RST_BUTTON_IS_ACTIVE_LOW        1" >> include/config.h
+	@echo "#define DEFAULT_FLASH_SIZE_IN_MB            16" >> include/config.h
+	@echo "#define WEBFAILSAFE_DISABLE_ART_UPGRADE      1" >> include/config.h
+	@echo "#define WEBFAILSAFE_DISABLE_UBOOT_UPGRADE    1" >> include/config.h
+	@echo "#define BOARD_CUSTOM_STRING                  \"AP121 (AR9331) U-Boot for Village Telco Mesh Potato 2\"" >> include/config.h
+	
+	@./mkconfig -a ap121 mips mips ap121 ar7240 ar7240
+
 gl-inet_config : unconfig hornet_common_config
 	@/bin/echo -e '\e[32m> Configuring for GL.iNet at:' `date` '\e[0m'
 	@echo "#define CONFIG_FOR_GL_INET                   1" >> include/config.h

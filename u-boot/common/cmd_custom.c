@@ -198,7 +198,8 @@ U_BOOT_CMD(startsc, 1, 0, do_start_sc, "start serial console\n", NULL);
 #endif /* if defined(CONFIG_NETCONSOLE) */
 
 #if defined(CONFIG_FOR_8DEVICES_CARAMBOLA2) || \
-    defined(CONFIG_FOR_DRAGINO_V2)
+    defined(CONFIG_FOR_DRAGINO_V2)          || \
+    defined(CONFIG_FOR_MESH_POTATO_V2)
 /*
  * Erase environment sector
  */
@@ -235,7 +236,7 @@ int do_default_env(cmd_tbl_t * cmdtp, int flag, int argc, char *argv[]){
 }
 
 U_BOOT_CMD(defenv, 1, 0, do_default_env, "reset environment variables to their default values\n", NULL);
-#endif /* if defined(CONFIG_FOR_8DEVICES_CARAMBOLA2) || defined(CONFIG_FOR_DRAGINO_V2) */
+#endif /* if defined(CONFIG_FOR_8DEVICES_CARAMBOLA2) || defined(CONFIG_FOR_DRAGINO_V2) || defined(CONFIG_FOR_MESH_POTATO_V2) */
 
 #if defined(PLL_IN_FLASH_MAGIC_OFFSET)
 
