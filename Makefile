@@ -13,7 +13,7 @@ export CONFIG_BOOTDELAY=1
 #export CONFIG_SKIP_LOWLEVEL_INIT=1
 
 tplink_mr3020:	export UBOOT_FILE_NAME=uboot_for_tp-link_tl-mr3020
-tplink_mr3020:	export MAX_UBOOT_SIZE=64
+tplink_mr3020:	export CONFIG_MAX_UBOOT_SIZE_KB=64
 ifndef CONFIG_SKIP_LOWLEVEL_INIT
 tplink_mr3020:	export COMPRESSED_UBOOT=1
 endif
@@ -23,7 +23,7 @@ tplink_mr3020:
 	@make --no-print-directory show_size
 
 tplink_wr703n:	export UBOOT_FILE_NAME=uboot_for_tp-link_tl-wr703n
-tplink_wr703n:	export MAX_UBOOT_SIZE=64
+tplink_wr703n:	export CONFIG_MAX_UBOOT_SIZE_KB=64
 ifndef CONFIG_SKIP_LOWLEVEL_INIT
 tplink_wr703n:	export COMPRESSED_UBOOT=1
 endif
@@ -33,7 +33,7 @@ tplink_wr703n:
 	@make --no-print-directory show_size
 
 tplink_wr720n_v3_CH:	export UBOOT_FILE_NAME=uboot_for_tp-link_tl-wr720n_v3_CH
-tplink_wr720n_v3_CH:	export MAX_UBOOT_SIZE=64
+tplink_wr720n_v3_CH:	export CONFIG_MAX_UBOOT_SIZE_KB=64
 ifndef CONFIG_SKIP_LOWLEVEL_INIT
 tplink_wr720n_v3_CH:	export COMPRESSED_UBOOT=1
 endif
@@ -43,7 +43,7 @@ tplink_wr720n_v3_CH:
 	@make --no-print-directory show_size
 
 tplink_wr710n:	export UBOOT_FILE_NAME=uboot_for_tp-link_tl-wr710n
-tplink_wr710n:	export MAX_UBOOT_SIZE=64
+tplink_wr710n:	export CONFIG_MAX_UBOOT_SIZE_KB=64
 ifndef CONFIG_SKIP_LOWLEVEL_INIT
 tplink_wr710n:	export COMPRESSED_UBOOT=1
 endif
@@ -53,7 +53,7 @@ tplink_wr710n:
 	@make --no-print-directory show_size
 
 tplink_mr3040:	export UBOOT_FILE_NAME=uboot_for_tp-link_tl-mr3040
-tplink_mr3040:	export MAX_UBOOT_SIZE=64
+tplink_mr3040:	export CONFIG_MAX_UBOOT_SIZE_KB=64
 ifndef CONFIG_SKIP_LOWLEVEL_INIT
 tplink_mr3040:	export COMPRESSED_UBOOT=1
 endif
@@ -63,7 +63,7 @@ tplink_mr3040:
 	@make --no-print-directory show_size
 
 tplink_mr10u:	export UBOOT_FILE_NAME=uboot_for_tp-link_tl-mr10u
-tplink_mr10u:	export MAX_UBOOT_SIZE=64
+tplink_mr10u:	export CONFIG_MAX_UBOOT_SIZE_KB=64
 ifndef CONFIG_SKIP_LOWLEVEL_INIT
 tplink_mr10u:	export COMPRESSED_UBOOT=1
 endif
@@ -73,7 +73,7 @@ tplink_mr10u:
 	@make --no-print-directory show_size
 
 tplink_mr13u:	export UBOOT_FILE_NAME=uboot_for_tp-link_tl-mr13u
-tplink_mr13u:	export MAX_UBOOT_SIZE=64
+tplink_mr13u:	export CONFIG_MAX_UBOOT_SIZE_KB=64
 ifndef CONFIG_SKIP_LOWLEVEL_INIT
 tplink_mr13u:	export COMPRESSED_UBOOT=1
 endif
@@ -83,7 +83,7 @@ tplink_mr13u:
 	@make --no-print-directory show_size
 
 tplink_wr740n_v4:	export UBOOT_FILE_NAME=uboot_for_tp-link_tl-wr740n_v4
-tplink_wr740n_v4:	export MAX_UBOOT_SIZE=64
+tplink_wr740n_v4:	export CONFIG_MAX_UBOOT_SIZE_KB=64
 ifndef CONFIG_SKIP_LOWLEVEL_INIT
 tplink_wr740n_v4:	export COMPRESSED_UBOOT=1
 endif
@@ -93,7 +93,7 @@ tplink_wr740n_v4:
 	@make --no-print-directory show_size
 
 tplink_mr3220_v2:	export UBOOT_FILE_NAME=uboot_for_tp-link_tl-mr3220_v2
-tplink_mr3220_v2:	export MAX_UBOOT_SIZE=64
+tplink_mr3220_v2:	export CONFIG_MAX_UBOOT_SIZE_KB=64
 ifndef CONFIG_SKIP_LOWLEVEL_INIT
 tplink_mr3220_v2:	export COMPRESSED_UBOOT=1
 endif
@@ -103,7 +103,7 @@ tplink_mr3220_v2:
 	@make --no-print-directory show_size
 
 tplink_wdr3600_43x0:	export UBOOT_FILE_NAME=uboot_for_tp-link_tl-wdr3600-43x0
-tplink_wdr3600_43x0:	export MAX_UBOOT_SIZE=64
+tplink_wdr3600_43x0:	export CONFIG_MAX_UBOOT_SIZE_KB=64
 ifndef CONFIG_SKIP_LOWLEVEL_INIT
 tplink_wdr3600_43x0:	export COMPRESSED_UBOOT=1
 endif
@@ -114,7 +114,7 @@ tplink_wdr3600_43x0:
 	@make --no-print-directory show_size
 
 tplink_wdr3500:	export UBOOT_FILE_NAME=uboot_for_tp-link_tl-wdr3500
-tplink_wdr3500:	export MAX_UBOOT_SIZE=64
+tplink_wdr3500:	export CONFIG_MAX_UBOOT_SIZE_KB=64
 ifndef CONFIG_SKIP_LOWLEVEL_INIT
 tplink_wdr3500:	export COMPRESSED_UBOOT=1
 endif
@@ -125,7 +125,7 @@ tplink_wdr3500:
 	@make --no-print-directory show_size
 
 tplink_mr3420_v2:	export UBOOT_FILE_NAME=uboot_for_tp-link_tl-mr3420_v2
-tplink_mr3420_v2:	export MAX_UBOOT_SIZE=64
+tplink_mr3420_v2:	export CONFIG_MAX_UBOOT_SIZE_KB=64
 ifndef CONFIG_SKIP_LOWLEVEL_INIT
 tplink_mr3420_v2:	export COMPRESSED_UBOOT=1
 endif
@@ -136,7 +136,7 @@ tplink_mr3420_v2:
 	@make --no-print-directory show_size
 
 tplink_wr841n_v8:	export UBOOT_FILE_NAME=uboot_for_tp-link_tl-wr841n_v8
-tplink_wr841n_v8:	export MAX_UBOOT_SIZE=64
+tplink_wr841n_v8:	export CONFIG_MAX_UBOOT_SIZE_KB=64
 ifndef CONFIG_SKIP_LOWLEVEL_INIT
 tplink_wr841n_v8:	export COMPRESSED_UBOOT=1
 endif
@@ -147,7 +147,7 @@ tplink_wr841n_v8:
 	@make --no-print-directory show_size
 
 tplink_wa830re_v2_wa801nd_v2:	export UBOOT_FILE_NAME=uboot_for_tp-link_tl-wa830re_v2_tl-wa801nd_v2
-tplink_wa830re_v2_wa801nd_v2:	export MAX_UBOOT_SIZE=64
+tplink_wa830re_v2_wa801nd_v2:	export CONFIG_MAX_UBOOT_SIZE_KB=64
 ifndef CONFIG_SKIP_LOWLEVEL_INIT
 tplink_wa830re_v2_wa801nd_v2:	export COMPRESSED_UBOOT=1
 endif
@@ -158,7 +158,7 @@ tplink_wa830re_v2_wa801nd_v2:
 	@make --no-print-directory show_size
 
 dlink_dir505:	export UBOOT_FILE_NAME=uboot_for_d-link_dir-505
-dlink_dir505:	export MAX_UBOOT_SIZE=64
+dlink_dir505:	export CONFIG_MAX_UBOOT_SIZE_KB=64
 ifndef CONFIG_SKIP_LOWLEVEL_INIT
 dlink_dir505:	export COMPRESSED_UBOOT=1
 endif
@@ -168,7 +168,7 @@ dlink_dir505:
 	@make --no-print-directory show_size
 
 gs-oolite_v1_dev:	export UBOOT_FILE_NAME=uboot_for_gs-oolite_v1_dev
-gs-oolite_v1_dev:	export MAX_UBOOT_SIZE=64
+gs-oolite_v1_dev:	export CONFIG_MAX_UBOOT_SIZE_KB=64
 ifndef CONFIG_SKIP_LOWLEVEL_INIT
 gs-oolite_v1_dev:	export COMPRESSED_UBOOT=1
 endif
@@ -178,14 +178,14 @@ gs-oolite_v1_dev:
 	@make --no-print-directory show_size
 
 8devices_carambola2:	export UBOOT_FILE_NAME=uboot_for_8devices_carambola2
-8devices_carambola2:	export MAX_UBOOT_SIZE=256
+8devices_carambola2:	export CONFIG_MAX_UBOOT_SIZE_KB=256
 8devices_carambola2:
 	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) carambola2_config
 	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) ENDIANNESS=-EB V=1 all
 	@make --no-print-directory show_size
 
 dragino_v2_ms14:	export UBOOT_FILE_NAME=uboot_for_dragino_v2_ms14
-dragino_v2_ms14:	export MAX_UBOOT_SIZE=192
+dragino_v2_ms14:	export CONFIG_MAX_UBOOT_SIZE_KB=192
 dragino_v2_ms14:	export DEVICE_VENDOR=dragino
 dragino_v2_ms14:
 	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) dragino_v2_ms14_config
@@ -193,7 +193,7 @@ dragino_v2_ms14:
 	@make --no-print-directory show_size
 
 villagetelco_mp2:	export UBOOT_FILE_NAME=uboot_for_villagetelco_mp2
-villagetelco_mp2:	export MAX_UBOOT_SIZE=192
+villagetelco_mp2:	export CONFIG_MAX_UBOOT_SIZE_KB=192
 villagetelco_mp2:	export DEVICE_VENDOR=villagetelco
 villagetelco_mp2:
 	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) villagetelco_mp2_config
@@ -201,7 +201,7 @@ villagetelco_mp2:
 	@make --no-print-directory show_size
 
 gl-inet:	export UBOOT_FILE_NAME=uboot_for_gl-inet
-gl-inet:	export MAX_UBOOT_SIZE=64
+gl-inet:	export CONFIG_MAX_UBOOT_SIZE_KB=64
 ifndef CONFIG_SKIP_LOWLEVEL_INIT
 gl-inet:	export COMPRESSED_UBOOT=1
 endif
@@ -229,8 +229,8 @@ else
 endif
 	@/bin/echo -ne "\e[32m"
 ifndef CONFIG_SKIP_LOWLEVEL_INIT
-	@echo "> Preparing $(MAX_UBOOT_SIZE)KB file filled with 0xFF..."
-	@`tr "\000" "\377" < /dev/zero | dd ibs=1k count=$(MAX_UBOOT_SIZE) of=$(BUILD_TOPDIR)/bin/$(UBOOT_FILE_NAME)$(UBOOT_FILE_NAME_SUFFIX).bin 2> /dev/null`
+	@echo "> Preparing $(CONFIG_MAX_UBOOT_SIZE_KB)KB file filled with 0xFF..."
+	@`tr "\000" "\377" < /dev/zero | dd ibs=1k count=$(CONFIG_MAX_UBOOT_SIZE_KB) of=$(BUILD_TOPDIR)/bin/$(UBOOT_FILE_NAME)$(UBOOT_FILE_NAME_SUFFIX).bin 2> /dev/null`
 	@echo "> Copying U-Boot image..."
 	@`dd if=$(BUILD_TOPDIR)/bin/temp.bin of=$(BUILD_TOPDIR)/bin/$(UBOOT_FILE_NAME)$(UBOOT_FILE_NAME_SUFFIX).bin conv=notrunc 2> /dev/null`
 	@`rm $(BUILD_TOPDIR)/bin/temp.bin`
@@ -243,7 +243,7 @@ endif
 	@`echo ' *'$(UBOOT_FILE_NAME)$(UBOOT_FILE_NAME_SUFFIX).bin >> $(BUILD_TOPDIR)/bin/$(UBOOT_FILE_NAME)$(UBOOT_FILE_NAME_SUFFIX).md5`
 # Do not check image size for RAM version
 ifndef CONFIG_SKIP_LOWLEVEL_INIT
-	@if [ "`wc -c < $(BUILD_TOPDIR)/bin/$(UBOOT_FILE_NAME)$(UBOOT_FILE_NAME_SUFFIX).bin`" -gt "`/bin/echo '$(MAX_UBOOT_SIZE)*1024' | bc`" ]; then \
+	@if [ "`wc -c < $(BUILD_TOPDIR)/bin/$(UBOOT_FILE_NAME)$(UBOOT_FILE_NAME_SUFFIX).bin`" -gt "`/bin/echo '$(CONFIG_MAX_UBOOT_SIZE_KB)*1024' | bc`" ]; then \
 			/bin/echo -e "\e[31m\n**************************************************"; \
 			/bin/echo "*     WARNING: U-BOOT IMAGE SIZE IS TOO BIG!     *"; \
 			/bin/echo -e "**************************************************"; \
