@@ -289,6 +289,10 @@ ifdef CONFIG_BOOTDELAY
 	@echo "#define CONFIG_BOOTDELAY "$(CONFIG_BOOTDELAY)   >> include/config.h
 endif
 
+ifdef CONFIG_MAX_UBOOT_SIZE_KB
+	@echo "#define CONFIG_MAX_UBOOT_SIZE_KB "$(CONFIG_MAX_UBOOT_SIZE_KB) >> include/config.h
+endif
+
 ifdef CFG_PLL_FREQ
 	@echo "#define CFG_PLL_FREQ "$(CFG_PLL_FREQ)           >> include/config.h
 endif
