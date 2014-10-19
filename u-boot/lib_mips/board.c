@@ -100,7 +100,13 @@ static int display_banner(void){
 }
 
 static int init_baudrate(void){
-	gd->baudrate = CONFIG_BAUDRATE;
+	char *s;
+
+	if((s = getenv("baudrate")) != NULL){
+		gd->baudrate = simple_strtoul(s, NULL, 10);
+	} else {
+		gd->baudrate = CONFIG_BAUDRATE;
+	}
 	return(0);
 }
 

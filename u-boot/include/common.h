@@ -401,6 +401,7 @@ void	serial_putc_raw(const char);
 void	serial_puts   (const char *);
 int	serial_getc   (void);
 int	serial_tstc   (void);
+void	serial_setbrg (void);
 
 void	_serial_putc   (const char, const int);
 void	_serial_putc_raw(const char, const int);

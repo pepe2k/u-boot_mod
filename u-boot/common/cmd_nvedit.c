@@ -240,6 +240,9 @@ int _do_setenv(int flag, int argc, char *argv[]){
 			udelay(50000);
 
 			gd->baudrate = baudrate;
+
+			serial_setbrg();
+
 			udelay(50000);
 
 			for(;;){

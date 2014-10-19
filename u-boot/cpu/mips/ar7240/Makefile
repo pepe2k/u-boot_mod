@@ -8,7 +8,9 @@ START	=
 OBJS	= meminit.o 
 
 ifeq ($(BOARD), ap121)
-OBJS	+= hornet_serial.o
+#OBJS	+= hornet_serial.o
+OBJS	+= ar933x_serial.o
+OBJS	+= ar933x_clocks.o
 SOBJS	+= hornet_ddr_init.o
 else
 OBJS	+= ar7240_serial.o
