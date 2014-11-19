@@ -211,7 +211,15 @@ gl-inet:
 	@make --no-print-directory show_size
 
 ifdef CONFIG_SKIP_LOWLEVEL_INIT
+  ifdef DISABLE_CONSOLE_OUTPUT
+show_size:	export UBOOT_FILE_NAME_SUFFIX=__SILENT-CONSOLE__RAM
+  else
 show_size:	export UBOOT_FILE_NAME_SUFFIX=__RAM
+  endif
+else
+  ifdef DISABLE_CONSOLE_OUTPUT
+show_size:	export UBOOT_FILE_NAME_SUFFIX=__SILENT-CONSOLE
+  endif
 endif
 show_size:
 ifdef COMPRESSED_UBOOT
@@ -235,10 +243,10 @@ endif
 	@`echo ' *'$(UBOOT_FILE_NAME)$(UBOOT_FILE_NAME_SUFFIX).bin >> $(BUILD_TOPDIR)/bin/$(UBOOT_FILE_NAME)$(UBOOT_FILE_NAME_SUFFIX).md5`
 # Do not check image size for RAM version
 ifndef CONFIG_SKIP_LOWLEVEL_INIT
-	@if [ "`wc -c < $(BUILD_TOPDIR)/bin/$(UBOOT_FILE_NAME).bin`" -gt "`/bin/echo '$(MAX_UBOOT_SIZE)*1024' | bc`" ]; then \
+	@if [ "`wc -c < $(BUILD_TOPDIR)/bin/$(UBOOT_FILE_NAME)$(UBOOT_FILE_NAME_SUFFIX).bin`" -gt "`/bin/echo '$(MAX_UBOOT_SIZE)*1024' | bc`" ]; then \
 			/bin/echo -e "\e[31m\n**************************************************"; \
-            /bin/echo "*     WARNING: U-BOOT IMAGE SIZE IS TOO BIG!     *"; \
-            /bin/echo -e "**************************************************"; \
+			/bin/echo "*     WARNING: U-BOOT IMAGE SIZE IS TOO BIG!     *"; \
+			/bin/echo -e "**************************************************"; \
 	fi;
 endif
 	@/bin/echo -ne "\e[0m"
