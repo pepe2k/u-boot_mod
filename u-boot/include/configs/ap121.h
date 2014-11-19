@@ -797,7 +797,6 @@
 							 CFG_CMD_NET    | \
 							 CFG_CMD_RUN    | \
 							 CFG_CMD_DATE   | \
-							 CFG_CMD_SNTP   | \
 							 CFG_CMD_ECHO   | \
 							 CFG_CMD_BOOTD  | \
 							 CFG_CMD_ITEST  | \
@@ -830,7 +829,6 @@
 							 CFG_CMD_NET    | \
 							 CFG_CMD_RUN    | \
 							 CFG_CMD_DATE   | \
-							 CFG_CMD_SNTP   | \
 							 CFG_CMD_ECHO   | \
 							 CFG_CMD_BOOTD  | \
 							 CFG_CMD_ITEST)
