@@ -1,0 +1,254 @@
+#!/bin/sh
+
+#==================================================
+#      Name: u-boot-upgrade
+#   Purpose: Update U-Boot partition using mtd tool
+#
+#    Author: Piotr Dymacz <piotr@dymacz.pl>
+# Copyright: Copyright (C) 2014 Piotr Dymacz
+#   Created: 2014-11-19
+#==================================================
+
+      MTD_DEVICE="mtd0"
+   NEW_UBOOT_DIR="/etc/u-boot_mod"
+ NEW_UBOOT_FNAME=
+MTD_BACKUP_FNAME="mtd0_backup.bin"
+
+echo_info() {
+	echo -e "[\e[93minfo\e[0m] $1"
+}
+
+echo_err() {
+	echo -e "[\e[31merro\e[0m] $1"
+}
+
+echo_ok() {
+	echo -e "[\e[92m ok \e[0m] $1"
+}
+
+show_disclaimer() {
+	local answer
+
+	echo ""
+	echo "================================================================="
+	echo -e "     \e[93mDISCLAIMER: you are using this script at your own risk!\e[0m"
+	echo ""
+	echo "     The author of U-Boot modification and this script takes"
+	echo "     no responsibility for any of the results of using them."
+	echo ""
+	echo -e "          \e[31mUpdating U-Boot is a very dangerous operation"
+	echo -e "        and may damage your device! You have been warned!\e[0m"
+	echo "================================================================="
+	read -p "   Are you sure you want to continue (type 'yes' or 'no')? " answer
+
+	while true; do
+		case $answer in
+			yes)
+				echo "================================================================="
+				echo ""
+				break
+				;;
+			no)
+				exit 0
+				;;
+			*)
+				read -p "   Please, type 'yes' or 'no': " answer
+				;;
+		esac
+	done
+}
+
+find_new_uboot_file() {
+	local answer
+	local filesqty
+	local new_ubot_md5
+
+	if [ ! -d $NEW_UBOOT_DIR ]; then
+		echo_err "Directory $NEW_UBOOT_DIR does not exist"
+		exit 1
+	fi
+
+	cd $NEW_UBOOT_DIR 2>/dev/null
+	if [ $? -ne 0 ]; then
+		echo_err "Could not change directory to $NEW_UBOOT_DIR"
+		exit 1
+	fi
+
+	filesqty=`ls -1 | grep "\.bin" | wc -l`
+
+	if [ $filesqty -eq 0 ]; then
+		echo_err "Could not find any binary file in $NEW_UBOOT_DIR"
+		exit 1
+	fi
+
+	if [ $filesqty -gt 1 ]; then
+		echo_err "Found more than one binary file in $NEW_UBOOT_DIR"
+		exit 1
+	fi
+
+	NEW_UBOOT_FNAME=`ls -1 | grep "\.bin"`
+	new_ubot_md5="`basename $NEW_UBOOT_FNAME .bin`.md5"
+
+	if [ ! -e $new_ubot_md5 ]; then
+		echo_err "Checksum file $new_ubot_md5 does not exist"
+		exit 1
+	fi
+
+	echo_ok "Found U-Boot image file: $NEW_UBOOT_FNAME"
+	read -p "       Do you want to use this file (type 'yes' or 'no')? " answer
+
+	while true; do
+		case $answer in
+			yes)
+				break
+				;;
+			no)
+				exit 0
+				;;
+			*)
+				read -p "       Please, type 'yes' or 'no': " answer
+				;;
+		esac
+	done
+
+	md5sum -cs $new_ubot_md5 &>/dev/null
+	if [ $? -ne 0 ]; then
+		echo_err "MD5 checksum of new U-Boot image file is wrong"
+		exit 1
+	fi
+
+	echo_ok "MD5 checksum of new U-Boot image file is correct"
+}
+
+backup_mtd_zero() {
+	local answer
+
+	if [ ! -c /dev/$MTD_DEVICE ]; then
+		echo_err "Device /dev/$MTD_DEVICE does not exist"
+		exit 1
+	fi
+
+	cd /tmp 2>/dev/null
+	if [ $? -ne 0 ]; then
+		echo_err "Could not change directory to /tmp"
+		exit 1
+	fi
+
+	if [ -e $MTD_BACKUP_FNAME ]; then
+		rm -f $MTD_BACKUP_FNAME 2>/dev/null
+	fi
+
+	dd if=/dev/$MTD_DEVICE of=$MTD_BACKUP_FNAME &>/dev/null
+	if [ $? -ne 0 ]; then
+		echo_err "Could not backup /dev/$MTD_DEVICE"
+		exit 1
+	fi
+
+	echo_ok "Backup of /dev/$MTD_DEVICE successfully created"
+	read -p "       Do you want to store backup in $NEW_UBOOT_DIR/backup/ (recommended, type 'yes' or 'no')? " answer
+
+	while true; do
+		case $answer in
+			yes)
+				cp -f $MTD_BACKUP_FNAME $NEW_UBOOT_DIR/backup/$MTD_BACKUP_FNAME &>/dev/null
+				if [ $? -ne 0 ]; then
+					echo_err "Could not copy backup file $MTD_BACKUP_FNAME to $NEW_UBOOT_DIR/backup/"
+					exit 1
+				fi
+
+				echo_ok "Backup of /dev/$MTD_DEVICE successfully copied to $NEW_UBOOT_DIR/backup/"
+				break
+				;;
+			no)
+				break
+				;;
+			*)
+				read -p "       Please, type 'yes' or 'no': " answer
+				;;
+		esac
+	done
+}
+
+combine_images() {
+	local new_size
+	local old_size
+
+	new_size=`wc -c $NEW_UBOOT_DIR/$NEW_UBOOT_FNAME | awk '{print $1}'`
+	old_size=`wc -c /tmp/$MTD_BACKUP_FNAME | awk '{print $1}'`
+
+	if [ "x$old_size" = "x" ] || \
+	   [ "x$new_size" = "x" ]; then
+		echo_err "Could not get size of new U-Boot image and/or backup file"
+		exit 1
+	fi
+
+	# Allow to use only images not bigger than mtd0 size
+	if [ $new_size -gt $old_size ]; then
+		echo_err "New U-Boot image size ($new_size bytes) is bigger than $MTD_DEVICE partition size ($old_size bytes)"
+		exit 1
+	fi
+
+	dd if=$NEW_UBOOT_DIR/$NEW_UBOOT_FNAME of=/tmp/$MTD_BACKUP_FNAME conv=notrunc &>/dev/null
+	if [ $? -ne 0 ]; then
+		echo_err "Could not combine new U-Boot image with backup file"
+		exit 1
+	fi
+
+	echo_ok "New U-Boot image successfully combined with backup file"
+}
+
+write_new_image() {
+	local answer
+	local verify_result
+
+	echo_info "New U-Boot image is ready to be written into FLASH"
+	read -p "       Are you sure you want to continue (type 'yes' or 'no')? " answer
+
+	while true; do
+		case $answer in
+			yes)
+				break
+				;;
+			no)
+				exit 0
+				;;
+			*)
+				read -p "       Please, type 'yes' or 'no': " answer
+				;;
+		esac
+	done
+
+	# Erase mtd0 and write new image...
+	mtd -e /dev/$MTD_DEVICE write /tmp/$MTD_BACKUP_FNAME /dev/$MTD_DEVICE &>/dev/null
+	if [ $? -ne 0 ]; then
+		echo_err "FATAL ERROR: could not write new U-Boot image into FLASH"
+		echo_err "DO NOT RESET YOUR DEVICE NOW AND TRY AGAIN!"
+		exit 1
+	fi
+
+	echo_ok "New U-Boot image successfully witten info FLASH"
+
+	# Verify MD5 of mtd0 and prepared image
+	verify_result=`mtd verify /tmp/$MTD_BACKUP_FNAME /dev/$MTD_DEVICE 2>&1 | grep "Success"`
+	if [ "x$verify_result" = "x" ]; then
+		echo_err "FATAL ERROR: MD5 checksum of $MTD_DEVICE and new U-Boot image are not equal"
+		echo_err "DO NOT RESET YOUR DEVICE NOW AND TRY AGAIN!"
+		exit 1
+	fi
+
+	echo_ok "MD5 checksum of $MTD_DEVICE and new U-Boot image are equal"
+
+	echo_info "Done!"
+}
+
+#======================
+# Execution begins here
+#======================
+
+show_disclaimer
+find_new_uboot_file
+backup_mtd_zero
+combine_images
+write_new_image
+
+exit 0
