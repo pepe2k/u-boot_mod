@@ -226,7 +226,7 @@ write_new_image() {
 		exit 1
 	fi
 
-	echo_ok "New U-Boot image successfully witten info FLASH"
+	echo_ok "New U-Boot image successfully written into FLASH"
 
 	# Verify MD5 of mtd0 and prepared image
 	verify_result=`mtd verify /tmp/$MTD_BACKUP_FNAME /dev/$MTD_DEVICE 2>&1 | grep "Success"`
