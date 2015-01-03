@@ -500,9 +500,13 @@ You can use one of the free toolchains:
 I am using **Sourcery CodeBench Lite Edition for MIPS GNU/Linux** on **Ubuntu 12.04 LTS** (32-bit, virtual machine) and all released binary images were/will be built using this set.
 
 I add a command line wich download/install toolchain linux-mips:
-type : ./setup_codesourcery.sh
+```
+./setup_codesourcery.sh
+```
 after install/download type:
+```
 codesourcery-mips-2011.03.sh
+```
 this will enable mips-cross compilation, after you can make your firmware
 
 
