@@ -78,7 +78,7 @@ exit 1
 # wget & bzip2 for downloading and unpacking
 # uboot's mkimage & devio for creating uImage
 echo 'Installing prerequisites:'
-PACKAGES='default-jre-headless git build-essential linux-libc-dev wget bzip2 uboot-mkimage devio ncurses-dev'
+PACKAGES='git build-essential linux-libc-dev wget bzip2 uboot-mkimage devio ncurses-dev default-jre-headless'
 DOINSTALL=0
 for PACKAGE in ${PACKAGES}
 do
