@@ -14,9 +14,7 @@
 #include "../httpd/uip.h"
 #include "../httpd/uip_arp.h"
 
-#if !defined(WEBFAILSAFE_UPLOAD_ART_ADDRESS)
 extern flash_info_t flash_info[];
-#endif
 
 static int arptimer = 0;
 
@@ -46,20 +44,43 @@ void HttpdStart(void){
 
 int do_http_upgrade(const ulong size, const int upgrade_type){
 	char buf[96];	// erase 0xXXXXXXXX +0xXXXXXXXX; cp.b 0xXXXXXXXX 0xXXXXXXXX 0xXXXXXXXX (68 signs)
-#if !defined(WEBFAILSAFE_UPLOAD_ART_ADDRESS)
 	flash_info_t *info = &flash_info[0];
-#endif
+	unsigned int backup_size = 0;
 
 	if(upgrade_type == WEBFAILSAFE_UPGRADE_TYPE_UBOOT){
+
+		while(size > backup_size){
+			backup_size += info->sector_size;
+		}
+
+		// Backup data from FLASH just before U-Boot image upgrade
+		// if uploaded image size is not a multiple of FLASH erase sector size (by default 64 KB)
+		if(size % info->sector_size != 0){
+			printf("Backup: copying %d bytes of data from FLASH at address 0x%X to RAM at address 0x%X...\n",
+					backup_size - size,
+					WEBFAILSAFE_UPLOAD_UBOOT_ADDRESS + size,
+					WEBFAILSAFE_UPLOAD_RAM_ADDRESS + size);
+
+			sprintf(buf,
+					"cp.b 0x%lX 0x%lX 0x%lX",
+					WEBFAILSAFE_UPLOAD_UBOOT_ADDRESS + size,
+					WEBFAILSAFE_UPLOAD_RAM_ADDRESS + size,
+					backup_size - size);
+
+			if(!run_command(buf, 0)){
+				printf("## Error: couldn't backup FLASH data before U-Boot image upgrade!\n");
+				return(-1);
+			}
+		}
 
 		printf("\n\n****************************\n*     U-BOOT UPGRADING     *\n* DO NOT POWER OFF DEVICE! *\n****************************\n\n");
 		sprintf(buf,
 				"erase 0x%lX +0x%lX; cp.b 0x%lX 0x%lX 0x%lX",
 				WEBFAILSAFE_UPLOAD_UBOOT_ADDRESS,
-				WEBFAILSAFE_UPLOAD_UBOOT_SIZE_IN_BYTES,
+				backup_size,
 				WEBFAILSAFE_UPLOAD_RAM_ADDRESS,
 				WEBFAILSAFE_UPLOAD_UBOOT_ADDRESS,
-				WEBFAILSAFE_UPLOAD_UBOOT_SIZE_IN_BYTES);
+				backup_size);
 
 	} else if(upgrade_type == WEBFAILSAFE_UPGRADE_TYPE_FIRMWARE){
 
