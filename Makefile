@@ -13,7 +13,7 @@ export CONFIG_BOOTDELAY=1
 #export CONFIG_SKIP_LOWLEVEL_INIT=1
 
 tplink_mr3020:	export UBOOT_FILE_NAME=uboot_for_tp-link_tl-mr3020
-tplink_mr3020:	export CONFIG_MAX_UBOOT_SIZE_KB=64
+tplink_mr3020:	export CONFIG_MAX_UBOOT_SIZE_KB=123
 ifndef CONFIG_SKIP_LOWLEVEL_INIT
 tplink_mr3020:	export COMPRESSED_UBOOT=1
 endif
@@ -23,7 +23,7 @@ tplink_mr3020:
 	@make --no-print-directory show_size
 
 tplink_wr703n:	export UBOOT_FILE_NAME=uboot_for_tp-link_tl-wr703n
-tplink_wr703n:	export CONFIG_MAX_UBOOT_SIZE_KB=64
+tplink_wr703n:	export CONFIG_MAX_UBOOT_SIZE_KB=123
 ifndef CONFIG_SKIP_LOWLEVEL_INIT
 tplink_wr703n:	export COMPRESSED_UBOOT=1
 endif
@@ -33,7 +33,7 @@ tplink_wr703n:
 	@make --no-print-directory show_size
 
 tplink_wr720n_v3_CH:	export UBOOT_FILE_NAME=uboot_for_tp-link_tl-wr720n_v3_CH
-tplink_wr720n_v3_CH:	export CONFIG_MAX_UBOOT_SIZE_KB=64
+tplink_wr720n_v3_CH:	export CONFIG_MAX_UBOOT_SIZE_KB=123
 ifndef CONFIG_SKIP_LOWLEVEL_INIT
 tplink_wr720n_v3_CH:	export COMPRESSED_UBOOT=1
 endif
@@ -43,7 +43,7 @@ tplink_wr720n_v3_CH:
 	@make --no-print-directory show_size
 
 tplink_wr710n:	export UBOOT_FILE_NAME=uboot_for_tp-link_tl-wr710n
-tplink_wr710n:	export CONFIG_MAX_UBOOT_SIZE_KB=64
+tplink_wr710n:	export CONFIG_MAX_UBOOT_SIZE_KB=123
 ifndef CONFIG_SKIP_LOWLEVEL_INIT
 tplink_wr710n:	export COMPRESSED_UBOOT=1
 endif
@@ -53,7 +53,7 @@ tplink_wr710n:
 	@make --no-print-directory show_size
 
 tplink_mr3040:	export UBOOT_FILE_NAME=uboot_for_tp-link_tl-mr3040
-tplink_mr3040:	export CONFIG_MAX_UBOOT_SIZE_KB=64
+tplink_mr3040:	export CONFIG_MAX_UBOOT_SIZE_KB=123
 ifndef CONFIG_SKIP_LOWLEVEL_INIT
 tplink_mr3040:	export COMPRESSED_UBOOT=1
 endif
@@ -63,7 +63,7 @@ tplink_mr3040:
 	@make --no-print-directory show_size
 
 tplink_mr10u:	export UBOOT_FILE_NAME=uboot_for_tp-link_tl-mr10u
-tplink_mr10u:	export CONFIG_MAX_UBOOT_SIZE_KB=64
+tplink_mr10u:	export CONFIG_MAX_UBOOT_SIZE_KB=123
 ifndef CONFIG_SKIP_LOWLEVEL_INIT
 tplink_mr10u:	export COMPRESSED_UBOOT=1
 endif
@@ -73,7 +73,7 @@ tplink_mr10u:
 	@make --no-print-directory show_size
 
 tplink_mr13u:	export UBOOT_FILE_NAME=uboot_for_tp-link_tl-mr13u
-tplink_mr13u:	export CONFIG_MAX_UBOOT_SIZE_KB=64
+tplink_mr13u:	export CONFIG_MAX_UBOOT_SIZE_KB=123
 ifndef CONFIG_SKIP_LOWLEVEL_INIT
 tplink_mr13u:	export COMPRESSED_UBOOT=1
 endif
@@ -83,7 +83,7 @@ tplink_mr13u:
 	@make --no-print-directory show_size
 
 tplink_wr740n_v4:	export UBOOT_FILE_NAME=uboot_for_tp-link_tl-wr740n_v4
-tplink_wr740n_v4:	export CONFIG_MAX_UBOOT_SIZE_KB=64
+tplink_wr740n_v4:	export CONFIG_MAX_UBOOT_SIZE_KB=123
 ifndef CONFIG_SKIP_LOWLEVEL_INIT
 tplink_wr740n_v4:	export COMPRESSED_UBOOT=1
 endif
@@ -93,7 +93,7 @@ tplink_wr740n_v4:
 	@make --no-print-directory show_size
 
 tplink_mr3220_v2:	export UBOOT_FILE_NAME=uboot_for_tp-link_tl-mr3220_v2
-tplink_mr3220_v2:	export CONFIG_MAX_UBOOT_SIZE_KB=64
+tplink_mr3220_v2:	export CONFIG_MAX_UBOOT_SIZE_KB=123
 ifndef CONFIG_SKIP_LOWLEVEL_INIT
 tplink_mr3220_v2:	export COMPRESSED_UBOOT=1
 endif
@@ -103,7 +103,7 @@ tplink_mr3220_v2:
 	@make --no-print-directory show_size
 
 tplink_wdr3600_43x0:	export UBOOT_FILE_NAME=uboot_for_tp-link_tl-wdr3600-43x0
-tplink_wdr3600_43x0:	export CONFIG_MAX_UBOOT_SIZE_KB=64
+tplink_wdr3600_43x0:	export CONFIG_MAX_UBOOT_SIZE_KB=123
 ifndef CONFIG_SKIP_LOWLEVEL_INIT
 tplink_wdr3600_43x0:	export COMPRESSED_UBOOT=1
 endif
@@ -114,7 +114,7 @@ tplink_wdr3600_43x0:
 	@make --no-print-directory show_size
 
 tplink_wdr3500:	export UBOOT_FILE_NAME=uboot_for_tp-link_tl-wdr3500
-tplink_wdr3500:	export CONFIG_MAX_UBOOT_SIZE_KB=64
+tplink_wdr3500:	export CONFIG_MAX_UBOOT_SIZE_KB=123
 ifndef CONFIG_SKIP_LOWLEVEL_INIT
 tplink_wdr3500:	export COMPRESSED_UBOOT=1
 endif
@@ -125,7 +125,7 @@ tplink_wdr3500:
 	@make --no-print-directory show_size
 
 tplink_mr3420_v2:	export UBOOT_FILE_NAME=uboot_for_tp-link_tl-mr3420_v2
-tplink_mr3420_v2:	export CONFIG_MAX_UBOOT_SIZE_KB=64
+tplink_mr3420_v2:	export CONFIG_MAX_UBOOT_SIZE_KB=123
 ifndef CONFIG_SKIP_LOWLEVEL_INIT
 tplink_mr3420_v2:	export COMPRESSED_UBOOT=1
 endif
@@ -136,7 +136,7 @@ tplink_mr3420_v2:
 	@make --no-print-directory show_size
 
 tplink_wr841n_v8:	export UBOOT_FILE_NAME=uboot_for_tp-link_tl-wr841n_v8
-tplink_wr841n_v8:	export CONFIG_MAX_UBOOT_SIZE_KB=64
+tplink_wr841n_v8:	export CONFIG_MAX_UBOOT_SIZE_KB=123
 ifndef CONFIG_SKIP_LOWLEVEL_INIT
 tplink_wr841n_v8:	export COMPRESSED_UBOOT=1
 endif
@@ -147,7 +147,7 @@ tplink_wr841n_v8:
 	@make --no-print-directory show_size
 
 tplink_wa830re_v2_wa801nd_v2:	export UBOOT_FILE_NAME=uboot_for_tp-link_tl-wa830re_v2_tl-wa801nd_v2
-tplink_wa830re_v2_wa801nd_v2:	export CONFIG_MAX_UBOOT_SIZE_KB=64
+tplink_wa830re_v2_wa801nd_v2:	export CONFIG_MAX_UBOOT_SIZE_KB=123
 ifndef CONFIG_SKIP_LOWLEVEL_INIT
 tplink_wa830re_v2_wa801nd_v2:	export COMPRESSED_UBOOT=1
 endif
@@ -168,7 +168,7 @@ dlink_dir505:
 	@make --no-print-directory show_size
 
 gs-oolite_v1_dev:	export UBOOT_FILE_NAME=uboot_for_gs-oolite_v1_dev
-gs-oolite_v1_dev:	export CONFIG_MAX_UBOOT_SIZE_KB=64
+gs-oolite_v1_dev:	export CONFIG_MAX_UBOOT_SIZE_KB=123
 ifndef CONFIG_SKIP_LOWLEVEL_INIT
 gs-oolite_v1_dev:	export COMPRESSED_UBOOT=1
 endif
@@ -201,7 +201,7 @@ villagetelco_mp2:
 	@make --no-print-directory show_size
 
 gl-inet:	export UBOOT_FILE_NAME=uboot_for_gl-inet
-gl-inet:	export CONFIG_MAX_UBOOT_SIZE_KB=64
+gl-inet:	export CONFIG_MAX_UBOOT_SIZE_KB=123
 ifndef CONFIG_SKIP_LOWLEVEL_INIT
 gl-inet:	export COMPRESSED_UBOOT=1
 endif
