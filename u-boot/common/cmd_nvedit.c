@@ -232,7 +232,12 @@ int _do_setenv(int flag, int argc, char *argv[]){
 			}
 
 			if(i == N_BAUDRATES){
-				printf("## Error: baudrate %d bps not supported\n", baudrate);
+				printf("## Error: baudrate %d bps is not supported,\n", baudrate);
+				printf("          choose one from the list:\n\n");
+				for(i = 0; i < N_BAUDRATES; ++i){
+					printf("- %7d bps%s\n", baudrate_table[i], baudrate_table[i] == gd->baudrate ? " [current]" : "");
+				}
+				printf("\n");
 				return(1);
 			}
 
