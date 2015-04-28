@@ -117,7 +117,6 @@ static int init_func_ram(void){
 typedef int(init_fnc_t)(void);
 
 init_fnc_t *init_sequence[] = { timer_init,
-                                serial_init,
                                 init_func_ram,
                                 NULL, };
 
@@ -202,7 +201,6 @@ void bootstrap_board_init_f(ulong bootflag){
 	 */
 	bd->bi_memstart = CFG_SDRAM_BASE;	/* start of  DRAM memory */
 	bd->bi_memsize = gd->ram_size;		/* size  of  DRAM memory in bytes */
-	bd->bi_baudrate = gd->baudrate;		/* Console Baudrate */
 
 	memcpy(id, (void *)gd, sizeof(gd_t));
 

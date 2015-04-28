@@ -165,6 +165,7 @@ init_fnc_t *init_sequence[] = { timer_init,
 #else
 init_fnc_t *init_sequence[] = { env_init,		/* initialize environment */
  								init_baudrate,	/* initialze baudrate settings */
+								serial_init,	/* serial communications setup */
  								console_init_f,	/* initialize console */
  								display_banner,	/* say that we are here -> print baner */
  								NULL, };
