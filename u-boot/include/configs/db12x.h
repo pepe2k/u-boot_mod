@@ -164,7 +164,10 @@
 
 // U-Boot partition size
 #define WEBFAILSAFE_UPLOAD_UBOOT_SIZE_IN_BYTES		(CONFIG_MAX_UBOOT_SIZE_KB * 1024)
-#define UPDATE_SCRIPT_UBOOT_SIZE_IN_BYTES			"0x10000"
+
+// TODO: should be == CONFIG_MAX_UBOOT_SIZE_KB
+#define UPDATE_SCRIPT_UBOOT_SIZE_IN_BYTES			"0x1EC00"
+#define UPDATE_SCRIPT_UBOOT_BACKUP_SIZE_IN_BYTES	"0x20000"
 
 // ART partition size
 #define WEBFAILSAFE_UPLOAD_ART_SIZE_IN_BYTES		(64 * 1024)
@@ -193,12 +196,15 @@
 #define CONFIG_EXTRA_ENV_SETTINGS	"uboot_addr=0x9F000000\0" \
 									"uboot_name=uboot.bin\0" \
 									"uboot_size=" UPDATE_SCRIPT_UBOOT_SIZE_IN_BYTES "\0" \
+									"uboot_backup_size=" UPDATE_SCRIPT_UBOOT_BACKUP_SIZE_IN_BYTES "\0" \
 									"uboot_upg=" \
 										"if ping $serverip; then " \
+											"mw.b $loadaddr 0xFF $uboot_backup_size && " \
+											"cp.b $uboot_addr $loadaddr $uboot_backup_size && " \
 											"tftp $loadaddr $uboot_name && " \
-											"if itest.l $filesize == $uboot_size; then " \
-												"erase $uboot_addr +$filesize && " \
-												"cp.b $loadaddr $uboot_addr $filesize && " \
+											"if itest.l $filesize <= $uboot_size; then " \
+												"erase $uboot_addr +$uboot_backup_size && " \
+												"cp.b $loadaddr $uboot_addr $uboot_backup_size && " \
 												"echo OK!; " \
 											"else " \
 												"echo ERROR! Wrong file size!; " \
