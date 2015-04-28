@@ -383,8 +383,7 @@ int flash_sect_erase(ulong addr_first, ulong addr_last){
 	return(rcode);
 }
 
-#ifndef COMPRESSED_UBOOT
-#if 0	// we don't need do_protect cmd
+#ifdef CFG_ENV_IS_IN_FLASH
 int do_protect(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[]){
 	flash_info_t *info;
 	ulong bank, addr_first, addr_last;
@@ -511,7 +510,6 @@ int do_protect(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[]){
 	rcode = flash_sect_protect(p, addr_first, addr_last);
 	return(rcode);
 }
-#endif /* we don't need do_protect cmd */
 
 int flash_sect_protect(int p, ulong addr_first, ulong addr_last){
 	flash_info_t *info;
@@ -548,7 +546,7 @@ int flash_sect_protect(int p, ulong addr_first, ulong addr_last){
 
 	return(rcode);
 }
-#endif /* ifndef COMPRESSED_UBOOT */
+#endif /* ifdef CFG_ENV_IS_IN_FLASH */
 
 /**************************************************/
 
@@ -564,8 +562,7 @@ U_BOOT_CMD(erase, 3, 1, do_flerase, "erase FLASH memory\n",
 		"erase all\n"
 		"\t- erase all FLASH banks\n");
 
-#ifndef COMPRESSED_UBOOT
-#if 0	// we don't need do_protect cmd
+#ifdef CFG_ENV_IS_IN_FLASH
 U_BOOT_CMD(protect, 4, 1, do_protect, "enable or disable FLASH write protection\n",
 	"start end\n"
 	"\t- protect FLASH from addr 'start' to addr 'end'\n"
@@ -588,7 +585,6 @@ U_BOOT_CMD(protect, 4, 1, do_protect, "enable or disable FLASH write protection\
 	"protect off all\n"
 	"\t- make all FLASH banks writable\n"
 );
-#endif /* we don't need do_protect cmd */
-#endif /* ifndef COMPRESSED_UBOOT */
+#endif /* ifdef CFG_ENV_IS_IN_FLASH */
 
 #endif	/* CFG_CMD_FLASH */
