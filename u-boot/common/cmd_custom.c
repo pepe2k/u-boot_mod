@@ -197,34 +197,49 @@ U_BOOT_CMD(startsc, 1, 0, do_start_sc, "start serial console\n", NULL);
 
 #endif /* if defined(CONFIG_NETCONSOLE) */
 
-#if defined(CONFIG_FOR_8DEVICES_CARAMBOLA2) || \
-    defined(CONFIG_FOR_DRAGINO_V2)          || \
-    defined(CONFIG_FOR_MESH_POTATO_V2)
+#if !defined(CONFIG_FOR_DLINK_DIR505_A1)
 /*
  * Erase environment sector
  */
 int do_default_env(cmd_tbl_t * cmdtp, int flag, int argc, char *argv[]){
 	int	rc, rcode = 0;
+	int len;
+	ulong end_addr, flash_sect_addr;
 #if defined(CFG_ENV_SECT_SIZE) && (CFG_ENV_SECT_SIZE > CFG_ENV_SIZE)
+	ulong flash_offset;
 	unsigned char env_buffer[CFG_ENV_SECT_SIZE];
 #endif
 
 #if defined(CFG_ENV_SECT_SIZE) && (CFG_ENV_SECT_SIZE > CFG_ENV_SIZE)
+	flash_offset    = CFG_ENV_ADDR & (CFG_ENV_SECT_SIZE-1);
+	flash_sect_addr = CFG_ENV_ADDR & ~(CFG_ENV_SECT_SIZE-1);
+
 	/* copy whole env sector to temporary buffer */
-	memcpy(env_buffer, (void *)CFG_ENV_ADDR, CFG_ENV_SECT_SIZE);
+	memcpy(env_buffer, (void *)flash_sect_addr, CFG_ENV_SECT_SIZE);
 
 	/* clear env part */
-	memset(env_buffer, 0xFF, CFG_ENV_SIZE);
+	memset((uchar *)((unsigned long)env_buffer + flash_offset), 0xFF, CFG_ENV_SIZE);
+
+	len	 = CFG_ENV_SECT_SIZE;
+#else
+	flash_sect_addr = CFG_ENV_ADDR;
+	len = CFG_ENV_SIZE;
 #endif
 
+	end_addr = flash_sect_addr + len - 1;
+
+	if(flash_sect_protect(0, flash_sect_addr, end_addr)){
+		return(1);
+	}
+
 	/* erase whole env sector */
-	if(flash_sect_erase(CFG_ENV_ADDR, CFG_ENV_ADDR + CFG_ENV_SECT_SIZE - 1)){
+	if(flash_sect_erase(flash_sect_addr, end_addr)){
 		rcode = 1;
 	}
 
 #if defined(CFG_ENV_SECT_SIZE) && (CFG_ENV_SECT_SIZE > CFG_ENV_SIZE)
 	/* restore data from buffer in FLASH */
-	rc = flash_write((char *)env_buffer, CFG_ENV_ADDR, CFG_ENV_SECT_SIZE);
+	rc = flash_write((char *)env_buffer, flash_sect_addr, len);
 
 	if(rc != 0){
 		flash_perror(rc);
