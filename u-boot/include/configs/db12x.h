@@ -92,11 +92,12 @@
 /*
  * Address and size of Primary Environment Sector
  */
-#undef  CFG_ENV_IS_IN_FLASH
-#define CFG_ENV_IS_NOWHERE	1
+#define CFG_ENV_IS_IN_FLASH	1
+#undef  CFG_ENV_IS_NOWHERE
 
-#define CFG_ENV_ADDR		0x9F040000
-#define CFG_ENV_SIZE		0x10000
+#define CFG_ENV_ADDR		0x9F01EC00
+#define CFG_ENV_SIZE		0x1000
+#define CFG_ENV_SECT_SIZE	0x10000
 
 /*
  * Available commands
@@ -111,7 +112,8 @@
 						 CFG_CMD_SNTP   | \
 						 CFG_CMD_ECHO   | \
 						 CFG_CMD_BOOTD  | \
-						 CFG_CMD_ITEST)
+						 CFG_CMD_ITEST  | \
+						 CFG_CMD_ENV)
 
 // Enable NetConsole and custom NetConsole port
 #define CONFIG_NETCONSOLE

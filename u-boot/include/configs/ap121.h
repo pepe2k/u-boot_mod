@@ -761,11 +761,9 @@
 /*
  * Address and size of Primary Environment Sector
  */
-#if defined(CONFIG_FOR_8DEVICES_CARAMBOLA2) || \
-	defined(CONFIG_FOR_DRAGINO_V2) || \
-	defined(CONFIG_FOR_MESH_POTATO_V2)
-	#define	CFG_ENV_IS_IN_FLASH	1
-	#undef CFG_ENV_IS_NOWHERE
+#if !defined(CONFIG_FOR_DLINK_DIR505_A1)
+	#define CFG_ENV_IS_IN_FLASH	1
+	#undef  CFG_ENV_IS_NOWHERE
 #else
 	#undef  CFG_ENV_IS_IN_FLASH
 	#define CFG_ENV_IS_NOWHERE	1
@@ -781,8 +779,9 @@
 	#define CFG_ENV_SIZE		0x8000
 	#define CFG_ENV_SECT_SIZE	0x10000
 #else
-	#define CFG_ENV_ADDR		0x9F040000
-	#define CFG_ENV_SIZE		0x10000
+	#define CFG_ENV_ADDR		0x9F01EC00
+	#define CFG_ENV_SIZE		0x1000
+	#define CFG_ENV_SECT_SIZE	0x10000
 #endif
 
 /*
@@ -828,9 +827,11 @@
 							 CFG_CMD_NET    | \
 							 CFG_CMD_RUN    | \
 							 CFG_CMD_DATE   | \
+							 CFG_CMD_SNTP   | \
 							 CFG_CMD_ECHO   | \
 							 CFG_CMD_BOOTD  | \
-							 CFG_CMD_ITEST)
+							 CFG_CMD_ITEST  | \
+							 CFG_CMD_ENV)
 
 #endif
 
