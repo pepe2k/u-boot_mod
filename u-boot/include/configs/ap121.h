@@ -962,7 +962,7 @@
 												"echo ERROR! Wrong file size!; " \
 											"fi; " \
 										"else " \
-											"ERROR! Server not reachable!; " \
+											"echo ERROR! Server not reachable!; " \
 										"fi\0" \
 									"firmware_addr=" UPDATE_SCRIPT_FW_ADDR "\0" \
 									"firmware_name=firmware.bin\0" \
@@ -973,7 +973,7 @@
 											"cp.b $loadaddr $firmware_addr $filesize && " \
 											"echo OK!; " \
 										"else " \
-											"ERROR! Server not reachable!; " \
+											"echo ERROR! Server not reachable!; " \
 										"fi\0" \
 									SILENT_ENV_VARIABLE
 
