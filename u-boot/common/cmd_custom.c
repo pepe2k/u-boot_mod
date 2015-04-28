@@ -26,7 +26,7 @@
 #include <ar7240_soc.h>
 #include "../board/ar7240/common/ar7240_flash.h"
 
-extern void ar7240_sys_frequency(u32 *cpu_freq, u32 *ddr_freq, u32 *ahb_freq);
+extern void ar933x_sys_frequency(u32 *cpu_freq, u32 *ddr_freq, u32 *ahb_freq);
 
 #if defined(OFFSET_MAC_ADDRESS)
 /*
@@ -247,7 +247,7 @@ int do_default_env(cmd_tbl_t * cmdtp, int flag, int argc, char *argv[]){
 }
 
 U_BOOT_CMD(defenv, 1, 0, do_default_env, "reset environment variables to their default values\n", NULL);
-#endif /* if defined(CONFIG_FOR_8DEVICES_CARAMBOLA2) || defined(CONFIG_FOR_DRAGINO_V2) || defined(CONFIG_FOR_MESH_POTATO_V2) */
+#endif /* if !defined(CONFIG_FOR_DLINK_DIR505_A1) */
 
 #if defined(PLL_IN_FLASH_MAGIC_OFFSET)
 
@@ -558,7 +558,7 @@ int do_set_clocks(cmd_tbl_t * cmdtp, int flag, int argc, char *argv[]){
 	if(argc == 1){
 
 		// read clocks
-		ar7240_sys_frequency(&cpu_freq, &ddr_freq, &ahb_freq);
+		ar933x_sys_frequency(&cpu_freq, &ddr_freq, &ahb_freq);
 
 		// calculate SPI clock (we need to set bit 0 to 1 in SPI_FUNC_SELECT to access SPI registers)
 		ar7240_reg_wr(AR7240_SPI_FS, 0x01);

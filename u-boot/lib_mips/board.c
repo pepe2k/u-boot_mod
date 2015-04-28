@@ -53,7 +53,11 @@ extern int timer_init(void);
 extern void all_led_on(void);
 extern void all_led_off(void);
 extern const char* print_mem_type(void);
+#ifdef CONFIG_WASP
 extern void ar7240_sys_frequency(u32 *cpu_freq, u32 *ddr_freq, u32 *ahb_freq);
+#else
+extern void ar933x_sys_frequency(u32 *cpu_freq, u32 *ddr_freq, u32 *ahb_freq);
+#endif
 
 ulong monitor_flash_len;
 
@@ -336,7 +340,11 @@ void board_init_r(gd_t *id, ulong dest_addr){
 	bd = gd->bd;
 
 	/* get CPU/RAM/AHB clocks */
+#ifdef CONFIG_WASP
 	ar7240_sys_frequency(&cpu_freq, &ddr_freq, &ahb_freq);
+#else
+	ar933x_sys_frequency(&cpu_freq, &ddr_freq, &ahb_freq);
+#endif
 
 	/* set bi_cfg_hz */
 	bd->bi_cfg_hz = (unsigned long)(cpu_freq >> 1);

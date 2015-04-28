@@ -28,7 +28,7 @@ void ag7240_miiphy_write(char *devname, uint32_t phaddr, uint8_t reg, uint16_t d
 
 ag7240_mac_t *ag7240_macs[CFG_AG7240_NMACS];
 
-extern void ar7240_sys_frequency(u32 *cpu_freq, u32 *ddr_freq, u32 *ahb_freq);
+extern void ar933x_sys_frequency(u32 *cpu_freq, u32 *ddr_freq, u32 *ahb_freq);
 
 extern int athrs26_phy_setup(int unit);
 extern int athrs26_phy_is_up(int unit);
@@ -174,7 +174,7 @@ void ag7240_mii_setup(ag7240_mac_t *mac) {
 			ag7240_reg_wr(mac, AG7240_MAC_MII_MGMT_CFG, mgmt_cfg_val);
 		}
 	} else {
-		ar7240_sys_frequency(&cpu_freq, &ddr_freq, &ahb_freq);
+		ar933x_sys_frequency(&cpu_freq, &ddr_freq, &ahb_freq);
 
 		switch (ahb_freq / 1000000) {
 		case 150:

@@ -22,8 +22,7 @@ inline int ar933x_40MHz_xtal(void)
  * Get CPU, RAM and AHB clocks
  * Based on: Linux/arch/mips/ath79/clock.c
  */
-/* TODO: void ar933x_sys_frequency(u32 *cpu_freq, u32 *ddr_freq, u32 *ahb_freq) */
-void ar7240_sys_frequency(u32 *cpu_freq, u32 *ddr_freq, u32 *ahb_freq)
+void ar933x_sys_frequency(u32 *cpu_freq, u32 *ddr_freq, u32 *ahb_freq)
 {
 	u32 ref_rate, clock_ctrl, cpu_config, pll, temp;
 
