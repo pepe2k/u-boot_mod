@@ -3,12 +3,10 @@ include $(TOPDIR)/config.mk
 LIB	= lib$(SOC).a
 
 START	=
-#OBJS	= ar7240_serial.o ag7240.o ar7240_flash.o meminit.o
 
 OBJS	= meminit.o 
 
 ifeq ($(BOARD), ap121)
-#OBJS	+= hornet_serial.o
 OBJS	+= ar933x_serial.o
 OBJS	+= ar933x_clocks.o
 SOBJS	+= hornet_ddr_init.o
