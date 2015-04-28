@@ -2,6 +2,7 @@
  * Atheros AR933x clocks helper functions
  *
  * Copyright (C) 2014 Piotr Dymacz <piotr@dymacz.pl>
+ * Copyright (C) 2014 Mantas Pucka <mantas@8devices.com>
  *
  * SPDX-License-Identifier:GPL-2.0
  */
@@ -12,7 +13,7 @@
 #include <asm/addrspace.h>
 #include <asm/ar933x.h>
 
-int ar933x_40MHz_xtal(void)
+inline int ar933x_40MHz_xtal(void)
 {
 	return (ar933x_reg_read(BOOTSTRAP_STATUS_REG) & BOOTSTRAP_SEL_25_40M_MASK);
 }
