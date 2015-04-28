@@ -21,57 +21,101 @@ static void ar933x_serial_get_scale_step(u32 *uart_scale, u32 *uart_step)
 {
 	if(ar933x_40MHz_xtal() == 1){
 		switch(gd->baudrate){
+		case 600:
+			*uart_scale = 255;
+			*uart_step  = 503;
+			break;
+		case 1200:
+			*uart_scale = 249;
+			*uart_step  = 983;
+			break;
+		case 2400:
+			*uart_scale = 167;
+			*uart_step  = 1321;
+			break;
+		case 4800:
+			*uart_scale = 87;
+			*uart_step  = 1384;
+			break;
 		case 9600:
-			*uart_scale = 34;
-			*uart_step = 1101;
+			*uart_scale = 45;
+			*uart_step  = 1447;
 			break;
 		case 14400:
-			*uart_scale = 26;
-			*uart_step = 1274;
+			*uart_scale = 53;
+			*uart_step  = 2548;
 			break;
 		case 19200:
 			*uart_scale = 22;
-			*uart_step = 1447;
+			*uart_step  = 1447;
 			break;
 		case 28800:
 			*uart_scale = 26;
-			*uart_step = 2548;
+			*uart_step  = 2548;
 			break;
 		case 38400:
 			*uart_scale = 28;
-			*uart_step = 3649;
+			*uart_step  = 3649;
 			break;
 		case 56000:
-			*uart_scale = 1;
-			*uart_step = 367;
+			*uart_scale = 7;
+			*uart_step  = 1468;
 			break;
 		case 57600:
 			*uart_scale = 34;
-			*uart_step = 6606;
+			*uart_step  = 6606;
 			break;
 		case 115200:
 			*uart_scale = 28;
-			*uart_step = 10947;
+			*uart_step  = 10947;
 			break;
 		case 128000:
 			*uart_scale = 6;
-			*uart_step = 2936;
+			*uart_step  = 2936;
+			break;
+		case 153600:
+			*uart_scale = 18;
+			*uart_step  = 9563;
 			break;
 		case 230400:
 			*uart_scale = 16;
-			*uart_step = 12834;
+			*uart_step  = 12834;
+			break;
+		case 250000:
+			*uart_scale = 4;
+			*uart_step  = 4096;
 			break;
 		case 256000:
 			*uart_scale = 6;
-			*uart_step = 5872;
+			*uart_step  = 5872;
 			break;
 		case 460800:
 			*uart_scale = 7;
-			*uart_step = 12079;
+			*uart_step  = 12079;
+			break;
+		case 576000:
+			*uart_scale = 4;
+			*uart_step  = 9437;
 			break;
 		case 921600:
 			*uart_scale = 3;
-			*uart_step = 12079;
+			*uart_step  = 12079;
+			break;
+		case 1000000:
+			*uart_scale = 2;
+			*uart_step  = 9830;
+			break;
+		case 1152000:
+			*uart_scale = 2;
+			*uart_step  = 11324;
+			break;
+		case 1500000:
+			*uart_scale = 0;
+			*uart_step  = 4915;
+			break;
+		case 2000000:
+			*uart_scale = 0;
+			*uart_step  = 6553;
 			break;
 		default:
 			*uart_scale = (40000000 / (16 * gd->baudrate)) - 1;
@@ -79,57 +123,101 @@ static void ar933x_serial_get_scale_step(u32 *uart_scale, u32 *uart_step)
 		}
 	} else {
 		switch(gd->baudrate){
+		case 600:
+			*uart_scale = 255;
+			*uart_step  = 805;
+			break;
+		case 1200:
+			*uart_scale = 209;
+			*uart_step  = 1321;
+			break;
+		case 2400:
+			*uart_scale = 104;
+			*uart_step  = 1321;
+			break;
+		case 4800:
+			*uart_scale = 54;
+			*uart_step  = 1384;
+			break;
 		case 9600:
 			*uart_scale = 78;
-			*uart_step = 3976;
+			*uart_step  = 3976;
 			break;
 		case 14400:
 			*uart_scale = 98;
-			*uart_step = 7474;
+			*uart_step  = 7474;
 			break;
 		case 19200:
 			*uart_scale = 55;
-			*uart_step = 5637;
+			*uart_step  = 5637;
 			break;
 		case 28800:
 			*uart_scale = 77;
-			*uart_step = 11777;
+			*uart_step  = 11777;
 			break;
 		case 38400:
 			*uart_scale = 36;
-			*uart_step = 7449;
+			*uart_step  = 7449;
 			break;
 		case 56000:
 			*uart_scale = 4;
-			*uart_step = 1468;
+			*uart_step  = 1468;
 			break;
 		case 57600:
 			*uart_scale = 35;
-			*uart_step = 10871;
+			*uart_step  = 10871;
 			break;
 		case 115200:
 			*uart_scale = 20;
-			*uart_step = 12683;
+			*uart_step  = 12683;
 			break;
 		case 128000:
 			*uart_scale = 11;
-			*uart_step = 8053;
+			*uart_step  = 8053;
+			break;
+		case 153600:
+			*uart_scale = 9;
+			*uart_step  = 8053;
 			break;
 		case 230400:
 			*uart_scale = 9;
-			*uart_step = 12079;
+			*uart_step  = 12079;
+			break;
+		case 250000:
+			*uart_scale = 6;
+			*uart_step  = 9175;
 			break;
 		case 256000:
 			*uart_scale = 5;
-			*uart_step = 8053;
+			*uart_step  = 8053;
 			break;
 		case 460800:
 			*uart_scale = 4;
-			*uart_step = 12079;
+			*uart_step  = 12079;
+			break;
+		case 576000:
+			*uart_scale = 3;
+			*uart_step  = 12079;
 			break;
 		case 921600:
 			*uart_scale = 1;
-			*uart_step = 9663;
+			*uart_step  = 9663;
+			break;
+		case 1000000:
+			*uart_scale = 1;
+			*uart_step  = 10485;
+			break;
+		case 1152000:
+			*uart_scale = 1;
+			*uart_step  = 12079;
+			break;
+		case 1500000:
+			*uart_scale = 0;
+			*uart_step  = 7864;
+			break;
+		case 2000000:
+			*uart_scale = 0;
+			*uart_step  = 10485;
 			break;
 		default:
 			*uart_scale = (25000000 / (16 * gd->baudrate)) - 1;
