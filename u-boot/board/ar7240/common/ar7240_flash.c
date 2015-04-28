@@ -73,7 +73,6 @@ static void flash_set_geom(int size, int sector_count, int sector_size){
 
 	for(i = 0; i < info->sector_count; i++){
 		info->start[i] = CFG_FLASH_BASE + (i * info->sector_size);
-		info->protect[i] = 0;
 	}
 }
 

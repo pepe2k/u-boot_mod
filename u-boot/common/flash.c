@@ -78,18 +78,6 @@ int flash_write(char *src, ulong addr, ulong cnt){
 		return(ERR_INVAL);
 	}
 
-	for(info = info_first; info <= info_last; ++info){
-		ulong b_end = info->start[0] + info->size; /* bank end addr */
-		short s_end = info->sector_count - 1;
-		for(i = 0; i < info->sector_count; ++i){
-			ulong e_addr = (i == s_end) ? b_end : info->start[i + 1];
-
-			if((end >= info->start[i]) && (addr < e_addr) && (info->protect[i] != 0)){
-				return(ERR_PROTECTED);
-			}
-		}
-	}
-
 	/* finally write data to flash */
 	for(info = info_first; info <= info_last && cnt > 0; ++info){
 		ulong len;
@@ -120,9 +108,6 @@ void flash_perror(int err){
 			break;
 		case ERR_NOT_ERASED:
 			puts("## Error: FLASH not erased\n");
-			break;
-		case ERR_PROTECTED:
-			puts("## Error: can't write to protected sectors\n");
 			break;
 		case ERR_INVAL:
 			puts("## Error: outside available FLASH\n");

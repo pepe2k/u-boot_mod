@@ -35,7 +35,6 @@ typedef struct {
 	ushort	sector_count;					/* number of erase units		*/
 	ulong	flash_id;						/* combined device & manufacturer code	*/
 	ulong	start[CFG_MAX_FLASH_SECT];		/* physical sector start addresses */
-	uchar	protect[CFG_MAX_FLASH_SECT];	/* sector protection status	*/
 } flash_info_t;
 
 
@@ -43,7 +42,6 @@ typedef struct {
 extern unsigned long flash_init (void);
 extern int flash_erase(flash_info_t *, int, int);
 extern int flash_sect_erase(ulong addr_first, ulong addr_last);
-extern int flash_sect_protect(int flag, ulong addr_first, ulong addr_last);
 
 /* common/flash.c */
 extern int flash_write(char *, ulong, ulong);

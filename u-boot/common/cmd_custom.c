@@ -228,10 +228,6 @@ int do_default_env(cmd_tbl_t * cmdtp, int flag, int argc, char *argv[]){
 
 	end_addr = flash_sect_addr + len - 1;
 
-	if(flash_sect_protect(0, flash_sect_addr, end_addr)){
-		return(1);
-	}
-
 	/* erase whole env sector */
 	if(flash_sect_erase(flash_sect_addr, end_addr)){
 		rcode = 1;
