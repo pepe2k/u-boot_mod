@@ -791,7 +791,6 @@
 #if defined(CONFIG_FOR_DLINK_DIR505_A1)
 
 	#define CONFIG_COMMANDS (CFG_CMD_MEMORY | \
-							 CFG_CMD_DHCP   | \
 							 CFG_CMD_PING   | \
 							 CFG_CMD_FLASH  | \
 							 CFG_CMD_NET    | \
