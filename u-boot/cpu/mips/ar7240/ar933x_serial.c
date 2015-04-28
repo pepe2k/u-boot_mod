@@ -158,14 +158,13 @@ int serial_init(void)
 	u32 uart_cs;
 
 	/*
-	 * Set GPIO10 (UART_SO) as output and enable UART and RTS/CTS,
+	 * Set GPIO10 (UART_SO) as output and enable UART,
 	 * BIT(15) in GPIO_FUNCTION_1 register must be written with 1
 	 */
 	ar933x_reg_read_set(GPIO_OE_REG, GPIO10);
 
 	ar933x_reg_read_set(GPIO_FUNCTION_1_REG,
 		(1 << GPIO_FUNCTION_1_UART_EN_SHIFT) |
-		(1 << GPIO_FUNCTION_1_UART_RTS_CTS_EN_SHIFT) |
 		(1 << 15));
 
 	/*
