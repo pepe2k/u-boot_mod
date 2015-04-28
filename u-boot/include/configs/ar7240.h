@@ -15,7 +15,10 @@
 #undef  CONFIG_AUTOBOOT_DELAY_STR
 #define DEBUG_BOOTKEYS				0
 #define CONFIG_BAUDRATE				115200
-#define CFG_BAUDRATE_TABLE			{115200}
+#define CFG_BAUDRATE_TABLE			{ 600,    1200,   2400,    4800,    9600,    14400,  \
+									  19200,  28800,  38400,   56000,   57600,   115200, \
+									  128000, 153600, 230400,  250000,  256000,  460800, \
+									  576000, 921600, 1000000, 1152000, 1500000, 2000000 }
 
 /*
  * Miscellaneous configurable options
