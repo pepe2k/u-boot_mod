@@ -113,7 +113,8 @@
 						 CFG_CMD_ECHO   | \
 						 CFG_CMD_BOOTD  | \
 						 CFG_CMD_ITEST  | \
-						 CFG_CMD_ENV)
+						 CFG_CMD_ENV    | \
+						 CFG_CMD_LOADB)
 
 // Enable NetConsole and custom NetConsole port
 #define CONFIG_NETCONSOLE

@@ -816,7 +816,8 @@
 							 CFG_CMD_BOOTD  | \
 							 CFG_CMD_ITEST  | \
 							 CFG_CMD_IMI    | \
-							 CFG_CMD_ENV)
+							 CFG_CMD_ENV    | \
+							 CFG_CMD_LOADB)
 
 #else
 
@@ -831,7 +832,8 @@
 							 CFG_CMD_ECHO   | \
 							 CFG_CMD_BOOTD  | \
 							 CFG_CMD_ITEST  | \
-							 CFG_CMD_ENV)
+							 CFG_CMD_ENV    | \
+							 CFG_CMD_LOADB)
 
 #endif
 
