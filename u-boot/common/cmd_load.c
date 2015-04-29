@@ -49,7 +49,9 @@ static int write_record(char *buf);
 static int do_echo = 1;
 #endif /* CFG_CMD_LOADS */
 
-#if (CONFIG_COMMANDS & CFG_CMD_LOADB) || defined(CFG_LOADS_BAUD_CHANGE)
+#if (CONFIG_COMMANDS & CFG_CMD_LOADB) || \
+	(CONFIG_COMMANDS & CFG_CMD_LOADS) || \
+	(CONFIG_COMMANDS & CFG_CMD_SAVES)
 static const unsigned long baudrate_table[] = CFG_BAUDRATE_TABLE;
 #define	N_BAUDRATES (sizeof(baudrate_table) / sizeof(baudrate_table[0]))
 
@@ -82,11 +84,9 @@ int do_load_serial(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 	int i;
 	char *env_echo;
 	int rcode = 0;
-#ifdef CFG_LOADS_BAUD_CHANGE
 	int load_baudrate, current_baudrate;
 
 	load_baudrate = current_baudrate = gd->baudrate;
-#endif
 
 	if(((env_echo = getenv("loads_echo")) != NULL) && (*env_echo == '1')){
 		do_echo = 1;
@@ -94,7 +94,6 @@ int do_load_serial(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 		do_echo = 0;
 	}
 
-#ifdef CFG_LOADS_BAUD_CHANGE
 	if(argc >= 2){
 		offset = simple_strtoul(argv[1], NULL, 16);
 	}
@@ -121,11 +120,6 @@ int do_load_serial(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 			switch_baudrate(load_baudrate, 0);
 		}
 	}
-#else /* ! CFG_LOADS_BAUD_CHANGE */
-	if(argc == 2){
-		offset = simple_strtoul(argv[1], NULL, 16);
-	}
-#endif /* CFG_LOADS_BAUD_CHANGE */
 
 	printf("Ready for S-Record download...\n");
 
@@ -147,16 +141,11 @@ int do_load_serial(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 	if(addr == ~0){
 		printf("## Error: S-Record download aborted!\n");
 		rcode = 1;
-	} else {
-		printf("Start address      = 0x%08lX\n", addr);
-		load_addr = addr;
 	}
 
-#ifdef CFG_LOADS_BAUD_CHANGE
 	if(load_baudrate != current_baudrate){
 		switch_baudrate(current_baudrate, 1);
 	}
-#endif
 
 	return rcode;
 }
@@ -187,13 +176,14 @@ static ulong load_serial(ulong offset)
 		case SREC_DATA3:
 		case SREC_DATA4:
 			store_addr = addr + offset;
+
 #ifndef CFG_NO_FLASH
 			if(addr2info(store_addr)){
-				int rc = flash_write((char *)binbuf,store_addr,binlen);
+				int rc = flash_write((char *)binbuf, store_addr, binlen);
 
 				if(rc != 0){
 					flash_perror(rc);
-					return(~0);
+					return (~0);
 				}
 			} else
 #endif
@@ -213,11 +203,12 @@ static ulong load_serial(ulong offset)
 			udelay(10000);
 
 			size = end_addr - start_addr + 1;
-			printf("\n"
-					"First load address = 0x%08lX\n"
-					"Last  load address = 0x%08lX\n"
-					"Total size         = 0x%08lX = %ld bytes\n",
-					start_addr, end_addr, size, size);
+
+			printf("\nS-Record download complete!\n");
+			printf("   First load address: 0x%08lX\n", start_addr);
+			printf("    Last load address: 0x%08lX\n", end_addr);
+			printf("Total downloaded size: 0x%08lX (%d bytes)\n", size, size);
+			printf("   Data start address: 0x%08lX\n\n", addr);
 
 			flush_cache(start_addr, size);
 
@@ -289,16 +280,14 @@ int do_save_serial(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 {
 	ulong offset = 0;
 	ulong size   = 0;
-#ifdef CFG_LOADS_BAUD_CHANGE
 	int save_baudrate, current_baudrate, i;
 
 	save_baudrate = current_baudrate = gd->baudrate;
-#endif
 
 	if(argc >= 2){
 		offset = simple_strtoul(argv[1], NULL, 16);
 	}
-#ifdef CFG_LOADS_BAUD_CHANGE
+
 	if(argc >= 3){
 		size = simple_strtoul(argv[2], NULL, 16);
 	}
@@ -325,11 +314,6 @@ int do_save_serial(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 			switch_baudrate(save_baudrate, 0);
 		}
 	}
-#else /* ! CFG_LOADS_BAUD_CHANGE */
-	if(argc == 3){
-		size = simple_strtoul(argv[2], NULL, 16);
-	}
-#endif /* CFG_LOADS_BAUD_CHANGE */
 
 	printf("Ready for S-Record upload, press ENTER to proceed...\n");
 
@@ -341,14 +325,12 @@ int do_save_serial(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 	if(save_serial(offset, size)){
 		printf("## Error: S-Record upload aborted!\n");
 	} else {
-		printf("S-Record upload complete!\n");
+		printf("\nS-Record upload complete!\n");
 	}
 
-#ifdef CFG_LOADS_BAUD_CHANGE
 	if(save_baudrate != current_baudrate){
 		switch_baudrate(current_baudrate, 1);
 	}
-#endif
 
 	return 0;
 }
@@ -476,24 +458,32 @@ char his_quote;		/* quote chars he'll use */
 
 int do_load_serial_bin(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 {
-	ulong offset = 0;
-	int load_baudrate, current_baudrate;
+	ulong address = 0;
 	int rcode = 0, size_dl = 0;
 	int i;
 	char *s, buf[32];;
-
-	/* pre-set offset from CFG_LOAD_ADDR */
-	offset = CFG_LOAD_ADDR;
-
-	/* pre-set offset from $loadaddr */
-	if((s = getenv("loadaddr")) != NULL){
-		offset = simple_strtoul(s, NULL, 16);
-	}
+	int load_baudrate, current_baudrate;
 
 	load_baudrate = current_baudrate = gd->baudrate;
 
+	/* pre-set address from $loadaddr */
+	if((s = getenv("loadaddr")) != NULL){
+		address = simple_strtoul(s, NULL, 16);
+	}
+
 	if(argc >= 2){
-		offset = simple_strtoul(argv[1], NULL, 16);
+		address = simple_strtoul(argv[1], NULL, 16);
+	}
+
+	if(address == 0){
+		printf("## Error: destination address can't be 0x0!\n");
+		return 1;
+	}
+
+	/* don't allow to write directly to FLASH (that will need erase before!) */
+	if(addr2info(address) != NULL){
+		printf("## Error: destination address in FLASH is not allowed!\n");
+		return 1;
 	}
 
 	if(argc == 3){
@@ -520,23 +510,19 @@ int do_load_serial_bin(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 	}
 
 	if(strcmp(argv[0],"loady") == 0){
-		printf("Ready for binary (ymodem) download to 0x%08lX at %d bps...\n",
-				offset, load_baudrate);
-
-		size_dl = load_serial_ymodem(offset);
+		printf("Ready for binary (Ymodem) download to 0x%08lX at %d bps...\n", address, load_baudrate);
+		size_dl = load_serial_ymodem(address);
 	} else {
-		printf("Ready for binary (kermit) download to 0x%08lX at %d bps...\n",
-				offset, load_baudrate);
-
-		size_dl = load_serial_bin(offset);
+		printf("Ready for binary (Kermit) download to 0x%08lX at %d bps...\n", address, load_baudrate);
+		size_dl = load_serial_bin(address);
 	}
 
 	if(size_dl > 0){
-		printf("\nTransfer complete!\n");
+		printf("\n%s download complete!\n", strcmp(argv[0],"loady") == 0 ? "Ymodem" : "Kermit");
 		printf("Total downloaded size: 0x%08lX (%d bytes)\n", size_dl, size_dl);
-		printf("   Data start address: 0x%08lX\n\n", offset);
+		printf("   Data start address: 0x%08lX\n\n", address);
 
-		flush_cache(offset, size_dl);
+		flush_cache(address, size_dl);
 
 		sprintf(buf, "%X", size_dl);
 		setenv("filesize", buf);
@@ -552,11 +538,11 @@ int do_load_serial_bin(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 	return rcode;
 }
 
-static int load_serial_bin(ulong offset)
+static int load_serial_bin(ulong address)
 {
 	int size, i;
 
-	set_kerm_bin_mode((ulong *) offset);
+	set_kerm_bin_mode((ulong *)address);
 	size = k_recv();
 
 	/*
@@ -671,6 +657,7 @@ static void os_data_save(void)
 	os_data_count_saved = os_data_count;
 	os_data_addr_saved  = os_data_addr;
 }
+
 static void os_data_restore(void)
 {
 	os_data_state = os_data_state_saved;
@@ -691,7 +678,7 @@ static void bin_data_char(char new_char)
 
 static void set_kerm_bin_mode(unsigned long *addr)
 {
-	bin_start_address = (char *) addr;
+	bin_start_address = (char *)addr;
 	os_data_init = bin_data_init;
 	os_data_char = bin_data_char;
 }
@@ -1053,7 +1040,7 @@ static int getcxmodem(void)
 	return -1;
 }
 
-static ulong load_serial_ymodem(ulong offset)
+static ulong load_serial_ymodem(ulong address)
 {
 	int size;
 	int err;
@@ -1070,24 +1057,11 @@ static ulong load_serial_ymodem(ulong offset)
 
 	if(!res){
 		while((res = xyzModem_stream_read(ymodemBuf, 1024, &err)) > 0){
-			store_addr = addr + offset;
+			store_addr = addr + address;
 			size += res;
 			addr += res;
-#ifndef CFG_NO_FLASH
-			if(addr2info(store_addr)){
-				int rc;
 
-				rc = flash_write((char *) ymodemBuf, store_addr, res);
-				if(rc != 0){
-					flash_perror(rc);
-					return(~0);
-				}
-			} else
-#endif
-			{
-				memcpy((char *)(store_addr), ymodemBuf, res);
-			}
-
+			memcpy((char *)(store_addr), ymodemBuf, res);
 		}
 	} else {
 		printf("\n## Error: %s\n", xyzModem_error(err));
@@ -1104,46 +1078,30 @@ static ulong load_serial_ymodem(ulong offset)
 /* -------------------------------------------------------------------- */
 
 #if (CONFIG_COMMANDS & CFG_CMD_LOADS)
-
-#ifdef CFG_LOADS_BAUD_CHANGE
-U_BOOT_CMD(loads, 3, 0, do_load_serial, "load S-Record file over serial line\n",
+U_BOOT_CMD(loads, 3, 0, do_load_serial, "load S-Record file over serial\n",
 	"[off] [baud]\n"
-	"\t- load S-Record file over serial line with offset 'off' and baudrate 'baud'\n"
+	"\t- load S-Record file over serial with offset 'off' and baudrate 'baud'\n"
 );
-#else /* ! CFG_LOADS_BAUD_CHANGE */
-U_BOOT_CMD(loads, 2, 0, do_load_serial, "load S-Record file over serial line\n",
-	"[off]\n"
-	"\t- load S-Record file over serial line with offset 'off'\n"
-);
-#endif /* #ifdef CFG_LOADS_BAUD_CHANGE */
 
 /*
  * SAVES always requires LOADS support, but not vice versa
  */
 #if (CONFIG_COMMANDS & CFG_CMD_SAVES)
-#ifdef CFG_LOADS_BAUD_CHANGE
-U_BOOT_CMD(saves, 4, 0, do_save_serial, "save S-Record file over serial line\n",
-	"[off] [size] [baud]\n"
-	"\t- save S-Record file over serial line with offset 'off', size 'size' and baudrate 'baud'\n"
+U_BOOT_CMD(saves, 4, 0, do_save_serial, "save S-Record file over serial\n",
+	"[addr] [size] [baud]\n"
+	"\t- upload S-Record file over serial from address 'addr', size 'size' with baudrate 'baud'\n"
 );
-#else /* ! CFG_LOADS_BAUD_CHANGE */
-U_BOOT_CMD(saves, 3, 0,	do_save_serial, "save S-Record file over serial line\n",
-	"[off] [size]\n"
-	"\t- save S-Record file over serial line with offset 'off' and size 'size'\n"
-);
-#endif /* #ifdef CFG_LOADS_BAUD_CHANGE */
 #endif /* #if (CONFIG_COMMANDS & CFG_CMD_SAVES) */
-
 #endif /* #if (CONFIG_COMMANDS & CFG_CMD_LOADS) */
 
 #if (CONFIG_COMMANDS & CFG_CMD_LOADB)
-U_BOOT_CMD(loadb, 3, 0, do_load_serial_bin, "load binary file over serial line (kermit mode)\n",
-	"[off] [baud]\n"
-	"\t- load binary file over serial line with offset 'off' and baudrate 'baud'\n"
+U_BOOT_CMD(loadb, 3, 0, do_load_serial_bin, "load binary file over serial (Kermit mode)\n",
+	"[addr] [baud]\n"
+	"\t- load binary file over serial at address 'addr', with baudrate 'baud'\n"
 );
 
-U_BOOT_CMD(loady, 3, 0, do_load_serial_bin, "load binary file over serial line (ymodem mode)\n",
-	"[off] [baud]\n"
-	"\t- load binary file over serial line with offset 'off' and baudrate 'baud'\n"
+U_BOOT_CMD(loady, 3, 0, do_load_serial_bin, "load binary file over serial (Ymodem mode)\n",
+	"[addr] [baud]\n"
+	"\t- load binary file over serial at address 'addr', with baudrate 'baud'\n"
 );
 #endif /* #if (CONFIG_COMMANDS & CFG_CMD_LOADB)*/
