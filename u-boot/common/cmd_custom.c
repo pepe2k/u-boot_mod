@@ -672,7 +672,7 @@ U_BOOT_CMD(setclk, 2, 0, do_set_clocks, "select clocks configuration from predef
 		"index\n"
 		"\t- save 'index' configuration in FLASH\n"
 		"setclk\n"
-		"\t- prints available clocks configurations and current settings");
+		"\t- prints available clocks configurations and current settings\n");
 
 /*
  * Remove (clear) PLL and clock settings in FLASH
