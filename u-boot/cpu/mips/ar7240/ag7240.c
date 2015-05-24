@@ -30,19 +30,11 @@ ag7240_mac_t *ag7240_macs[CFG_AG7240_NMACS];
 
 extern void ar933x_sys_frequency(u32 *cpu_freq, u32 *ddr_freq, u32 *ahb_freq);
 
-extern int athrs26_phy_setup(int unit);
-extern int athrs26_phy_is_up(int unit);
-extern int athrs26_phy_is_fdx(int unit);
-extern int athrs26_phy_speed(int unit);
 extern void athrs26_reg_init(void);
 extern void athrs26_reg_init_lan(void);
 extern int athrs26_mdc_check(void);
 
 #ifdef CONFIG_F1E_PHY
-extern int athr_phy_setup(int unit);
-extern int athr_phy_is_up(int unit);
-extern int athr_phy_is_fdx(int unit);
-extern int athr_phy_speed(int unit);
 extern void athr_reg_init(void);
 #endif
 
