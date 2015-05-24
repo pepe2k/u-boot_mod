@@ -18,14 +18,12 @@
 #define _10BASET	10
 #endif
 
-#define ag7240_unit2mac(_unit)     ag7240_macs[(_unit)]
-#define ag7240_name2mac(name)	   strcmp(name,"eth0") ? ag7240_unit2mac(1) : ag7240_unit2mac(0)
+#define ag7240_unit2mac(_unit)	ag7240_macs[(_unit)]
+#define ag7240_name2mac(name)	strcmp(name,"eth0") ? ag7240_unit2mac(1) : ag7240_unit2mac(0)
 #define CHECK_BIT(var,pos)			((var) & (1<<(pos)))
 
 uint16_t ag7240_miiphy_read(char *devname, uint32_t phaddr, uint8_t reg);
-
 void ag7240_miiphy_write(char *devname, uint32_t phaddr, uint8_t reg, uint16_t data);
-
 ag7240_mac_t *ag7240_macs[CFG_AG7240_NMACS];
 
 extern void ar933x_sys_frequency(u32 *cpu_freq, u32 *ddr_freq, u32 *ahb_freq);
@@ -40,10 +38,11 @@ extern void athr_reg_init(void);
 
 //#define AG7240_DEBUG
 
-static int ag7240_send(struct eth_device *dev, volatile void *packet, int length) {
+static int ag7240_send(struct eth_device *dev, volatile void *packet, int length)
+{
 	int i;
 
-	ag7240_mac_t *mac = (ag7240_mac_t *) dev->priv;
+	ag7240_mac_t *mac = (ag7240_mac_t *)dev->priv;
 
 	ag7240_desc_t *f = mac->fifo_tx[mac->next_tx];
 
@@ -52,14 +51,15 @@ static int ag7240_send(struct eth_device *dev, volatile void *packet, int length
 	f->pkt_start_addr = virt_to_phys(packet);
 
 	ag7240_tx_give_to_dma(f);
-	flush_cache((u32) packet, length);
+	flush_cache((u32)packet, length);
 	ag7240_reg_wr(mac, AG7240_DMA_TX_DESC, virt_to_phys(f));
 	ag7240_reg_wr(mac, AG7240_DMA_TX_CTRL, AG7240_TXE);
 
 	for (i = 0; i < MAX_WAIT; i++) {
 		udelay(10);
-		if (!ag7240_tx_owned_by_dma(f))
+		if (!ag7240_tx_owned_by_dma(f)) {
 			break;
+		}
 	}
 
 	if (i == MAX_WAIT) {
@@ -73,19 +73,19 @@ static int ag7240_send(struct eth_device *dev, volatile void *packet, int length
 		mac->next_tx = 0;
 	}
 
-	return (0);
+	return 0;
 }
 
-static int ag7240_recv(struct eth_device *dev) {
+static int ag7240_recv(struct eth_device *dev)
+{
 	int length;
 	ag7240_desc_t *f;
 	ag7240_mac_t *mac;
 
-	mac = (ag7240_mac_t *) dev->priv;
+	mac = (ag7240_mac_t *)dev->priv;
 
 	for (;;) {
 		f = mac->fifo_rx[mac->next_rx];
-
 		if (ag7240_rx_owned_by_dma(f)) {
 			break;
 		}
@@ -93,7 +93,7 @@ static int ag7240_recv(struct eth_device *dev) {
 		length = f->pkt_size;
 
 		NetReceive(NetRxPackets[mac->next_rx], length - 4);
-		flush_cache((u32) NetRxPackets[mac->next_rx], PKTSIZE_ALIGN);
+		flush_cache((u32)NetRxPackets[mac->next_rx], PKTSIZE_ALIGN);
 
 		ag7240_rx_give_to_dma(f);
 
@@ -107,13 +107,14 @@ static int ag7240_recv(struct eth_device *dev) {
 		ag7240_reg_wr(mac, AG7240_DMA_RX_CTRL, 1);
 	}
 
-	return (0);
+	return 0;
 }
 
 /*
  * Called in ag7240_hw_start() function
- * */
-void ag7240_mii_setup(ag7240_mac_t *mac) {
+ */
+void ag7240_mii_setup(ag7240_mac_t *mac)
+{
 	u32 mgmt_cfg_val;
 	u32 cpu_freq, ddr_freq, ahb_freq;
 	u32 check_cnt;
@@ -187,8 +188,8 @@ void ag7240_mii_setup(ag7240_mac_t *mac) {
 		default:
 			mgmt_cfg_val = 0x7;
 		}
-		if ((is_ar7241() || is_ar7242())) {
 
+		if ((is_ar7241() || is_ar7242())) {
 			/* External MII mode */
 			if (mac->mac_unit == 0 && is_ar7242()) {
 				mgmt_cfg_val = 0x6;
@@ -196,12 +197,12 @@ void ag7240_mii_setup(ag7240_mac_t *mac) {
 				ag7240_reg_wr(mac, AG7240_MAC_MII_MGMT_CFG, mgmt_cfg_val | (1 << 31));
 				ag7240_reg_wr(mac, AG7240_MAC_MII_MGMT_CFG, mgmt_cfg_val);
 			}
+
 			/* Virian */
 			mgmt_cfg_val = 0x4;
 			ag7240_reg_wr(ag7240_macs[1], AG7240_MAC_MII_MGMT_CFG, mgmt_cfg_val | (1 << 31));
 			ag7240_reg_wr(ag7240_macs[1], AG7240_MAC_MII_MGMT_CFG, mgmt_cfg_val);
 			printf("Virian MDC CFG Value ==> %x\n", mgmt_cfg_val);
-
 		} else if (is_ar933x()) {
 			//GE0 receives Rx/Tx clock, and use S26 phy
 			ar7240_reg_rmw_set(AG7240_ETH_CFG, AG7240_ETH_CFG_MII_GE0_SLAVE);
@@ -224,6 +225,7 @@ void ag7240_mii_setup(ag7240_mac_t *mac) {
 		} else { /* Python 1.0 & 1.1 */
 			if (mac->mac_unit == 0) {
 				check_cnt = 0;
+
 				while (check_cnt++ < 10) {
 					ag7240_reg_wr(mac, AG7240_MAC_MII_MGMT_CFG, mgmt_cfg_val | (1 << 31));
 					ag7240_reg_wr(mac, AG7240_MAC_MII_MGMT_CFG, mgmt_cfg_val);
@@ -233,17 +235,17 @@ void ag7240_mii_setup(ag7240_mac_t *mac) {
 					}
 #endif
 				}
+
 				if (check_cnt == 11) {
 					printf("%s: MDC check failed\n", __func__);
 				}
 			}
 		}
-
 	}
 }
 
-static void ag7240_hw_start(ag7240_mac_t *mac) {
-
+static void ag7240_hw_start(ag7240_mac_t *mac)
+{
 	if (mac->mac_unit) {
 		ag7240_reg_wr(mac, AG7240_MAC_CFG1, (AG7240_MAC_CFG1_RX_EN | AG7240_MAC_CFG1_TX_EN));
 		ag7240_reg_rmw_set(mac, AG7240_MAC_CFG2, (AG7240_MAC_CFG2_PAD_CRC_EN | AG7240_MAC_CFG2_LEN_CHECK | AG7240_MAC_CFG2_IF_1000));
@@ -266,18 +268,18 @@ static void ag7240_hw_start(ag7240_mac_t *mac) {
 	 * frames now,the PC first will tx a ARP request packet, it's a broadcast packet.
 	 */
 	ag7240_reg_wr(mac, AG7240_MAC_FIFO_CFG_5, 0x66b82);
-	/* 
+	/*
 	 * Setting Drop CRC Errors, Pause Frames, Length Error frames
 	 * and Multi/Broad cast frames.
 	 */
 	//ag7240_reg_wr(mac, AG7240_MAC_FIFO_CFG_5, 0x7eccf);
 
-
 	ag7240_reg_wr(mac, AG7240_MAC_FIFO_CFG_3, 0x1f00140);
 	//printf("cfg1:\t%#x\ncfg2:\t%#x\n", ag7240_reg_rd(mac, AG7240_MAC_CFG1), ag7240_reg_rd(mac, AG7240_MAC_CFG2));
 }
 
-static int ag7240_check_link(ag7240_mac_t *mac) {
+static int ag7240_check_link(ag7240_mac_t *mac)
+{
 	int link = 0, duplex = 0, speed = 0;
 	char *s;
 
@@ -290,7 +292,7 @@ static int ag7240_check_link(ag7240_mac_t *mac) {
 	mac->link = link;
 
 	if (!mac->link) {
-		if((s != NULL) && (strcmp(s, "nc") != 0)){
+		if ((s != NULL) && (strcmp(s, "nc") != 0)){
 			printf("Link down: %s\n", mac->dev->name);
 		}
 		return 0;
@@ -307,7 +309,7 @@ static int ag7240_check_link(ag7240_mac_t *mac) {
 		if (is_wasp() && (mac->mac_unit == 0)) {
 			ar7240_reg_wr(AR7242_ETH_XMII_CONFIG,0x0e000000);
 		}
-#else      
+#else
 		if (is_wasp() && (mac->mac_unit == 0)) {
 			ar7240_reg_wr(AR7242_ETH_XMII_CONFIG, 0x06000000);
 		}
@@ -318,7 +320,8 @@ static int ag7240_check_link(ag7240_mac_t *mac) {
 		ag7240_set_mac_if(mac, 0);
 		ag7240_set_mac_speed(mac, 1);
 		ag7240_reg_rmw_clear(mac, AG7240_MAC_FIFO_CFG_5, (1 << 19));
-		if ((is_ar7242() || is_wasp()) && (mac->mac_unit == 0)){
+
+		if ((is_ar7242() || is_wasp()) && (mac->mac_unit == 0)) {
 			ar7240_reg_wr(AR7242_ETH_XMII_CONFIG, 0x0101);
 		}
 		break;
@@ -339,7 +342,7 @@ static int ag7240_check_link(ag7240_mac_t *mac) {
 		return 0;
 	}
 
-	if (mac->link && (duplex == mac->duplex) && (speed == mac->speed)){
+	if (mac->link && (duplex == mac->duplex) && (speed == mac->speed)) {
 		return 1;
 	}
 
@@ -358,13 +361,13 @@ static int ag7240_check_link(ag7240_mac_t *mac) {
 /*
  * For every command we re-setup the ring and start with clean h/w rx state
  */
-static int ag7240_clean_rx(struct eth_device *dev, bd_t * bd) {
-
+static int ag7240_clean_rx(struct eth_device *dev, bd_t * bd)
+{
 	int i;
 	ag7240_desc_t *fr;
 	ag7240_mac_t *mac = (ag7240_mac_t*)dev->priv;
 
-	if (!ag7240_check_link(mac)){
+	if (!ag7240_check_link(mac)) {
 		return 0;
 	}
 
@@ -373,7 +376,7 @@ static int ag7240_clean_rx(struct eth_device *dev, bd_t * bd) {
 	for (i = 0; i < NO_OF_RX_FIFOS; i++) {
 		fr = mac->fifo_rx[i];
 		fr->pkt_start_addr = virt_to_phys(NetRxPackets[i]);
-		flush_cache((u32) NetRxPackets[i], PKTSIZE_ALIGN);
+		flush_cache((u32)NetRxPackets[i], PKTSIZE_ALIGN);
 		ag7240_rx_give_to_dma(fr);
 	}
 
@@ -387,10 +390,10 @@ static int ag7240_clean_rx(struct eth_device *dev, bd_t * bd) {
 	}
 
 	return 1;
-
 }
 
-static int ag7240_alloc_fifo(int ndesc, ag7240_desc_t ** fifo) {
+static int ag7240_alloc_fifo(int ndesc, ag7240_desc_t ** fifo)
+{
 	int i;
 	u32 size;
 	uchar *p = NULL;
@@ -403,38 +406,43 @@ static int ag7240_alloc_fifo(int ndesc, ag7240_desc_t ** fifo) {
 		return -1;
 	}
 
-	p = (uchar *) (((u32) p + CFG_CACHELINE_SIZE - 1) & ~(CFG_CACHELINE_SIZE - 1));
+	p = (uchar *)(((u32)p + CFG_CACHELINE_SIZE - 1) & ~(CFG_CACHELINE_SIZE - 1));
 	p = UNCACHED_SDRAM(p);
 
-	for (i = 0; i < ndesc; i++)
-		fifo[i] = (ag7240_desc_t *) p + i;
+	for (i = 0; i < ndesc; i++) {
+		fifo[i] = (ag7240_desc_t *)p + i;
+	}
 
 	return 0;
 }
 
-static int ag7240_setup_fifos(ag7240_mac_t *mac) {
+static int ag7240_setup_fifos(ag7240_mac_t *mac)
+{
 	int i;
 
-	if (ag7240_alloc_fifo(NO_OF_TX_FIFOS, mac->fifo_tx))
+	if (ag7240_alloc_fifo(NO_OF_TX_FIFOS, mac->fifo_tx)) {
 		return 1;
+	}
 
 	for (i = 0; i < NO_OF_TX_FIFOS; i++) {
 		mac->fifo_tx[i]->next_desc = (i == NO_OF_TX_FIFOS - 1) ? virt_to_phys(mac->fifo_tx[0]) : virt_to_phys(mac->fifo_tx[i + 1]);
 		ag7240_tx_own(mac->fifo_tx[i]);
 	}
 
-	if (ag7240_alloc_fifo(NO_OF_RX_FIFOS, mac->fifo_rx))
+	if (ag7240_alloc_fifo(NO_OF_RX_FIFOS, mac->fifo_rx)) {
 		return 1;
+	}
 
 	for (i = 0; i < NO_OF_RX_FIFOS; i++) {
 		mac->fifo_rx[i]->next_desc = (i == NO_OF_RX_FIFOS - 1) ? virt_to_phys(mac->fifo_rx[0]) : virt_to_phys(mac->fifo_rx[i + 1]);
 	}
 
-	return (1);
+	return 1;
 }
 
-static void ag7240_halt(struct eth_device *dev) {
-	ag7240_mac_t *mac = (ag7240_mac_t *) dev->priv;
+static void ag7240_halt(struct eth_device *dev)
+{
+	ag7240_mac_t *mac = (ag7240_mac_t *)dev->priv;
 	ag7240_reg_wr(mac, AG7240_DMA_RX_CTRL, 0);
 	while (ag7240_reg_rd(mac, AG7240_DMA_RX_CTRL))
 		;
@@ -443,7 +451,8 @@ static void ag7240_halt(struct eth_device *dev) {
 /*
  * Get MAC address stored in flash
  */
-static void ag7240_get_ethaddr(struct eth_device *dev) {
+static void ag7240_get_ethaddr(struct eth_device *dev)
+{
 	unsigned char *mac = dev->enetaddr;
 #ifdef OFFSET_MAC_ADDRESS
 	unsigned char buffer[6];
@@ -486,7 +495,8 @@ static void ag7240_get_ethaddr(struct eth_device *dev) {
 #endif
 }
 
-int ag7240_enet_initialize(bd_t * bis) {
+int ag7240_enet_initialize(bd_t * bis)
+{
 	struct eth_device *dev[CFG_AG7240_NMACS];
 	u32 mask, mac_h, mac_l;
 	int i;
@@ -542,7 +552,7 @@ int ag7240_enet_initialize(bd_t * bis) {
 		dev[i]->halt = ag7240_halt;
 		dev[i]->send = ag7240_send;
 		dev[i]->recv = ag7240_recv;
-		dev[i]->priv = (void *) ag7240_macs[i];
+		dev[i]->priv = (void *)ag7240_macs[i];
 	}
 
 	for (i = 0; i < CFG_AG7240_NMACS; i++) {
@@ -558,7 +568,7 @@ int ag7240_enet_initialize(bd_t * bis) {
 		if (!i) {
 			mask = (AR7240_RESET_GE0_MAC | AR7240_RESET_GE0_PHY | AR7240_RESET_GE1_MAC | AR7240_RESET_GE1_PHY);
 
-			if (is_ar7241() || is_ar7242() || is_wasp()){
+			if (is_ar7241() || is_ar7242() || is_wasp()) {
 				mask = mask | AR7240_RESET_GE0_MDIO | AR7240_RESET_GE1_MDIO;
 			}
 
@@ -600,7 +610,6 @@ int ag7240_enet_initialize(bd_t * bis) {
 
 		/* if using header for register configuration, we have to     */
 		/* configure s26 register after frame transmission is enabled */
-
 		if (ag7240_macs[i]->mac_unit == 0) { /* WAN Phy */
 #ifdef CONFIG_AR7242_S16_PHY
 			if (is_ar7242() || is_wasp()) {
@@ -658,7 +667,8 @@ int ag7240_enet_initialize(bd_t * bis) {
 }
 
 /* Modified by lsz for reduceing CMD_MII, but ag7240 need this 090306 */
-uint16_t ag7240_miiphy_read(char *devname, uint32_t phy_addr, uint8_t reg) {
+uint16_t ag7240_miiphy_read(char *devname, uint32_t phy_addr, uint8_t reg)
+{
 	ag7240_mac_t *mac = ag7240_name2mac(devname);
 	uint16_t addr = (phy_addr << AG7240_ADDR_SHIFT) | reg, val;
 	volatile int rddata;
@@ -694,7 +704,8 @@ uint16_t ag7240_miiphy_read(char *devname, uint32_t phy_addr, uint8_t reg) {
 	return val;
 }
 
-void ag7240_miiphy_write(char *devname, uint32_t phy_addr, uint8_t reg, uint16_t data) {
+void ag7240_miiphy_write(char *devname, uint32_t phy_addr, uint8_t reg, uint16_t data)
+{
 	ag7240_mac_t *mac = ag7240_name2mac(devname);
 	uint16_t addr = (phy_addr << AG7240_ADDR_SHIFT) | reg;
 	volatile int rddata;
