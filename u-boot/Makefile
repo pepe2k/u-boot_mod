@@ -492,6 +492,18 @@ gs_oolite_v1_dev_config : unconfig hornet_common_config
 	
 	@./mkconfig -a ap121 mips mips ap121 ar7240 ar7240
 
+bsb_config : unconfig hornet_common_config
+	@echo '======= Configuring for Black Swift board (128K compressed) at:' `date` '======='
+	@echo "#define CONFIG_FOR_BSB		            1" >> include/config.h
+	@echo "#define GPIO_SYS_LED_BIT                    27" >> include/config.h
+	@echo "#define GPIO_SYS_LED_ON                      0" >> include/config.h
+	@echo "#define GPIO_RST_BUTTON_BIT                 11" >> include/config.h
+	@echo "#define GPIO_RST_BUTTON_IS_ACTIVE_LOW        1" >> include/config.h
+	@echo "#define DEFAULT_FLASH_SIZE_IN_MB            16" >> include/config.h
+	@echo "#define BOARD_CUSTOM_STRING                  \"U-Boot for Black Swift board (AR9331)\"" >> include/config.h
+
+	@./mkconfig -a ap121 mips mips ap121 ar7240 ar7240
+
 carambola2_config : unconfig hornet_common_config
 	@/bin/echo -e '\e[32m> Configuring for 8devices Carambola 2 at:' `date` '\e[0m'
 	@echo "#define CONFIG_FOR_8DEVICES_CARAMBOLA2       1" >> include/config.h
