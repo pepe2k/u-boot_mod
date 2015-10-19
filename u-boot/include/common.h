@@ -520,6 +520,7 @@ void	wait_ticks    (unsigned long);
 
 /* lib_$(ARCH)/time.c */
 void	udelay	      (unsigned long);
+#define milisecdelay(_x)                        udelay((_x) * 1000)
 ulong	usec2ticks    (unsigned long usec);
 ulong	ticks2usec    (unsigned long ticks);
 int	init_timebase (void);
