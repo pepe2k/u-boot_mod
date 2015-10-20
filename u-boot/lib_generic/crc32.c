@@ -12,10 +12,14 @@
 #include <common.h>	/* to get command definitions like CFG_CMD_JFFS2 */
 #endif
 
-#include "zlib.h"
+#include "crc32.h"
 
 #define local static
 #define ZEXPORT	/* empty */
+#define uLong unsigned long
+#define uLongf uLong
+#define uInt unsigned int
+#define Bytef unsigned char
 unsigned long crc32 (unsigned long, const unsigned char *, unsigned int);
 
 #ifdef DYNAMIC_CRC_TABLE

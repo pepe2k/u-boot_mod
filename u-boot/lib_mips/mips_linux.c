@@ -24,7 +24,6 @@
 #include <common.h>
 #include <command.h>
 #include <image.h>
-#include <zlib.h>
 #include <asm/byteorder.h>
 #include <asm/addrspace.h>
 

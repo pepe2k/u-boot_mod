@@ -28,8 +28,6 @@
 #include <command.h>
 #include <image.h>
 #include <malloc.h>
-#include <zlib.h>
-#include <bzlib.h>
 #include <LzmaWrapper.h>
 #include <environment.h>
 #include <asm/byteorder.h>
