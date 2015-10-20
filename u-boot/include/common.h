@@ -538,6 +538,7 @@ int	vsprintf(char *buf, const char *fmt, va_list args);
 /* Hack: Forces compilation failure if must_be_zero is not zero. */
 #define crc32(must_be_zero, buf, len) \
 	tinf_crc32(buf, len*(sizeof(char[1 - 2*!!(must_be_zero)])))
+uint tinf_crc32(const void *data, uint length);
 
 /* common/console.c */
 int	console_init_f(void);	/* Before relocation; uses the serial  stuff	*/
