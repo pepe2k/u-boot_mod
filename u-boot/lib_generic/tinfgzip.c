@@ -32,7 +32,6 @@
  */
 
 #include "tinf.h"
-#include <stdio.h>
 
 #define FTEXT    1
 #define FHCRC    2
@@ -113,25 +112,13 @@ int tinf_gzip_uncompress(void *dest, unsigned int *destLen,
 
     res = tinf_uncompress(dst, destLen, start, src + sourceLen - start - 8);
 
-    if (res != TINF_OK) {
-	puts("uncompress error");
-	return TINF_DATA_ERROR;
-    }
+    if (res != TINF_OK) return TINF_DATA_ERROR;
 
-#if 0
-    if (*destLen != dlen) {
-	printf("len error %d != %d", *destLen, dlen);
-	return TINF_DATA_ERROR;
-    }
+    if (*destLen != dlen) return TINF_DATA_ERROR;
 
     /* -- check CRC32 checksum -- */
 
-    if (crc32 != tinf_crc32(dst, *destLen)) {
-	return TINF_DATA_ERROR;
-    }
-#endif
-    printf("expected len %08x vs decoded %08x\n", dlen, *destLen);
-    printf("expected crc32 %08x vs calculated %08x\n", crc32, tinf_crc32(dst, *destLen));
+    if (crc32 != tinf_crc32(dst, dlen)) return TINF_DATA_ERROR;
 
     return TINF_OK;
 }
