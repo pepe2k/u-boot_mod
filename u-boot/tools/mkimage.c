@@ -68,7 +68,10 @@ extern int errno;
 
 char *cmdname;
 
-extern unsigned long crc32 (unsigned long crc, const char *buf, unsigned int len);
+#include <tinf.h>
+/* Hack: Forces compilation failure if must_be_zero is not zero. */
+#define crc32(must_be_zero, buf, len) \
+	tinf_crc32(buf, len*(sizeof(char[1 - 2*!!(must_be_zero)])))
 
 typedef struct table_entry {
 	int	val;		/* as defined in image.h	*/

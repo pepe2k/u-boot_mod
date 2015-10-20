@@ -535,8 +535,9 @@ int	sprintf(char * buf, const char *fmt, ...);
 int	vsprintf(char *buf, const char *fmt, va_list args);
 
 /* lib_generic/crc32.c */
-ulong crc32 (ulong, const unsigned char *, uint);
-ulong crc32_no_comp (ulong, const unsigned char *, uint);
+/* Hack: Forces compilation failure if must_be_zero is not zero. */
+#define crc32(must_be_zero, buf, len) \
+	tinf_crc32(buf, len*(sizeof(char[1 - 2*!!(must_be_zero)])))
 
 /* common/console.c */
 int	console_init_f(void);	/* Before relocation; uses the serial  stuff	*/
