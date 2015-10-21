@@ -534,12 +534,6 @@ long	simple_strtol(const char *cp,char **endp,unsigned int base);
 int	sprintf(char * buf, const char *fmt, ...);
 int	vsprintf(char *buf, const char *fmt, va_list args);
 
-/* lib_generic/crc32.c */
-/* Hack: Forces compilation failure if must_be_zero is not zero. */
-#define crc32(must_be_zero, buf, len) \
-	tinf_crc32(buf, len*(sizeof(char[1 - 2*!!(must_be_zero)])))
-uint tinf_crc32(const void *data, uint length);
-
 /* common/console.c */
 int	console_init_f(void);	/* Before relocation; uses the serial  stuff	*/
 int	console_init_r(void);	/* After  relocation; uses the console stuff	*/

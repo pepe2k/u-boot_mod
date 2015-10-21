@@ -34,6 +34,7 @@
 #include <environment.h>
 #include <linux/stddef.h>
 #include <malloc.h>
+#include <tinf.h>
 
 DECLARE_GLOBAL_DATA_PTR;
 
@@ -99,8 +100,8 @@ int env_init(void){
 	ulong addr1 = (ulong)&(flash_addr->data);
 	ulong addr2 = (ulong)&(flash_addr_new->data);
 
-	crc1_ok = (crc32(0, flash_addr->data, ENV_SIZE) == flash_addr->crc);
-	crc2_ok = (crc32(0, flash_addr_new->data, ENV_SIZE) == flash_addr_new->crc);
+	crc1_ok = (tinf_crc32(flash_addr->data, ENV_SIZE) == flash_addr->crc);
+	crc2_ok = (tinf_crc32(flash_addr_new->data, ENV_SIZE) == flash_addr_new->crc);
 
 	if(crc1_ok && !crc2_ok){
 		gd->env_addr  = addr1;
@@ -193,7 +194,7 @@ Done:
 
 #else /* ! CFG_ENV_ADDR_REDUND */
 int env_init(void){
-	if(crc32(0, env_ptr->data, ENV_SIZE) == env_ptr->crc){
+	if(tinf_crc32(env_ptr->data, ENV_SIZE) == env_ptr->crc){
 		gd->env_addr = (ulong)&(env_ptr->data);
 		gd->env_valid = 1;
 
@@ -273,7 +274,7 @@ void env_relocate_spec(void){
 		end_addr_new = ltmp;
 	}
 
-	if(flash_addr_new->flags != OBSOLETE_FLAG && crc32(0, flash_addr_new->data, ENV_SIZE) == flash_addr_new->crc){
+	if(flash_addr_new->flags != OBSOLETE_FLAG && tinf_crc32(flash_addr_new->data, ENV_SIZE) == flash_addr_new->crc){
 		char flag = OBSOLETE_FLAG;
 
 		gd->env_valid = 2;

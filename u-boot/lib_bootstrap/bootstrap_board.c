@@ -28,6 +28,7 @@
 #include <version.h>
 #include <net.h>
 #include <environment.h>
+#include <tinf.h>
 #include "LzmaWrapper.h"
 
 //#define DEBUG_ENABLE_BOOTSTRAP_PRINTF
@@ -243,7 +244,7 @@ void bootstrap_board_init_r(gd_t *id, ulong dest_addr){
 	checksum = ntohl(hdr->ih_hcrc);
 	hdr->ih_hcrc = 0;
 
-	if(crc32(0, (unsigned char *)data, len) != checksum){
+	if(tinf_crc32((unsigned char *)data, len) != checksum){
 		return;
 	}
 
