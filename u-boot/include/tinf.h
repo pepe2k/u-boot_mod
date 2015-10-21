@@ -30,7 +30,7 @@ extern "C" {
 
 /* function prototypes */
 
-void TINFCC tinf_init();
+void TINFCC tinf_init(void);
 
 int TINFCC tinf_uncompress(void *dest, unsigned int *destLen,
                            const void *source, unsigned int sourceLen);
