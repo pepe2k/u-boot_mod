@@ -20,7 +20,7 @@ Table of contents
 	- [Using external programmer](#using-external-programmer)
 	- [Using UART, U-Boot console and TFTP server](#using-uart-u-boot-console-and-tftp-server)
 		- [Important notice!](#important-notice)
-		- [Step by step instruction](#step-by-step-instruction)
+		- [Step by step instructions](#step-by-step-instructions)
 	- [Using OpenWrt](#using-openwrt)
 	- [Using DD-WRT](#using-dd-wrt)
 - [How to use it?](#how-to-use-it)
@@ -505,6 +505,8 @@ Configure adapter to use the following settings:
 
 ### Using OpenWrt
 
+**This method is recommended!**
+
 Starting from official release "**[2014-11-19](https://github.com/pepe2k/u-boot_mod/releases/tag/2014-11-19)**", you will find ready **OpenWrt** images, with unlocked `u-boot` partition, embedded U-Boot image and dedicated small script for easy update process inside release tarball. All you need to do is download last release, select proper OpenWrt image for your device, install it and invoke one command: `u-boot-upgrade`:
 
 ```
@@ -537,154 +539,88 @@ root@OpenWrt:/# u-boot-upgrade
 
 ### Using DD-WRT
 
-#### Step by step instructions
+**WARNING! This method is not recommended!**
 
-Tutorial untested and taken from [here](http://zhujunsan.net/index.php/2013/08/install-web-failsafe-u-boot-for-wr703n/).
+1. Login into the router using telnet or SSH and find out which of the mtd partitions is the first one. In DD-WRT it is usally called `RedBoot`:
 
-1. Copy the following, and save to a shell script on your local computer (e.g. makeu.sh)
+  ```
+  root@DD-WRT:~# cat /proc/mtd
+  dev:    size   erasesize  name
+  mtd0: 00020000 00010000 "RedBoot"
+  mtd1: 003c0000 00010000 "linux"
+  mtd2: 002c0000 00010000 "rootfs"
+  mtd3: 00010000 00010000 "ddwrt"
+  mtd4: 00010000 00010000 "nvram"
+  mtd5: 00010000 00010000 "board_config"
+  mtd6: 00400000 00010000 "fullflash"
+  mtd7: 00020000 00010000 "fullboot"
+  ```
 
-    ```bash
-    #! /bin/sh
-    # high chance need have a change ...
-    
-    UBOOT_NAME=wr703n_tuboot_test_2012_06_06.bin
-    MD5SUM_SHOULD_BE="623dc0bba6fab68c22e5fb2f329d7d09"
-    
-    # need check the md5sum, any one byte in bootloader shoud right ...
-    CURRENT_MD5SUM_VAL=$( md5sum $UBOOT_NAME |awk '{print $1 }' )
-    echo "$UBOOT_NAME md5sum : $CURRENT_MD5SUM_VAL"
+  In this case, for **TP-Link TL-MR3020**, the `RedBoot` partition is the one, which contains U-Boot and additional data (MAC address, model number, PIN).
 
-    if [ $MD5SUM_SHOULD_BE = $CURRENT_MD5SUM_VAL ]; then
-        echo "$UBOOT_NAME md5sum check pass"
-    else
-        echo "###############$UBOOT_NAME md5sum check fail###############"
-        exit
-    fi
-    
-    RAW_UBOOT_LEN=`wc -c $UBOOT_NAME | awk '{print $1 }'`
-    NEED_PAD_LEN=$((0x1fc00-$RAW_UBOOT_LEN))
-    
-    # Generate a file used as pad ...
-    dd if=/dev/zero of=pad.bin bs=1 count=$NEED_PAD_LEN
-    cat $UBOOT_NAME pad.bin >tuboot_0x1fc00.bin
-    
-    echo "Backup some config first, just like MAC address ..."
-    dd if=/dev/mtd0 of=./config.bin bs=1 skip=$((0x1fc00))
-    cat ./tuboot_0x1fc00.bin ./config.bin >uboot_0x20000.bin
-    ```
+  **Warning!** If size of the first partition is smaller than the size of the modified U-Boot image, you should not continue!
 
-2. Edit the lines 3 and 4 to the name of the file you will flash, and its MD5 sum. e.g.:
+2. Using SCP or other method, transfer the new U-Boot image and corresponding MD5 file to the `/tmp` folder in device.
 
-    ```bash
-    ..
-    UBOOT_NAME=uboot_for_tl-wr740n_v4.bin
-    MD5SUM_SHOULD_BE="0c09e1d87724dc3e45872e8641b28916"
-    ..
-    ```
+  ```
+  root@DD-WRT:/tmp# ls -la
+  [...]
+  -rw-r--r--    1 root     root        125952 Nov  5  2015 uboot_for_tp-link_tl-mr3020.bin
+  -rw-r--r--    1 root     root            66 Nov  5  2015 uboot_for_tp-link_tl-mr3020.md5
+  [...]
+  ```
 
-    **IMPORTANT**: If you're editing the file in Windows, it's best to use Notepad++. Before you save **make sure** to **Edit -> EOL Conversion -> UNIX/OSX Format**. Otherwise, your script will not run, and will return an Error 2(it stops seeing the "then" on line 8, because the EOL character breaks it).
- 
-    You can grab the bin file's sum by running **md5sum uboot_for_tl-wr740n_v4.bin** under Linux, or use a tool like [HashTab for Windows](http://implbits.com/HashTab/HashTabWindows.aspx).
+3. Verify the MD5 sum of the image:
 
-3. Once you have your shell script, and your bin file, place them in a folder(in this example, we'll call it **yourfolder**), and SCP the folder into /tmp on the router (for Windows, you can use [WinSCP](http://winscp.net/eng/index.php)).
+  ```
+  root@DD-WRT:/tmp# md5sum uboot_for_tp-link_tl-mr3020.bin
+  aaae0f772ce007f7d1542b9233dd765b  uboot_for_tp-link_tl-mr3020.bin
 
-4. SSH into the router, and run the following first, to make a backup of your current U-Boot partition:
+  root@DD-WRT:/tmp# cat uboot_for_tp-link_tl-mr3020.md5
+  aaae0f772ce007f7d1542b9233dd765b *uboot_for_tp-link_tl-mr3020.bin
+  ```
 
-    ```bash
-    cd /tmp/yourfolder
-    cat /dev/mtd0 > ./uboot_backup.bin
-    ```
-    
-    SCP that file back to your computer for safe keeping.
+4. Make a backup of the current `RedBoot` partition (`mtd0`):
 
-5. Fix your script's permissions by invoking:
+  ```
+  root@DD-WRT:/tmp# dd if=/dev/mtd0 of=uboot_factory.bin
+  256+0 records in
+  256+0 records out
+  ```
 
-    ```bash
-    chmod 777 /tmp/yourfolder/makeu.sh
-    ```
+5. Using SCP or other method, transfer backuped `RedBoot` original partition to some safe place (I highly recommended you to save backup somewhere!).
 
-6. Run the builder script by invoking:
+6. You need to combine together original image and the one with U-Boot modification, but it seems that `dd` from DD-WRT does not support `conv=notrunc`, so we will use different approach:
 
-    ```bash
-    ./makeu.sh
-    ```
-    
-    You must get output similar to:
+  ```
+  root@DD-WRT:/tmp# dd if=uboot_factory.bin of=uboot_rest.bin bs=1 skip=$(wc -c < uboot_for_tp-link_tl-mr3020.bin)
+  5120+0 records in
+  5120+0 records out
 
-    ```ShellSession
-    root@superhornet:/tmp/superhornet# chmod 777 makeu.sh
-    root@superhornet:/tmp/superhornet# ./makeu.sh
-    uboot_for_tl-wr740n_v4.bin md5sum : 0c09e1d87724dc3e45872e8641b28916
-    uboot_for_tl-wr740n_v4.bin md5sum check pass
-    64512+0 records in
-    64512+0 records out
-    Backup some config first,just like MAC address ...
-    1024+0 records in
-    1024+0 records out
-    root@superhornet:/tmp/superhornet#
-    ```
+  root@DD-WRT:/tmp# cat uboot_for_tp-link_tl-mr3020.bin uboot_rest.bin > uboot_new.bin
+  ```
 
-    This will output several files into yourfolder. The idea is that this takes part of mtd0 from address 0x1fc00 onwards, and then writes out the 64KB U-boot bin, followed by some padding, and the the information from 0x1fc00 to build a full 128KB U-boot that also contains your router's MAC Address. This is required, in order to make a file that's safely flashable. The one you're interested in will be **uboot_0x20000.bin**.
+7. **Danger**: This is the point of no return, if you have any errors or problems, please revert the original image at any time using:
 
-7. Explore your folder, to make sure the file you're about to flash (uboot_0x200000.bin) has the correct non-zero length:
-    ```bash
-    ls -l
-    ```
+  ```
+  root@DD-WRT:/tmp# mtd write uboot_factory.bin "RedBoot"
+  Unlocking RedBoot ...
+  Writing from uboot_orig.bin to RedBoot ...
+  ```
 
-    Example output:
-    
-    ```ShellSession
-    root@superhornet:/tmp/superhornet# ls -l
-    -rw-r--r--    1 root     root          1024 May 19 14:06 config.bin
-    -rwxrwxrwx    1 root     root           876 May 18 16:03 makeu.sh
-    -rw-r--r--    1 root     root         64512 May 19 14:06 pad.bin
-    -rw-r--r--    1 root     root        130048 May 19 14:06 tuboot_0x1fc00.bin
-    -rw-r--r--    1 root     root        131072 May 19 14:06 uboot_0x20000.bin
-    -rw-r--r--    1 root     root        131072 May 18 17:45 uboot_backup.bin
-    -rw-r--r--    1 root     root         65536 Jun 19  2013 uboot_for_tl-wr740n_v4.bin
-    root@superhornet:/tmp/superhornet#
-    ```
+8. Now, to actually flash the new image, run:
 
-8. Check the name of your mtd0 partition:
+  ```
+  root@DD-WRT:/tmp# mtd write uboot_new.bin "RedBoot"
+  Unlocking RedBoot ...
+  Writing from uboot_new.bin to RedBoot ...
+  ```
 
-    ```bash
-    cat /proc/mtd
-    ```
+9. If you are sure that everything went OK, you may reboot the device:
 
-    e.g.:
-
-    ```ShellSession
-    root@superhornet:/tmp/superhornet# cat /proc/mtd
-    dev:    size   erasesize  name
-    mtd0: 00020000 00010000 "RedBoot"
-    mtd1: 003c0000 00010000 "linux"
-    mtd2: 002c0000 00010000 "rootfs"
-    mtd3: 00010000 00010000 "ddwrt"
-    mtd4: 00010000 00010000 "nvram"
-    mtd5: 00010000 00010000 "board_config"
-    mtd6: 00400000 00010000 "fullflash"
-    mtd7: 00020000 00010000 "fullboot"
-    root@superhornet:/tmp/superhornet#
-    ```
-    
-    The one you want is mtd0. In some devices it may be labeled "u-boot", instead of "RedBoot". As long as the size reads 00020000(128KB), you are ok.
-
-9. (Point of no return step!) Flash the created image onto your mtd0. Invoke:
-
-    ```bash
-    mtd write uboot_0x20000.bin RedBoot
-    ```
-
-    In the above RedBoot is the name of the partition - it may be different between devices. This was tested successfully on TP-LINK TL-WR740 v4.23 board with a **EON EN25Q32 (4 MiB, JEDEC ID: 1C 3016)** memory chip.
-
-    If an error is displayed at any point **IMMEDIATELY** revert the changes you made by restoring the backup you took earlier:
-    ```bash
-    mtd write uboot_backup.bin RedBoot
-    ```
-    
-    If flashing completes with no errors, you may issue a **reboot** to reboot your router. It should start as normal.
-  
-**Warning**: if the U-Boot partition is broken and the device is restarted, it becomes a superbrick (especially true for devices like tlwr740 that don't have JTAG).
+  ```
+  root@DD-WRT:/tmp# reboot
+  ```
 
 How to use it?
 --------------
@@ -746,7 +682,7 @@ FAQ
 
 #### 5. My device does not boot after upgrade!
 
-*I told you... bootloader, in this case U-Boot, is the most important piece of code inside your device. It is responsible for hardware initialization and booting an OS (kernel in this case), i.e. it's the bridge head for delegating to / flashing kernel and rootfs images. So, if during the upgrade something went wrong, your device will not boot any more. The only way to recover from such a situation in a mild way is via a JTAG adapter connection. In case of a lack of JTAG connection, you would even need to remove the FLASH chip, load proper image using an external programmer and solder it back.*
+*I told you... bootloader, in this case U-Boot, is the most important piece of code inside your device. It is responsible for hardware initialization and booting an OS (kernel in this case), i.e. it is the bridge head for delegating to / flashing kernel and rootfs images. So, if during the upgrade something went wrong, your device will not boot any more. The only way to recover from such a situation in a mild way is via a JTAG adapter connection. In case of a lack of JTAG connection, you would even need to remove the FLASH chip, load proper image using an external programmer and solder it back.*
 
 License, outdated sources etc.
 ------------------------------

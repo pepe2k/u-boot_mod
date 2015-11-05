@@ -498,6 +498,8 @@ Skonfiguruj program do używania takich ustawień:
 
 ### Przy pomocy OpenWrt
 
+**Ta metoda jest zalecana!**
+
 Począwszy od oficjalnego wydania "**[2014-11-19](https://github.com/pepe2k/u-boot_mod/releases/tag/2014-11-19)**", wewnątrz archiwum znajdziesz przygotowane obrazy **OpenWrt** z odblokowaną możliwością zapisu na partycji `u-boot`, gotowym obrazem U-Boot oraz niewielkim, dedykowanym skryptem do prostej aktualizacji bootloadera. Jedyne, co należy zrobić to pobrać ostatnie oficjalne wydanie tej modyfikacji, wybrać i zainstalować odpowiedni obraz OpenWrt i wywołać skrypt poleceniem `u-boot-upgrade`:
 
 ```
@@ -530,7 +532,88 @@ root@OpenWrt:/# u-boot-upgrade
 
 ### Przy pomocy DD-WRT
 
-[TODO]
+**UWAGA! Ta metoda jest niezalecana!**
+
+1. Zaloguj się do routera przy pomocy SSH lub telnetu i sprawdź, która z partycji mtd jest pierwsza. W DD-WRT najczęściej będzie to `RedBoot`:
+
+  ```
+  root@DD-WRT:~# cat /proc/mtd
+  dev:    size   erasesize  name
+  mtd0: 00020000 00010000 "RedBoot"
+  mtd1: 003c0000 00010000 "linux"
+  mtd2: 002c0000 00010000 "rootfs"
+  mtd3: 00010000 00010000 "ddwrt"
+  mtd4: 00010000 00010000 "nvram"
+  mtd5: 00010000 00010000 "board_config"
+  mtd6: 00400000 00010000 "fullflash"
+  mtd7: 00020000 00010000 "fullboot"
+  ```
+
+  W przypadku **TP-Link TL-MR3020**, partycja `RedBoot` zawiera obraz U-Boot oraz dodatkowe dane, takie jak adres MAC, numer modelu oraz PIN.
+
+  **Uwaga!** Jeżeli rozmiar pierwszej partycji jest mniejszy niż rozmiar obrazu zmodyfikowanej wersji U-Boot, nie kontynuuj!
+
+2. Przy pomocy SCP lub innej metody skopiuj obraz U-Boot i odpowiedni plik z sumą MD5 do folderu `/tmp` na urządzeniu.
+
+  ```
+  root@DD-WRT:/tmp# ls -la
+  [...]
+  -rw-r--r--    1 root     root        125952 Nov  5  2015 uboot_for_tp-link_tl-mr3020.bin
+  -rw-r--r--    1 root     root            66 Nov  5  2015 uboot_for_tp-link_tl-mr3020.md5
+  [...]
+  ```
+
+3. Sprawdź sumę kontrolną MD5 pliku z obrazem:
+
+  ```
+  root@DD-WRT:/tmp# md5sum uboot_for_tp-link_tl-mr3020.bin
+  aaae0f772ce007f7d1542b9233dd765b  uboot_for_tp-link_tl-mr3020.bin
+
+  root@DD-WRT:/tmp# cat uboot_for_tp-link_tl-mr3020.md5
+  aaae0f772ce007f7d1542b9233dd765b *uboot_for_tp-link_tl-mr3020.bin
+  ```
+
+4. Utwórz kopię zapasową partycji `RedBoot` (`mtd0`):
+
+  ```
+  root@DD-WRT:/tmp# dd if=/dev/mtd0 of=uboot_factory.bin
+  256+0 records in
+  256+0 records out
+  ```
+
+5. Przy pomocy SCP lub innej metody, skopiuj utworzoną kopię zapasową w jakieś bezpieczne miejsce (zdecydowanie zalecam zapisanie gdzieś tego pliku!).
+
+6. Potrzebujesz utworzyć plik składający się z oryginalnego i zmodyfikowaneg obrazu, ale `dd` z DD-WRT prawdopodobnie nie obsługuje `conv=notrunc`, dlatego wykorzystamy inne podejście:
+
+  ```
+  root@DD-WRT:/tmp# dd if=uboot_factory.bin of=uboot_rest.bin bs=1 skip=$(wc -c < uboot_for_tp-link_tl-mr3020.bin)
+  5120+0 records in
+  5120+0 records out
+
+  root@DD-WRT:/tmp# cat uboot_for_tp-link_tl-mr3020.bin uboot_rest.bin > uboot_new.bin
+  ```
+
+7. **Uwaga**: To jest punkt bez powrotu. Jeżeli podczas dotychczasowych kroków wystąpiły jakieś błędy lub problemy, wgraj kopię oryginalnej partycji z powrotem, przy pomocy polecenia:
+
+  ```
+  root@DD-WRT:/tmp# mtd write uboot_factory.bin "RedBoot"
+  Unlocking RedBoot ...
+  Writing from uboot_orig.bin to RedBoot ...
+  ```
+
+8. W celu wgrania nowego obrazu, wykonaj poniższe polecenie:
+
+  ```
+  root@DD-WRT:/tmp# mtd write uboot_new.bin "RedBoot"
+  Unlocking RedBoot ...
+  Writing from uboot_new.bin to RedBoot ...
+  ```
+
+9. Jeżeli jesteś pewien, że do tej pory wszystko przebiegło pomyślnie, możesz zrestartować urządzenie:
+
+  ```
+  root@DD-WRT:/tmp# reboot
+  ```
 
 ### Jak korzystać z tej modyfikacji?
 
