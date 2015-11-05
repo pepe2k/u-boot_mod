@@ -505,96 +505,35 @@ Configure adapter to use the following settings:
 
 ### Using OpenWrt
 
-1. Compile and flash OpenWrt with an unlocked U-Boot partition.
-  - This is done by removing the `MTD_WRITEABLE` from the `mask_flags` of the `u-boot` partition.
-  - To put it simply, for TP-Link products, just remove [this line](https://dev.openwrt.org/browser/trunk/target/linux/ar71xx/files/drivers/mtd/tplinkpart.c?rev=41580#L152), compile and flash the image as usual. 
-2. Find out which mtd partition is the `u-boot` partition:
+Starting from official release "**[2014-11-19](https://github.com/pepe2k/u-boot_mod/releases/tag/2014-11-19)**", you will find ready **OpenWrt** images, with unlocked `u-boot` partition, embedded U-Boot image and dedicated small script for easy update process inside release tarball. All you need to do is download last release, select proper OpenWrt image for your device, install it and invoke one command: `u-boot-upgrade`:
 
-  ```
-  root@OpenWrt:/tmp/uboot-work# cat /proc/mtd
-  dev:    size   erasesize  name
-  mtd0: 00020000 00010000 "u-boot"
-  mtd1: 000feba0 00010000 "kernel"
-  mtd2: 002d1460 00010000 "rootfs"
-  mtd3: 00100000 00010000 "rootfs_data"
-  mtd4: 00010000 00010000 "art"
-  mtd5: 003d0000 00010000 "firmware"
-  ```
+```
+root@OpenWrt:/# u-boot-upgrade
 
-3. Transfer the new U-Boot image to the device:
+=================================================================
+     DISCLAIMER: you are using this script at your own risk!
 
-  ```
-  me@laptop:~# scp uboot_for_tp-link_tl-mr3220_v2.bin root@192.168.1.1:/tmp/
-  uboot_for_tp-link_tl-mr3220_v2.bin            100%   64KB  64.0KB/s   00:00
-  ```
+     The author of U-Boot modification and this script takes
+     no responsibility for any of the results of using them.
 
-4. Verify the MD5 sum of the image:
+          Updating U-Boot is a very dangerous operation
+        and may damage your device! You have been warned!
+=================================================================
+   Are you sure you want to continue (type 'yes' or 'no')? yes
+=================================================================
 
-  ```
-  me@laptop:~# md5sum uboot_for_tp-link_tl-mr3220_v2.bin
-  cefad12aa9fbd04291652dae3eb7650c  uboot_for_tp-link_tl-mr3220_v2.bin
-
-  root@OpenWrt:/tmp# md5sum uboot_for_tp-link_tl-mr3220_v2.bin
-  cefad12aa9fbd04291652dae3eb7650c  uboot_for_tp-link_tl-mr3220_v2.bin
-  ```
-
-5. Take a backup of the current u-boot partition (`mtd0`):
-
-  ```
-  root@OpenWrt:/tmp# dd if=/dev/mtd0 of=uboot_orig.bin
-  256+0 records in
-  256+0 records out
-  ```
-
-6. Transfer the backup off the device and to a safe place:
-
-  ```
-  me@laptop:~# scp root@192.168.1.1:/tmp/uboot_orig.bin .
-  uboot_orig.bin                                100%  128KB 128.0KB/s   00:00
-  ```
-
-7. **Beware**: This step may differ for other devices. I'm using TP-Link TL-MR3220v2 and it uses the first 64 KiB block to store compressed U-Boot image. In the second 64 KiB block they store additional information like MAC address, model number and WPS pin number. This means the old backup is bigger than the new one we're going to flash. To store the old settings we're going to modify only the compressed U-Boot image and leave the additional information intact. To do that, take a copy of the original file, and copy the new image over it without truncating the leftover bytes:
-
-  ```
-  root@OpenWrt:/tmp# cp uboot_orig.bin uboot_new.bin
-  root@OpenWrt:/tmp# dd if=uboot_for_tp-link_tl-mr3220_v2.bin of=uboot_new.bin conv=notrunc
-  128+0 records in
-  128+0 records out
-  ```
-
-9. **Danger**: This is the point of no return, if you have any errors or problems, please revert the original image at any time using:
-
-  ```
-  root@OpenWrt:/tmp# mtd write uboot_orig.bin "u-boot"
-  Unlocking u-boot ...
-
-  Writing from uboot_orig.bin to u-boot ...
-  ```
-
-10. Now, to actually flash the new image, run:
-
-  ```
-  root@OpenWrt:/tmp# mtd write uboot_new.bin "u-boot"
-  Unlocking u-boot ...
-
-  Writing from uboot_new.bin to u-boot ...
-  ```
-
-11. To verify that the image was flashed correctly, you should verify it:
-
-  ```
-  root@OpenWrt:/tmp# mtd verify uboot_new.bin "u-boot"
-  Verifying u-boot against uboot_new.bin ...
-  a80c3a8683345a3fb311555c5d4194c5 - u-boot
-  a80c3a8683345a3fb311555c5d4194c5 - uboot_new.bin
-  Success
-  ```
-
-12. To restart with the new bootloader, reboot the router:
-
-  ```
-  root@OpenWrt:/tmp# reboot
-  ```
+[ ok ] Found U-Boot image file: uboot_for_tp-link_tl-mr3020.bin
+       Do you want to use this file (type 'yes' or 'no')? yes
+[ ok ] MD5 checksum of new U-Boot image file is correct
+[ ok ] Backup of /dev/mtd0 successfully created
+       Do you want to store backup in /etc/u-boot_mod/backup/ (recommended, type 'yes' or 'no')? no
+[ ok ] New U-Boot image successfully combined with backup file
+[info] New U-Boot image is ready to be written into FLASH
+       Are you sure you want to continue (type 'yes' or 'no')? yes
+[ ok ] New U-Boot image successfully written info FLASH
+[ ok ] MD5 checksum of mtd0 and new U-Boot image are equal
+[info] Done!
+```
 
 ### Using DD-WRT
 

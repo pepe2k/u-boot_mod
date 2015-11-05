@@ -498,7 +498,35 @@ Skonfiguruj program do używania takich ustawień:
 
 ### Przy pomocy OpenWrt
 
-[TODO]
+Począwszy od oficjalnego wydania "**[2014-11-19](https://github.com/pepe2k/u-boot_mod/releases/tag/2014-11-19)**", wewnątrz archiwum znajdziesz przygotowane obrazy **OpenWrt** z odblokowaną możliwością zapisu na partycji `u-boot`, gotowym obrazem U-Boot oraz niewielkim, dedykowanym skryptem do prostej aktualizacji bootloadera. Jedyne, co należy zrobić to pobrać ostatnie oficjalne wydanie tej modyfikacji, wybrać i zainstalować odpowiedni obraz OpenWrt i wywołać skrypt poleceniem `u-boot-upgrade`:
+
+```
+root@OpenWrt:/# u-boot-upgrade
+
+=================================================================
+     DISCLAIMER: you are using this script at your own risk!
+
+     The author of U-Boot modification and this script takes
+     no responsibility for any of the results of using them.
+
+          Updating U-Boot is a very dangerous operation
+        and may damage your device! You have been warned!
+=================================================================
+   Are you sure you want to continue (type 'yes' or 'no')? yes
+=================================================================
+
+[ ok ] Found U-Boot image file: uboot_for_tp-link_tl-mr3020.bin
+       Do you want to use this file (type 'yes' or 'no')? yes
+[ ok ] MD5 checksum of new U-Boot image file is correct
+[ ok ] Backup of /dev/mtd0 successfully created
+       Do you want to store backup in /etc/u-boot_mod/backup/ (recommended, type 'yes' or 'no')? no
+[ ok ] New U-Boot image successfully combined with backup file
+[info] New U-Boot image is ready to be written into FLASH
+       Are you sure you want to continue (type 'yes' or 'no')? yes
+[ ok ] New U-Boot image successfully written info FLASH
+[ ok ] MD5 checksum of mtd0 and new U-Boot image are equal
+[info] Done!
+```
 
 ### Przy pomocy DD-WRT
 
