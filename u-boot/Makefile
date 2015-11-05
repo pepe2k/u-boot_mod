@@ -492,9 +492,9 @@ gs_oolite_v1_dev_config : unconfig hornet_common_config
 	
 	@./mkconfig -a ap121 mips mips ap121 ar7240 ar7240
 
-bsb_config : unconfig hornet_common_config
+black_swift_board_config : unconfig hornet_common_config
 	@echo '======= Configuring for Black Swift board (128K compressed) at:' `date` '======='
-	@echo "#define CONFIG_FOR_BSB		            1" >> include/config.h
+	@echo "#define CONFIG_FOR_BLACK_SWIFT_BOARD         1" >> include/config.h
 	@echo "#define GPIO_SYS_LED_BIT                    27" >> include/config.h
 	@echo "#define GPIO_SYS_LED_ON                      0" >> include/config.h
 	@echo "#define GPIO_RST_BUTTON_BIT                 11" >> include/config.h

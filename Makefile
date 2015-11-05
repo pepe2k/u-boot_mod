@@ -192,12 +192,12 @@ dragino_v2_ms14:
 	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) ENDIANNESS=-EB V=1 all
 	@make --no-print-directory show_size
 
-bsb:	export UBOOT_FILE_NAME=uboot_for_bsb
-bsb:	export CONFIG_MAX_UBOOT_SIZE_KB=128
-bsb:	export COMPRESSED_UBOOT=1
-bsb:	export DEVICE_VENDOR=SE
-bsb:
-	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) bsb_config
+black_swift_board:	export UBOOT_FILE_NAME=uboot_for_black_swift_board
+black_swift_board:	export CONFIG_MAX_UBOOT_SIZE_KB=128
+black_swift_board:	export COMPRESSED_UBOOT=1
+black_swift_board:	export DEVICE_VENDOR=SE
+black_swift_board:
+	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) black_swift_board_config
 	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) ENDIANNESS=-EB V=1 all
 	@make --no-print-directory show_size
 

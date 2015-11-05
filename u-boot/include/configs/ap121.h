@@ -58,7 +58,7 @@
 
 	#define	CONFIG_BOOTARGS	"console=ttyS0,115200 root=31:02 rootfstype=squashfs init=/sbin/init mtdparts=ar7240-nor0:128k(u-boot),1024k(kernel),2816k(rootfs),64k(config),64k(ART)"
 
-#elif defined(CONFIG_FOR_BSB)
+#elif defined(CONFIG_FOR_BLACK_SWIFT_BOARD)
 
 	#define	CONFIG_BOOTARGS	"console=ttyS0,115200 root=31:02 rootfstype=squashfs init=/sbin/init mtdparts=ar7240-nor0:128k(u-boot),64k(u-boot-env),16128k(firmware),64k(ART)"
 
@@ -92,7 +92,7 @@
       defined(CONFIG_FOR_MESH_POTATO_V2)
 	#define	CFG_LOAD_ADDR			 0x9F040000
 	#define UPDATE_SCRIPT_FW_ADDR	"0x9F040000"
-#elif defined(CONFIG_FOR_BSB)
+#elif defined(CONFIG_FOR_BLACK_SWIFT_BOARD)
 	#define	CFG_LOAD_ADDR			 0x9F030000
 	#define UPDATE_SCRIPT_FW_ADDR	"0x9F030000"
 #else
@@ -107,7 +107,7 @@
 #elif defined(CONFIG_FOR_DRAGINO_V2) || \
       defined(CONFIG_FOR_MESH_POTATO_V2)
 	#define CONFIG_BOOTCOMMAND "bootm 0x9F040000"
-#elif defined(CONFIG_FOR_BSB)
+#elif defined(CONFIG_FOR_BLACK_SWIFT_BOARD)
 	#define CONFIG_BOOTCOMMAND "bootm 0x9F030000"
 #else
 	#define CONFIG_BOOTCOMMAND "bootm 0x9F020000"
@@ -135,7 +135,7 @@
 	#define	CFG_PROMPT "dr_boot> "
 #endif
 
-#if defined(CONFIG_FOR_BSB)
+#if defined(CONFIG_FOR_BLACK_SWIFT_BOARD)
 	#if defined(CFG_PROMPT)
 		#undef CFG_PROMPT
 	#endif
@@ -794,7 +794,7 @@
 	#define CFG_ENV_ADDR		0x9F040000
 	#define CFG_ENV_SIZE		0x8000
 	#define CFG_ENV_SECT_SIZE	0x10000
-#elif defined(CONFIG_FOR_BSB)
+#elif defined(CONFIG_FOR_BLACK_SWIFT_BOARD)
 	#define CFG_ENV_ADDR		0x9F020000
 	#define CFG_ENV_SIZE		0x8000
 	#define CFG_ENV_SECT_SIZE	0x10000
@@ -823,7 +823,7 @@
 #elif defined(CONFIG_FOR_8DEVICES_CARAMBOLA2) || \
       defined(CONFIG_FOR_DRAGINO_V2) || \
       defined(CONFIG_FOR_MESH_POTATO_V2) || \
-      defined(CONFIG_FOR_BSB)
+      defined(CONFIG_FOR_BLACK_SWIFT_BOARD)
 
 	#define CONFIG_COMMANDS (CFG_CMD_MEMORY | \
 							 CFG_CMD_DHCP   | \
@@ -915,7 +915,7 @@
       defined(CONFIG_FOR_MESH_POTATO_V2)
 	#define UPDATE_SCRIPT_UBOOT_SIZE_IN_BYTES			"0x30000"
 	#define UPDATE_SCRIPT_UBOOT_BACKUP_SIZE_IN_BYTES	UPDATE_SCRIPT_UBOOT_SIZE_IN_BYTES
-#elif defined(CONFIG_FOR_BSB)
+#elif defined(CONFIG_FOR_BLACK_SWIFT_BOARD)
 	#define UPDATE_SCRIPT_UBOOT_SIZE_IN_BYTES			"0x20000"
 	#define UPDATE_SCRIPT_UBOOT_BACKUP_SIZE_IN_BYTES	UPDATE_SCRIPT_UBOOT_SIZE_IN_BYTES
 #else
@@ -932,7 +932,7 @@
 #elif defined(CONFIG_FOR_DRAGINO_V2) || \
       defined(CONFIG_FOR_MESH_POTATO_V2)
 	#define WEBFAILSAFE_UPLOAD_KERNEL_ADDRESS			WEBFAILSAFE_UPLOAD_UBOOT_ADDRESS + 0x40000
-#elif defined(CONFIG_FOR_BSB)
+#elif defined(CONFIG_FOR_BLACK_SWIFT_BOARD)
 	#define WEBFAILSAFE_UPLOAD_KERNEL_ADDRESS			WEBFAILSAFE_UPLOAD_UBOOT_ADDRESS + 0x30000
 #else
 	#define WEBFAILSAFE_UPLOAD_KERNEL_ADDRESS			WEBFAILSAFE_UPLOAD_UBOOT_ADDRESS + 0x20000
@@ -959,7 +959,7 @@
 #elif defined(CONFIG_FOR_GS_OOLITE_V1_DEV)
 	// GS-Oolite v1: 128k(U-Boot + MAC),64k(ART)
 	#define WEBFAILSAFE_UPLOAD_LIMITED_AREA_IN_BYTES	(192 * 1024)
-#elif defined(CONFIG_FOR_BSB)
+#elif defined(CONFIG_FOR_BLACK_SWIFT_BOARD)
 	// Black Swift board: 128k(U-Boot),64k(U-Boot env),64k(ART)
 	#define WEBFAILSAFE_UPLOAD_LIMITED_AREA_IN_BYTES	(256 * 1024)
 #else
@@ -1046,7 +1046,7 @@
 	#define OFFSET_MAC_DATA_BLOCK			0x010000
 	#define OFFSET_MAC_DATA_BLOCK_LENGTH	0x010000
 	#define OFFSET_MAC_ADDRESS				0x00FC00
-#elif defined(CONFIG_FOR_BSB)
+#elif defined(CONFIG_FOR_BLACK_SWIFT_BOARD)
 	// Black Swift board has only one MAC address at the beginning of ART partition
 	#define OFFSET_MAC_DATA_BLOCK		0xFF0000
 	#define OFFSET_MAC_DATA_BLOCK_LENGTH	0x010000
@@ -1063,7 +1063,7 @@
 	!defined(CONFIG_FOR_DRAGINO_V2)          && \
 	!defined(CONFIG_FOR_MESH_POTATO_V2)      && \
 	!defined(CONFIG_FOR_GL_INET)             && \
-	!defined(CONFIG_FOR_BSB)
+	!defined(CONFIG_FOR_BLACK_SWIFT_BOARD)
 #define OFFSET_ROUTER_MODEL					0x00FD00
 #endif
 
@@ -1084,11 +1084,18 @@
  *   - CLOCK_CONTROL  (page 71)
  *   - SPI_CONTROL    (page 261)
  */
-#if defined(CONFIG_FOR_DLINK_DIR505_A1)
+#if defined(CONFIG_FOR_DLINK_DIR505_A1) || \
+    defined(CONFIG_FOR_BLACK_SWIFT_BOARD)
 	/*
+	 * For DIR505 A1:
 	 * We will store PLL and CLOCK registers
 	 * configuration at the end of MAC data
 	 * partition (3rd 64 KiB block)
+	 * ----
+	 * For Black Swift board:
+	 * We will store PLL and CLOCK registers
+	 * configuration at the end of environment
+	 * sector (64 KB, environment uses only part!)
 	 */
 	#define PLL_IN_FLASH_MAGIC				0x504C4C73
 	#define PLL_IN_FLASH_DATA_BLOCK_OFFSET	0x00020000
@@ -1113,16 +1120,6 @@
 	 */
 	#define PLL_IN_FLASH_MAGIC				0x504C4C73
 	#define PLL_IN_FLASH_DATA_BLOCK_OFFSET	0x00030000
-	#define PLL_IN_FLASH_DATA_BLOCK_LENGTH	0x00010000
-	#define PLL_IN_FLASH_MAGIC_OFFSET		0x0000FFF0	// last 16 bytes
-#elif defined(CONFIG_FOR_BSB)
-	/*
-	 * We will store PLL and CLOCK registers
-	 * configuration at the end of environment
-	 * sector (64 KB, environment uses only half!)
-	 */
-	#define PLL_IN_FLASH_MAGIC				0x504C4C73
-	#define PLL_IN_FLASH_DATA_BLOCK_OFFSET	0x00020000
 	#define PLL_IN_FLASH_DATA_BLOCK_LENGTH	0x00010000
 	#define PLL_IN_FLASH_MAGIC_OFFSET		0x0000FFF0	// last 16 bytes
 #else

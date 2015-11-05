@@ -38,7 +38,7 @@ void led_toggle(void){
 	gpio ^= 1 << GPIO_WLAN_LED_BIT;
 #elif defined(CONFIG_FOR_DRAGINO_V2) || defined(CONFIG_FOR_MESH_POTATO_V2)
 	gpio ^= 1 << GPIO_WLAN_LED_BIT;
-#elif defined(CONFIG_FOR_BSB)
+#elif defined(CONFIG_FOR_BLACK_SWIFT_BOARD)
 	gpio ^= 1 << GPIO_SYS_LED_BIT;
 #elif defined(CONFIG_FOR_GL_INET)
 	gpio ^= 1 << GPIO_WLAN_LED_BIT;
@@ -94,7 +94,7 @@ void all_led_on(void){
 	SETBITVAL(gpio, GPIO_WAN_LED_BIT,      GPIO_WAN_LED_ON);
 	SETBITVAL(gpio, GPIO_LAN_LED_BIT,      GPIO_LAN_LED_ON);
 	SETBITVAL(gpio, GPIO_INTERNET_LED_BIT, GPIO_INTERNET_LED_ON);
-#elif defined(CONFIG_FOR_BSB)
+#elif defined(CONFIG_FOR_BLACK_SWIFT_BOARD)
 	SETBITVAL(gpio, GPIO_SYS_LED_BIT, GPIO_SYS_LED_ON);
 #elif defined(CONFIG_FOR_GL_INET)
 	SETBITVAL(gpio, GPIO_WLAN_LED_BIT, GPIO_WLAN_LED_ON);
@@ -151,7 +151,7 @@ void all_led_off(void){
 	SETBITVAL(gpio, GPIO_WAN_LED_BIT,      !GPIO_WAN_LED_ON);
 	SETBITVAL(gpio, GPIO_LAN_LED_BIT,      !GPIO_LAN_LED_ON);
 	SETBITVAL(gpio, GPIO_INTERNET_LED_BIT, !GPIO_INTERNET_LED_ON);
-#elif defined(CONFIG_FOR_BSB)
+#elif defined(CONFIG_FOR_BLACK_SWIFT_BOARD)
 	SETBITVAL(gpio, GPIO_SYS_LED_BIT, !GPIO_SYS_LED_ON);
 #elif defined(CONFIG_FOR_GL_INET)
 	SETBITVAL(gpio, GPIO_WLAN_LED_BIT, !GPIO_WLAN_LED_ON);
@@ -336,7 +336,7 @@ void gpio_config(void){
 	/* set GPIO_OE */
 	ar7240_reg_wr(AR7240_GPIO_OE, (ar7240_reg_rd(AR7240_GPIO_OE) | 0x10022001));
 
-#elif defined(CONFIG_FOR_BSB)
+#elif defined(CONFIG_FOR_BLACK_SWIFT_BOARD)
 
 	/* LED's GPIOs on Black Swift board:
 	 *

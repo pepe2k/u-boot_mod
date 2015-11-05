@@ -75,7 +75,7 @@ ulong load_addr = CFG_LOAD_ADDR; /* default load address */
 	!defined(CONFIG_FOR_DLINK_DIR505_A1)     && \
 	!defined(CONFIG_FOR_DRAGINO_V2)          && \
 	!defined(CONFIG_FOR_MESH_POTATO_V2)      && \
-	!defined(CONFIG_FOR_BSB)
+	!defined(CONFIG_FOR_BLACK_SWIFT_BOARD)
 void fake_image_header(image_header_t *hdr, tplink_image_header_t *tpl_hdr){
 	memset(hdr, 0, sizeof(image_header_t));
 
@@ -94,7 +94,7 @@ void fake_image_header(image_header_t *hdr, tplink_image_header_t *tpl_hdr){
 
 	strncpy((char *)hdr->ih_name, (char *)tpl_hdr->signiture_1, IH_NMLEN);
 }
-#endif /* if !defined(CONFIG_FOR_8DEVICES_CARAMBOLA2) && !defined(CONFIG_FOR_DLINK_DIR505_A1) && !defined(CONFIG_FOR_DRAGINO_V2) && !defined(CONFIG_FOR_MESH_POTATO_V2) && !defined(CONFIG_FOR_BSB) */
+#endif /* if !defined(CONFIG_FOR_8DEVICES_CARAMBOLA2) && !defined(CONFIG_FOR_DLINK_DIR505_A1) && !defined(CONFIG_FOR_DRAGINO_V2) && !defined(CONFIG_FOR_MESH_POTATO_V2) && !defined(CONFIG_FOR_BLACK_SWIFT_BOARD) */
 
 int do_bootm(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[]){
 	ulong addr, data, len;
@@ -105,7 +105,7 @@ int do_bootm(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[]){
 	!defined(CONFIG_FOR_DLINK_DIR505_A1)     && \
 	!defined(CONFIG_FOR_DRAGINO_V2)          && \
 	!defined(CONFIG_FOR_MESH_POTATO_V2)      && \
-	!defined(CONFIG_FOR_BSB)
+	!defined(CONFIG_FOR_BLACK_SWIFT_BOARD)
 	tplink_image_header_t *fileTag;
 #endif
 
@@ -121,7 +121,7 @@ int do_bootm(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[]){
 	defined(CONFIG_FOR_DLINK_DIR505_A1)     || \
 	defined(CONFIG_FOR_DRAGINO_V2)          || \
 	defined(CONFIG_FOR_MESH_POTATO_V2)      || \
-	defined(CONFIG_FOR_BSB)
+	defined(CONFIG_FOR_BLACK_SWIFT_BOARD)
 	memmove(&header, (char *)addr, sizeof(image_header_t));
 	print_image_hdr(hdr);
 
@@ -230,7 +230,7 @@ static void fixup_silent_linux(){
 	defined(CONFIG_FOR_DLINK_DIR505_A1)     || \
 	defined(CONFIG_FOR_DRAGINO_V2)          || \
 	defined(CONFIG_FOR_MESH_POTATO_V2)      || \
-	defined(CONFIG_FOR_BSB)
+	defined(CONFIG_FOR_BLACK_SWIFT_BOARD)
 static void print_type(image_header_t *hdr){
 	char *os, *arch, *type, *comp;
 
@@ -407,7 +407,7 @@ void print_image_hdr(tplink_image_header_t *hdr){
 	print_size(ntohl(hdr->kernelLen), "\n");
 	printf("   Load address: 0x%08X\n   Entry point:  0x%08X\n\n", ntohl(hdr->kernelTextAddr), ntohl(hdr->kernelEntryPoint));
 }
-#endif /* defined(CONFIG_FOR_8DEVICES_CARAMBOLA2) || defined(CONFIG_FOR_DLINK_DIR505_A1) || defined(CONFIG_FOR_DRAGINO_V2) || defined(CONFIG_FOR_MESH_POTATO_V2) || defined(CONFIG_FOR_BSB) */
+#endif /* defined(CONFIG_FOR_8DEVICES_CARAMBOLA2) || defined(CONFIG_FOR_DLINK_DIR505_A1) || defined(CONFIG_FOR_DRAGINO_V2) || defined(CONFIG_FOR_MESH_POTATO_V2) || defined(CONFIG_FOR_BLACK_SWIFT_BOARD) */
 
 #if (CONFIG_COMMANDS & CFG_CMD_BOOTD)
 int do_bootd(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[]){

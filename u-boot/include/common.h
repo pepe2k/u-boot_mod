@@ -195,7 +195,7 @@ int	autoscript (ulong addr);
  * use different (simply) image header
  */
 #if !defined(CONFIG_FOR_8DEVICES_CARAMBOLA2) && \
-	!defined(CONFIG_FOR_BSB)     && \
+	!defined(CONFIG_FOR_BLACK_SWIFT_BOARD)   && \
 	!defined(CONFIG_FOR_DLINK_DIR505_A1)     && \
 	!defined(CONFIG_FOR_DRAGINO_V2)          && \
 	!defined(CONFIG_FOR_MESH_POTATO_V2)
@@ -204,7 +204,7 @@ int	autoscript (ulong addr);
 
 /* common/cmd_bootm.c */
 #if defined(CONFIG_FOR_8DEVICES_CARAMBOLA2) || \
-	defined(CONFIG_FOR_BSB)     || \
+	defined(CONFIG_FOR_BLACK_SWIFT_BOARD)   || \
 	defined(CONFIG_FOR_DLINK_DIR505_A1)     || \
 	defined(CONFIG_FOR_DRAGINO_V2)          || \
 	defined(CONFIG_FOR_MESH_POTATO_V2)
