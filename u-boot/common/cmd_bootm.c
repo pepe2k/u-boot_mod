@@ -28,11 +28,10 @@
 #include <command.h>
 #include <image.h>
 #include <malloc.h>
-#include <zlib.h>
-#include <bzlib.h>
 #include <LzmaWrapper.h>
 #include <environment.h>
 #include <asm/byteorder.h>
+#include <tinf.h>
 
 DECLARE_GLOBAL_DATA_PTR;
 
@@ -470,7 +469,7 @@ static int image_info(ulong addr){
 	checksum = ntohl(hdr->ih_hcrc);
 	hdr->ih_hcrc = 0;
 
-	if(crc32(0, (uchar *)data, len) != checksum){
+	if(tinf_crc32((uchar *)data, len) != checksum){
 		puts("## Error: bad header checksum!\n");
 		return 1;
 	}
@@ -483,7 +482,7 @@ static int image_info(ulong addr){
 
 	puts("   Verifying checksum... ");
 
-	if(crc32(0, (uchar *)data, len) != ntohl(hdr->ih_dcrc)){
+	if(tinf_crc32((uchar *)data, len) != ntohl(hdr->ih_dcrc)){
 		puts("bad data CRC!\n");
 		return(1);
 	}

@@ -32,6 +32,7 @@
 #include <sys/stat.h>
 #include <time.h>
 #include <unistd.h>
+#include <tinf.h>
 
 #if defined(__BEOS__) || defined(__NetBSD__) || defined(__APPLE__)
 #include <inttypes.h>
@@ -67,8 +68,6 @@ extern int errno;
 #endif
 
 char *cmdname;
-
-extern unsigned long crc32 (unsigned long crc, const char *buf, unsigned int len);
 
 typedef struct table_entry {
 	int	val;		/* as defined in image.h	*/
@@ -346,7 +345,7 @@ NXTARG:		;
 		checksum = ntohl(hdr->ih_hcrc);
 		hdr->ih_hcrc = htonl(0);	/* clear for re-calculation */
 
-		if (crc32 (0, data, len) != checksum) {
+		if (tinf_crc32 (data, len) != checksum) {
 			fprintf (stderr,
 				"*** Warning: \"%s\" has bad header checksum!\n",
 				imagefile);
@@ -355,7 +354,7 @@ NXTARG:		;
 		data = (char *)(ptr + sizeof(image_header_t));
 		len  = sbuf.st_size - sizeof(image_header_t) ;
 
-		if (crc32 (0, data, len) != ntohl(hdr->ih_dcrc)) {
+		if (tinf_crc32 (data, len) != ntohl(hdr->ih_dcrc)) {
 			fprintf (stderr,
 				"*** Warning: \"%s\" has corrupted data!\n",
 				imagefile);
@@ -464,7 +463,7 @@ NXTARG:		;
 
 	hdr = (image_header_t *)ptr;
 
-	checksum = crc32 (0,
+	checksum = tinf_crc32 (
 			  (const char *)(ptr + sizeof(image_header_t)),
 			  sbuf.st_size - sizeof(image_header_t)
 			 );
@@ -483,7 +482,7 @@ NXTARG:		;
 
 	strncpy((char *)hdr->ih_name, name, IH_NMLEN);
 
-	checksum = crc32(0,(const char *)hdr,sizeof(image_header_t));
+	checksum = tinf_crc32((const char *)hdr,sizeof(image_header_t));
 
 	hdr->ih_hcrc = htonl(checksum);
 

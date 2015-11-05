@@ -537,8 +537,8 @@ int ag7240_enet_initialize(bd_t * bis)
 			return 0;
 		}
 
-		memset(ag7240_macs[i], 0, sizeof(ag7240_macs[i]));
-		memset(dev[i], 0, sizeof(dev[i]));
+		memset(ag7240_macs[i], 0, sizeof(*ag7240_macs[i]));
+		memset(dev[i], 0, sizeof(*dev[i]));
 
 		sprintf(dev[i]->name, "eth%d", i);
 		ag7240_get_ethaddr(dev[i]);

@@ -1022,7 +1022,6 @@
 #define CFG_BOOTM_LEN				(16 << 20) /* 16 MB */
 
 #undef DEBUG
-#define milisecdelay(_x)			udelay((_x) * 1000)
 
 /* MAC address, model and PIN number offsets in FLASH */
 #if defined(CONFIG_FOR_DLINK_DIR505_A1)

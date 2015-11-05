@@ -234,7 +234,6 @@
 #define CFG_BOOTM_LEN				(16 << 20) /* 16 MB */
 
 #undef DEBUG
-#define milisecdelay(_x)			udelay((_x) * 1000)
 
 /* MAC address, model and PIN number offsets in FLASH */
 #define OFFSET_MAC_DATA_BLOCK			0x010000
