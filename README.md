@@ -12,6 +12,7 @@ Table of contents
 - [Modifications, changes](#modifications-changes)
 	- [Web server](#web-server)
 	- [Network Console](#network-console)
+	- [Writable environment variables](#writable-environment-variables)
 	- [Other](#other)
 	- [Supported FLASH chips](#supported-flash-chips)
 - [How to install it?](#how-to-install-it)
@@ -31,12 +32,15 @@ Table of contents
 Introduction
 ------------
 
-In short, this project is a deep modification of **U-Boot 1.1.4** sources, mostly from **TP-Link**, but some code fragments were taken also from **D-Link**.
+In short, this project is a deep modification of **U-Boot 1.1.4** sources, mostly from **TP-Link**, but some code fragments were taken also from **D-Link**, **Netgear**, **ZyXEL** and **Belkin**. All these companies are using SDK from Qualcomm/Atheros which includes modified version of **U-Boot 1.1.4**.
 
 You can download original sources from the following pages:
 
 - [TP-Link GPL Code Center](http://www.tp-link.com/en/support/gpl/ "TP-Link GPL Code Center")
 - [D-Link GPL Source Code Support](http://tsd.dlink.com.tw/GPL.asp "D-Link GPL Source Code Support")
+- [NETGEAR Open Source Code for Programmers (GPL)](http://kb.netgear.com/app/answers/detail/a_id/2649/~/netgear-open-source-code-for-programmers-%28gpl%29 "NETGEAR Open Source Code for Programmers (GPL)")
+- [ZyXEL GPL-OSS](http://www.zyxel.com/us/en/form/gpl_oss_form.shtml "ZyXEL GPL-OSS")
+- [Belkin Open Source Code Center](http://www.belkin.com/us/support-article?articleNum=51238 "Belkin Open Source Code Center")
 
 The concept for this project came from another U-Boot modification, dedicated to a small and very popular TP-Link router - model **TL-WR703N**, which includes web fail safe mode: **[wr703n-uboot-with-web-failsafe](http://code.google.com/p/wr703n-uboot-with-web-failsafe/)**. I was using it and decided to make my own version, which could have some improvements, additional capabilities, support for different models and work with all modern web browsers.
 
@@ -132,13 +136,105 @@ Web server contains 7 pages:
 6. fail.html
 7. style.css
 
-![](http://www.tech-blog.pl/wordpress/wp-content/uploads/2013/08/uboot_mod_firmware_upgrade.jpg)
+![](http://www.tech-blog.pl/wordpress/wp-content/uploads/2015/11/uboot_mod_firmware_upgrade.jpg)
+
+![](http://www.tech-blog.pl/wordpress/wp-content/uploads/2015/11/uboot_mod_firmware_upgrade_progress.jpg)
+
+![](http://www.tech-blog.pl/wordpress/wp-content/uploads/2015/11/uboot_mod_uboot_upgrade.jpg)
+
 
 ### Network Console
 
 Second, very useful modification is a network console (it is a part of original U-Boot sources, but none of the manufacturers included it). It allows you to communicate with U-Boot console over the Ethernet, using UDP protocol (default UDP port: 6666, router IP: 192.168.1.1).
 
 ![](http://www.tech-blog.pl/wordpress/wp-content/uploads/2013/04/u-boot_mod_for_tp-link_with_ar9331_netconsole.jpg)
+
+### Writable environment variables
+
+U-Boot uses special "**environment variables**" which are used for storing values of many different settings, like IP addresses of device and remote server for TFTP transaction, serial console baud rate, boot command, etc. Environment is usually stored in separate FLASH sector or its part, so all changes can be saved permanently.
+
+None of the popular manufacturers provides this feature and use so called "**read-only environment**" (embedded in U-Boot image), which means that all changes made during a runtime will be lost after device restart and there is no way to store them in FLASH.
+
+This modification uses writable environment variables in almost all supported devices, so you can do for example:
+
+```
+uboot> setenv ipaddr 192.168.1.100
+uboot> saveenv
+Saving environment to FLASH...
+
+Erase FLASH from 0x9F010000 to 0x9F01FFFF in bank #1
+Erasing: #
+
+Erased sectors: 1
+
+Writting at address: 0x9F010000
+
+uboot> reset
+```
+
+Which will change device IP address and save updated environment variables in FLASH. From next power up, the device will use new value for its IP address.
+
+Using command **run** and writable environment variables you are able to write custom, small scripts like below example, used for firmware upgrade using TFTP method:
+
+```
+uboot> printenv
+[...]
+firmware_addr=0x9F020000
+firmware_name=firmware.bin
+firmware_upg=if ping $serverip; then tftp $loadaddr $firmware_name && erase $firmware_addr +$filesize && cp.b $loadaddr $firmware_addr $filesize && echo OK!; else echo ERROR! Server not reachable!; fi
+[...]
+
+uboot> run firmware_upg
+Ethernet mode (duplex/speed): 1/100 Mbps
+Using eth0 device
+
+Ping OK, host 192.168.1.2 is alive!
+
+
+TFTP from IP: 192.168.1.2
+      Our IP: 192.168.1.1
+    Filename: 'firmware.bin'
+Load address: 0x80800000
+       Using: eth0
+
+     Loading: ########################################
+              ########################################
+              ########################################
+              ########################################
+              ########################################
+              ########################################
+              ########################################
+              ########################################
+              ########################################
+              ########################################
+              ########################################
+              ########################################
+              ########################################
+              ########################################
+              ########################################
+              ########################################
+              ########################################
+              ########################################
+              ########################################
+              #########
+
+TFTP transfer complete!
+
+Bytes transferred: 3932160 (0x3c0000)
+Erase FLASH from 0x9F020000 to 0x9F3DFFFF in bank #1
+Erasing: #######################################
+         #####################
+
+Erased sectors: 60
+
+Copying to FLASH...
+Writting at address: 0x9F020000
+
+Done!
+
+OK!
+uboot>
+```
 
 ### Other
 
@@ -149,19 +245,23 @@ Moreover:
 - FLASH chip is automatically recognized (using JEDEC ID)
 - Ethernet MAC is set from FLASH (no more "No valid address in FLASH. Using fixed address")
 - Automatic kernel booting can be interrupted using any key
+- Better UART serial console driver with support for different baud rates
 - Press and hold reset button to run:
   - Web server (min. 3 seconds)
   - U-Boot serial console (min. 5 seconds)
   - U-Boot network console (min. 7 seconds)
 - Additional commands (in comparison to the default version; availability depends on router model):
+  -  defenv
   -  httpd
+  -  itest
+  -  loadb
+  -  loady
   -  printmac
   -  setmac
   -  printmodel
   -  printpin
   -  startnc
   -  startsc
-  -  eraseenv
   -  ping
   -  dhcp
   -  sntp
@@ -231,7 +331,7 @@ mtd4: 00010000 00010000 "art"
 mtd5: 00fd0000 00010000 "firmware"
 ```
 
-As you can see, `u-boot` partition size is **0x20000** (128 KiB) and my image for this model has size of **0x10000** (64 KiB) - it is a very important difference! You should remember about this if you want to use `mtd` utility, to change U-Boot.
+As you can see, `u-boot` partition size is **0x20000** (128 KiB) and my image for this model has smaller size: **0x1EC00** (123 KiB) - it is a very important difference! You should remember about this if you want to use `mtd` utility or serial console and U-Boot command line, to change the bootloader.
 
 To backup `u-boot` partition in RAM, run:
 
@@ -245,7 +345,11 @@ And then connect to your router using `SCP protocol` and download from `/tmp` th
 
 If you have an external FLASH programmer (all supported devices have **SPI NOR FLASH** chips), you probably know how to use it. Download package with prebuilt images or compile the code, choose right file for your device and put it on FLASH at the beginning (offset `0x00000`). Remember to first erase block(s) - with high probability, if you use some kind of automatic mode, the programmer will do it for you.
 
-All prebuilt images are padded with 0xFF, so their size will always be a **multiple of 64 KiB block** and they will not be bigger than the original versions. For example, **TP-Link** uses only first **64 KiB** block to store compressed U-Boot image (in most of their modern devices). In the second 64 KiB block they store additional information like MAC address, model number and WPS pin number.
+All prebuilt images are padded with 0xFF and since change "**![Extend maximum U-Boot image size up to 123 KB](https://github.com/pepe2k/u-boot_mod/commit/7829f50c0e92024fde613cb01e65cbdeae1f126b)**", in most supported devices, **their size is no longer a multiple of 64 KiB block**. For example, **TP-Link** uses only first **64 KiB** block to store compressed U-Boot image (in most of their modern devices). In the second 64 KiB block they store additional information like MAC address, model number and WPS pin number. This modification will use both sectors for U-Boot image and also other data, including small block for writable environment variables.
+
+Below image with beginning part of FLASH memory map for TP-Link TL-MR3020 shows differences between stock version and this modification.
+
+![](http://www.tech-blog.pl/wordpress/wp-content/uploads/2015/11/mr3020_u-boot-modification_flash-map_comparison.png)
 
 On the other hand, U-Boot image in **Carambola 2** from **8devices** may have up to **256 KiB** (4x 64 KiB block), they use uncompressed version and environment stored in FLASH. Immediately after the Carambola 2 U-Boot partition is an area which contains U-Boot environment variables (1x 64 KiB block), called `u-boot-env`:
 
@@ -261,6 +365,8 @@ mtd6: 00010000 00010000 "art"
 ```
 
 ### Using UART, U-Boot console and TFTP server
+
+**WARNING! This method is highly not recommended!**
 
 It is probably the most common method to change firmware in case of any problems. Main disadvantage of this approach is the need to connect with device using a serial port (this does not apply to Carambola 2 with development board, which already has a built-in USB-UART adapter, based on FTDI FT232RQ).
 
@@ -306,48 +412,60 @@ Configure adapter to use the following settings:
   serverip=192.168.1.2
   ```
 
-7. Download and store in RAM proper image for your router, using `tftpboot` command in U-Boot console (in this example, for **TP-Link TL-MR3020**):
+7. Due to differences in FLASH memory map and sizes of original and modified version of U-Boot, you must first make a backup of the partition with original version in RAM. **If you skip this step or make a mistake, your device will be probably broken!**
+
+  This step is different between supported models, so you should pay attention to the size of image with modified version of U-Boot, **round it to the nearest multiple of 64 KiB** and use this value in all next steps.
+
+  For example, if image of the modified version is **123 KiB** (**0x1EC00**) you must first make a backup of **128 KiB** (**0x20000**) in RAM, at the same address where you are going to download the image:
 
   ```
-  tftpboot 0x80800000 uboot_for_tp-link_tl-mr3020.bin
+  hornet> cp.b 0x9F000000 0x80800000 0x20000
+  ```
 
+  Using the same offset address in RAM for backup and new image will end up with combination of both images and preserve additional data like MAC address, model number and PIN.
+
+8. Download and store in RAM proper image for your router, using `tftpboot` command in U-Boot console (in this example, for **TP-Link TL-MR3020**):
+
+  ```
+  hornet> tftpboot 0x80800000 uboot_for_tp-link_tl-mr3020.bin
   eth1 link down
   Using eth0 device
   TFTP from server 192.168.1.2; our IP address is 192.168.1.1
   Filename 'uboot_for_tp-link_tl-mr3020.bin'.
   Load address: 0x80800000
-  Loading: #############
+  Loading: #########################
   done
-  Bytes transferred = 65536 (10000 hex)
+  Bytes transferred = 125952 (1ec00 hex)
+
   hornet>
   ```
 
-8. Next step is very risky! You are going to delete existing U-Boot image from FLASH in your device and copy from RAM the new one. If something goes wrong (for example, a power failure), your router, without bootloader, will not boot again!
+9. Next step is very risky! You are going to delete existing U-Boot image from FLASH in your device and copy from RAM the new one. If something goes wrong (for example, a power failure), your router, without bootloader, will not boot again!
 
-  You should also note the size of downloaded image. For supported **TP-Link** and **D-Link** routers it will be always **0x10000** (64 KiB), but for Carambola 2 image size is different: **0x40000** (256 KiB). In all cases, the start address of FLASH is **0x9F000000** and for RAM: **0x80000000** (as you may noticed, I did not use start address of RAM to store image and you should follow this approach).
+  You should also note the size of image and use value from step 7. In all cases, the start address of FLASH is **0x9F000000** and for RAM: **0x80000000** (as you may noticed, I did not use start address of RAM to store image and you should follow this approach).
 
   Please, do not make any mistake with offsets and sizes during next steps!
 
-9. Erase appropriate FLASH space for new U-Boot image (this command will remove default U-Boot image!):
+10. Erase appropriate FLASH space for new U-Boot image (this command will remove default U-Boot image!):
 
   ```
-  hornet> erase 0x9F000000 +0x10000   
+  hornet> erase 0x9F000000 +0x20000
 
-  First 0x0 last 0x0 sector size 0x10000
-  0
-  Erased 1 sectors
+  First 0x0 last 0x1 sector size 0x10000
+  Erased 2 sectors
+  hornet>
   ```
 
-10. Now your router does not have U-Boot, so do not wait and copy to FLASH the new one, stored earlier in RAM:
+11. Now your router does not have U-Boot, so do not wait and copy to FLASH the new one, stored earlier in RAM:
 
   ```
-  hornet> cp.b 0x80800000 0x9F000000 0x10000   
+  hornet> cp.b 0x80800000 0x9F000000 0x20000
 
   Copy to Flash... write addr: 9f000000
   done
   ```
 
-11. If you want, you can check content of the newly written FLASH and compare it to the image on your PC (or better also do such a "legit memory content" comparison prior to writing!), using `md` command in U-Boot console, which prints indicated memory area (press only ENTER after first execution of this command to move further in memory):
+12. If you want, you can check content of the newly written FLASH and compare it to the image on your PC (or better also do such a "legit memory content" comparison prior to writing!), using `md` command in U-Boot console, which prints indicated memory area (press only ENTER after first execution of this command to move further in memory):
 
   ```
   hornet> md 0x9F000000
@@ -370,7 +488,7 @@ Configure adapter to use the following settings:
   9f0000f0: 100001ea 00000000 100001e8 00000000    ................
   ```
 
-12. If you are sure that everything went OK, you may reset the board:
+12. If you are sure that everything went OK, you may reset the board using below command or just reset power:
 
   ```
   hornet> reset
