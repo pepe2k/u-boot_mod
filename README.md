@@ -12,6 +12,7 @@ Table of contents
 - [Modifications, changes](#modifications-changes)
 	- [Web server](#web-server)
 	- [Network Console](#network-console)
+	- [Writable environment variables](#writable-environment-variables)
 	- [Other](#other)
 	- [Supported FLASH chips](#supported-flash-chips)
 - [How to install it?](#how-to-install-it)
@@ -31,12 +32,15 @@ Table of contents
 Introduction
 ------------
 
-In short, this project is a deep modification of **U-Boot 1.1.4** sources, mostly from **TP-Link**, but some code fragments were taken also from **D-Link**.
+In short, this project is a deep modification of **U-Boot 1.1.4** sources, mostly from **TP-Link**, but some code fragments were taken also from **D-Link**, **Netgear**, **ZyXEL** and **Belkin**. All these companies are using SDK from Qualcomm/Atheros which includes modified version of **U-Boot 1.1.4**.
 
 You can download original sources from the following pages:
 
 - [TP-Link GPL Code Center](http://www.tp-link.com/en/support/gpl/ "TP-Link GPL Code Center")
 - [D-Link GPL Source Code Support](http://tsd.dlink.com.tw/GPL.asp "D-Link GPL Source Code Support")
+- [NETGEAR Open Source Code for Programmers (GPL)](http://kb.netgear.com/app/answers/detail/a_id/2649/~/netgear-open-source-code-for-programmers-%28gpl%29 "NETGEAR Open Source Code for Programmers (GPL)")
+- [ZyXEL GPL-OSS](http://www.zyxel.com/us/en/form/gpl_oss_form.shtml "ZyXEL GPL-OSS")
+- [Belkin Open Source Code Center](http://www.belkin.com/us/support-article?articleNum=51238 "Belkin Open Source Code Center")
 
 The concept for this project came from another U-Boot modification, dedicated to a small and very popular TP-Link router - model **TL-WR703N**, which includes web fail safe mode: **[wr703n-uboot-with-web-failsafe](http://code.google.com/p/wr703n-uboot-with-web-failsafe/)**. I was using it and decided to make my own version, which could have some improvements, additional capabilities, support for different models and work with all modern web browsers.
 
@@ -136,7 +140,12 @@ Web server contains 7 pages:
 6. fail.html
 7. style.css
 
-![](http://www.tech-blog.pl/wordpress/wp-content/uploads/2013/08/uboot_mod_firmware_upgrade.jpg)
+![](http://www.tech-blog.pl/wordpress/wp-content/uploads/2015/11/uboot_mod_firmware_upgrade.jpg)
+
+![](http://www.tech-blog.pl/wordpress/wp-content/uploads/2015/11/uboot_mod_firmware_upgrade_progress.jpg)
+
+![](http://www.tech-blog.pl/wordpress/wp-content/uploads/2015/11/uboot_mod_uboot_upgrade.jpg)
+
 
 ### Network Console
 
@@ -149,6 +158,93 @@ You could also use netcat instead of Hercules utility on Mac/Linux:
 # nc -u -p 6666 192.168.1.1 6666
 ```
 
+### Writable environment variables
+
+U-Boot uses special "**environment variables**" which are used for storing values of many different settings, like IP addresses of device and remote server for TFTP transaction, serial console baud rate, boot command, etc. Environment is usually stored in separate FLASH sector or its part, so all changes can be saved permanently.
+
+None of the popular manufacturers provides this feature and use so called "**read-only environment**" (embedded in U-Boot image), which means that all changes made during a runtime will be lost after device restart and there is no way to store them in FLASH.
+
+This modification uses writable environment variables in almost all supported devices, so you can do for example:
+
+```
+uboot> setenv ipaddr 192.168.1.100
+uboot> saveenv
+Saving environment to FLASH...
+
+Erase FLASH from 0x9F010000 to 0x9F01FFFF in bank #1
+Erasing: #
+
+Erased sectors: 1
+
+Writting at address: 0x9F010000
+
+uboot> reset
+```
+
+Which will change device IP address and save updated environment variables in FLASH. From next power up, the device will use new value for its IP address.
+
+Using command **run** and writable environment variables you are able to write custom, small scripts like below example, used for firmware upgrade using TFTP method:
+
+```
+uboot> printenv
+[...]
+firmware_addr=0x9F020000
+firmware_name=firmware.bin
+firmware_upg=if ping $serverip; then tftp $loadaddr $firmware_name && erase $firmware_addr +$filesize && cp.b $loadaddr $firmware_addr $filesize && echo OK!; else echo ERROR! Server not reachable!; fi
+[...]
+
+uboot> run firmware_upg
+Ethernet mode (duplex/speed): 1/100 Mbps
+Using eth0 device
+
+Ping OK, host 192.168.1.2 is alive!
+
+
+TFTP from IP: 192.168.1.2
+      Our IP: 192.168.1.1
+    Filename: 'firmware.bin'
+Load address: 0x80800000
+       Using: eth0
+
+     Loading: ########################################
+              ########################################
+              ########################################
+              ########################################
+              ########################################
+              ########################################
+              ########################################
+              ########################################
+              ########################################
+              ########################################
+              ########################################
+              ########################################
+              ########################################
+              ########################################
+              ########################################
+              ########################################
+              ########################################
+              ########################################
+              ########################################
+              #########
+
+TFTP transfer complete!
+
+Bytes transferred: 3932160 (0x3c0000)
+Erase FLASH from 0x9F020000 to 0x9F3DFFFF in bank #1
+Erasing: #######################################
+         #####################
+
+Erased sectors: 60
+
+Copying to FLASH...
+Writting at address: 0x9F020000
+
+Done!
+
+OK!
+uboot>
+```
+
 ### Other
 
 Moreover:
@@ -158,19 +254,23 @@ Moreover:
 - FLASH chip is automatically recognized (using JEDEC ID)
 - Ethernet MAC is set from FLASH (no more "No valid address in FLASH. Using fixed address")
 - Automatic kernel booting can be interrupted using any key
+- Better UART serial console driver with support for different baud rates
 - Press and hold reset button to run:
   - Web server (min. 3 seconds)
   - U-Boot serial console (min. 5 seconds)
   - U-Boot network console (min. 7 seconds)
 - Additional commands (in comparison to the default version; availability depends on router model):
+  -  defenv
   -  httpd
+  -  itest
+  -  loadb
+  -  loady
   -  printmac
   -  setmac
   -  printmodel
   -  printpin
   -  startnc
   -  startsc
-  -  eraseenv
   -  ping
   -  dhcp
   -  sntp
@@ -240,7 +340,7 @@ mtd4: 00010000 00010000 "art"
 mtd5: 00fd0000 00010000 "firmware"
 ```
 
-As you can see, `u-boot` partition size is **0x20000** (128 KiB) and my image for this model has size of **0x10000** (64 KiB) - it is a very important difference! You should remember about this if you want to use `mtd` utility, to change U-Boot.
+As you can see, `u-boot` partition size is **0x20000** (128 KiB) and my image for this model has smaller size: **0x1EC00** (123 KiB) - it is a very important difference! You should remember about this if you want to use `mtd` utility or serial console and U-Boot command line, to change the bootloader.
 
 To backup `u-boot` partition in RAM, run:
 
@@ -254,7 +354,11 @@ And then connect to your router using `SCP protocol` and download from `/tmp` th
 
 If you have an external FLASH programmer (all supported devices have **SPI NOR FLASH** chips), you probably know how to use it. Download package with prebuilt images or compile the code, choose right file for your device and put it on FLASH at the beginning (offset `0x00000`). Remember to first erase block(s) - with high probability, if you use some kind of automatic mode, the programmer will do it for you.
 
-All prebuilt images are padded with 0xFF, so their size will always be a **multiple of 64 KiB block** and they will not be bigger than the original versions. For example, **TP-Link** uses only first **64 KiB** block to store compressed U-Boot image (in most of their modern devices). In the second 64 KiB block they store additional information like MAC address, model number and WPS pin number.
+All prebuilt images are padded with 0xFF and since change "**![Extend maximum U-Boot image size up to 123 KB](https://github.com/pepe2k/u-boot_mod/commit/7829f50c0e92024fde613cb01e65cbdeae1f126b)**", in most supported devices, **their size is no longer a multiple of 64 KiB block**. For example, **TP-Link** uses only first **64 KiB** block to store compressed U-Boot image (in most of their modern devices). In the second 64 KiB block they store additional information like MAC address, model number and WPS pin number. This modification will use both sectors for U-Boot image and also other data, including small block for writable environment variables.
+
+Below image with beginning part of FLASH memory map for TP-Link TL-MR3020 shows differences between stock version and this modification.
+
+![](http://www.tech-blog.pl/wordpress/wp-content/uploads/2015/11/mr3020_u-boot-modification_flash-map_comparison.png)
 
 On the other hand, U-Boot image in **Carambola 2** from **8devices** may have up to **256 KiB** (4x 64 KiB block), they use uncompressed version and environment stored in FLASH. Immediately after the Carambola 2 U-Boot partition is an area which contains U-Boot environment variables (1x 64 KiB block), called `u-boot-env`:
 
@@ -271,6 +375,8 @@ mtd6: 00010000 00010000 "art"
 
 ### Using UART, U-Boot console and TFTP server
 
+**WARNING! This method is highly not recommended!**
+
 It is probably the most common method to change firmware in case of any problems. Main disadvantage of this approach is the need to connect with device using a serial port (this does not apply to Carambola 2 with development board, which already has a built-in USB-UART adapter, based on FTDI FT232RQ).
 
 #### Important notice!
@@ -281,7 +387,7 @@ Please, **do not** connect any RS232 +/- 12 V cable or any adapter without logic
 
 For a long time I have been using without any problems a small and very cheap (about 1-2 USD) **CP2102** based adapter. Go to [Serial Console article in OpenWrt Wiki](http://wiki.openwrt.org/doc/hardware/port.serial) for more, detailed information.
 
-#### Step by step instruction
+#### Step by step instructions
 
 1. Install and configure any **TFTP server** on your PC (on Windows, you can use [TFTP32](http://tftpd32.jounin.net)).
 
@@ -315,48 +421,60 @@ Configure adapter to use the following settings:
   serverip=192.168.1.2
   ```
 
-7. Download and store in RAM proper image for your router, using `tftpboot` command in U-Boot console (in this example, for **TP-Link TL-MR3020**):
+7. Due to differences in FLASH memory map and sizes of original and modified version of U-Boot, you must first make a backup of the partition with original version in RAM. **If you skip this step or make a mistake, your device will be probably broken!**
+
+  This step is different between supported models, so you should pay attention to the size of image with modified version of U-Boot, **round it to the nearest multiple of 64 KiB** and use this value in all next steps.
+
+  For example, if image of the modified version is **123 KiB** (**0x1EC00**) you must first make a backup of **128 KiB** (**0x20000**) in RAM, at the same address where you are going to download the image:
 
   ```
-  tftpboot 0x80800000 uboot_for_tp-link_tl-mr3020.bin
+  hornet> cp.b 0x9F000000 0x80800000 0x20000
+  ```
 
+  Using the same offset address in RAM for backup and new image will end up with combination of both images and preserve additional data like MAC address, model number and PIN.
+
+8. Download and store in RAM proper image for your router, using `tftpboot` command in U-Boot console (in this example, for **TP-Link TL-MR3020**):
+
+  ```
+  hornet> tftpboot 0x80800000 uboot_for_tp-link_tl-mr3020.bin
   eth1 link down
   Using eth0 device
   TFTP from server 192.168.1.2; our IP address is 192.168.1.1
   Filename 'uboot_for_tp-link_tl-mr3020.bin'.
   Load address: 0x80800000
-  Loading: #############
+  Loading: #########################
   done
-  Bytes transferred = 65536 (10000 hex)
+  Bytes transferred = 125952 (1ec00 hex)
+
   hornet>
   ```
 
-8. Next step is very risky! You are going to delete existing U-Boot image from FLASH in your device and copy from RAM the new one. If something goes wrong (for example, a power failure), your router, without bootloader, will not boot again!
+9. Next step is very risky! You are going to delete existing U-Boot image from FLASH in your device and copy from RAM the new one. If something goes wrong (for example, a power failure), your router, without bootloader, will not boot again!
 
-  You should also note the size of downloaded image. For supported **TP-Link** and **D-Link** routers it will be always **0x10000** (64 KiB), but for Carambola 2 image size is different: **0x40000** (256 KiB). In all cases, the start address of FLASH is **0x9F000000** and for RAM: **0x80000000** (as you may noticed, I did not use start address of RAM to store image and you should follow this approach).
+  You should also note the size of image and use value from step 7. In all cases, the start address of FLASH is **0x9F000000** and for RAM: **0x80000000** (as you may noticed, I did not use start address of RAM to store image and you should follow this approach).
 
   Please, do not make any mistake with offsets and sizes during next steps!
 
-9. Erase appropriate FLASH space for new U-Boot image (this command will remove default U-Boot image!):
+10. Erase appropriate FLASH space for new U-Boot image (this command will remove default U-Boot image!):
 
   ```
-  hornet> erase 0x9F000000 +0x10000   
+  hornet> erase 0x9F000000 +0x20000
 
-  First 0x0 last 0x0 sector size 0x10000
-  0
-  Erased 1 sectors
+  First 0x0 last 0x1 sector size 0x10000
+  Erased 2 sectors
+  hornet>
   ```
 
-10. Now your router does not have U-Boot, so do not wait and copy to FLASH the new one, stored earlier in RAM:
+11. Now your router does not have U-Boot, so do not wait and copy to FLASH the new one, stored earlier in RAM:
 
   ```
-  hornet> cp.b 0x80800000 0x9F000000 0x10000   
+  hornet> cp.b 0x80800000 0x9F000000 0x20000
 
   Copy to Flash... write addr: 9f000000
   done
   ```
 
-11. If you want, you can check content of the newly written FLASH and compare it to the image on your PC (or better also do such a "legit memory content" comparison prior to writing!), using `md` command in U-Boot console, which prints indicated memory area (press only ENTER after first execution of this command to move further in memory):
+12. If you want, you can check content of the newly written FLASH and compare it to the image on your PC (or better also do such a "legit memory content" comparison prior to writing!), using `md` command in U-Boot console, which prints indicated memory area (press only ENTER after first execution of this command to move further in memory):
 
   ```
   hornet> md 0x9F000000
@@ -379,7 +497,7 @@ Configure adapter to use the following settings:
   9f0000f0: 100001ea 00000000 100001e8 00000000    ................
   ```
 
-12. If you are sure that everything went OK, you may reset the board:
+12. If you are sure that everything went OK, you may reset the board using below command or just reset power:
 
   ```
   hornet> reset
@@ -480,7 +598,154 @@ Configure adapter to use the following settings:
 
 ### Using DD-WRT
 
-[TODO]
+#### Step by step instructions
+
+Tutorial untested and taken from [here](http://zhujunsan.net/index.php/2013/08/install-web-failsafe-u-boot-for-wr703n/).
+
+1. Copy the following, and save to a shell script on your local computer (e.g. makeu.sh)
+
+    ```bash
+    #! /bin/sh
+    # high chance need have a change ...
+    
+    UBOOT_NAME=wr703n_tuboot_test_2012_06_06.bin
+    MD5SUM_SHOULD_BE="623dc0bba6fab68c22e5fb2f329d7d09"
+    
+    # need check the md5sum, any one byte in bootloader shoud right ...
+    CURRENT_MD5SUM_VAL=$( md5sum $UBOOT_NAME |awk '{print $1 }' )
+    echo "$UBOOT_NAME md5sum : $CURRENT_MD5SUM_VAL"
+
+    if [ $MD5SUM_SHOULD_BE = $CURRENT_MD5SUM_VAL ]; then
+        echo "$UBOOT_NAME md5sum check pass"
+    else
+        echo "###############$UBOOT_NAME md5sum check fail###############"
+        exit
+    fi
+    
+    RAW_UBOOT_LEN=`wc -c $UBOOT_NAME | awk '{print $1 }'`
+    NEED_PAD_LEN=$((0x1fc00-$RAW_UBOOT_LEN))
+    
+    # Generate a file used as pad ...
+    dd if=/dev/zero of=pad.bin bs=1 count=$NEED_PAD_LEN
+    cat $UBOOT_NAME pad.bin >tuboot_0x1fc00.bin
+    
+    echo "Backup some config first, just like MAC address ..."
+    dd if=/dev/mtd0 of=./config.bin bs=1 skip=$((0x1fc00))
+    cat ./tuboot_0x1fc00.bin ./config.bin >uboot_0x20000.bin
+    ```
+
+2. Edit the lines 3 and 4 to the name of the file you will flash, and its MD5 sum. e.g.:
+
+    ```bash
+    ..
+    UBOOT_NAME=uboot_for_tl-wr740n_v4.bin
+    MD5SUM_SHOULD_BE="0c09e1d87724dc3e45872e8641b28916"
+    ..
+    ```
+
+    **IMPORTANT**: If you're editing the file in Windows, it's best to use Notepad++. Before you save **make sure** to **Edit -> EOL Conversion -> UNIX/OSX Format**. Otherwise, your script will not run, and will return an Error 2(it stops seeing the "then" on line 8, because the EOL character breaks it).
+ 
+    You can grab the bin file's sum by running **md5sum uboot_for_tl-wr740n_v4.bin** under Linux, or use a tool like [HashTab for Windows](http://implbits.com/HashTab/HashTabWindows.aspx).
+
+3. Once you have your shell script, and your bin file, place them in a folder(in this example, we'll call it **yourfolder**), and SCP the folder into /tmp on the router (for Windows, you can use [WinSCP](http://winscp.net/eng/index.php)).
+
+4. SSH into the router, and run the following first, to make a backup of your current U-Boot partition:
+
+    ```bash
+    cd /tmp/yourfolder
+    cat /dev/mtd0 > ./uboot_backup.bin
+    ```
+    
+    SCP that file back to your computer for safe keeping.
+
+5. Fix your script's permissions by invoking:
+
+    ```bash
+    chmod 777 /tmp/yourfolder/makeu.sh
+    ```
+
+6. Run the builder script by invoking:
+
+    ```bash
+    ./makeu.sh
+    ```
+    
+    You must get output similar to:
+
+    ```ShellSession
+    root@superhornet:/tmp/superhornet# chmod 777 makeu.sh
+    root@superhornet:/tmp/superhornet# ./makeu.sh
+    uboot_for_tl-wr740n_v4.bin md5sum : 0c09e1d87724dc3e45872e8641b28916
+    uboot_for_tl-wr740n_v4.bin md5sum check pass
+    64512+0 records in
+    64512+0 records out
+    Backup some config first,just like MAC address ...
+    1024+0 records in
+    1024+0 records out
+    root@superhornet:/tmp/superhornet#
+    ```
+
+    This will output several files into yourfolder. The idea is that this takes part of mtd0 from address 0x1fc00 onwards, and then writes out the 64KB U-boot bin, followed by some padding, and the the information from 0x1fc00 to build a full 128KB U-boot that also contains your router's MAC Address. This is required, in order to make a file that's safely flashable. The one you're interested in will be **uboot_0x20000.bin**.
+
+7. Explore your folder, to make sure the file you're about to flash (uboot_0x200000.bin) has the correct non-zero length:
+    ```bash
+    ls -l
+    ```
+
+    Example output:
+    
+    ```ShellSession
+    root@superhornet:/tmp/superhornet# ls -l
+    -rw-r--r--    1 root     root          1024 May 19 14:06 config.bin
+    -rwxrwxrwx    1 root     root           876 May 18 16:03 makeu.sh
+    -rw-r--r--    1 root     root         64512 May 19 14:06 pad.bin
+    -rw-r--r--    1 root     root        130048 May 19 14:06 tuboot_0x1fc00.bin
+    -rw-r--r--    1 root     root        131072 May 19 14:06 uboot_0x20000.bin
+    -rw-r--r--    1 root     root        131072 May 18 17:45 uboot_backup.bin
+    -rw-r--r--    1 root     root         65536 Jun 19  2013 uboot_for_tl-wr740n_v4.bin
+    root@superhornet:/tmp/superhornet#
+    ```
+
+8. Check the name of your mtd0 partition:
+
+    ```bash
+    cat /proc/mtd
+    ```
+
+    e.g.:
+
+    ```ShellSession
+    root@superhornet:/tmp/superhornet# cat /proc/mtd
+    dev:    size   erasesize  name
+    mtd0: 00020000 00010000 "RedBoot"
+    mtd1: 003c0000 00010000 "linux"
+    mtd2: 002c0000 00010000 "rootfs"
+    mtd3: 00010000 00010000 "ddwrt"
+    mtd4: 00010000 00010000 "nvram"
+    mtd5: 00010000 00010000 "board_config"
+    mtd6: 00400000 00010000 "fullflash"
+    mtd7: 00020000 00010000 "fullboot"
+    root@superhornet:/tmp/superhornet#
+    ```
+    
+    The one you want is mtd0. In some devices it may be labeled "u-boot", instead of "RedBoot". As long as the size reads 00020000(128KB), you are ok.
+
+9. (Point of no return step!) Flash the created image onto your mtd0. Invoke:
+
+    ```bash
+    mtd write uboot_0x20000.bin RedBoot
+    ```
+
+    In the above RedBoot is the name of the partition - it may be different between devices. This was tested successfully on TP-LINK TL-WR740 v4.23 board with a **EON EN25Q32 (4 MiB, JEDEC ID: 1C 3016)** memory chip.
+
+    If an error is displayed at any point **IMMEDIATELY** revert the changes you made by restoring the backup you took earlier:
+    ```bash
+    mtd write uboot_backup.bin RedBoot
+    ```
+    
+    If flashing completes with no errors, you may issue a **reboot** to reboot your router. It should start as normal.
+  
+**Warning**: if the U-Boot partition is broken and the device is restarted, it becomes a superbrick (especially true for devices like tlwr740 that don't have JTAG).
 
 How to use it?
 --------------
