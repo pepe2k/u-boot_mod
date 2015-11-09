@@ -1,6 +1,11 @@
 #ifndef _LINUX_BITOPS_H
 #define _LINUX_BITOPS_H
 
+/*
+ * Helper macros
+ */
+#define BIT(_x)				(1 << (_x))
+#define BITS(_start, _bits)	(((1UL << (_bits)) - 1) << _start)
 
 /*
  * ffs: find first bit set. This is defined the same way as
