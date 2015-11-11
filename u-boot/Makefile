@@ -284,6 +284,14 @@ unconfig:
 #########################################################################
 common_config :
 	@ >include/config.h
+	@echo "/* Temporary solution */"                       >> include/config.h
+	@echo "#define QCA_AR933X_SOC                       1" >> include/config.h
+	@echo "#define QCA_AR9341_SOC                       2" >> include/config.h
+	@echo "#define QCA_AR9344_SOC                       3" >> include/config.h
+	@echo "#define QCA_QCA9531_SOC                      4" >> include/config.h
+	@echo "#define QCA_QCA9533_SOC                      5" >> include/config.h
+	@echo "#define QCA_QCA9558_SOC                      6" >> include/config.h
+	@echo ""                                               >> include/config.h
 
 ifdef CONFIG_BOOTDELAY
 	@echo "#define CONFIG_BOOTDELAY "$(CONFIG_BOOTDELAY)   >> include/config.h
@@ -317,6 +325,7 @@ endif
 	@echo "#define CFG_CONSOLE_INFO_QUIET"                 >> include/config.h
 
 hornet_common_config : common_config
+	@echo "#define SOC_TYPE                QCA_AR933X_SOC" >> include/config.h
 	@echo "#define CONFIG_AR7240                        1" >> include/config.h
 	@echo "#define CONFIG_MACH_HORNET                   1" >> include/config.h
 	@echo "#define CONFIG_HORNET_1_1_WAR                1" >> include/config.h
@@ -588,6 +597,7 @@ wasp_common_config : common_config
 
 wdr3600_43x0_config : unconfig wasp_common_config
 	@/bin/echo -e '\e[32m> Configuring for TP-Link TL-WDR3600/43x0 at:' `date` '\e[0m'
+	@echo "#define SOC_TYPE                QCA_AR9344_SOC" >> include/config.h
 	@echo "#define CONFIG_FOR_TPLINK_WDR3600_WDR43X0_V1 1" >> include/config.h
 	@echo "#define DDR2_32BIT_SUPPORT                   1" >> include/config.h
 	@echo "#define CFG_ATHRS17_PHY                      1" >> include/config.h
@@ -612,6 +622,7 @@ wdr3600_43x0_config : unconfig wasp_common_config
 
 wdr3500_config : unconfig wasp_common_config
 	@/bin/echo -e '\e[32m> Configuring for TP-Link TL-WDR3500 at:' `date` '\e[0m'
+	@echo "#define SOC_TYPE                QCA_AR9344_SOC" >> include/config.h
 	@echo "#define CONFIG_FOR_TPLINK_WDR3500_V1         1" >> include/config.h
 	@echo "#define DDR2_32BIT_SUPPORT                   1" >> include/config.h
 	@echo "#define CFG_ATHRS27_PHY                      1" >> include/config.h
@@ -643,6 +654,7 @@ wdr3500_config : unconfig wasp_common_config
 
 mr3420_v2_config : unconfig wasp_common_config
 	@/bin/echo -e '\e[32m> Configuring for TP-Link TL-MR3420 v2 at:' `date` '\e[0m'
+	@echo "#define SOC_TYPE                QCA_AR9341_SOC" >> include/config.h
 	@echo "#define CONFIG_FOR_TPLINK_MR3420_V2          1" >> include/config.h
 	@echo "#define CONFIG_AP123                         1" >> include/config.h
 	@echo "#define DDR2_32BIT_SUPPORT                   1" >> include/config.h
@@ -675,6 +687,7 @@ mr3420_v2_config : unconfig wasp_common_config
 
 wr841n_v8_config : unconfig wasp_common_config
 	@/bin/echo -e '\e[32m> Configuring for TP-Link TL-WR841N/D v8 at:' `date` '\e[0m'
+	@echo "#define SOC_TYPE                QCA_AR9341_SOC" >> include/config.h
 	@echo "#define CONFIG_FOR_TPLINK_WR841N_V8          1" >> include/config.h
 	@echo "#define CONFIG_AP123                         1" >> include/config.h
 	@echo "#define DDR2_32BIT_SUPPORT                   1" >> include/config.h
@@ -705,6 +718,7 @@ wr841n_v8_config : unconfig wasp_common_config
 
 wa830re_v2_wa801nd_v2_config : unconfig wasp_common_config
 	@/bin/echo -e '\e[32m> Configuring for TP-Link TL-WA830RE/TL-WA801ND v2 at:' `date` '\e[0m'
+	@echo "#define SOC_TYPE                   QCA_AR9341_SOC" >> include/config.h
 	@echo "#define CONFIG_FOR_TPLINK_WA830RE_V2_WA801ND_V2 1" >> include/config.h
 	@echo "#define CONFIG_AP123                            1" >> include/config.h
 	@echo "#define DDR2_32BIT_SUPPORT                      1" >> include/config.h
