@@ -1,9 +1,9 @@
+#include <config.h>
 #include <common.h>
 #include <command.h>
 #include <asm/mipsregs.h>
 #include <asm/addrspace.h>
-#include <config.h>
-#include <version.h>
+
 #include "ar7240_soc.h"
 
 #if !defined(COMPRESSED_UBOOT)
@@ -15,7 +15,8 @@ extern void hornet_ddr_tap_init(void);
 
 #define SETBITVAL(val, pos, bit) do {ulong bitval = (bit) ? 0x1 : 0x0; (val) = ((val) & ~(0x1 << (pos))) | ( (bitval) << (pos));} while(0)
 
-void led_toggle(void){
+void led_toggle(void)
+{
 	unsigned int gpio;
 
 	gpio = ar7240_reg_rd(AR7240_GPIO_OUT);
@@ -49,7 +50,8 @@ void led_toggle(void){
 	ar7240_reg_wr(AR7240_GPIO_OUT, gpio);
 }
 
-void all_led_on(void){
+void all_led_on(void)
+{
 	unsigned int gpio;
 
 	gpio = ar7240_reg_rd(AR7240_GPIO_OUT);
@@ -106,7 +108,8 @@ void all_led_on(void){
 	ar7240_reg_wr(AR7240_GPIO_OUT, gpio);
 }
 
-void all_led_off(void){
+void all_led_off(void)
+{
 	unsigned int gpio;
 
 	gpio = ar7240_reg_rd(AR7240_GPIO_OUT);
@@ -167,7 +170,8 @@ void all_led_off(void){
 #ifndef GPIO_RST_BUTTON_BIT
 	#error "GPIO_RST_BUTTON_BIT not defined!"
 #endif
-int reset_button_status(void){
+int reset_button_status(void)
+{
 	unsigned int gpio;
 
 	gpio = ar7240_reg_rd(AR7240_GPIO_IN);
@@ -187,29 +191,30 @@ int reset_button_status(void){
 	}
 }
 
-void gpio_config(void){
+int gpio_init(void)
+{
 #if defined(CONFIG_FOR_8DEVICES_CARAMBOLA2)
-    /* Disable clock obs
-     * clk_obs1(gpio13/bit8),  clk_obs2(gpio14/bit9), clk_obs3(gpio15/bit10),
-     * clk_obs4(gpio16/bit11), clk_obs5(gpio17/bit12)
-     * clk_obs0(gpio1/bit19), 6(gpio11/bit20)
-     */
-    ar7240_reg_wr(AR7240_GPIO_FUNC, (ar7240_reg_rd(AR7240_GPIO_FUNC) & ~((0x1f<<8)|(0x3<<19))));
+	/* Disable clock obs
+	 * clk_obs1(gpio13/bit8),  clk_obs2(gpio14/bit9), clk_obs3(gpio15/bit10),
+	 * clk_obs4(gpio16/bit11), clk_obs5(gpio17/bit12)
+	 * clk_obs0(gpio1/bit19), 6(gpio11/bit20)
+	 */
+	ar7240_reg_wr(AR7240_GPIO_FUNC, (ar7240_reg_rd(AR7240_GPIO_FUNC) & ~((0x1f<<8)|(0x3<<19))));
 
 
-    /* Enable eth Switch LEDs */
-    ar7240_reg_wr(AR7240_GPIO_FUNC, (ar7240_reg_rd(AR7240_GPIO_FUNC) | (0x1f<<3)));
+	/* Enable eth Switch LEDs */
+	ar7240_reg_wr(AR7240_GPIO_FUNC, (ar7240_reg_rd(AR7240_GPIO_FUNC) | (0x1f<<3)));
 
 
-    //Turn on status leds:
-    //set output enable
-    ar7240_reg_wr(AR7240_GPIO_OE, (ar7240_reg_rd(AR7240_GPIO_OE) |(1<<0)));
+	//Turn on status leds:
+	//set output enable
+	ar7240_reg_wr(AR7240_GPIO_OE, (ar7240_reg_rd(AR7240_GPIO_OE) |(1<<0)));
 
-    //set WLAN LED output to low (reverse polarity LED)
-    //ar7240_reg_wr(AR7240_GPIO_CLEAR, (1<<0));
+	//set WLAN LED output to low (reverse polarity LED)
+	//ar7240_reg_wr(AR7240_GPIO_CLEAR, (1<<0));
 
-    /* Clear AR7240_GPIO_FUNC BIT2 to ensure that software can control LED5(GPIO16) and LED6(GPIO17)  */
-    ar7240_reg_wr(AR7240_GPIO_FUNC, (ar7240_reg_rd(AR7240_GPIO_FUNC) & ~(0x1<<2)));
+	/* Clear AR7240_GPIO_FUNC BIT2 to ensure that software can control LED5(GPIO16) and LED6(GPIO17)  */
+	ar7240_reg_wr(AR7240_GPIO_FUNC, (ar7240_reg_rd(AR7240_GPIO_FUNC) & ~(0x1<<2)));
 #else
 	/* Disable clock obs 
 	 * clk_obs1(gpio13/bit8),  clk_obs2(gpio14/bit9), clk_obs3(gpio15/bit10),
@@ -415,9 +420,11 @@ void gpio_config(void){
 #else
 	#error "Custom GPIO config in gpio_config() not defined!"
 #endif
+	return 0;
 }
 
-int ar7240_mem_config(void){
+int ar7240_mem_config(void)
+{
 #ifndef CONFIG_SKIP_LOWLEVEL_INIT
 	#ifndef COMPRESSED_UBOOT
 	hornet_ddr_init();
@@ -428,7 +435,6 @@ int ar7240_mem_config(void){
 	ar7240_reg_wr(AR7240_DDR_TAP_CONTROL1, CFG_DDR_TAP1_VAL);
 #endif
 
-	gpio_config();
 	all_led_off();
 
 #ifndef CONFIG_SKIP_LOWLEVEL_INIT
@@ -436,51 +442,10 @@ int ar7240_mem_config(void){
 #endif
 
 	// return memory size
-	return(ar7240_ddr_find_size());
+	return ar7240_ddr_find_size();
 }
 
-long int initdram(){
-	return((long int)ar7240_mem_config());
-}
-
-#ifndef COMPRESSED_UBOOT
-int checkboard(void){
-	printf(BOARD_CUSTOM_STRING"\n\n");
-	return(0);
-}
-#endif
-
-/*
- * Returns a string with memory type preceded by a space sign
- */
-const char* print_mem_type(void){
-/*
- * WR720N v3 (CH version) has wrong bootstrap configuration,
- * so the memory type cannot be recognized automatically
- */
-#if defined(CONFIG_FOR_TPLINK_WR720N_V3)
-	return " DDR 16-bit";
-#else
-	unsigned int reg_val;
-
-	reg_val = (ar7240_reg_rd(HORNET_BOOTSTRAP_STATUS) & HORNET_BOOTSTRAP_MEM_TYPE_MASK) >> HORNET_BOOTSTRAP_MEM_TYPE_SHIFT;
-
-	switch(reg_val){
-		case 0:
-			return " SDRAM";
-			break;
-
-		case 1:
-			return " DDR 16-bit";
-			break;
-
-		case 2:
-			return " DDR2 16-bit";
-			break;
-
-		default:
-			return "";
-			break;
-	}
-#endif /* defined(CONFIG_FOR_TPLINK_WR720N_V3) */
+long int dram_init()
+{
+	return (long int)ar7240_mem_config();
 }

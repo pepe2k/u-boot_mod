@@ -164,8 +164,16 @@ typedef void (interrupt_handler_t)(void *);
 void hang(void) __attribute__ ((noreturn));
 
 /* */
-long int initdram(void);
-void print_size(ulong, const char *);
+long int dram_init(void);
+int      timer_init(void);
+int      gpio_init(void);
+void     all_led_on(void);
+void     all_led_off(void);
+void     print_size(ulong, const char *);
+void     print_board_info(void);
+void     macaddr_init(unsigned char *);
+void     flash_print_name(void);
+unsigned int main_cpu_clk(void);
 
 /* common/main.c */
 void	main_loop		(void);

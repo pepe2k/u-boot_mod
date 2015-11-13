@@ -11,7 +11,8 @@ extern int ar7240_ddr_find_size(void);
 
 #define SETBITVAL(val, pos, bit) do {ulong bitval = (bit) ? 0x1 : 0x0; (val) = ((val) & ~(0x1 << (pos))) | ( (bitval) << (pos));} while(0)
 
-void led_toggle(void){
+void led_toggle(void)
+{
 	unsigned int gpio;
 
 	gpio = ar7240_reg_rd(AR934X_GPIO_OUT);
@@ -29,7 +30,8 @@ void led_toggle(void){
 	ar7240_reg_wr(AR934X_GPIO_OUT, gpio);
 }
 
-void all_led_on(void){
+void all_led_on(void)
+{
 	unsigned int gpio;
 
 	gpio = ar7240_reg_rd(AR934X_GPIO_OUT);
@@ -81,7 +83,8 @@ void all_led_on(void){
 	ar7240_reg_wr(AR934X_GPIO_OUT, gpio);
 }
 
-void all_led_off(void){
+void all_led_off(void)
+{
 	unsigned int gpio;
 
 	gpio = ar7240_reg_rd(AR934X_GPIO_OUT);
@@ -137,27 +140,29 @@ void all_led_off(void){
 #ifndef GPIO_RST_BUTTON_BIT
 	#error "GPIO_RST_BUTTON_BIT not defined!"
 #endif
-int reset_button_status(void){
+int reset_button_status(void)
+{
 	unsigned int gpio;
 
 	gpio = ar7240_reg_rd(AR934X_GPIO_IN);
 
 	if(gpio & (1 << GPIO_RST_BUTTON_BIT)){
 #if defined(GPIO_RST_BUTTON_IS_ACTIVE_LOW)
-		return(0);
+		return 0;
 #else
-		return(1);
+		return 1;
 #endif
 	} else {
 #if defined(GPIO_RST_BUTTON_IS_ACTIVE_LOW)
-		return(1);
+		return 1;
 #else
-		return(0);
+		return 0;
 #endif
 	}
 }
 
-void ath_set_tuning_caps(void){
+void ath_set_tuning_caps(void)
+{
 	typedef struct {
 		u_int8_t pad[0x28];
 		u_int8_t params_for_tuning_caps[2];
@@ -189,7 +194,8 @@ void ath_set_tuning_caps(void){
 	return;
 }
 
-int wasp_mem_config(void){
+int wasp_mem_config(void)
+{
 #ifndef CONFIG_SKIP_LOWLEVEL_INIT
 	unsigned int reg32;
 
@@ -212,47 +218,15 @@ int wasp_mem_config(void){
 
 #endif
 	// return memory size
-	return(ar7240_ddr_find_size());
+	return ar7240_ddr_find_size();
 }
 
-long int initdram(){
-	return((long int)wasp_mem_config());
+int gpio_init(void)
+{
+	return 0;
 }
 
-#ifndef COMPRESSED_UBOOT
-int checkboard(void){
-	printf(BOARD_CUSTOM_STRING"\n\n");
-	return(0);
-}
-#endif
-
-/*
- * Returns a string with memory type preceded by a space sign
- */
-const char* print_mem_type(void){
-	unsigned int reg;
-
-	reg = ar7240_reg_rd(WASP_BOOTSTRAP_REG);
-
-	// if SDRAM is disabled -> we are using DDR
-	if(reg & WASP_BOOTSTRAP_SDRAM_DISABLE_MASK){
-
-		// 1 -> DDR1
-		if(reg & WASP_BOOTSTRAP_DDR_SELECT_MASK){
-			if(reg & WASP_BOOTSTRAP_DDR_WIDTH_MASK){
-				return " DDR 32-bit";
-			} else {
-				return " DDR 16-bit";
-			}
-		} else {
-			if(reg & WASP_BOOTSTRAP_DDR_WIDTH_MASK){
-				return " DDR2 32-bit";
-			} else {
-				return " DDR2 16-bit";
-			}
-		}
-
-	} else {
-		return " SDRAM";
-	}
+long int dram_init()
+{
+	return (long int)wasp_mem_config();
 }
