@@ -28,10 +28,19 @@ flash_info_t flash_info[CFG_MAX_FLASH_BANKS];
 /*
  * statics
  */
+static char flash_name[32];
+
 static void ar7240_spi_write_enable(void);
 static void ar7240_spi_poll(void);
 static void ar7240_spi_write_page(uint32_t addr, uint8_t * data, int len);
 static void ar7240_spi_sector_erase(uint32_t addr);
+
+/*
+ * Prints FLASH name
+ */
+void flash_print_name(void){
+	printf("%s", flash_name);
+}
 
 /*
  * Returns JEDEC ID from SPI flash
@@ -113,8 +122,6 @@ unsigned long flash_init(void){
 	// get flash id
 	info->flash_id = read_id();
 
-	puts("FLASH:  ");
-
 	// fill flash info based on JEDEC ID
 	switch(info->flash_id){
 		/*
@@ -122,37 +129,37 @@ unsigned long flash_init(void){
 		 */
 		case 0x010215:	// tested
 			flash_set_geom(SIZE_INBYTES_4MBYTES, 64, SIZE_INBYTES_64KBYTES);
-			puts("Spansion S25FL032P (4 MB)");
+			sprintf(flash_name, "%s", "4 MB Spansion S25FL032P");
 			break;
 
 		case 0x1F4700:
 			flash_set_geom(SIZE_INBYTES_4MBYTES, 64, SIZE_INBYTES_64KBYTES);
-			puts("Atmel AT25DF321 (4 MB)");
+			sprintf(flash_name, "%s", "4 MB Atmel AT25DF321");
 			break;
 
 		case 0x1C3016:	// tested
 			flash_set_geom(SIZE_INBYTES_4MBYTES, 64, SIZE_INBYTES_64KBYTES);
-			puts("EON EN25Q32 (4 MB)");
+			sprintf(flash_name, "%s", "4 MB EON EN25Q32");
 			break;
 
 		case 0x1C3116:	// tested
 			flash_set_geom(SIZE_INBYTES_4MBYTES, 64, SIZE_INBYTES_64KBYTES);
-			puts("EON EN25F32 (4 MB)");
+			sprintf(flash_name, "%s", "4 MB EON EN25F32");
 			break;
 
 		case 0x202016:
 			flash_set_geom(SIZE_INBYTES_4MBYTES, 64, SIZE_INBYTES_64KBYTES);
-			puts("Micron M25P32 (4 MB)");
+			sprintf(flash_name, "%s", "4 MB Micron M25P32");
 			break;
 
 		case 0xEF4016:
 			flash_set_geom(SIZE_INBYTES_4MBYTES, 64, SIZE_INBYTES_64KBYTES);
-			puts("Winbond W25Q32 (4 MB)");
+			sprintf(flash_name, "%s", "4 MB Winbond W25Q32");
 			break;
 
 		case 0xC22016:
 			flash_set_geom(SIZE_INBYTES_4MBYTES, 64, SIZE_INBYTES_64KBYTES);
-			puts("Macronix MX25L320 (4 MB)");
+			sprintf(flash_name, "%s", "4 MB Macronix MX25L320");
 			break;
 
 			/*
@@ -160,33 +167,33 @@ unsigned long flash_init(void){
 			 */
 		case 0x010216:
 			flash_set_geom(SIZE_INBYTES_8MBYTES, 128, SIZE_INBYTES_64KBYTES);
-			puts("Spansion S25FL064P (8 MB)");
+			sprintf(flash_name, "%s", "8 MB Spansion S25FL064P");
 			break;
 
 		case 0x1F4800:
 			flash_set_geom(SIZE_INBYTES_8MBYTES, 128, SIZE_INBYTES_64KBYTES);
-			puts("Atmel AT25DF641 (8 MB)");
+			sprintf(flash_name, "%s", "8 MB Atmel AT25DF641");
 			break;
 
 		case 0x1C3017:	// tested
 			flash_set_geom(SIZE_INBYTES_8MBYTES, 128, SIZE_INBYTES_64KBYTES);
-			puts("EON EN25Q64 (8 MB)");
+			sprintf(flash_name, "%s", "8 MB EON EN25Q64");
 			break;
 
 		case 0x202017:
 			flash_set_geom(SIZE_INBYTES_8MBYTES, 128, SIZE_INBYTES_64KBYTES);
-			puts("Micron M25P64 (8 MB)");
+			sprintf(flash_name, "%s", "8 MB Micron M25P64");
 			break;
 
 		case 0xEF4017:	// tested
 			flash_set_geom(SIZE_INBYTES_8MBYTES, 128, SIZE_INBYTES_64KBYTES);
-			puts("Winbond W25Q64 (8 MB)");
+			sprintf(flash_name, "%s", "8 MB Winbond W25Q64");
 			break;
 
 		case 0xC22017:	// tested
 		case 0xC22617:
 			flash_set_geom(SIZE_INBYTES_8MBYTES, 128, SIZE_INBYTES_64KBYTES);
-			puts("Macronix MX25L64 (8 MB)");
+			sprintf(flash_name, "%s", "8 MB Macronix MX25L64");
 			break;
 
 			/*
@@ -194,24 +201,24 @@ unsigned long flash_init(void){
 			 */
 		case 0xEF4018:	// tested
 			flash_set_geom(SIZE_INBYTES_16MBYTES, 256, SIZE_INBYTES_64KBYTES);
-			puts("Winbond W25Q128 (16 MB)");
+			sprintf(flash_name, "%s", "16 MB Winbond W25Q128");
 			break;
 
 		case 0xC22018:
 		case 0xC22618:
 			flash_set_geom(SIZE_INBYTES_16MBYTES, 256, SIZE_INBYTES_64KBYTES);
-			puts("Macronix MX25L128 (16 MB)");
+			sprintf(flash_name, "%s", "16 MB Macronix MX25L128");
 			break;
 
 		case 0x012018:
- 			flash_set_geom(SIZE_INBYTES_16MBYTES, 256, SIZE_INBYTES_64KBYTES);
- 			puts("Spansion S25FL127S (16 MB)");
- 			break;
+			flash_set_geom(SIZE_INBYTES_16MBYTES, 256, SIZE_INBYTES_64KBYTES);
+			sprintf(flash_name, "%s", "16 MB Spansion S25FL127S");
+			break;
 
 		case 0x20BA18:
- 			flash_set_geom(SIZE_INBYTES_16MBYTES, 256, SIZE_INBYTES_64KBYTES);
- 			puts("Micron N25Q128 (16 MB)");
- 			break;
+			flash_set_geom(SIZE_INBYTES_16MBYTES, 256, SIZE_INBYTES_64KBYTES);
+			sprintf(flash_name, "%s", "16 MB Micron N25Q128");
+			break;
 
 			/*
 			 * Unknown flash
@@ -219,20 +226,21 @@ unsigned long flash_init(void){
 		default:
 #if (DEFAULT_FLASH_SIZE_IN_MB == 4)
 			flash_set_geom(SIZE_INBYTES_4MBYTES, 64, SIZE_INBYTES_64KBYTES);
-			puts("Unknown type (using only 4 MB)\n");
+			sprintf(flash_name, "%s", "4 MB Unknown, JEDEC ID: 0x%06lX\n", info->flash_id);
+			//puts("Unknown type (using only 4 MB)\n");
 #elif (DEFAULT_FLASH_SIZE_IN_MB == 8)
 			flash_set_geom(SIZE_INBYTES_8MBYTES, 128, SIZE_INBYTES_64KBYTES);
-			puts("Unknown type (using only 8 MB)\n");
+			sprintf(flash_name, "%s", "8 MB Unknown, JEDEC ID: 0x%06lX\n", info->flash_id);
+			//puts("Unknown type (using only 8 MB)\n");
 #elif (DEFAULT_FLASH_SIZE_IN_MB == 16)
 			flash_set_geom(SIZE_INBYTES_16MBYTES, 256, SIZE_INBYTES_64KBYTES);
-			puts("Unknown type (using only 16 MB)\n");
+			sprintf(flash_name, "%s", "16 MB Unknown, JEDEC ID: 0x%06lX\n", info->flash_id);
+			//puts("Unknown type (using only 16 MB)\n");
 #endif
-			printf("\nPlease, send request to add support\nfor your FLASH - JEDEC ID: 0x%06lX\n", info->flash_id);
+			/*printf("\nPlease, send request to add support\nfor your FLASH - JEDEC ID: 0x%06lX\n", info->flash_id);*/
 			info->flash_id = FLASH_CUSTOM;
 			break;
 	}
-
-	puts("\n");
 
 	return(info->size);
 }
