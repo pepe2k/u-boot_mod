@@ -83,7 +83,7 @@
 /*
  * Useful clock variables
  */
-#define CLK_40MHz	(40 * 1000 * 1000)
-#define CLK_25MHz	(25 * 1000 * 1000)
+#define VAL_40MHz	(40 * 1000 * 1000)
+#define VAL_25MHz	(25 * 1000 * 1000)
 
 #endif /* _SOC_COMMON_H_ */
