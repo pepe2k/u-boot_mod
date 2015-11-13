@@ -4,23 +4,24 @@ LIB	= lib$(SOC).a
 
 START	=
 
-OBJS	= meminit.o 
+OBJS	=  meminit.o
+OBJS	+= qca_common.o
+OBJS	+= qca_clocks.o
 
 ifeq ($(BOARD), ap121)
-OBJS	+= ar933x_serial.o
-OBJS	+= ar933x_clocks.o
-SOBJS	+= hornet_ddr_init.o
+	OBJS	+= qca_hs_uart.o
+	SOBJS	+= hornet_ddr_init.o
 else
-OBJS	+= ar7240_serial.o
+	OBJS	+= qca_ls_uart.o
 endif
 
 ifeq ($(BOARD), db12x)
-OBJS    += ag934x.o
+	OBJS	+= ag934x.o
 else
-OBJS    += ag7240.o
+	OBJS	+= ag7240.o
 endif
 
-SOBJS	+= 
+SOBJS	+=
 
 all:	.depend $(START) $(LIB)
 

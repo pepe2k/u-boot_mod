@@ -10,6 +10,8 @@
 #include "ag7240.h"
 #include "ag7240_phy.h"
 
+DECLARE_GLOBAL_DATA_PTR;
+
 #if (CONFIG_COMMANDS & CFG_CMD_MII)
 #include <miiphy.h>
 #else
@@ -20,13 +22,14 @@
 
 #define ag7240_unit2mac(_unit)	ag7240_macs[(_unit)]
 #define ag7240_name2mac(name)	strcmp(name,"eth0") ? ag7240_unit2mac(1) : ag7240_unit2mac(0)
-#define CHECK_BIT(var,pos)			((var) & (1<<(pos)))
 
 uint16_t ag7240_miiphy_read(char *devname, uint32_t phaddr, uint8_t reg);
 void ag7240_miiphy_write(char *devname, uint32_t phaddr, uint8_t reg, uint16_t data);
 ag7240_mac_t *ag7240_macs[CFG_AG7240_NMACS];
 
-extern void ar933x_sys_frequency(u32 *cpu_freq, u32 *ddr_freq, u32 *ahb_freq);
+/* TODO: remove extern and include header file*/
+extern void qca_sys_clocks(u32 *cpu_clk, u32 *ddr_clk, u32 *ahb_clk,
+						   u32 *spi_clk, u32 *ref_clk);
 
 extern void athrs26_reg_init(void);
 extern void athrs26_reg_init_lan(void);
@@ -167,7 +170,7 @@ void ag7240_mii_setup(ag7240_mac_t *mac)
 			ag7240_reg_wr(mac, AG7240_MAC_MII_MGMT_CFG, mgmt_cfg_val);
 		}
 	} else {
-		ar933x_sys_frequency(&cpu_freq, &ddr_freq, &ahb_freq);
+		qca_sys_clocks(&cpu_freq, &ddr_freq, &ahb_freq, NULL, NULL);
 
 		switch (ahb_freq / 1000000) {
 		case 150:
@@ -454,45 +457,9 @@ static void ag7240_halt(struct eth_device *dev)
 static void ag7240_get_ethaddr(struct eth_device *dev)
 {
 	unsigned char *mac = dev->enetaddr;
-#ifdef OFFSET_MAC_ADDRESS
-	unsigned char buffer[6];
+	bd_t *bd = gd->bd;
 
-	// get MAC address from flash and check it
-	memcpy(buffer, (void *)(CFG_FLASH_BASE + OFFSET_MAC_DATA_BLOCK + OFFSET_MAC_ADDRESS), 6);
-
-	/*
-	 * check first LSBit (I/G bit) and second LSBit (U/L bit) in MSByte of vendor part
-	 * both of them should be 0:
-	 * I/G bit == 0 -> Individual MAC address (unicast address)
-	 * U/L bit == 0 -> Burned-In-Address (BIA) MAC address
-	 */
-	if(CHECK_BIT((buffer[0] & 0xFF), 0) == 0 && CHECK_BIT((buffer[0] & 0xFF), 1) == 0){
-		mac[0] = (buffer[0] & 0xFF);
-		mac[1] = (buffer[1] & 0xFF);
-		mac[2] = (buffer[2] & 0xFF);
-		mac[3] = (buffer[3] & 0xFF);
-		mac[4] = (buffer[4] & 0xFF);
-		mac[5] = (buffer[5] & 0xFF);
-	} else {
-		// 00-03-7F (Atheros Communications, Inc.)
-		mac[0] = 0x00;
-		mac[1] = 0x03;
-		mac[2] = 0x7f;
-		mac[3] = 0x09;
-		mac[4] = 0x0b;
-		mac[5] = 0xad;
-
-		printf("## Error: MAC address in FLASH is invalid, using fixed!\n");
-	}
-#else
-	// 00-03-7F (Atheros Communications, Inc.)
-	mac[0] = 0x00;
-	mac[1] = 0x03;
-	mac[2] = 0x7f;
-	mac[3] = 0x09;
-	mac[4] = 0x0b;
-	mac[5] = 0xad;
-#endif
+	memcpy(mac, (void *)bd->bi_enetaddr, 6);
 }
 
 int ag7240_enet_initialize(bd_t * bis)

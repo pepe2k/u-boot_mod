@@ -26,7 +26,9 @@
 #include <ar7240_soc.h>
 #include "../board/ar7240/common/ar7240_flash.h"
 
-extern void ar933x_sys_frequency(u32 *cpu_freq, u32 *ddr_freq, u32 *ahb_freq);
+/* TODO: remove extern and include header file*/
+extern void qca_sys_clocks(u32 *cpu_clk, u32 *ddr_clk, u32 *ahb_clk,
+						   u32 *spi_clk, u32 *ref_clk);
 
 #if defined(OFFSET_MAC_ADDRESS)
 /*
@@ -558,7 +560,7 @@ int do_set_clocks(cmd_tbl_t * cmdtp, int flag, int argc, char *argv[]){
 	if(argc == 1){
 
 		// read clocks
-		ar933x_sys_frequency(&cpu_freq, &ddr_freq, &ahb_freq);
+		qca_sys_clocks(&cpu_freq, &ddr_freq, &ahb_freq, NULL, NULL);
 
 		// calculate SPI clock (we need to set bit 0 to 1 in SPI_FUNC_SELECT to access SPI registers)
 		ar7240_reg_wr(AR7240_SPI_FS, 0x01);
