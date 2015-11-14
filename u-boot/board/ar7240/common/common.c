@@ -18,7 +18,7 @@ void print_board_info(void)
 {
 	u32 ahb_clk, cpu_clk, ddr_clk, spi_clk, ref_clk;
 	bd_t *bd = gd->bd;
-	char soc_buffer[24];
+	char buffer[24];
 
 	/* Board name */
 #ifdef BOARD_CUSTOM_STRING
@@ -26,8 +26,12 @@ void print_board_info(void)
 #endif
 
 	/* SOC name, version and revision */
-	qca_soc_name_rev(soc_buffer);
-	printf("%" ALIGN_SIZE "s %s\n", "SOC:", soc_buffer);
+	qca_soc_name_rev(buffer);
+	printf("%" ALIGN_SIZE "s %s\n", "SOC:", buffer);
+
+	/* MIPS CPU type */
+	cpu_name(buffer);
+	printf("%" ALIGN_SIZE "s %s\n", "CPU:", buffer);
 
 	/* RAM size and type */
 	printf("%" ALIGN_SIZE "s ", "RAM:");

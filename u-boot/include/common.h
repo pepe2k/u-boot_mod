@@ -173,6 +173,7 @@ void     print_size(ulong, const char *);
 void     print_board_info(void);
 void     macaddr_init(unsigned char *);
 void     flash_print_name(void);
+void     cpu_name(char *name);
 unsigned int main_cpu_clk(void);
 
 /* common/main.c */

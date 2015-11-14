@@ -78,3 +78,25 @@ void flush_cache(ulong start_addr, ulong size){
 
 	dcache_flush_range(a, end);
 }
+
+/*
+ * Read CPU type and put its name into buffer
+ * For now only 24/74Kc are supported as all
+ * supported SOCs are based on one of them
+ */
+void cpu_name(char *name)
+{
+	u32 cpu_id = read_c0_prid();
+
+	switch (cpu_id & PRID_IMP_MASK) {
+	case PRID_IMP_24K:
+		sprintf(name, "MIPS 24Kc");
+		break;
+	case PRID_IMP_74K:
+		sprintf(name, "MIPS 74Kc");
+		break;
+	default:
+		sprintf(name, "MIPS Unknown");
+		break;
+	}
+}
