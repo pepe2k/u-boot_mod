@@ -126,3 +126,11 @@ u32 main_cpu_clk(void)
 
 	return cpu_clk;
 }
+
+/*
+ * Calls full chip reset
+ */
+void full_reset(void)
+{
+	qca_full_chip_reset();
+}

@@ -41,6 +41,9 @@ void qca_soc_name_rev(char *buf)
 	u32 major;
 	u32 rev = 0;
 
+	if (buf == NULL)
+		return;
+
 	/* Get revision ID value */
 	id = qca_soc_reg_read(QCA_RST_REVISION_ID_REG);
 
@@ -83,4 +86,18 @@ void qca_soc_name_rev(char *buf)
 		sprintf(buf, "Unknown");
 		break;
 	}
+}
+
+/*
+ * Performs full chip reset
+ */
+void qca_full_chip_reset(void)
+{
+	volatile u32 i = 1;
+
+	do {
+		qca_soc_reg_write(QCA_RST_RST_REG,
+						  QCA_RST_RESET_FULL_CHIP_RST_MASK
+						  | QCA_RST_RESET_DDR_RST_MASK);
+	} while (i);
 }
