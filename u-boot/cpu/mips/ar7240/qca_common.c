@@ -67,11 +67,10 @@ void qca_soc_name_rev(char *buf)
 		break;
 #endif
 #if (SOC_TYPE == QCA_QCA9531_SOC || SOC_TYPE == QCA_QCA9533_SOC)
-	case QCA_RST_REVISION_ID_MAJOR_QCA9531_VAL:
-	case QCA_RST_REVISION_ID_MAJOR_QCA9533_VAL:
+	case QCA_RST_REVISION_ID_MAJOR_QCA953X_VAL:
 		sprintf(buf, "QCA953x ver. 1 rev. %d", rev);
 		break;
-	case QCA_RST_REVISION_ID_MAJOR_QCA9533_V2_VAL:
+	case QCA_RST_REVISION_ID_MAJOR_QCA953X_V2_VAL:
 		sprintf(buf, "QCA953x ver. 2 rev. %d", rev);
 		break;
 #endif
