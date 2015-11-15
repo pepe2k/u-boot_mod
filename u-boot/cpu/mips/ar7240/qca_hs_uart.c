@@ -95,7 +95,7 @@ int serial_init(void)
 {
 	u32 uart_cs;
 
-#if (SOC_TYPE == QCA_AR933X_SOC)
+#if (SOC_TYPE & QCA_AR933X_SOC)
 	/*
 	 * Set GPIO10 (UART_SO) as output and enable UART,
 	 * BIT(15) in GPIO_FUNCTION_1 register must be written with 1

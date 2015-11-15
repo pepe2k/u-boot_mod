@@ -51,7 +51,7 @@ void qca_soc_name_rev(char *buf)
 	rev = id & QCA_RST_REVISION_ID_REV_MASK;
 
 	switch (major) {
-#if (SOC_TYPE == QCA_AR933X_SOC)
+#if (SOC_TYPE & QCA_AR933X_SOC)
 	case QCA_RST_REVISION_ID_MAJOR_AR9330_VAL:
 		sprintf(buf, "AR9330 rev. %d", rev);
 		break;
@@ -59,17 +59,15 @@ void qca_soc_name_rev(char *buf)
 		sprintf(buf, "AR9331 rev. %d", rev);
 		break;
 #endif
-#if (SOC_TYPE == QCA_AR9341_SOC)
+#if (SOC_TYPE & QCA_AR934X_SOC)
 	case QCA_RST_REVISION_ID_MAJOR_AR9341_VAL:
 		sprintf(buf, "AR9341 rev. %d", rev);
 		break;
-#endif
-#if (SOC_TYPE == QCA_AR9344_SOC)
 	case QCA_RST_REVISION_ID_MAJOR_AR9344_VAL:
 		sprintf(buf, "AR9344 rev. %d", rev);
 		break;
 #endif
-#if (SOC_TYPE == QCA_QCA9531_SOC || SOC_TYPE == QCA_QCA9533_SOC)
+#if (SOC_TYPE & QCA_QCA953X_SOC)
 	case QCA_RST_REVISION_ID_MAJOR_QCA953X_VAL:
 		sprintf(buf, "QCA953x ver. 1 rev. %d", rev);
 		break;
@@ -77,7 +75,7 @@ void qca_soc_name_rev(char *buf)
 		sprintf(buf, "QCA953x ver. 2 rev. %d", rev);
 		break;
 #endif
-#if (SOC_TYPE == QCA_QCA9558_SOC)
+#if (SOC_TYPE & QCA_QCA955X_SOC)
 	case QCA_RST_REVISION_ID_MAJOR_QCA9558_VAL:
 		sprintf(buf, "QCA9558 rev. %d", rev);
 		break;

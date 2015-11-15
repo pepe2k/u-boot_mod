@@ -65,7 +65,7 @@ void qca_sys_clocks(u32 *cpu_clk,
 					u32 *ref_clk)
 {
 	u32 cpu_pll;
-#if (SOC_TYPE != QCA_AR933X_SOC)
+#if (SOC_TYPE & (~QCA_AR933X_SOC))
 	u32 ddr_pll;
 #endif
 	u32 outdiv;
@@ -82,7 +82,7 @@ void qca_sys_clocks(u32 *cpu_clk,
 		qca_ref_clk = VAL_25MHz;
 	}
 
-#if (SOC_TYPE == QCA_AR933X_SOC)
+#if (SOC_TYPE & QCA_AR933X_SOC)
 	/*
 	 * Main AR933x CPU PLL clock calculation:
 	 *
