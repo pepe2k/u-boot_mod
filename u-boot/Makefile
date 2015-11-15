@@ -284,14 +284,29 @@ unconfig:
 #########################################################################
 common_config :
 	@ >include/config.h
-	@echo "/* Temporary solution */"                       >> include/config.h
-	@echo "#define QCA_AR933X_SOC                       1" >> include/config.h
-	@echo "#define QCA_AR9341_SOC                       2" >> include/config.h
-	@echo "#define QCA_AR9344_SOC                       3" >> include/config.h
-	@echo "#define QCA_QCA9531_SOC                      4" >> include/config.h
-	@echo "#define QCA_QCA9533_SOC                      5" >> include/config.h
-	@echo "#define QCA_QCA9558_SOC                      6" >> include/config.h
-	@echo ""                                               >> include/config.h
+	@echo "/* Temporary solution */"             >> include/config.h
+	@echo "/* AR933x */"                         >> include/config.h
+	@echo "#define QCA_AR9330_SOC		0x00001" >> include/config.h
+	@echo "#define QCA_AR9331_SOC		0x00002" >> include/config.h
+	@echo "#define QCA_AR933X_SOC		(QCA_AR9330_SOC || QCA_AR9331_SOC)" >> include/config.h
+	@echo "/* AR934x */"                         >> include/config.h
+	@echo "#define QCA_AR9341_SOC		0x00010" >> include/config.h
+	@echo "#define QCA_AR9342_SOC		0x00020" >> include/config.h
+	@echo "#define QCA_AR9344_SOC		0x00040" >> include/config.h
+	@echo "#define QCA_AR934X_SOC		(QCA_AR9341_SOC || QCA_AR9342_SOC || QCA_AR9344_SOC)" >> include/config.h
+	@echo "/* QCA953x */"                        >> include/config.h
+	@echo "#define QCA_QCA9531_SOC		0x00100" >> include/config.h
+	@echo "#define QCA_QCA9533_SOC		0x00200" >> include/config.h
+	@echo "#define QCA_QCA953X_SOC		(QCA_QCA9531_SOC || QCA_QCA9533_SOC)" >> include/config.h
+	@echo "/* QCA956x */"                        >> include/config.h
+	@echo "#define QCA_QCA9561_SOC		0x01000" >> include/config.h
+	@echo "#define QCA_QCA9563_SOC		0x02000" >> include/config.h
+	@echo "#define QCA_QCA956X_SOC		(QCA_QCA9561_SOC || QCA_QCA9563_SOC)" >> include/config.h
+	@echo "/* QCA955x */"                        >> include/config.h
+	@echo "#define QCA_QCA9557_SOC		0x10000" >> include/config.h
+	@echo "#define QCA_QCA9558_SOC		0x20000" >> include/config.h
+	@echo "#define QCA_QCA955X_SOC		(QCA_QCA9557_SOC || QCA_QCA9558_SOC)" >> include/config.h
+	@echo ""                                     >> include/config.h
 
 ifdef CONFIG_BOOTDELAY
 	@echo "#define CONFIG_BOOTDELAY "$(CONFIG_BOOTDELAY)   >> include/config.h
