@@ -7,11 +7,11 @@
 #include "ar7240_soc.h"
 
 #if !defined(COMPRESSED_UBOOT)
-extern void	hornet_ddr_init(void);
+extern void	ar933x_ddr_init(void);
 #endif
 
 extern int ar7240_ddr_find_size(void);
-extern void hornet_ddr_tap_init(void);
+extern void ar933x_ddr_tap_init(void);
 
 #define SETBITVAL(val, pos, bit) do {ulong bitval = (bit) ? 0x1 : 0x0; (val) = ((val) & ~(0x1 << (pos))) | ( (bitval) << (pos));} while(0)
 
@@ -427,7 +427,7 @@ int ar7240_mem_config(void)
 {
 #ifndef CONFIG_SKIP_LOWLEVEL_INIT
 	#ifndef COMPRESSED_UBOOT
-	hornet_ddr_init();
+	ar933x_ddr_init();
 	#endif
 
 	/* Default tap values for starting the tap_init*/
@@ -438,7 +438,7 @@ int ar7240_mem_config(void)
 	all_led_off();
 
 #ifndef CONFIG_SKIP_LOWLEVEL_INIT
-	hornet_ddr_tap_init();
+	ar933x_ddr_tap_init();
 #endif
 
 	// return memory size

@@ -30,7 +30,7 @@
 #include <asm/addrspace.h>
 #include <ar7240_soc.h>
 
-	.globl hornet_ddr_init
+	.globl ar933x_ddr_init
 	.text
 	.align 4
 
@@ -41,7 +41,7 @@
 //============================================
 //   init DDR1 parameter before rel_start
 //===========================================
-hornet_ddr_init:
+ar933x_ddr_init:
 	// 0x18000000 (DDR_CONFIG, p. 54)
 	// CFG_DDR_CONFIG_VAL = 0x7fbc8cd0 (ap121.h)
 	li t8, CFG_DDR_CONFIG_VAL;
@@ -249,13 +249,13 @@ ddr1_config:
 	jr ra
     
 /*
- * void hornet_ddr_tap_init(void)
+ * void ar933x_ddr_tap_init(void)
  *
  * This "function" is used to find the tap settings for the DDR
  */
-	.globl	hornet_ddr_tap_init
-	.ent	hornet_ddr_tap_init
-hornet_ddr_tap_init: /* { */
+	.globl	ar933x_ddr_tap_init
+	.ent	ar933x_ddr_tap_init
+ar933x_ddr_tap_init: /* { */
 
 	li	t1,0x80500000 
 	li	t0,0xffffffff 
@@ -559,5 +559,5 @@ end:
 	nop
 	jr 	ra
 
-	.end	hornet_ddr_tap_init
+	.end	ar933x_ddr_tap_init
 /* } */

@@ -5,7 +5,8 @@
 #include <asm/addrspace.h>
 #include <ar7240_soc.h>
 
-	.globl hornet_pll_init
+	.globl lowlevel_init
+	.type  lowlevel_init, @function
 	.text
 	.align 4
 
@@ -38,7 +39,7 @@
 		beq t1, (1 << GPIO_RST_BUTTON_BIT), _branch;
 #endif
 
-hornet_pll_init:
+lowlevel_init:
 
 #if 1
 /* These three wlan reset will avoid original issue,
