@@ -34,52 +34,33 @@
  */
 #undef CONFIG_BOOTARGS
 #if defined(CONFIG_FOR_TPLINK_WR820N_CH)
-#define	CONFIG_BOOTARGS	"console=ttyS0,115200 root=31:02 rootfstype=squashfs init=/sbin/init mtdparts=mtdparts=ath-nor0:32k(u-boot1),32k(u-boot2),3008k(rootfs),896k(uImage),64k(mib0),64k(ART)"
+	#define	CONFIG_BOOTARGS	"console=ttyS0,115200 root=31:02 rootfstype=squashfs init=/sbin/init mtdparts=mtdparts=ath-nor0:32k(u-boot1),32k(u-boot2),3008k(rootfs),896k(uImage),64k(mib0),64k(ART)"
 #endif
 
 /*
  * Other env default values
  */
 #undef CONFIG_BOOTFILE
-#define CONFIG_BOOTFILE		"firmware.bin"
+#define CONFIG_BOOTFILE			"firmware.bin"
 
 #undef CONFIG_LOADADDR
-#define CONFIG_LOADADDR		0x80800000
+#define CONFIG_LOADADDR			0x80800000
 
 #define	CFG_LOAD_ADDR			 0x9F020000
 #define UPDATE_SCRIPT_FW_ADDR	"0x9F020000"
 #define CONFIG_BOOTCOMMAND 		"bootm 0x9F020000"
-
-
-#define CONFIG_IPADDR		192.168.1.1
-#define CONFIG_SERVERIP		192.168.1.2
+#define CONFIG_IPADDR			192.168.1.1
+#define CONFIG_SERVERIP			192.168.1.2
 
 #undef CFG_PLL_FREQ
 #undef CFG_HZ
 
 // CPU-RAM-AHB frequency setting
-//#define CFG_PLL_FREQ				CFG_PLL_650_400_200
-//#define CFG_PLL_FREQ				0x13
-#define CFG_HZ_FALLBACK				(650000000LU/2)
+#define CFG_HZ_FALLBACK				(400000000LU/2)
 
 #define	CFG_HZ						bd->bi_cfg_hz
 #define AR7240_SPI_CONTROL			0x43
 #define AR7240_SPI_CONTROL_DEFAULT	AR7240_SPI_CONTROL
-/*
- * MIPS32 24K Processor Core Family Software User's Manual
- *
- * 6.2.9 Count Register (CP0 Register 9, Select 0)
- * The Count register acts as a timer, incrementing at a constant
- * rate, whether or not an instruction is executed, retired, or
- * any forward progress is made through the pipeline.  The counter
- * increments every other clock, if the DC bit in the Cause register
- * is 0.
- *
- * Since the count is incremented every other tick, divide by 2
- * XXX derive this from CFG_PLL_FREQ
- */
-
-
 
 /*
  * Address and size of Primary Environment Sector
@@ -112,21 +93,10 @@
 #define CONFIG_NETCONSOLE
 #define CONFIG_NETCONSOLE_PORT	6666
 
-
-
-
-
-
-
 /*modify from 0x4138 to 0x40c3, ddr refresh interval: 12uS to 7.8uS. by wkp 
   from Li Guanwen, 30Dec14. */
 //#define CFG_DDR_REFRESH_VAL		0x40c3 (??????????????????)
 #define CFG_DDR_REFRESH_VAL		0x4138
-
-
-
-
-
 
 /*
  * Web Failsafe configuration
