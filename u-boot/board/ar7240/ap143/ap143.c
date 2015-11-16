@@ -5,28 +5,73 @@
 #include <config.h>
 #include <version.h>
 #include <atheros.h>
+#include <soc/qca_soc_common.h>
 
 extern int ath_ddr_initial_config(uint32_t refresh);
 extern int ath_ddr_find_size(void);
 
+#define SETBITVAL(val, pos, bit) do {ulong bitval = (bit) ? 0x1 : 0x0; (val) = ((val) & ~(0x1 << (pos))) | ( (bitval) << (pos));} while(0)
+
 void led_toggle(void)
 {
-	return;
+	u32 gpio = qca_soc_reg_read(QCA_GPIO_OUT_REG);
+
+#if defined(CONFIG_FOR_TPLINK_WR820N_CH)
+	gpio ^= 1 << GPIO_SYS_LED_BIT;
+#else
+	#error "Custom GPIO in leg_toggle() not defined!"
+#endif
+
+	qca_soc_reg_write(QCA_GPIO_OUT_REG, gpio);
 }
 
 void all_led_on(void)
 {
-	return;
+	u32 gpio = qca_soc_reg_read(QCA_GPIO_OUT_REG);
+
+#if defined(CONFIG_FOR_TPLINK_WR820N_CH)
+	SETBITVAL(gpio, GPIO_SYS_LED_BIT, GPIO_SYS_LED_ON);
+#else
+	#error "Custom GPIO in all_led_on() not defined!"
+#endif
+
+	qca_soc_reg_write(QCA_GPIO_OUT_REG, gpio);
 }
 
 void all_led_off(void)
 {
-	return;
+	u32 gpio = qca_soc_reg_read(QCA_GPIO_OUT_REG);
+
+#if defined(CONFIG_FOR_TPLINK_WR820N_CH)
+	SETBITVAL(gpio, GPIO_SYS_LED_BIT, !GPIO_SYS_LED_ON);
+#else
+	#error "Custom GPIO in all_led_on() not defined!"
+#endif
+
+	qca_soc_reg_write(QCA_GPIO_OUT_REG, gpio);
 }
 
 int reset_button_status(void)
 {
+#ifndef GPIO_RST_BUTTON_BIT
 	return 0;
+#else
+	u32 gpio = qca_soc_reg_read(QCA_GPIO_IN_REG);
+
+	if(gpio & (1 << GPIO_RST_BUTTON_BIT)){
+  #if defined(GPIO_RST_BUTTON_IS_ACTIVE_LOW)
+		return 0 ;
+  #else
+		return 1 ;
+  #endif
+	} else {
+  #if defined(GPIO_RST_BUTTON_IS_ACTIVE_LOW)
+		return 1;
+  #else
+		return 0;
+  #endif
+	}
+#endif
 }
 
 int gpio_init(void)

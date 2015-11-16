@@ -762,6 +762,10 @@ tplink_wr820n_CH_config : unconfig ap143_common_config
 	@echo "#define CFG_ATHRS27_PHY                      1" >> include/config.h
 	@echo "#define CFG_ATH_GMAC_NMACS                   2" >> include/config.h
 	@echo "#define DEFAULT_FLASH_SIZE_IN_MB             4" >> include/config.h
+	@echo "#define GPIO_SYS_LED_BIT                    13" >> include/config.h
+	@echo "#define GPIO_SYS_LED_ON                      0" >> include/config.h
+	@echo "#define GPIO_RST_BUTTON_BIT                 12" >> include/config.h
+	@echo "#define GPIO_RST_BUTTON_IS_ACTIVE_LOW        1" >> include/config.h
 	@echo "#define BOARD_CUSTOM_STRING                  \"TP-Link TL-WR820N CH\"" >> include/config.h
 	@echo "#define CFG_PLL_FREQ       CFG_PLL_400_400_200" >> include/config.h
 

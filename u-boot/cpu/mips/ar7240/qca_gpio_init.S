@@ -338,6 +338,54 @@ lowlevel_gpio_init:
 	li  t8, QCA_GPIO_SET_REG
 	li  t9, (GPIO13 | GPIO14 | GPIO15 | GPIO18)
 	sw  t9, 0(t8)
+
+#elif defined(CONFIG_FOR_TPLINK_WR820N_CH)
+	/*
+	 * LEDs and buttons GPIOs on WR820N CH:
+	 *
+	 * 11 => USB Power (active high)
+	 * 13 => SYS
+	 *
+	 * 0  => SWITCH
+	 * 1  => SWITCH
+	 * 12 => Reset button
+	 *
+	 * All OUT GPIOs are active LOW if not stated otherwise
+	 */
+
+	/* GPIOs init */
+	li  t8, QCA_GPIO_OE_REG
+	lw  t9, 0(t8)
+	/* Set GPIOs 11 and 13 outputs */
+	and t9, t9, ~(GPIO11 | GPIO13)
+	/* Set GPIOs 0, 1 and 12 as inputs */
+	or  t9, t9, (GPIO0 | GPIO1 | GPIO12)
+	sw  t9, 0(t8)
+
+	/* Set GPIO function for GPIOs 0 and 1 */
+	li  t8, QCA_GPIO_OUT_FUNC0_REG
+	lw  t9, 0(t8)
+	and t9, t9, ~(QCA_GPIO_OUT_FUNCX_GPIO0_EN_MASK | \
+				  QCA_GPIO_OUT_FUNCX_GPIO1_EN_MASK)
+	sw  t9, 0(t8)
+
+	/* Set GPIO function for GPIO 11 */
+	li  t8, QCA_GPIO_OUT_FUNC2_REG
+	lw  t9, 0(t8)
+	and t9, t9, ~(QCA_GPIO_OUT_FUNCX_GPIO11_EN_MASK)
+	sw  t9, 0(t8)
+
+	/* Set gpio function for GPIOs 12 and 13 */
+	li  t8, QCA_GPIO_OUT_FUNC3_REG
+	lw  t9, 0(t8)
+	and t9, t9, ~(QCA_GPIO_OUT_FUNCX_GPIO12_EN_MASK | \
+				  QCA_GPIO_OUT_FUNCX_GPIO13_EN_MASK)
+	sw  t9, 0(t8)
+
+	/* Turn off LED, turn on power on USB */
+	li  t8, QCA_GPIO_SET_REG
+	li  t9, (GPIO11 | GPIO13)
+	sw  t9, 0(t8)
 #endif
 
 	j ra
