@@ -751,6 +751,22 @@ wa830re_v2_wa801nd_v2_config : unconfig wasp_common_config
 
 	@./mkconfig -a db12x mips mips db12x ar7240 ar7240
 
+ap143_common_config : common_config
+	@echo "#define CONFIG_ATHEROS                       1" >> include/config.h
+	@echo "#define CONFIG_MACH_QCA953x                  1" >> include/config.h
+
+tplink_wr820n_CH_config : unconfig ap143_common_config
+	@/bin/echo -e '\e[32m> Configuring for TP-Link TL-WR820N CH at:' `date` '\e[0m'
+	@echo "#define SOC_TYPE               QCA_QCA953X_SOC" >> include/config.h
+	@echo "#define CONFIG_FOR_TPLINK_WR820N_CH          1" >> include/config.h
+	@echo "#define CFG_ATHRS27_PHY                      1" >> include/config.h
+	@echo "#define CFG_ATH_GMAC_NMACS                   2" >> include/config.h
+	@echo "#define DEFAULT_FLASH_SIZE_IN_MB             4" >> include/config.h
+	@echo "#define BOARD_CUSTOM_STRING                  \"TP-Link TL-WR820N CH\"" >> include/config.h
+	@echo "#define CFG_PLL_FREQ       CFG_PLL_400_400_200" >> include/config.h
+
+	@./mkconfig -a ap143 mips mips ap143 ar7240 ar7240
+
 #########################################################################
 #########################################################################
 #########################################################################
