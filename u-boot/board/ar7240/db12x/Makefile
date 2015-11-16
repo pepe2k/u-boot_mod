@@ -12,8 +12,6 @@ ifeq ($(ETH_CONFIG), _s27)
 OBJS	+= ../common/athrs27_phy.o
 endif
 
-SOBJS	= ../common/lowlevel_init_934x.o
-
 $(LIB):	.depend $(OBJS) $(SOBJS)
 	$(AR) crv $@ $(OBJS) $(SOBJS)
 
