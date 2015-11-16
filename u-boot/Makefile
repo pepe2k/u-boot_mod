@@ -342,7 +342,6 @@ endif
 hornet_common_config : common_config
 	@echo "#define SOC_TYPE                QCA_AR933X_SOC" >> include/config.h
 	@echo "#define CONFIG_MACH_HORNET                   1" >> include/config.h
-	@echo "#define CONFIG_HORNET_1_1_WAR                1" >> include/config.h
 
 wr703n_config : unconfig hornet_common_config
 	@/bin/echo -e '\e[32m> Configuring for TP-Link TL-WR703N at:' `date` '\e[0m'
