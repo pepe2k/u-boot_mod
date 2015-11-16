@@ -87,7 +87,8 @@
 /*
  * Cache lock for stack
  */
-#define CFG_INIT_SP_OFFSET		0x1000
+#define CFG_INIT_SP_OFFSET			0x1000
+#define CONFIG_INIT_SRAM_SP_OFFSET	0xbd007000
 
 /*
  * Address and size of Primary Environment Sector
