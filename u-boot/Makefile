@@ -341,7 +341,6 @@ endif
 
 hornet_common_config : common_config
 	@echo "#define SOC_TYPE                QCA_AR933X_SOC" >> include/config.h
-	@echo "#define CONFIG_AR7240                        1" >> include/config.h
 	@echo "#define CONFIG_MACH_HORNET                   1" >> include/config.h
 	@echo "#define CONFIG_HORNET_1_1_WAR                1" >> include/config.h
 
@@ -606,7 +605,6 @@ gl-inet_config : unconfig hornet_common_config
 	@./mkconfig -a ap121 mips mips ap121 ar7240 ar7240
 
 wasp_common_config : common_config
-	@echo "#define CONFIG_AR7240                        1" >> include/config.h
 	@echo "#define CONFIG_WASP                          1" >> include/config.h
 	@echo "#define CONFIG_WASP_SUPPORT                  1" >> include/config.h
 

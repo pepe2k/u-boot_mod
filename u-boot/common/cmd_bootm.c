@@ -149,7 +149,7 @@ int do_bootm(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[]){
 	eth_halt();
 #endif
 
-#if defined(CONFIG_AR7100) || defined(CONFIG_AR7240)
+	/* TODO: should we flush caches for kernel? */
 	/*
 	 * Flush everything, restore caches for linux
 	 */
@@ -158,7 +158,6 @@ int do_bootm(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[]){
 
 	/* XXX - this causes problems when booting from flash */
 	/* dcache_disable(); */
-#endif
 
 	/*	case IH_COMP_LZMA:*/
 	puts("Uncompressing kernel image... ");
