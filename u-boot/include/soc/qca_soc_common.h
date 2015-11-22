@@ -1224,6 +1224,21 @@
 #define QCA_SPI_IO_CTRL_IO_CS2_SHIFT		18
 #define QCA_SPI_IO_CTRL_IO_CS2_MASK			(1 << QCA_SPI_IO_CTRL_IO_CS2_SHIFT)
 
+/* SPI_SHIFT_CNT_ADDR register (SPI content to shift out or in) */
+#define QCA_SPI_SHIFT_CNT_BITS_CNT_SHIFT		0
+#define QCA_SPI_SHIFT_CNT_BITS_CNT_MASK			BITS(QCA_SPI_SHIFT_CNT_BITS_CNT_SHIFT, 7)
+#define QCA_SPI_SHIFT_CNT_TERMINATE_SHIFT		26
+#define QCA_SPI_SHIFT_CNT_TERMINATE_MASK		(1 << QCA_SPI_SHIFT_CNT_TERMINATE_SHIFT)
+#define QCA_SPI_SHIFT_CNT_CLKOUT_INIT_SHIFT		27
+#define QCA_SPI_SHIFT_CNT_CLKOUT_INIT_MASK		(1 << QCA_SPI_SHIFT_CNT_CLKOUT_INIT_SHIFT)
+#define QCA_SPI_SHIFT_CNT_CHNL_CS0_SHIFT		28
+#define QCA_SPI_SHIFT_CNT_CHNL_CS0_MASK			(1 << QCA_SPI_SHIFT_CNT_CHNL_CS0_SHIFT)
+#define QCA_SPI_SHIFT_CNT_CHNL_CS1_SHIFT		29
+#define QCA_SPI_SHIFT_CNT_CHNL_CS1_MASK			(1 << QCA_SPI_SHIFT_CNT_CHNL_CS1_SHIFT)
+#define QCA_SPI_SHIFT_CNT_CHNL_CS2_SHIFT		30
+#define QCA_SPI_SHIFT_CNT_CHNL_CS2_MASK			(1 << QCA_SPI_SHIFT_CNT_CHNL_CS2_SHIFT)
+#define QCA_SPI_SHIFT_CNT_SHIFT_EN_SHIFT		31
+#define QCA_SPI_SHIFT_CNT_SHIFT_EN_MASK			(1 << QCA_SPI_SHIFT_CNT_SHIFT_EN_SHIFT)
 
 
 /*
@@ -1235,6 +1250,10 @@ inline u32 qca_mem_type(void);
 void   qca_soc_name_rev(char *buf);
 void   qca_full_chip_reset(void);
 void   qca_sys_clocks(u32 *cpu_clk, u32 *ddr_clk, u32 *ahb_clk, u32 *spi_clk, u32 *ref_clk);
+void   qca_sf_bulk_erase(u32 bank);
+void   qca_sf_write_page(u32 bank, u32 address, u32 length, u8 *data);
+u32    qca_sf_sect_erase(u32 bank, u32 address, u32 sect_size);
+u32    qca_sf_jedec_id(u32 bank);
 #endif /* !__ASSEMBLY__ */
 
 /*
