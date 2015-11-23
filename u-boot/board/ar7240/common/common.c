@@ -1,3 +1,9 @@
+/*
+ * Copyright (C) 2015 Piotr Dymacz <piotr@dymacz.pl>
+ *
+ * SPDX-License-Identifier:GPL-2.0
+ */
+
 #include <config.h>
 #include <common.h>
 #include <command.h>
