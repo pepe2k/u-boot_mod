@@ -188,17 +188,13 @@ void qca_sf_write_page(u32 bank, u32 address, u32 length, u8 *data)
 /* Returns JEDEC ID for selected FLASH chip */
 u32 qca_sf_jedec_id(u32 bank)
 {
-	volatile u32 data_in = 0;
+	u32 data_in;
 
 	qca_sf_bank_to_cs_mask(bank);
 
 	qca_sf_spi_en();
 	qca_sf_shift_out(SPI_FLASH_CMD_JEDEC << 24, 32, 1);
-
-	do {
-		data_in = qca_sf_shift_in();
-	} while (data_in == 0);
-
+	data_in = qca_sf_shift_in();
 	qca_sf_spi_di();
 
 	return (data_in & 0x00FFFFFF);
