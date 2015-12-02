@@ -559,12 +559,7 @@ int do_set_clocks(cmd_tbl_t * cmdtp, int flag, int argc, char *argv[]){
 	if(argc == 1){
 
 		// read clocks
-		qca_sys_clocks(&cpu_freq, &ddr_freq, &ahb_freq, NULL, NULL);
-
-		// calculate SPI clock (we need to set bit 0 to 1 in SPI_FUNC_SELECT to access SPI registers)
-		ar7240_reg_wr(AR7240_SPI_FS, 0x01);
-		spi_freq = ahb_freq / (((ar7240_reg_rd(AR7240_SPI_CLOCK) & 0x3F) + 1) * 2);
-		ar7240_reg_wr(AR7240_SPI_FS, 0x0);
+		qca_sys_clocks(&cpu_freq, &ddr_freq, &ahb_freq, &spi_freq, NULL);
 
 		// make MHz from Hz
 		cpu_freq /= 1000000;
