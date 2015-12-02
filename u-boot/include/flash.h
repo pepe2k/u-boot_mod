@@ -61,14 +61,14 @@ extern const u32 spi_nor_ids_count;
 /* Prototypes */
 u32 flash_init(void);
 u32 flash_erase(flash_info_t *info, u32 s_first, u32 s_last);
-const char* flash_manuf_name(u32 jedec_id);
+const char *flash_manuf_name(u32 jedec_id);
 
 extern int flash_sect_erase(ulong addr_first, ulong addr_last);
 
 /* common/flash.c */
 extern int flash_write(char *, ulong, ulong);
 extern flash_info_t *addr2info(ulong);
-extern int write_buff(flash_info_t *info, uchar *src, ulong addr, ulong cnt);
+extern u32 write_buff(flash_info_t *info, uchar *src, ulong addr, ulong cnt);
 
 /* Useful size */
 #define SIZE_4KiB	 4 * 1024
