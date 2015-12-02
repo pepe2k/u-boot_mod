@@ -6,7 +6,7 @@
 
 #include <config.h>
 #include <common.h>
-#include <command.h>
+#include <flash.h>
 #include <asm/mipsregs.h>
 #include <asm/addrspace.h>
 #include <soc/qca_soc_common.h>
@@ -23,6 +23,7 @@ static u32 mac_is_not_valid = 1;
 void print_board_info(void)
 {
 	u32 ahb_clk, cpu_clk, ddr_clk, spi_clk, ref_clk;
+	u32 bank;
 	bd_t *bd = gd->bd;
 	char buffer[24];
 
@@ -58,10 +59,26 @@ void print_board_info(void)
 			break;
 	}
 
-	/* FLASH size and type */
+	/* SPI NOR FLASH sizes and types */
 	printf("%" ALIGN_SIZE "s ", "FLASH:");
-	flash_print_name();
-	puts("\n");
+
+	for (bank = 0; bank < CFG_MAX_FLASH_BANKS; bank++) {
+		if (flash_info[bank].size == 0)
+			continue;
+
+		if (bank > 0)
+			printf("%" ALIGN_SIZE "s ", " ");
+
+		print_size(flash_info[bank].size, "");
+
+		if (flash_info[bank].manuf_name != NULL)
+			printf(" %s", flash_info[bank].manuf_name);
+
+		if (flash_info[bank].model_name != NULL)
+			printf(" %s", flash_info[bank].model_name);
+
+		puts("\n");
+	}
 
 	/* MAC address */
 	printf("%" ALIGN_SIZE "s %02X:%02X:%02X:%02X:%02X:%02X", "MAC:",
