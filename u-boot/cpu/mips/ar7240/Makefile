@@ -9,6 +9,7 @@ SOBJS	=
 OBJS	+= meminit.o
 OBJS	+= qca_common.o
 OBJS	+= qca_clocks.o
+OBJS	+= qca_sf.o
 SOBJS	+= qca_gpio_init.o
 
 ifeq ($(BOARD), ap121)
