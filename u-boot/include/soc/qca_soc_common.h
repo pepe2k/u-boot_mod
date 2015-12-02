@@ -1252,7 +1252,8 @@ void   qca_full_chip_reset(void);
 void   qca_sys_clocks(u32 *cpu_clk, u32 *ddr_clk, u32 *ahb_clk, u32 *spi_clk, u32 *ref_clk);
 void   qca_sf_bulk_erase(u32 bank);
 void   qca_sf_write_page(u32 bank, u32 address, u32 length, u8 *data);
-u32    qca_sf_sect_erase(u32 bank, u32 address, u32 sect_size);
+u32    qca_sf_sect_erase(u32 bank, u32 address, u32 sect_size, u8 erase_cmd);
+u32    qca_sf_sfdp_info(u32 bank, u32 *flash_size, u32 *sector_size, u8 *erase_cmd);
 u32    qca_sf_jedec_id(u32 bank);
 #endif /* !__ASSEMBLY__ */
 
