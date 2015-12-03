@@ -303,7 +303,7 @@ rel_start:
 	/* REMAP_DISABLE */
 	li a0, KSEG1ADDR(QCA_SPI_CTRL_REG)
 #if (SOC_TYPE & QCA_QCA953X_SOC)
-	li t0, 0x246
+	li t0, 0x243
 #elif (SOC_TYPE & QCA_AR934X_SOC)
 	li t0, 0x243
 #else
