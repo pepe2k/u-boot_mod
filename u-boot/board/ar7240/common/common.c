@@ -101,7 +101,7 @@ void print_board_info(void)
 	spi_clk = spi_clk / 1000000;
 	ref_clk = ref_clk / 1000000;
 
-	printf("%" ALIGN_SIZE "s %d/%d/%d/%3d/%3d MHz\n",
+	printf("%" ALIGN_SIZE "s %3d/%3d/%3d/%3d/%3d MHz\n",
 		" ", cpu_clk, ddr_clk, ahb_clk, spi_clk, ref_clk);
 
 	puts("\n");
