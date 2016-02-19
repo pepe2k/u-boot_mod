@@ -346,8 +346,6 @@ hornet_common_config : common_config
 wr703n_config : unconfig hornet_common_config
 	@/bin/echo -e '\e[32m> Configuring for TP-Link TL-WR703N at:' `date` '\e[0m'
 	@echo "#define CONFIG_FOR_TPLINK_WR703N_V1          1" >> include/config.h
-	@echo "#define GPIO_SYS_LED_BIT                    27" >> include/config.h
-	@echo "#define GPIO_SYS_LED_ON                      0" >> include/config.h
 	@echo "#define GPIO_RST_BUTTON_BIT                 11" >> include/config.h
 	@echo "#define DEFAULT_FLASH_SIZE_IN_MB             4" >> include/config.h
 	@echo "#define BOARD_CUSTOM_STRING                  \"TP-Link TL-WR703N\"" >> include/config.h
@@ -357,8 +355,6 @@ wr703n_config : unconfig hornet_common_config
 wr720n_v3_CH_config : unconfig hornet_common_config
 	@/bin/echo -e '\e[32m> Configuring for TP-Link TL-WR720N v3 CH at:' `date` '\e[0m'
 	@echo "#define CONFIG_FOR_TPLINK_WR720N_V3          1" >> include/config.h
-	@echo "#define GPIO_SYS_LED_BIT                    27" >> include/config.h
-	@echo "#define GPIO_SYS_LED_ON                      0" >> include/config.h
 	@echo "#define GPIO_RST_BUTTON_BIT                 11" >> include/config.h
 	@echo "#define DEFAULT_FLASH_SIZE_IN_MB             4" >> include/config.h
 	@echo "#define BOARD_CUSTOM_STRING                  \"TP-Link TL-WR720N v3 CH\"" >> include/config.h
@@ -368,8 +364,6 @@ wr720n_v3_CH_config : unconfig hornet_common_config
 wr710n_config : unconfig hornet_common_config
 	@/bin/echo -e '\e[32m> Configuring for TP-Link TL-WR710N at:' `date` '\e[0m'
 	@echo "#define CONFIG_FOR_TPLINK_WR710N_V1          1" >> include/config.h
-	@echo "#define GPIO_SYS_LED_BIT                    27" >> include/config.h
-	@echo "#define GPIO_SYS_LED_ON                      0" >> include/config.h
 	@echo "#define GPIO_RST_BUTTON_BIT                 11" >> include/config.h
 	@echo "#define DEFAULT_FLASH_SIZE_IN_MB             8" >> include/config.h
 	@echo "#define BOARD_CUSTOM_STRING                  \"TP-Link TL-WR710N\"" >> include/config.h
@@ -379,14 +373,6 @@ wr710n_config : unconfig hornet_common_config
 mr3020_config : unconfig hornet_common_config
 	@/bin/echo -e '\e[32m> Configuring for TP-Link TL-MR3020 at:' `date`.'\e[0m'
 	@echo "#define CONFIG_FOR_TPLINK_MR3020_V1          1" >> include/config.h
-	@echo "#define GPIO_INTERNET_LED_BIT               27" >> include/config.h
-	@echo "#define GPIO_INTERNET_LED_ON                 0" >> include/config.h
-	@echo "#define GPIO_WPS_LED_BIT                    26" >> include/config.h
-	@echo "#define GPIO_WPS_LED_ON                      0" >> include/config.h
-	@echo "#define GPIO_WLAN_LED_BIT                    0" >> include/config.h
-	@echo "#define GPIO_WLAN_LED_ON                     1" >> include/config.h
-	@echo "#define GPIO_ETH_LED_BIT                    17" >> include/config.h
-	@echo "#define GPIO_ETH_LED_ON                      0" >> include/config.h
 	@echo "#define GPIO_RST_BUTTON_BIT                 11" >> include/config.h
 	@echo "#define DEFAULT_FLASH_SIZE_IN_MB             4" >> include/config.h
 	@echo "#define BOARD_CUSTOM_STRING                  \"TP-Link TL-MR3020\"" >> include/config.h
@@ -396,12 +382,6 @@ mr3020_config : unconfig hornet_common_config
 mr3040_config : unconfig hornet_common_config
 	@/bin/echo -e '\e[32m> Configuring for TP-Link TL-MR3040 at:' `date` '\e[0m'
 	@echo "#define CONFIG_FOR_TPLINK_MR3040_V1V2        1" >> include/config.h
-	@echo "#define GPIO_INTERNET_LED_BIT               27" >> include/config.h
-	@echo "#define GPIO_INTERNET_LED_ON                 0" >> include/config.h
-	@echo "#define GPIO_WLAN_LED_BIT                   26" >> include/config.h
-	@echo "#define GPIO_WLAN_LED_ON                     0" >> include/config.h
-	@echo "#define GPIO_ETH_LED_BIT                    17" >> include/config.h
-	@echo "#define GPIO_ETH_LED_ON                      0" >> include/config.h
 	@echo "#define GPIO_RST_BUTTON_BIT                 11" >> include/config.h
 	@echo "#define DEFAULT_FLASH_SIZE_IN_MB             4" >> include/config.h
 	@echo "#define BOARD_CUSTOM_STRING                  \"TP-Link TL-MR3040\"" >> include/config.h
@@ -411,8 +391,6 @@ mr3040_config : unconfig hornet_common_config
 mr10u_config : unconfig hornet_common_config
 	@/bin/echo -e '\e[32m> Configuring for TP-Link TL-MR10U at:' `date` '\e[0m'
 	@echo "#define CONFIG_FOR_TPLINK_MR10U_V1           1" >> include/config.h
-	@echo "#define GPIO_SYS_LED_BIT                    27" >> include/config.h
-	@echo "#define GPIO_SYS_LED_ON                      0" >> include/config.h
 	@echo "#define GPIO_RST_BUTTON_BIT                 11" >> include/config.h
 	@echo "#define DEFAULT_FLASH_SIZE_IN_MB             4" >> include/config.h
 	@echo "#define BOARD_CUSTOM_STRING                  \"TP-Link TL-MR10U\"" >> include/config.h
@@ -422,8 +400,6 @@ mr10u_config : unconfig hornet_common_config
 mr13u_config : unconfig hornet_common_config
 	@/bin/echo -e '\e[32m> Configuring for TP-Link TL-MR13U at:' `date` '\e[0m'
 	@echo "#define CONFIG_FOR_TPLINK_MR13U_V1           1" >> include/config.h
-	@echo "#define GPIO_SYS_LED_BIT                    27" >> include/config.h
-	@echo "#define GPIO_SYS_LED_ON                      0" >> include/config.h
 	@echo "#define GPIO_RST_BUTTON_BIT                 11" >> include/config.h
 	@echo "#define DEFAULT_FLASH_SIZE_IN_MB             4" >> include/config.h
 	@echo "#define BOARD_CUSTOM_STRING                  \"TP-Link TL-MR13U\"" >> include/config.h
@@ -433,22 +409,6 @@ mr13u_config : unconfig hornet_common_config
 wr740n_v4_config : unconfig hornet_common_config
 	@/bin/echo -e '\e[32m> Configuring for TP-Link TL-WR740N v4 at:' `date` '\e[0m'
 	@echo "#define CONFIG_FOR_TPLINK_WR740N_V4          1" >> include/config.h
-	@echo "#define GPIO_SYS_LED_BIT                    27" >> include/config.h
-	@echo "#define GPIO_SYS_LED_ON                      0" >> include/config.h
-	@echo "#define GPIO_WLAN_LED_BIT                    0" >> include/config.h
-	@echo "#define GPIO_WLAN_LED_ON                     1" >> include/config.h
-	@echo "#define GPIO_LAN1_LED_BIT                   14" >> include/config.h
-	@echo "#define GPIO_LAN1_LED_ON                     1" >> include/config.h
-	@echo "#define GPIO_LAN2_LED_BIT                   15" >> include/config.h
-	@echo "#define GPIO_LAN2_LED_ON                     1" >> include/config.h
-	@echo "#define GPIO_LAN3_LED_BIT                   16" >> include/config.h
-	@echo "#define GPIO_LAN3_LED_ON                     1" >> include/config.h
-	@echo "#define GPIO_LAN4_LED_BIT                   17" >> include/config.h
-	@echo "#define GPIO_LAN4_LED_ON                     0" >> include/config.h
-	@echo "#define GPIO_INTERNET_LED_BIT               13" >> include/config.h
-	@echo "#define GPIO_INTERNET_LED_ON                 1" >> include/config.h
-	@echo "#define GPIO_QSS_LED_BIT                     1" >> include/config.h
-	@echo "#define GPIO_QSS_LED_ON                      1" >> include/config.h
 	@echo "#define GPIO_RST_BUTTON_BIT                 11" >> include/config.h
 	@echo "#define DEFAULT_FLASH_SIZE_IN_MB             4" >> include/config.h
 	@echo "#define BOARD_CUSTOM_STRING                  \"TP-Link TL-WR74xN/D v4\"" >> include/config.h
@@ -458,24 +418,6 @@ wr740n_v4_config : unconfig hornet_common_config
 mr3220_v2_config : unconfig hornet_common_config
 	@/bin/echo -e '\e[32m> Configuring for TP-Link TL-MR3220 v2 at:' `date` '\e[0m'
 	@echo "#define CONFIG_FOR_TPLINK_MR3220_V2          1" >> include/config.h
-	@echo "#define GPIO_SYS_LED_BIT                    27" >> include/config.h
-	@echo "#define GPIO_SYS_LED_ON                      0" >> include/config.h
-	@echo "#define GPIO_WLAN_LED_BIT                    0" >> include/config.h
-	@echo "#define GPIO_WLAN_LED_ON                     1" >> include/config.h
-	@echo "#define GPIO_LAN1_LED_BIT                   14" >> include/config.h
-	@echo "#define GPIO_LAN1_LED_ON                     1" >> include/config.h
-	@echo "#define GPIO_LAN2_LED_BIT                   15" >> include/config.h
-	@echo "#define GPIO_LAN2_LED_ON                     1" >> include/config.h
-	@echo "#define GPIO_LAN3_LED_BIT                   16" >> include/config.h
-	@echo "#define GPIO_LAN3_LED_ON                     1" >> include/config.h
-	@echo "#define GPIO_LAN4_LED_BIT                   17" >> include/config.h
-	@echo "#define GPIO_LAN4_LED_ON                     0" >> include/config.h
-	@echo "#define GPIO_INTERNET_LED_BIT               13" >> include/config.h
-	@echo "#define GPIO_INTERNET_LED_ON                 1" >> include/config.h
-	@echo "#define GPIO_QSS_LED_BIT                     1" >> include/config.h
-	@echo "#define GPIO_QSS_LED_ON                      1" >> include/config.h
-	@echo "#define GPIO_USB_LED_BIT                    26" >> include/config.h
-	@echo "#define GPIO_USB_LED_ON                      1" >> include/config.h
 	@echo "#define GPIO_RST_BUTTON_BIT                 11" >> include/config.h
 	@echo "#define DEFAULT_FLASH_SIZE_IN_MB             4" >> include/config.h
 	@echo "#define BOARD_CUSTOM_STRING                  \"TP-Link TL-MR3220 v2\"" >> include/config.h
@@ -485,8 +427,6 @@ mr3220_v2_config : unconfig hornet_common_config
 dir505_config : unconfig hornet_common_config
 	@/bin/echo -e '\e[32m> Configuring for D-Link DIR-505 at:' `date` '\e[0m'
 	@echo "#define CONFIG_FOR_DLINK_DIR505_A1           1" >> include/config.h
-	@echo "#define GPIO_SYS_LED_BIT                    27" >> include/config.h
-	@echo "#define GPIO_SYS_LED_ON                      0" >> include/config.h
 
 	# we will use WPS button instead of reset
 	@echo "#define GPIO_RST_BUTTON_BIT                 11" >> include/config.h
@@ -500,14 +440,6 @@ dir505_config : unconfig hornet_common_config
 gs_oolite_v1_dev_config : unconfig hornet_common_config
 	@/bin/echo -e '\e[32m> Configuring for GS-Oolite v1 with dev board at:' `date` '\e[0m'
 	@echo "#define CONFIG_FOR_GS_OOLITE_V1_DEV          1" >> include/config.h
-	@echo "#define GPIO_SYS_LED_BIT                    27" >> include/config.h
-	@echo "#define GPIO_SYS_LED_ON                      0" >> include/config.h
-	@echo "#define GPIO_WAN_LED_BIT                    17" >> include/config.h
-	@echo "#define GPIO_WAN_LED_ON                      0" >> include/config.h
-	@echo "#define GPIO_LAN1_LED_BIT                   13" >> include/config.h
-	@echo "#define GPIO_LAN1_LED_ON                     0" >> include/config.h
-	@echo "#define GPIO_LAN2_LED_BIT                   15" >> include/config.h
-	@echo "#define GPIO_LAN2_LED_ON                     0" >> include/config.h
 	@echo "#define GPIO_RST_BUTTON_BIT                 11" >> include/config.h
 	@echo "#define DEFAULT_FLASH_SIZE_IN_MB            16" >> include/config.h
 	@echo "#define BOARD_CUSTOM_STRING                  \"Gainstrong GS-Oolite v1\"" >> include/config.h
@@ -517,8 +449,6 @@ gs_oolite_v1_dev_config : unconfig hornet_common_config
 black_swift_board_config : unconfig hornet_common_config
 	@echo '======= Configuring for Black Swift board (128K compressed) at:' `date` '======='
 	@echo "#define CONFIG_FOR_BLACK_SWIFT_BOARD         1" >> include/config.h
-	@echo "#define GPIO_SYS_LED_BIT                    27" >> include/config.h
-	@echo "#define GPIO_SYS_LED_ON                      0" >> include/config.h
 	@echo "#define GPIO_RST_BUTTON_BIT                 11" >> include/config.h
 	@echo "#define GPIO_RST_BUTTON_IS_ACTIVE_LOW        1" >> include/config.h
 	@echo "#define DEFAULT_FLASH_SIZE_IN_MB            16" >> include/config.h
@@ -536,11 +466,7 @@ carambola2_config : unconfig hornet_common_config
 	# Carambola 2 uses 40 MHz oscillator
 	@echo "#define CONFIG_40MHZ_XTAL_SUPPORT            1" >> include/config.h
 
-	@echo "#define GPIO_WLAN_LED_BIT                    0" >> include/config.h
-	@echo "#define GPIO_WLAN_LED_ON                     0" >> include/config.h
 	@echo "#define GPIO_RST_BUTTON_BIT                 11" >> include/config.h
-
-	# Carambola 2 development board has RST button pulled up, so it is active at low
 	@echo "#define GPIO_RST_BUTTON_IS_ACTIVE_LOW        1" >> include/config.h
 
 	@echo "#define DEFAULT_FLASH_SIZE_IN_MB            16" >> include/config.h
@@ -552,14 +478,6 @@ dragino_v2_ms14_config : unconfig hornet_common_config
 	@/bin/echo -e '\e[32m> Configuring for Dragino Dragino v2 (MS14) at:' `date` '\e[0m'
 	@echo "#define CONFIG_FOR_DRAGINO_V2                1" >> include/config.h
 	@echo "#undef  COMPRESSED_UBOOT"                       >> include/config.h
-	@echo "#define GPIO_WLAN_LED_BIT                    0" >> include/config.h
-	@echo "#define GPIO_WLAN_LED_ON                     1" >> include/config.h
-	@echo "#define GPIO_WAN_LED_BIT                    17" >> include/config.h
-	@echo "#define GPIO_WAN_LED_ON                      0" >> include/config.h
-	@echo "#define GPIO_LAN_LED_BIT                    13" >> include/config.h
-	@echo "#define GPIO_LAN_LED_ON                      0" >> include/config.h
-	@echo "#define GPIO_INTERNET_LED_BIT               28" >> include/config.h
-	@echo "#define GPIO_INTERNET_LED_ON                 1" >> include/config.h
 	@echo "#define GPIO_RST_BUTTON_BIT                 11" >> include/config.h
 	@echo "#define GPIO_RST_BUTTON_IS_ACTIVE_LOW        1" >> include/config.h
 	@echo "#define DEFAULT_FLASH_SIZE_IN_MB            16" >> include/config.h
@@ -573,14 +491,6 @@ villagetelco_mp2_config : unconfig hornet_common_config
 	@/bin/echo -e '\e[32m> Configuring for Village Telco Mesh Potato 2 at:' `date` '\e[0m'
 	@echo "#define CONFIG_FOR_MESH_POTATO_V2            1" >> include/config.h
 	@echo "#undef  COMPRESSED_UBOOT"                       >> include/config.h
-	@echo "#define GPIO_WLAN_LED_BIT                    0" >> include/config.h
-	@echo "#define GPIO_WLAN_LED_ON                     1" >> include/config.h
-	@echo "#define GPIO_WAN_LED_BIT                    17" >> include/config.h
-	@echo "#define GPIO_WAN_LED_ON                      0" >> include/config.h
-	@echo "#define GPIO_LAN_LED_BIT                    13" >> include/config.h
-	@echo "#define GPIO_LAN_LED_ON                      0" >> include/config.h
-	@echo "#define GPIO_INTERNET_LED_BIT               28" >> include/config.h
-	@echo "#define GPIO_INTERNET_LED_ON                 1" >> include/config.h
 	@echo "#define GPIO_RST_BUTTON_BIT                 11" >> include/config.h
 	@echo "#define GPIO_RST_BUTTON_IS_ACTIVE_LOW        1" >> include/config.h
 	@echo "#define DEFAULT_FLASH_SIZE_IN_MB            16" >> include/config.h
@@ -593,10 +503,6 @@ villagetelco_mp2_config : unconfig hornet_common_config
 gl-inet_config : unconfig hornet_common_config
 	@/bin/echo -e '\e[32m> Configuring for GL.iNet at:' `date` '\e[0m'
 	@echo "#define CONFIG_FOR_GL_INET                   1" >> include/config.h
-	@echo "#define GPIO_WLAN_LED_BIT                    0" >> include/config.h
-	@echo "#define GPIO_WLAN_LED_ON                     1" >> include/config.h
-	@echo "#define GPIO_LAN_LED_BIT                    13" >> include/config.h
-	@echo "#define GPIO_LAN_LED_ON                      1" >> include/config.h
 	@echo "#define GPIO_RST_BUTTON_BIT                 11" >> include/config.h
 	@echo "#define DEFAULT_FLASH_SIZE_IN_MB             8" >> include/config.h
 	@echo "#define BOARD_CUSTOM_STRING                  \"GL.iNet\"" >> include/config.h
@@ -615,16 +521,6 @@ wdr3600_43x0_config : unconfig wasp_common_config
 	@echo "#define CFG_ATHRS17_PHY                      1" >> include/config.h
 	@echo "#define CFG_AG7240_NMACS                     1" >> include/config.h
 	@echo "#define CFG_DUAL_PHY_SUPPORT                 1" >> include/config.h
-	@echo "#define GPIO_SYS_LED_BIT                    14" >> include/config.h
-	@echo "#define GPIO_SYS_LED_ON                      0" >> include/config.h
-	@echo "#define GPIO_WLAN_2G_LED_BIT                13" >> include/config.h
-	@echo "#define GPIO_WLAN_2G_LED_ON                  0" >> include/config.h
-	@echo "#define GPIO_USB1_LED_BIT                   11" >> include/config.h
-	@echo "#define GPIO_USB1_LED_ON                     0" >> include/config.h
-	@echo "#define GPIO_USB2_LED_BIT                   12" >> include/config.h
-	@echo "#define GPIO_USB2_LED_ON                     0" >> include/config.h
-	@echo "#define GPIO_QSS_LED_BIT                    15" >> include/config.h
-	@echo "#define GPIO_QSS_LED_ON                      0" >> include/config.h
 	@echo "#define GPIO_RST_BUTTON_BIT                 16" >> include/config.h
 	@echo "#define GPIO_RST_BUTTON_IS_ACTIVE_LOW        1" >> include/config.h
 	@echo "#define DEFAULT_FLASH_SIZE_IN_MB             8" >> include/config.h
@@ -639,24 +535,6 @@ wdr3500_config : unconfig wasp_common_config
 	@echo "#define DDR2_32BIT_SUPPORT                   1" >> include/config.h
 	@echo "#define CFG_ATHRS27_PHY                      1" >> include/config.h
 	@echo "#define CFG_AG7240_NMACS                     2" >> include/config.h
-	@echo "#define GPIO_SYS_LED_BIT                    14" >> include/config.h
-	@echo "#define GPIO_SYS_LED_ON                      0" >> include/config.h
-	@echo "#define GPIO_WLAN_2G_LED_BIT                13" >> include/config.h
-	@echo "#define GPIO_WLAN_2G_LED_ON                  0" >> include/config.h
-	@echo "#define GPIO_LAN1_LED_BIT                   19" >> include/config.h
-	@echo "#define GPIO_LAN1_LED_ON                     0" >> include/config.h
-	@echo "#define GPIO_LAN2_LED_BIT                   20" >> include/config.h
-	@echo "#define GPIO_LAN2_LED_ON                     0" >> include/config.h
-	@echo "#define GPIO_LAN3_LED_BIT                   21" >> include/config.h
-	@echo "#define GPIO_LAN3_LED_ON                     0" >> include/config.h
-	@echo "#define GPIO_LAN4_LED_BIT                   22" >> include/config.h
-	@echo "#define GPIO_LAN4_LED_ON                     0" >> include/config.h
-	@echo "#define GPIO_INTERNET_LED_BIT               18" >> include/config.h
-	@echo "#define GPIO_INTERNET_LED_ON                 0" >> include/config.h
-	@echo "#define GPIO_QSS_LED_BIT                    15" >> include/config.h
-	@echo "#define GPIO_QSS_LED_ON                      0" >> include/config.h
-	@echo "#define GPIO_USB_LED_BIT                    11" >> include/config.h
-	@echo "#define GPIO_USB_LED_ON                      0" >> include/config.h
 	@echo "#define GPIO_RST_BUTTON_BIT                 16" >> include/config.h
 	@echo "#define GPIO_RST_BUTTON_IS_ACTIVE_LOW        1" >> include/config.h
 	@echo "#define DEFAULT_FLASH_SIZE_IN_MB             8" >> include/config.h
@@ -672,24 +550,6 @@ mr3420_v2_config : unconfig wasp_common_config
 	@echo "#define DDR2_32BIT_SUPPORT                   1" >> include/config.h
 	@echo "#define CFG_ATHRS27_PHY                      1" >> include/config.h
 	@echo "#define CFG_AG7240_NMACS                     2" >> include/config.h
-	@echo "#define GPIO_SYS_LED_BIT                    14" >> include/config.h
-	@echo "#define GPIO_SYS_LED_ON                      0" >> include/config.h
-	@echo "#define GPIO_WLAN_LED_BIT                   13" >> include/config.h
-	@echo "#define GPIO_WLAN_LED_ON                     0" >> include/config.h
-	@echo "#define GPIO_INTERNET_LED_BIT               18" >> include/config.h
-	@echo "#define GPIO_INTERNET_LED_ON                 0" >> include/config.h
-	@echo "#define GPIO_LAN1_LED_BIT                   19" >> include/config.h
-	@echo "#define GPIO_LAN1_LED_ON                     0" >> include/config.h
-	@echo "#define GPIO_LAN2_LED_BIT                   20" >> include/config.h
-	@echo "#define GPIO_LAN2_LED_ON                     0" >> include/config.h
-	@echo "#define GPIO_LAN3_LED_BIT                   21" >> include/config.h
-	@echo "#define GPIO_LAN3_LED_ON                     0" >> include/config.h
-	@echo "#define GPIO_LAN4_LED_BIT                   12" >> include/config.h
-	@echo "#define GPIO_LAN4_LED_ON                     0" >> include/config.h
-	@echo "#define GPIO_USB_LED_BIT                    11" >> include/config.h
-	@echo "#define GPIO_USB_LED_ON                      0" >> include/config.h
-	@echo "#define GPIO_QSS_LED_BIT                    15" >> include/config.h
-	@echo "#define GPIO_QSS_LED_ON                      0" >> include/config.h
 	@echo "#define GPIO_RST_BUTTON_BIT                 17" >> include/config.h
 	@echo "#define GPIO_RST_BUTTON_IS_ACTIVE_LOW        1" >> include/config.h
 	@echo "#define DEFAULT_FLASH_SIZE_IN_MB             4" >> include/config.h
@@ -705,22 +565,6 @@ wr841n_v8_config : unconfig wasp_common_config
 	@echo "#define DDR2_32BIT_SUPPORT                   1" >> include/config.h
 	@echo "#define CFG_ATHRS27_PHY                      1" >> include/config.h
 	@echo "#define CFG_AG7240_NMACS                     2" >> include/config.h
-	@echo "#define GPIO_SYS_LED_BIT                    14" >> include/config.h
-	@echo "#define GPIO_SYS_LED_ON                      0" >> include/config.h
-	@echo "#define GPIO_WLAN_LED_BIT                   13" >> include/config.h
-	@echo "#define GPIO_WLAN_LED_ON                     0" >> include/config.h
-	@echo "#define GPIO_INTERNET_LED_BIT               18" >> include/config.h
-	@echo "#define GPIO_INTERNET_LED_ON                 0" >> include/config.h
-	@echo "#define GPIO_LAN1_LED_BIT                   19" >> include/config.h
-	@echo "#define GPIO_LAN1_LED_ON                     0" >> include/config.h
-	@echo "#define GPIO_LAN2_LED_BIT                   20" >> include/config.h
-	@echo "#define GPIO_LAN2_LED_ON                     0" >> include/config.h
-	@echo "#define GPIO_LAN3_LED_BIT                   21" >> include/config.h
-	@echo "#define GPIO_LAN3_LED_ON                     0" >> include/config.h
-	@echo "#define GPIO_LAN4_LED_BIT                   12" >> include/config.h
-	@echo "#define GPIO_LAN4_LED_ON                     0" >> include/config.h
-	@echo "#define GPIO_QSS_LED_BIT                    15" >> include/config.h
-	@echo "#define GPIO_QSS_LED_ON                      0" >> include/config.h
 	@echo "#define GPIO_RST_BUTTON_BIT                 17" >> include/config.h
 	@echo "#define GPIO_RST_BUTTON_IS_ACTIVE_LOW        1" >> include/config.h
 	@echo "#define DEFAULT_FLASH_SIZE_IN_MB             4" >> include/config.h
@@ -736,14 +580,6 @@ wa830re_v2_wa801nd_v2_config : unconfig wasp_common_config
 	@echo "#define DDR2_32BIT_SUPPORT                      1" >> include/config.h
 	@echo "#define CFG_ATHRS27_PHY                         1" >> include/config.h
 	@echo "#define CFG_AG7240_NMACS                        2" >> include/config.h
-	@echo "#define GPIO_SYS_LED_BIT                       14" >> include/config.h
-	@echo "#define GPIO_SYS_LED_ON                         0" >> include/config.h
-	@echo "#define GPIO_LAN_LED_BIT                       18" >> include/config.h
-	@echo "#define GPIO_LAN_LED_ON                         0" >> include/config.h
-	@echo "#define GPIO_WLAN_LED_BIT                      13" >> include/config.h
-	@echo "#define GPIO_WLAN_LED_ON                        0" >> include/config.h
-	@echo "#define GPIO_QSS_LED_BIT                       15" >> include/config.h
-	@echo "#define GPIO_QSS_LED_ON                         0" >> include/config.h
 	@echo "#define GPIO_RST_BUTTON_BIT                    17" >> include/config.h
 	@echo "#define GPIO_RST_BUTTON_IS_ACTIVE_LOW           1" >> include/config.h
 	@echo "#define DEFAULT_FLASH_SIZE_IN_MB                4" >> include/config.h
@@ -762,8 +598,6 @@ tplink_wr820n_CH_config : unconfig ap143_common_config
 	@echo "#define CFG_ATHRS27_PHY                      1" >> include/config.h
 	@echo "#define CFG_ATH_GMAC_NMACS                   2" >> include/config.h
 	@echo "#define DEFAULT_FLASH_SIZE_IN_MB             4" >> include/config.h
-	@echo "#define GPIO_SYS_LED_BIT                    13" >> include/config.h
-	@echo "#define GPIO_SYS_LED_ON                      0" >> include/config.h
 	@echo "#define GPIO_RST_BUTTON_BIT                 12" >> include/config.h
 	@echo "#define GPIO_RST_BUTTON_IS_ACTIVE_LOW        1" >> include/config.h
 	@echo "#define BOARD_CUSTOM_STRING                  \"TP-Link TL-WR820N CH\"" >> include/config.h

@@ -10,47 +10,6 @@
 extern int ath_ddr_initial_config(uint32_t refresh);
 extern int ath_ddr_find_size(void);
 
-#define SETBITVAL(val, pos, bit) do {ulong bitval = (bit) ? 0x1 : 0x0; (val) = ((val) & ~(0x1 << (pos))) | ( (bitval) << (pos));} while(0)
-
-void led_toggle(void)
-{
-	u32 gpio = qca_soc_reg_read(QCA_GPIO_OUT_REG);
-
-#if defined(CONFIG_FOR_TPLINK_WR820N_CH)
-	gpio ^= 1 << GPIO_SYS_LED_BIT;
-#else
-	#error "Custom GPIO in leg_toggle() not defined!"
-#endif
-
-	qca_soc_reg_write(QCA_GPIO_OUT_REG, gpio);
-}
-
-void all_led_on(void)
-{
-	u32 gpio = qca_soc_reg_read(QCA_GPIO_OUT_REG);
-
-#if defined(CONFIG_FOR_TPLINK_WR820N_CH)
-	SETBITVAL(gpio, GPIO_SYS_LED_BIT, GPIO_SYS_LED_ON);
-#else
-	#error "Custom GPIO in all_led_on() not defined!"
-#endif
-
-	qca_soc_reg_write(QCA_GPIO_OUT_REG, gpio);
-}
-
-void all_led_off(void)
-{
-	u32 gpio = qca_soc_reg_read(QCA_GPIO_OUT_REG);
-
-#if defined(CONFIG_FOR_TPLINK_WR820N_CH)
-	SETBITVAL(gpio, GPIO_SYS_LED_BIT, !GPIO_SYS_LED_ON);
-#else
-	#error "Custom GPIO in all_led_on() not defined!"
-#endif
-
-	qca_soc_reg_write(QCA_GPIO_OUT_REG, gpio);
-}
-
 int reset_button_status(void)
 {
 #ifndef GPIO_RST_BUTTON_BIT
@@ -72,11 +31,6 @@ int reset_button_status(void)
   #endif
 	}
 #endif
-}
-
-int gpio_init(void)
-{
-	return 0;
 }
 
 void ath_set_tuning_caps(void)
@@ -170,26 +124,6 @@ void ath_usb_initial_config(void)
 	udelay(10);
 }
 
-void ath_gpio_config(void)
-{
-	/* disable the CLK_OBS on GPIO_4 and set GPIO4 as input */
-#if 0
-	ath_reg_rmw_clear(GPIO_OE_ADDRESS, (1 << 4));
-	ath_reg_rmw_clear(GPIO_OUT_FUNCTION1_ADDRESS, GPIO_OUT_FUNCTION1_ENABLE_GPIO_4_MASK);
-	ath_reg_rmw_set(GPIO_OUT_FUNCTION1_ADDRESS, GPIO_OUT_FUNCTION1_ENABLE_GPIO_4_SET(0x80));
-	ath_reg_rmw_set(GPIO_OE_ADDRESS, (1 << 4));
-#endif
-
-#if 0
-	/* Set GPIO 13 as input for LED functionality to be OFF during bootup */
-	ath_reg_rmw_set(GPIO_OE_ADDRESS, (1 << 13));
-	/* Turn off JUMPST_LED and 5Gz LED during bootup */
-	ath_reg_rmw_set(GPIO_OE_ADDRESS, (1 << 15));
-#endif
-	ath_reg_rmw_set(GPIO_OE_ADDRESS, (1 << 12));
-
-}
-
 int ath_mem_config(void)
 {
 	unsigned int type, reg32, *tap;
@@ -216,7 +150,6 @@ int ath_mem_config(void)
 
 	ath_usb_initial_config();
 
-	ath_gpio_config();
 #endif /* !defined(CONFIG_ATH_EMULATION) */
 
 	//ath_set_tuning_caps();

@@ -166,7 +166,6 @@ void hang(void) __attribute__ ((noreturn));
 /* */
 long int dram_init(void);
 int      timer_init(void);
-int      gpio_init(void);
 void     full_reset(void);
 void     all_led_on(void);
 void     all_led_off(void);
