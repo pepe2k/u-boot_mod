@@ -1,12 +1,12 @@
 /*
  * Qualcomm/Atheros system clocks related functions
  *
- * Copyright (C) 2015 Piotr Dymacz <piotr@dymacz.pl>
+ * Copyright (C) 2016 Piotr Dymacz <piotr@dymacz.pl>
  *
  * Partially based on:
  * Linux/arch/mips/ath79/clock.c
  *
- * SPDX-License-Identifier:GPL-2.0
+ * SPDX-License-Identifier: GPL-2.0
  */
 
 #include <config.h>
@@ -108,17 +108,17 @@ void qca_sys_clocks(u32 *cpu_clk,
 		*ddr_clk = qca_ref_clk;
 		*ahb_clk = qca_ref_clk;
 	} else {
-		reg_val = qca_soc_reg_read(QCA_PLL_PLL_DITHER_REG);
+		reg_val = qca_soc_reg_read(QCA_PLL_CPU_PLL_DITHER_REG);
 
-		if (reg_val & QCA_PLL_PLL_DITHER_DITHER_EN_MASK) {
+		if (reg_val & QCA_PLL_CPU_PLL_DITHER_DITHER_EN_MASK) {
 			reg_val = qca_soc_reg_read(QCA_PLL_CPU_PLL_CFG_REG);
 			nfrac = (reg_val & QCA_PLL_CPU_PLL_CFG_NFRAC_MASK)
 					>> QCA_PLL_CPU_PLL_CFG_NFRAC_SHIFT;
 		} else {
 			/* NFRAC = NFRAC_MIN if DITHER_EN is 0 */
-			reg_val = qca_soc_reg_read(QCA_PLL_PLL_DITHER_FRAC_REG);
-			nfrac = (reg_val & QCA_PLL_PLL_DITHER_FRAC_NFRAC_MIN_MASK)
-					>> QCA_PLL_PLL_DITHER_FRAC_NFRAC_MIN_SHIFT;
+			reg_val = qca_soc_reg_read(QCA_PLL_CPU_PLL_DITHER_FRAC_REG);
+			nfrac = (reg_val & QCA_PLL_CPU_PLL_DITHER_FRAC_NFRAC_MIN_MASK)
+					>> QCA_PLL_CPU_PLL_DITHER_FRAC_NFRAC_MIN_SHIFT;
 		}
 
 		nfracdiv = 1 << 10;
