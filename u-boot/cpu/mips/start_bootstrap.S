@@ -245,40 +245,6 @@ reset:
 	jalr t7
 	nop
 
-#if (SOC_TYPE & QCA_AR933X_SOC)
-/*
- * WAR: Hornet 1.1 currently need a reset once we boot to let the resetb has
- *      enough time to stable, so that trigger reset at 1st boot, system team
- *      is investigaing the issue, will remove in short
- *
- * TODO: verify this problem, add execution based on revision
- */
-do_reset_normal:
-	li  t7, 0xbd000000
-	lw  t8, 0(t7)			// t8 : value of 0xbd000000
-	li  t9, 0x12345678
-	bne t8, t9, do_reset	// if value of 0xbd000000 != 0x12345678 , go to do_reset
-	nop
-	li  t9, 0xffffffff
-	sw  t9, 0(t7) 
-	b   normal_path
-	nop
-
-do_reset:
-	sw  t9, 0(t7)
-	li t7, 0xb806001c		// load reset register 0x1806001c
-	lw t8, 0(t7)
-	li t9, 0x1000000		// bit24, fullchip reset
-	or t8, t8, t9
-	sw t8, 0(t7)
-
-do_reset_loop:
-	b   do_reset_loop
-	nop
-
-normal_path:
-#endif /* #if (SOC_TYPE & QCA_AR933X_SOC) */
-
 	/* Initialize any external memory */
 	la   t9, lowlevel_init
 	jalr t9
@@ -297,19 +263,6 @@ normal_path:
 	nop
 
 rel_start:
-	/* REMAP_DISABLE */
-	li a0, KSEG1ADDR(QCA_SPI_CTRL_REG)
-#if (SOC_TYPE & QCA_QCA953X_SOC)
-	li t0, 0x243
-#elif (SOC_TYPE & QCA_AR934X_SOC)
-	li t0, 0x243
-#else
-	// TODO: SPI clock from FLASH?
-	// for now we will use divider = 10 ( (4+1)*2 )
-	li t0, 0x44
-#endif
-	sw t0, 0(a0)
-
 	/* Initialize caches... */
 	la   t9, simple_mips_cache_reset
 	jalr t9
