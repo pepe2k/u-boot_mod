@@ -119,21 +119,30 @@
 #define CONFIG_IPADDR		192.168.1.1
 #define CONFIG_SERVERIP		192.168.1.2
 
-#undef CFG_PLL_FREQ
-#undef CFG_HZ
+/*
+ * PLL/Clocks configuration
+ */
+#ifdef CFG_HZ
+	#undef	CFG_HZ
+#endif
+#define	CFG_HZ	bd->bi_cfg_hz
 
-// CPU-RAM-AHB frequency setting
-#if !defined(CONFIG_AP123)
-#define CFG_PLL_FREQ    			CFG_PLL_560_480_240
-#define CFG_HZ_FALLBACK				(560000000LU/2)
-#else
-#define CFG_PLL_FREQ    			CFG_PLL_533_400_200
-#define CFG_HZ_FALLBACK				(535000000LU/2)
+/* For now, use some safe clocks for all AR934x */
+#define CONFIG_QCA_PLL 		QCA_PLL_PRESET_550_400_200
+#define CFG_HZ_FALLBACK		(550000000LU/2)
+
+
+/*
+ * For PLL/clocks recovery use reset button by default
+ */
+#ifdef GPIO_RST_BUTTON_BIT
+	#define CONFIG_QCA_GPIO_OC_RECOVERY_BTN		GPIO_RST_BUTTON_BIT
 #endif
 
-#define	CFG_HZ						bd->bi_cfg_hz
-#define AR7240_SPI_CONTROL			0x43
-#define AR7240_SPI_CONTROL_DEFAULT	AR7240_SPI_CONTROL
+#ifdef GPIO_RST_BUTTON_IS_ACTIVE_LOW
+	#define CONFIG_QCA_GPIO_OC_RECOVERY_BTN_ACTIVE_LOW	1
+#endif
+
 /*
  * MIPS32 24K Processor Core Family Software User's Manual
  *
@@ -306,6 +315,32 @@
 #define OFFSET_MAC_ADDRESS				0x00FC00
 #define OFFSET_ROUTER_MODEL				0x00FD00
 #define OFFSET_PIN_NUMBER				0x00FE00
+
+/*
+ * PLL and clocks configurations from FLASH
+ */
+#if defined(CONFIG_FOR_TPLINK_WDR3600_WDR43X0_V1) || \
+	defined(CONFIG_FOR_TPLINK_WDR3500_V1)         || \
+	defined(CONFIG_FOR_TPLINK_MR3420_V2)          || \
+	defined(CONFIG_FOR_TPLINK_WR841N_V8)          || \
+	defined(CONFIG_FOR_TPLINK_WA830RE_V2_WA801ND_V2)
+	/*
+	 * All TP-Link routers have a lot of unused space
+	 * in FLASH, in second 64 KiB block.
+	 * We will store there PLL and CLOCK
+	 * registers configuration.
+	 */
+	#define CONFIG_QCA_PLL_IN_FLASH_BLOCK_OFFSET	0x00010000
+	#define CONFIG_QCA_PLL_IN_FLASH_BLOCK_SIZE		0x00010000
+
+#endif
+
+#if defined(CONFIG_QCA_PLL_IN_FLASH_BLOCK_OFFSET)
+	/* Use last 32 bytes */
+	#define CONFIG_QCA_PLL_IN_FLASH_MAGIC_OFFSET	(CFG_FLASH_BASE + \
+													 CONFIG_QCA_PLL_IN_FLASH_BLOCK_OFFSET + \
+													 0x0000FFE0)
+#endif
 
 #include <cmd_confdefs.h>
 
