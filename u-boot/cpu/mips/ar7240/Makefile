@@ -23,7 +23,11 @@ endif
 
 ifeq ($(BOARD), db12x)
 	OBJS	+= ag934x.o
-	SOBJS	+= ar934x_pll_init.o
+	SOBJS	+= qca95xx_pll_init.o
+endif
+
+ifeq ($(BOARD), ap143)
+	SOBJS	+= qca95xx_pll_init.o
 endif
 
 all:	.depend $(START) $(LIB)

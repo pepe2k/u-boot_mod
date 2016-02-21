@@ -1,531 +1,345 @@
+/*
+ * PLL and clocks configurations for
+ * Qualcomm/Atheros AR933x WiSoC
+ *
+ * Copyright (C) 2016 Piotr Dymacz <piotr@dymacz.pl>
+ * Copyright (C) 2008-2010 Atheros Communications Inc.
+ *
+ * SPDX-License-Identifier: GPL-2.0
+ */
+
+#include <soc/qca_pll_list.h>
 #include <config.h>
-#include <version.h>
+#include <soc/qca_soc_common.h>
+#include <soc/ar933x_pll_init.h>
 #include <asm/regdef.h>
 #include <asm/mipsregs.h>
 #include <asm/addrspace.h>
-#include <ar7240_soc.h>
 
-	.globl lowlevel_init
-	.type  lowlevel_init, @function
-	.text
-	.align 4
+#define reg_oc_recovery		t0
+#define reg_spi_ctrl_cfg	t1
+#define reg_ref_clk_val		t2
+#define reg_cpu_pll_cfg		t3
+#define reg_cpu_clk_ctrl	t4
+#define reg_cpu_pll_dit		t5
+#define reg_loop_counter	t6
 
-#define CLEAR_BIT(val, bit)				((val) & ~(1 << (bit)))
-#define SET_BIT(val, bit)				((val) |  (1 << (bit)))
+/* Sanity check for O/C recovery button number */
+#ifdef CONFIG_QCA_GPIO_OC_RECOVERY_BTN
+	#if (CONFIG_QCA_GPIO_OC_RECOVERY_BTN >= QCA_GPIO_COUNT)
+		#error "O/C recovery button number is not correct!"
+	#endif
 
-#define CLEAR_PLL_POWER_DOWN(reg_val)	CLEAR_BIT(reg_val, 30)
-#define SET_PLL_POWER_DOWN(reg_val)		SET_BIT(reg_val, 30)
-#define SET_AHB_DIV_TO_4(reg_val)		SET_BIT(SET_BIT(reg_val, 15), 16)
-#define CLEAR_PLL_BYPASS(reg_val)		CLEAR_BIT(reg_val, 2)
-#define SET_PLL_BYPASS(reg_val)			SET_BIT(reg_val, 2)
-
-/*
- * Helper macros.
- * These Clobber t7, t8 and t9
- * or  t8, t8, t9;
- */
-#define set_reg(_reg, _val) \
-	li t7, KSEG1ADDR(_reg); \
-	lw t8, 0(t7);           \
-	li t9, _val;            \
-	sw t9, 0(t7);
-
-/* if reset button is active low -> use bne (branch on not equal) */
-#ifdef GPIO_RST_BUTTON_IS_ACTIVE_LOW
-	#define recovery_jump(_branch) \
-		bne t1, (1 << GPIO_RST_BUTTON_BIT), _branch;
-#else
-	#define recovery_jump(_branch) \
-		beq t1, (1 << GPIO_RST_BUTTON_BIT), _branch;
+	#define CONFIG_QCA_GPIO_MASK_OC_RECOVERY_BTN	\
+					(1 << CONFIG_QCA_GPIO_OC_RECOVERY_BTN)
 #endif
+
+.globl lowlevel_init
+.type  lowlevel_init, @function
+.align 4
+.text
+.ent lowlevel_init
 
 lowlevel_init:
 
-#if 1
-/* These three wlan reset will avoid original issue,
- * so full chip reset isn't needed here.
+/*
+ * Get reference clock (XTAL) type, based on BOOTSTRAP register
+ * and save its value in one register for later use
+ */
+	li   reg_ref_clk_val, 25
+	li   t8, QCA_RST_BOOTSTRAP_REG
+	lw   t9, 0(t8)
+	li   t8, QCA_RST_BOOTSTRAP_REF_CLK_MASK
+	and  t9, t9, t8
+	bgtz t9, set_xtal_40mhz
+	nop
+
+	b wlan_rst_init
+	nop
+
+set_xtal_40mhz:
+	li reg_ref_clk_val,  40
+
+/*
+ * Several WLAN module resets as in broken Atheros SDK code
+ * TODO: do we really need this?
+ */
+wlan_rst_init:
+	li reg_loop_counter, 10
+
+wlan_rst:
+	li  t8, QCA_RST_RST_REG
+	lw  t9, 0(t8)
+	or  t9, t9, QCA_RST_RESET_WLAN_RST_MASK
+	sw  t9, 0(t8)
+	nop
+	nop
+
+	lw  t9, 0(t8)
+	and t9, t9, ~QCA_RST_RESET_WLAN_RST_MASK
+	sw  t9, 0(t8)
+	nop
+	nop
+
+	addi reg_loop_counter, reg_loop_counter, -1
+	bnez reg_loop_counter, wlan_rst
+	nop
+
+/*
+ * From datasheet:
+ * For normal operation mode, SW should select
+ * the APB interface before register access
  *
- * WLAN_RESET in RST_RESET (AR7240_RESET) register
- * 0x00C06B30 -> BIT(11) is set
- * 0x00C06330 -> BIT(11) is not set
+ * Register: BOOTSTRAP, bit: 17 (JTAG=1, APB=0)
+ * Should be set by default, but it's not...
  */
-	set_reg(AR7240_RESET, 0x00C06B30)
-	nop
-	set_reg(AR7240_RESET, 0x00C06330)
-	nop
-	set_reg(AR7240_RESET, 0x00C06B30)
-	nop
-	set_reg(AR7240_RESET, 0x00C06330)
-	nop
+sel_apb_for_mac:
+	li  t8, QCA_RST_BOOTSTRAP_REG
+	lw  t9, 0(t8)
+	and t9, t9, ~QCA_RST_BOOTSTRAP_JTAG_APB_SEL_MASK
+	sw  t9, 0(t8)
 
-reset_wlan:
-	set_reg(AR7240_RESET, 0x00C06B30)
-	nop
-	set_reg(AR7240_RESET, 0x00C06330)
-	nop
-	li t5, 0x20
-
-check_val:
-	beq  zero, t5, reset_wlan
-	addi t5,   t5, -1
-	li   t6,   KSEG1ADDR(HORNET_BOOTSTRAP_STATUS)
-	lw   t7,   0(t6)
-	li   t8,   0x10
-	and  t7,   t7, t8
-	bne  zero, t7, check_val
-	set_reg(HORNET_BOOTSTRAP_STATUS, 0x0002110E)
-	nop
-#else
-/* clear wlan reset bit in RESET_Register 0x1c */
-	set_reg(AR7240_RESET, 0x00C06B30)
-	nop
-	set_reg(AR7240_RESET, 0x00C06330)
-	nop
-
-/* cleck bootstrap status, wait for bit4 on, then clear bit16 */
-wait_loop0:
-	li  t6,   KSEG1ADDR(HORNET_BOOTSTRAP_STATUS)
-	lw  t7,   0(t6)
-	li  t8,   0x10
-	and t7,   t7, t8
-	bne zero, t7, wait_loop0
-	nop
-	set_reg(HORNET_BOOTSTRAP_STATUS, 0x0002110E)
-	nop
-#endif
-
-/* RTC reset */
-/* 0x1810704C -> RTC_FORCE_WAKE (RTC Force Wake) */
-	set_reg(0x1810704C, 0x00000003)
-	nop
-	nop
-/* 0x18107040 -> RTC_RESET (RTC Reset and Force Sleep and Force Wakeup) */
-	set_reg(0x18107040, 0x00000000)
-	nop
-	nop
-	set_reg(0x18107040, 0x00000001)
-	nop
-
-wait_loop1:
-/* 0x18107044 -> RTC_STATUS (RTC Sleep Status) */
-	li  t6, KSEG1ADDR(0x18107044)
-	lw  t7, 0(t6)
-	li  t8, 0x2
-	and t7, t7, t8
-	bne t8, t7, wait_loop1
-	nop
+/* AHB max master timeout */
+ahb_max_timeout:
+	li t8, QCA_AHB_MASTER_TOUT_MAX_REG
+	lw t9, 0(t8)
+	or t9, t9, 0xFFFFF
+	sw t9, 0(t8)
 
 /*
- * AHB/APH reset
- * TODO: 0x18104000 is "Reset the Host Interface (HOST_INTF_RESET_CONTROL)" and bits 0:7 are RESERVED!
+ * Reset RTC
+ * TODO: do we need to reset RTC at all?
  */
-/*
-	set_reg(0x18104000, 0x00000003)
+rtc_reset:
+	li  t8, QCA_RTC_SYNC_FORCE_WAKE_REG
+	li  t9, (QCA_RTC_SYNC_FORCE_WAKE_EN_MASK |\
+			 QCA_RTC_SYNC_FORCE_WAKE_MACINTR_MASK)
+	sw  t9, 0(t8)
 	nop
-	set_reg(0x18104000, 0x00000000)
 	nop
-*/
+
+	li  t8, QCA_RTC_SYNC_RST_REG
+	li  t9, 0x0
+	sw  t9, 0(t8)
+	nop
+	nop
+
+	li  t9, QCA_RTC_SYNC_RST_RESET_MASK
+	sw  t9, 0(t8)
+	nop
+
+	li  t8, QCA_RTC_SYNC_STATUS_REG
+
+rtc_wait_on:
+	lw   t9, 0(t8)
+	and  t9, t9, QCA_RTC_SYNC_STATUS_ON_MASK
+	beqz t9, rtc_wait_on
+	nop
+
 /*
- * MAC reset (TODO: ?? AR9344 has 0x18107000 register -> AR9344_RTC_BASE)
+ * O/C recovery mode (start with safe PLL/clocks configuration):
+ * 1. Check if defined recovery button is pressed
+ * 2. Indicate recovery mode in predefined register
+ * 3. If in recovery mode, do not use PLL configuration from FLASH,
+ *    because it is probably the reason why user is using recovery mode
  */
+#ifdef CONFIG_QCA_GPIO_OC_RECOVERY_BTN
+is_oc_recovery_btn_pressed:
+	li  reg_oc_recovery, 0
+	li  t8, QCA_GPIO_IN_REG
+	lw  t9, 0(t8)
+	and t9, t9, CONFIG_QCA_GPIO_MASK_OC_RECOVERY_BTN
+
+	#ifdef CONFIG_QCA_GPIO_OC_RECOVERY_BTN_ACTIVE_LOW
+	bne t9, CONFIG_QCA_GPIO_MASK_OC_RECOVERY_BTN, in_oc_recovery_mode
+	nop
+	#else
+	beq t9, CONFIG_QCA_GPIO_MASK_OC_RECOVERY_BTN, in_oc_recovery_mode
+	nop
+	#endif
+
+	#ifdef CONFIG_QCA_PLL_IN_FLASH_MAGIC_OFFSET
+	b is_pll_cfg_in_flash
+	#else
+	b xtal_type_check
+	#endif
+	nop
+
+in_oc_recovery_mode:
+	li reg_oc_recovery, 1
+	b  xtal_type_check
+	nop
+#endif /* CONFIG_QCA_GPIO_OC_RECOVERY_BTN */
+
 /*
-	set_reg(0x18107000, 0x0000000F)
-	nop
-	set_reg(0x18107000, 0x00000000)
-	nop
-*/
-
-#if 1  /* fetch pmu1.refv and ctrl2.tx from OTP */
-	li t1, KSEG1ADDR(0x18114014)
-	lw t2, 0(t1)
-
-otp_loop0:
-	li  t3, KSEG1ADDR(0x18115F18)
-	lw  t4, 0(t3)
-	nop
-	li  t5, 0x7
-	and t4, t4, t5
-	li  t5, 0x4
-	bne t4, t5, otp_loop0
-	nop
-	li  t6, KSEG1ADDR(0x18115F1C)
-	lw  t7, 0(t6)
-	nop
-	li  t8, 0x80000080
-	and t9, t7, t8
-	beq t8, t9, fetch_otp
-
-otp_loop0_end:
-	li  t1, KSEG1ADDR(0x18114004)
-	lw  t2, 0(t1)
-
-otp_loop1:
-	li  t3, KSEG1ADDR(0x18115F18)
-	lw  t4, 0(t3)
-	nop
-	li  t5, 0x7
-	and t4, t4, t5
-	li  t5, 0x4
-	bne t4, t5, otp_loop1
-	nop
-	li  t6, KSEG1ADDR(0x18115F1C)
-	lw  t7, 0(t6)
-	nop
-	li  t8, 0x80000080
-	and t9, t7, t8
-
-default_pmu:
-	li  t5, 0x80			/* default 0x031c4386 */
-	bne t8, t9, otp_end
-
-fetch_otp:
-	srl t8, t7, 0x18
-	li  t1, 0xf
-	and t2, t1, t7			/* USB */
-	and t5, t1, t8			/* PMU */
-
-check_pmu:
-	li  t0, 0x4				/* PMU range should be 0x4~0xa */
-	bgt t0, t5, default_pmu
-	nop
-	li  t0, 0xa				/* PMU range should be 0x4~0xa */
-	blt t0, t5, default_pmu
-	nop
-	li  t0, 0x4
-	sll t5, t5, t0
-
-otp_end:
-#endif
-
-#if 1 /* Program PMU */
-#define PMU_TEST_NO 1000
-	li t6, KSEG1ADDR(0x18116C40)
-	li t9, 0xbd000010
-	li t0, 0
-	li t1, 0
-	li t2, 0
-	li t3, PMU_TEST_NO
-	sw t3, 12(t9)
-
-pmu_loop0:
-	beq   zero, t3, pmu_loop0_end
-	nop
-	addi  t3,   t3, -1
-	li    t7,   0x10180000  /* ldo_tune 0x3 */
-	nop
-	sw    t7,   4(t6)
-	nop
-	lw    t8,   4(t6)
-	nop
-	beq   t8,   t7, pmu_loop0_end
-	nop
-	addiu t0,   t0, 1
-	b     pmu_loop0
+ * Check if PLL configuration is stored in FLASH:
+ * 1. Get 32-bit value from defined offset in FLASH
+ * 2. Compare it with predefined magic value
+ * 3. If values are not equal, continue default PLL/clocks configuration
+ * 4. If values are equal it means we should have target PLL/clocks register
+ *    values stored in FLASH, just after magic value, in the following order:
+ *    - SPI_CONTROL (offset 4)
+ *    - CPU_PLL_CONFIG (offset 8)
+ *    - CPU_CLOCK_CONTROL (offset 12)
+ *    - CPU_PLL_DITHER_FRAC (offset 16)
+ * 5. After loading target values from FLASH,
+ *    jump directly to PLL/clocks configuration
+ */
+#ifdef CONFIG_QCA_PLL_IN_FLASH_MAGIC_OFFSET
+is_pll_cfg_in_flash:
+	li  t8, CONFIG_QCA_PLL_IN_FLASH_MAGIC_OFFSET
+	lw  t9, 0(t8)
+	bne t9, QCA_PLL_IN_FLASH_MAGIC, xtal_type_check
 	nop
 
-pmu_loop0_end:
-	li t3, PMU_TEST_NO
+pll_cfg_in_flash:
+	lw reg_spi_ctrl_cfg,  4(t8)
+	lw reg_cpu_pll_cfg,   8(t8)
+	lw reg_cpu_clk_ctrl, 12(t8)
+	lw reg_cpu_pll_dit,  16(t8)
+	b  cpu_clock_control
+	nop
+#endif /* CONFIG_QCA_PLL_IN_FLASH_MAGIC_OFFSET */
 
-pmu_loop1:
-	beq  zero, t3, pmu_loop1_end
-	nop
-	addi t3,   t3, -1
-	//li   t7,   0x031c4326    /* 1.100V */
-	//li   t7,   0x031c4336    /* 1.125V */
-	//li   t7,   0x031c4346    /* 1.150V */
-	//li   t7,   0x031c4356    /* 1.175V */
-	//li   t7,   0x031c4366    /* 1.200V */
-	//li   t7,   0x031c4376    /* 1.225V */
-	li   t7,   0x031c4386    /* 1.250V (DEFAULT) */
-	//li   t7,   0x031c4396    /* 1.275V */
-	//li   t7,   0x031c43a6    /* 1.300V */
-	nop
-
-#if 1 /* from OTP */
-	li  t8, 0xFFFFFF0F
-	and t7, t7, t8
-	or  t7, t7, t5
-#endif
-	sw    t7, 0(t6)
-	nop
-	lw    t8, 0(t6)
-	nop
-	beq   t8, t7, pmu_loop1_end
-	nop
-	addiu t1, t1, 1
-	b     pmu_loop1
+/*
+ * Check XTAL type, configure PLL settle time and include dedicated
+ * PLL/clocks values, predefined in header file, based on selected
+ * preset configuration
+ */
+xtal_type_check:
+	beq reg_ref_clk_val, 40, xtal_is_40mhz
 	nop
 
-pmu_loop1_end:
-	li t3, PMU_TEST_NO
+xtal_is_25mhz:
+	li t8, QCA_PLL_CPU_PLL_CFG2_REG
+	li t9, QCA_PLL_CPU_PLL_CFG2_SETTLE_TIME_REG_VAL_XTAL25
+	sw t9, 0(t8)
 
-pmu_loop2:
-	beq   zero, t3, pmu_loop2_end
-	nop
-	addi  t3,   t3, -1
-	li    t7,   0x10380000  /* ldo_tune 0x3 */
-	nop
-	sw    t7,   4(t6)
-	nop
-	lw    t8,   4(t6)
-	nop
-	beq   t8,   t7, pmu_loop2_end
-	nop
-	addiu t2,   t2, 1
-	b     pmu_loop2
-	nop
-
-pmu_loop2_end:
-	sw t0, 0(t9)
-	nop
-	sw t1, 4(t9)
-	nop
-	sw t2, 8(t9)
+#ifdef CONFIG_QCA_GPIO_OC_RECOVERY_BTN
+	beq reg_oc_recovery, 1, xtal_is_25mhz_recovery
 	nop
 #endif
 
-#if 1 /* Program ki, kd */
-// TODO: ??
-/* Program ki/kd */
-#if CONFIG_40MHZ_XTAL_SUPPORT
-	set_reg(0x18116244, 0x19e82f01)
-#else
-	set_reg(0x18116244, 0x18e82f01)
-#endif
+	li reg_spi_ctrl_cfg, QCA_SPI_CTRL_REG_VAL
+	li reg_cpu_pll_cfg,  QCA_PLL_CPU_PLL_CFG_REG_VAL_XTAL25
+	li reg_cpu_clk_ctrl, QCA_PLL_CPU_CLK_CTRL_REG_VAL_XTAL25
+	li reg_cpu_pll_dit,  QCA_PLL_CPU_PLL_DITHER_FRAC_REG_VAL_XTAL25
+	b  cpu_clock_control
 	nop
-    
-/* Program phase shift */
-	li  t6, KSEG1ADDR(0x18116248)
-	lw  t7, 0(t6)
-	li  t8, 0xc07fffff
-	and t7, t7, t8
-	li  t8, 0x800000
-	or  t7, t7, t8
-	sw  t7, 0(t6)
+
+#ifdef CONFIG_QCA_GPIO_OC_RECOVERY_BTN
+xtal_is_25mhz_recovery:
+	li reg_spi_ctrl_cfg, QCA_SPI_CTRL_REG_VAL_SAFE
+	li reg_cpu_pll_cfg,  QCA_PLL_CPU_PLL_CFG_REG_VAL_SAFE_XTAL25
+	li reg_cpu_clk_ctrl, QCA_PLL_CPU_CLK_CTRL_REG_VAL_SAFE_XTAL25
+	li reg_cpu_pll_dit,  QCA_PLL_CPU_PLL_DITHER_FRAC_REG_VAL_SAFE_XTAL25
+	b  cpu_clock_control
 	nop
 #endif
 
-/* max AHB Master wait time out ... */
-	set_reg(0x1800009C, 0xfffff)
+xtal_is_40mhz:
+	li t8, QCA_PLL_CPU_PLL_CFG2_REG
+	li t9, QCA_PLL_CPU_PLL_CFG2_SETTLE_TIME_REG_VAL_XTAL40
+	sw t9, 0(t8)
+
+#ifdef CONFIG_QCA_GPIO_OC_RECOVERY_BTN
+	beq reg_oc_recovery, 1, xtal_is_40mhz_recovery
+	nop
+#endif
+
+	li reg_spi_ctrl_cfg, QCA_SPI_CTRL_REG_VAL
+	li reg_cpu_pll_cfg,  QCA_PLL_CPU_PLL_CFG_REG_VAL_XTAL40
+	li reg_cpu_clk_ctrl, QCA_PLL_CPU_CLK_CTRL_REG_VAL_XTAL40
+	li reg_cpu_pll_dit,  QCA_PLL_CPU_PLL_DITHER_FRAC_REG_VAL_XTAL40
+
+#ifdef CONFIG_QCA_GPIO_OC_RECOVERY_BTN
+	b  cpu_clock_control
+	nop
+
+xtal_is_40mhz_recovery:
+	li reg_spi_ctrl_cfg, QCA_SPI_CTRL_REG_VAL_SAFE
+	li reg_cpu_pll_cfg,  QCA_PLL_CPU_PLL_CFG_REG_VAL_SAFE_XTAL40
+	li reg_cpu_clk_ctrl, QCA_PLL_CPU_CLK_CTRL_REG_VAL_SAFE_XTAL40
+	li reg_cpu_pll_dit,  QCA_PLL_CPU_PLL_DITHER_FRAC_REG_VAL_SAFE_XTAL40
+#endif
+
+/*
+ * Load target value into CPU_CLOCK_CONTROL register, but for now keep bypass
+ * enabled (by default, after reset, it should be bypassed, do it just in case)
+ */
+cpu_clock_control:
+	li   t8, QCA_PLL_CPU_CLK_CTRL_REG
+	move t9, reg_cpu_clk_ctrl
+	or   t9, t9, QCA_PLL_CPU_CLK_CTRL_BYPASS_MASK
+	sw   t9, 0(t8)
+
+/*
+ * Load target value into CPU_PLL_CONFIG register, but for now keep PLL down
+ * (by default, after reset, it should be powered down, do it just in case)
+ */
+cpu_pll_config:
+	li   t8, QCA_PLL_CPU_PLL_CFG_REG
+	move t9, reg_cpu_pll_cfg
+	or   t9, t9, QCA_PLL_CPU_PLL_CFG_PLLPWD_MASK
+	sw   t9, 0(t8)
+
+/* Load target NFRAC_MIN value into PLL_DITHER_FRAC register */
+cpu_pll_dither:
+	li  t8, QCA_PLL_CPU_PLL_DITHER_FRAC_REG
+	lw  t9, 0(t8)
+	and t9, t9, ~QCA_PLL_CPU_PLL_DITHER_FRAC_NFRAC_MIN_MASK
+	or  t9, t9, reg_cpu_pll_dit
+	sw  t9, 0(t8)
+
+/* Enable CPU PLL and wait for update complete */
+cpu_pll_enable:
+	li  t8, QCA_PLL_CPU_PLL_CFG_REG
+	lw  t9, 0(t8)
+	and t9, t9, ~QCA_PLL_CPU_PLL_CFG_PLLPWD_MASK
+	sw  t9, 0(t8)
+	nop
+
+/* Wait for CPU PLL update complete */
+cpu_pll_wait:
+	lw   t9, 0(t8)
+	and  t9, t9, QCA_PLL_CPU_PLL_CFG_UPDATING_MASK
+	bgtz t9, cpu_pll_wait
+	nop
+
+/* Disable bypassing all clocks */
+pll_bypass_disable:
+	li  t8, QCA_PLL_CPU_CLK_CTRL_REG
+	lw  t9, 0(t8)
+	and t9, t9, ~QCA_PLL_CPU_CLK_CTRL_BYPASS_MASK
+	sw  t9, 0(t8)
+
+/* Setup SPI (clock and other settings) */
+spi_setup:
+	li   t8, QCA_SPI_CTRL_REG
+	sw   reg_spi_ctrl_cfg, 0(t8)
+	and  reg_spi_ctrl_cfg, reg_spi_ctrl_cfg, QCA_SPI_CTRL_REMAP_DIS_MASK
+	beqz reg_spi_ctrl_cfg, end
 	nop
 
 /*
- * O/C recovery mode
+ * This is a small hack, needed after setting REMAP_DISABLE bit
+ * in SPI_CONTROL_ADDR register.
  *
- * If RESET BUTTON is pressed and hold during power on
- * we will use default PLL and clocks configuration (400/400/200)
+ * Before that, SPI FLASH is mapped to 0x1FC00000, but just after
+ * setting REMAP_DISABLE bit, aliasing is disabled and SPI FLASH
+ * is mapped to 0x1F00000, so that the whole 16 MB address space
+ * could be used.
  *
- * Using t0 and t1 (t1 indicates if recovery mode was turned on)
- */
-pll_clock_control_oc_recovery:
-	li  t0, KSEG1ADDR(AR7240_GPIO_IN)
-	lw  t1, 0(t0)
-	and t1, t1, (1 << GPIO_RST_BUTTON_BIT)
-	recovery_jump(pll_clock_control_default)
-	nop
-
-#if defined(PLL_IN_FLASH_MAGIC_OFFSET)
-/*
- * PLL and CLOCK configuration from FLASH
+ * That means, we need to "fix" return address, stored previously
+ * in $ra register, subtracting a value 0x00C00000 from it.
  *
- * Using t0, t2 and t3 (t2 stores magic value from flash)
+ * Without that, jump would end up somewhere far away on FLASH...
  */
-pll_clock_control_flash:
-	li  t0, (CFG_FLASH_BASE + PLL_IN_FLASH_DATA_BLOCK_OFFSET + PLL_IN_FLASH_MAGIC_OFFSET)	// load PLL_IN_FLASH_MAGIC address
-	lw  t2, 0(t0)																			// load PLL_IN_FLASH_MAGIC value from FLASH
-	bne t2, PLL_IN_FLASH_MAGIC, pll_clock_control											// jump if we don't have PLL_MAGIC value in FLASH
-	nop
-	lw  t3, 8(t0)																			// load CLOCK_CONTROL register value from FLASH
-	or  t3, t3, 0x18004																		// set BYPASS bit and make AHB_POST_DIV = 4
-	li  t0, KSEG1ADDR(AR7240_CPU_CLOCK_CONTROL)												// load CLOCK_CONTROL register address
-	sw  t3, 0(t0)																			// store value in CLOCK_CONTROL register
-	j   pll_settle_time																		// jump to pll_settle_time
-	nop
-#endif
-
-pll_clock_control:
-/* set PLL bypass(Bit 2), CPU_POST_DIV, DDR_POST_DIV, AHB_POST_DIV in CPU clock control */
-/* in some cases, the SoC doesn't start with higher clock on AHB */
-	set_reg(AR7240_CPU_CLOCK_CONTROL, SET_AHB_DIV_TO_4(SET_PLL_BYPASS(CPU_CLK_CONTROL_VAL)))
-	j pll_settle_time
-	nop
-
-pll_clock_control_default:
-/* set PLL bypass(Bit 2), CPU_POST_DIV, DDR_POST_DIV, AHB_POST_DIV in CPU clock control */
-/* in some cases, the SoC doesn't start with higher clock on AHB */
-	set_reg(AR7240_CPU_CLOCK_CONTROL, SET_AHB_DIV_TO_4(SET_PLL_BYPASS(CPU_CLK_CONTROL_VAL_DEFAULT)))
-	nop
-
-pll_settle_time:
-/* set SETTLE_TIME in CPU PLL */
-	set_reg(AR7240_USB_PLL_CONFIG, CPU_PLL_SETTLE_TIME_VAL)
-	nop
-
-pll_unlock_handler_oc_recovery:
-	recovery_jump(pll_unlock_handler_default)
-	nop
-
-#if defined(PLL_IN_FLASH_MAGIC_OFFSET)
-pll_unlock_handler_flash:
-	bne t2, PLL_IN_FLASH_MAGIC, pll_unlock_handler											// jump if we don't have PLL_MAGIC value in FLASH
-	nop
-	li  t0, (CFG_FLASH_BASE + PLL_IN_FLASH_DATA_BLOCK_OFFSET + PLL_IN_FLASH_MAGIC_OFFSET)	// load PLL_IN_FLASH_MAGIC address
-	lw  t3, 4(t0)																			// load CPU_PLL_CONFIG register value from FLASH
-	or  t3, t3, 0x40000000																	// set CPU_PLLPWD bit (power down for CPU PLL)
-	li  t0, KSEG1ADDR(AR7240_CPU_PLL_CONFIG)												// load CPU_PLL_CONFIG register address
-	sw  t3, 0(t0)																			// store value in CPU_PLL_CONFIG register
-	j   wait_loop2																			// jump to wait_loop2
-	nop
-#endif
-
-pll_unlock_handler:
-/* set nint, frac, refdiv, outdiv, range in CPU PLL configuration resiter */
-	set_reg(AR7240_CPU_PLL_CONFIG, SET_PLL_POWER_DOWN(CPU_PLL_CONFIG_VAL))
-	j wait_loop2
-	nop
-
-pll_unlock_handler_default:
-/* set nint, frac, refdiv, outdiv, range in CPU PLL configuration resiter */
-	set_reg(AR7240_CPU_PLL_CONFIG, SET_PLL_POWER_DOWN(CPU_PLL_CONFIG_VAL_DEFAULT))
-	nop
-
-wait_loop2:
-	li  t6,   KSEG1ADDR(AR7240_CPU_PLL_CONFIG)
-	lw  t7,   0(t6)
-	li  t8,   0x80000000
-	and t7,   t7, t8
-	bne zero, t7, wait_loop2
-	nop
-    
-/* put frac bit19:10 configuration */
-/* TODO: do we need this? */
-	set_reg(AR7240_PCIE_PLL_CONFIG, CPU_PLL_DITHER_FRAC_VAL)
-	nop
-
-pll_lock_handler_oc_recovery:
-	recovery_jump(pll_lock_handler_default)
-	nop
-
-#if defined(PLL_IN_FLASH_MAGIC_OFFSET)
-pll_lock_handler_flash:
-	bne t2, PLL_IN_FLASH_MAGIC, pll_lock_handler											// jump if we don't have PLL_MAGIC value in FLASH
-	nop
-	li  t0, (CFG_FLASH_BASE + PLL_IN_FLASH_DATA_BLOCK_OFFSET + PLL_IN_FLASH_MAGIC_OFFSET)	// load PLL_IN_FLASH_MAGIC address
-	lw  t3, 4(t0)																			// load CPU_PLL_CONFIG register value from FLASH
-	li  t0, KSEG1ADDR(AR7240_CPU_PLL_CONFIG)												// load CPU_PLL_CONFIG register address
-	sw  t3, 0(t0)																			// store value in CPU_PLL_CONFIG register
-	j   wait_loop3																			// jump to wait_loop3
-	nop
-#endif
-
-pll_lock_handler:
-/* clear PLL power down bit in CPU PLL configuration */
-	set_reg(AR7240_CPU_PLL_CONFIG, CPU_PLL_CONFIG_VAL)
-	j wait_loop3
-	nop
-
-pll_lock_handler_default:
-/* clear PLL power down bit in CPU PLL configuration */
-	set_reg(AR7240_CPU_PLL_CONFIG, CPU_PLL_CONFIG_VAL_DEFAULT)
-	nop
-
-wait_loop3:
-/* wait for PLL update -> bit 31 in CPU_PLL_CONFIG should be 0 */
-	li  t6,   KSEG1ADDR(AR7240_CPU_PLL_CONFIG)
-	lw  t7,   0(t6)
-	li  t8,   0x80000000
-	and t7,   t7, t8
-	bne zero, t7, wait_loop3
-	nop
-
-/* confirm DDR PLL lock */
-	li t3, 100
-	li t4, 0
-
-start_meas0:
-	addi t4, t4, 1
-	bgt  t4, t3, pll_unlock_handler_oc_recovery
-	nop
-	li   t5, 5
-
-start_meas:
-	li  t6, KSEG1ADDR(0x18116248)
-	lw  t7, 0(t6)
-	li  t8, 0xBFFFFFFF
-	and t7, t7, t8
-	sw  t7, 0(t6)
-	nop
-
-/* delay */
-	li t9, 10
-
-delayloop0:
-	subu t9, t9,   1
-	bne  t9, zero, delayloop0
-	nop
-	li   t8, 0x40000000
-	or   t7, t7,   t8
-	sw   t7, 0(t6)
-	nop
-
-meas_done_statue:
-	li  t6,   KSEG1ADDR(0x1811624C)
-	lw  t7,   0(t6)
-	li  t8,   0x8
-	and t7,   t7, t8
-	beq zero, t7, meas_done_statue
-	nop
-
-meas_result:
-	li   t6,   KSEG1ADDR(0x18116248)
-	lw   t7,   0(t6)
-	li   t8,   0x007FFFF8
-	and  t7,   t7, t8
-	srl  t7,   t7, 3
-	li   t8,   0x4000
-	bgt  t7,   t8, start_meas0
-	nop
-	addi t5,   t5, -1
-	bne  zero, t5, start_meas
-	nop
-
-pll_clear_bypass_oc_recovery:
-	recovery_jump(pll_clear_bypass_default)
-	nop
-
-#if defined(PLL_IN_FLASH_MAGIC_OFFSET)
-pll_clear_bypass_flash:
-	bne t2, PLL_IN_FLASH_MAGIC, pll_clear_bypass											// jump if we don't have PLL_MAGIC value in FLASH
-	nop
-	li  t0, (CFG_FLASH_BASE + PLL_IN_FLASH_DATA_BLOCK_OFFSET + PLL_IN_FLASH_MAGIC_OFFSET)	// load PLL_IN_FLASH_MAGIC address
-	lw  t3, 8(t0)																			// load CLOCK_CONTROL register value from FLASH
-	li  t0, KSEG1ADDR(AR7240_CPU_CLOCK_CONTROL)												// load CLOCK_CONTROL register address
-	sw  t3, 0(t0)																			// store value in CLOCK_CONTROL register
-	j   end																					// jump to end
-	nop
-#endif
-
-pll_clear_bypass:
-/* clear PLL bypass (bit 2) in CPU CLOCK CONTROL register */
-	set_reg(AR7240_CPU_CLOCK_CONTROL, CPU_CLK_CONTROL_VAL)
-	j end
-	nop
-
-pll_clear_bypass_default:
-/* clear PLL bypass (bit 2) in CPU CLOCK CONTROL register */
-	set_reg(AR7240_CPU_CLOCK_CONTROL, CPU_CLK_CONTROL_VAL_DEFAULT)
-	nop
-
-/* Sync mode, Set Bit 8 of DDR Tap Conrtol 3 register */
-/*
- * TODO: something is wrong here?
- * There is no AR7240_DDR_TAP_CONTROL3 in AR9331 datasheet!
- */
-/*
-	set_reg(AR7240_DDR_TAP_CONTROL3, 0x10105);
-	nop
-*/
+	li   t8, 0x00C00000
+	subu ra, ra, t8
 
 end:
 	jr ra
 	nop
+
+.end lowlevel_init
