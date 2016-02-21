@@ -498,6 +498,25 @@ lowlevel_gpio_init:
 		#endif
 	#endif
 
+	/* Enable regular GPIO function on GPIO11 and/or GPIO12 if needed */
+	#if defined(CONFIG_QCA_GPIO_MASK_OUTPUTS) || \
+		defined(CONFIG_QCA_GPIO_MASK_INPUTS)
+		#if (CONFIG_QCA_GPIO_MASK_OUTPUTS & (GPIO11 | GPIO12)) || \
+			(CONFIG_QCA_GPIO_MASK_INPUTS  & (GPIO11 | GPIO12))
+	li t8, QCA_GPIO_FUNC_2_REG
+	lw t9, 0(t8)
+			#if (CONFIG_QCA_GPIO_MASK_OUTPUTS & GPIO11) || \
+				(CONFIG_QCA_GPIO_MASK_INPUTS  & GPIO11)
+	or t9, t9, QCA_GPIO_FUNC_2_JUMPSTART_DIS_MASK
+			#endif
+			#if (CONFIG_QCA_GPIO_MASK_OUTPUTS & GPIO12) || \
+				(CONFIG_QCA_GPIO_MASK_INPUTS  & GPIO12)
+	or t9, t9, QCA_GPIO_FUNC_2_WPS_DIS_MASK
+			#endif
+	sw t9, 0(t8)
+		#endif
+	#endif
+
 	/* Setup init states on requested GPIO lines */
 	li  t8, QCA_GPIO_OUT_REG
 	lw  t9, 0(t8)
