@@ -10,29 +10,6 @@
 extern int ath_ddr_initial_config(uint32_t refresh);
 extern int ath_ddr_find_size(void);
 
-int reset_button_status(void)
-{
-#ifndef GPIO_RST_BUTTON_BIT
-	return 0;
-#else
-	u32 gpio = qca_soc_reg_read(QCA_GPIO_IN_REG);
-
-	if(gpio & (1 << GPIO_RST_BUTTON_BIT)){
-  #if defined(GPIO_RST_BUTTON_IS_ACTIVE_LOW)
-		return 0 ;
-  #else
-		return 1 ;
-  #endif
-	} else {
-  #if defined(GPIO_RST_BUTTON_IS_ACTIVE_LOW)
-		return 1;
-  #else
-		return 0;
-  #endif
-	}
-#endif
-}
-
 void ath_set_tuning_caps(void)
 {
 	typedef struct {

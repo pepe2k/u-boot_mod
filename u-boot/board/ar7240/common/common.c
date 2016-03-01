@@ -1,7 +1,8 @@
 /*
- * Copyright (C) 2015 Piotr Dymacz <piotr@dymacz.pl>
+ * Common functions for QC/A WiSoCs support
+ * Copyright (C) 2016 Piotr Dymacz <piotr@dymacz.pl>
  *
- * SPDX-License-Identifier:GPL-2.0
+ * SPDX-License-Identifier: GPL-2.0
  */
 
 #include <config.h>
@@ -136,6 +137,36 @@ void macaddr_init(u8 *mac_addr)
 #endif
 
 	memcpy(mac_addr, buffer, 6);
+}
+
+/*
+ * Returns "reset button" status:
+ * 1 -> button is pressed
+ * 0 -> button is not pressed
+ */
+int reset_button_status(void)
+{
+#ifdef GPIO_RST_BUTTON_BIT
+	u32 gpio;
+
+	gpio = qca_soc_reg_read(QCA_GPIO_IN_REG);
+
+	if (gpio & (1 << GPIO_RST_BUTTON_BIT)) {
+	#if defined(GPIO_RST_BUTTON_IS_ACTIVE_LOW)
+		return 0;
+	#else
+		return 1;
+	#endif
+	} else {
+	#if defined(GPIO_RST_BUTTON_IS_ACTIVE_LOW)
+		return 1;
+	#else
+		return 0;
+	#endif
+	}
+#else
+	return 0;
+#endif
 }
 
 /*
