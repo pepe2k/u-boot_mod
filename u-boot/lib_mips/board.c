@@ -96,7 +96,7 @@ static int display_banner(void)
 #endif
 
 	printf("\n***************************************"
-		   "\n*        %s        *"
+		   "\n*     %s     *"
 		   "\n*        " __DATE__ ", " __TIME__ "        *"
 		   "\n***************************************\n\n",
 			version_string);
