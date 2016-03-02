@@ -8,7 +8,7 @@ ifeq ($(ETH_CONFIG), _s27)
 OBJS	+= ../common/athr_s27_phy.o
 endif
 
-SOBJS	= ../common/953x.o ../common/tap-953x.o
+SOBJS	= ../common/tap-953x.o
 
 $(LIB):	.depend $(OBJS) $(SOBJS)
 	$(AR) crv $@ $(OBJS) $(SOBJS)
