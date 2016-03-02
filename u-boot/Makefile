@@ -356,13 +356,13 @@ wr703n_config : unconfig hornet_common_config
 
 	@./mkconfig -a ap121 mips mips ap121 ar7240 ar7240
 
-wr720n_v3_CH_config : unconfig hornet_common_config
-	@/bin/echo -e '\e[32m> Configuring for TP-Link TL-WR720N v3 CH at:' `date` '\e[0m'
+wr720n_v3_CN_config : unconfig hornet_common_config
+	@/bin/echo -e '\e[32m> Configuring for TP-Link TL-WR720N v3 CN at:' `date` '\e[0m'
 	@echo "#define CONFIG_FOR_TPLINK_WR720N_V3          1" >> include/config.h
 	@echo "#define GPIO_RST_BUTTON_BIT                 11" >> include/config.h
 	@echo "#define DEFAULT_FLASH_SIZE_IN_MB             4" >> include/config.h
 	@echo "#define CONFIG_TPLINK_IMAGE_HEADER           1" >> include/config.h
-	@echo "#define BOARD_CUSTOM_STRING                  \"TP-Link TL-WR720N v3 CH\"" >> include/config.h
+	@echo "#define BOARD_CUSTOM_STRING                  \"TP-Link TL-WR720N v3 CN\"" >> include/config.h
 
 	@./mkconfig -a ap121 mips mips ap121 ar7240 ar7240
 
@@ -599,17 +599,17 @@ ap143_common_config : common_config
 	@echo "#define CONFIG_ATHEROS                       1" >> include/config.h
 	@echo "#define CONFIG_MACH_QCA953x                  1" >> include/config.h
 
-tplink_wr820n_CH_config : unconfig ap143_common_config
-	@/bin/echo -e '\e[32m> Configuring for TP-Link TL-WR820N CH at:' `date` '\e[0m'
+wr820n_CN_config : unconfig ap143_common_config
+	@/bin/echo -e '\e[32m> Configuring for TP-Link TL-WR820N CN at:' `date` '\e[0m'
 	@echo "#define SOC_TYPE               QCA_QCA953X_SOC" >> include/config.h
-	@echo "#define CONFIG_FOR_TPLINK_WR820N_CH          1" >> include/config.h
+	@echo "#define CONFIG_FOR_TPLINK_WR820N_CN          1" >> include/config.h
 	@echo "#define CFG_ATHRS27_PHY                      1" >> include/config.h
 	@echo "#define CFG_ATH_GMAC_NMACS                   2" >> include/config.h
 	@echo "#define DEFAULT_FLASH_SIZE_IN_MB             4" >> include/config.h
 	@echo "#define GPIO_RST_BUTTON_BIT                 12" >> include/config.h
 	@echo "#define GPIO_RST_BUTTON_IS_ACTIVE_LOW        1" >> include/config.h
 	@echo "#define CONFIG_TPLINK_IMAGE_HEADER           1" >> include/config.h
-	@echo "#define BOARD_CUSTOM_STRING                  \"TP-Link TL-WR820N CH\"" >> include/config.h
+	@echo "#define BOARD_CUSTOM_STRING                  \"TP-Link TL-WR820N CN\"" >> include/config.h
 
 	@./mkconfig -a ap143 mips mips ap143 ar7240 ar7240
 

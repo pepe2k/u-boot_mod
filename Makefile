@@ -37,13 +37,13 @@ tplink_wr703n:
 	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) ENDIANNESS=-EB V=1 all
 	@make --no-print-directory show_size
 
-tplink_wr720n_v3_CH:	export UBOOT_FILE_NAME=uboot_for_tp-link_tl-wr720n_v3_CH
-tplink_wr720n_v3_CH:	export CONFIG_MAX_UBOOT_SIZE_KB=123
+tplink_wr720n_v3_CN:	export UBOOT_FILE_NAME=uboot_for_tp-link_tl-wr720n_v3_CN
+tplink_wr720n_v3_CN:	export CONFIG_MAX_UBOOT_SIZE_KB=123
 ifndef CONFIG_SKIP_LOWLEVEL_INIT
-tplink_wr720n_v3_CH:	export COMPRESSED_UBOOT=1
+tplink_wr720n_v3_CN:	export COMPRESSED_UBOOT=1
 endif
-tplink_wr720n_v3_CH:
-	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) wr720n_v3_CH_config
+tplink_wr720n_v3_CN:
+	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) wr720n_v3_CN_config
 	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) ENDIANNESS=-EB V=1 all
 	@make --no-print-directory show_size
 
@@ -162,14 +162,14 @@ tplink_wa830re_v2_wa801nd_v2:
 	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) ENDIANNESS=-EB V=1 all
 	@make --no-print-directory show_size
 
-tplink_wr820n_CH:	export UBOOT_FILE_NAME=uboot_for_tp-link_tl-wr820n_CH
-tplink_wr820n_CH:	export CONFIG_MAX_UBOOT_SIZE_KB=123
+tplink_wr820n_CN:	export UBOOT_FILE_NAME=uboot_for_tp-link_tl-wr820n_CN
+tplink_wr820n_CN:	export CONFIG_MAX_UBOOT_SIZE_KB=123
 ifndef CONFIG_SKIP_LOWLEVEL_INIT
-tplink_wr820n_CH:	export COMPRESSED_UBOOT=1
+tplink_wr820n_CN:	export COMPRESSED_UBOOT=1
 endif
-tplink_wr820n_CH:	export ETH_CONFIG=_s27
-tplink_wr820n_CH:
-	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) tplink_wr820n_CH_config
+tplink_wr820n_CN:	export ETH_CONFIG=_s27
+tplink_wr820n_CN:
+	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) wr820n_CN_config
 	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) ENDIANNESS=-EB V=1 all
 	@make --no-print-directory show_size
 
