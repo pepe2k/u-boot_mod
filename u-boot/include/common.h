@@ -203,24 +203,12 @@ int	autoscript (ulong addr);
  * Only TP-Link OFW and OpenWrt for TP-Link routers
  * use different (simply) image header
  */
-#if !defined(CONFIG_FOR_8DEVICES_CARAMBOLA2) && \
-	!defined(CONFIG_FOR_BLACK_SWIFT_BOARD)   && \
-	!defined(CONFIG_FOR_DLINK_DIR505_A1)     && \
-	!defined(CONFIG_FOR_DRAGINO_V2)          && \
-	!defined(CONFIG_FOR_MESH_POTATO_V2)
+#ifdef CONFIG_TPLINK_IMAGE_HEADER
 #include "tpLinuxTag.h"
-#endif
-
-/* common/cmd_bootm.c */
-#if defined(CONFIG_FOR_8DEVICES_CARAMBOLA2) || \
-	defined(CONFIG_FOR_BLACK_SWIFT_BOARD)   || \
-	defined(CONFIG_FOR_DLINK_DIR505_A1)     || \
-	defined(CONFIG_FOR_DRAGINO_V2)          || \
-	defined(CONFIG_FOR_MESH_POTATO_V2)
-void print_image_hdr(image_header_t *hdr);
-#else
 void print_image_hdr(tplink_image_header_t *hdr);
-#endif
+#else
+void print_image_hdr(image_header_t *hdr);
+#endif /* CONFIG_TPLINK_IMAGE_HEADER */
 
 extern ulong load_addr;		/* Default Load Address */
 
