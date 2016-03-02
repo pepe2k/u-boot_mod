@@ -97,9 +97,9 @@ lowlevel_gpio_init:
 	li t8, QCA_GPIO_FUNC_REG
 	#if defined(CONFIG_SKIP_LOWLEVEL_INIT) || \
 		defined(CONFIG_QCA_KEEP_JTAG_ENABLED)
-	li t9, QCA_GPIO_FUNC_JTAG_DIS_MASK
-	#else
 	li t9, 0x0
+	#else
+	li t9, QCA_GPIO_FUNC_JTAG_DIS_MASK
 	#endif
 	sw t9, 0(t8)
 
