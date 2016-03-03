@@ -12,6 +12,10 @@
 #include <asm/addrspace.h>
 #include <soc/qca_soc_common.h>
 
+#ifndef CONFIG_BOARD_CUSTOM_STRING
+	#define CONFIG_BOARD_CUSTOM_STRING	"Unknown/OEM"
+#endif
+
 #define ALIGN_SIZE		"8"
 
 DECLARE_GLOBAL_DATA_PTR;
@@ -29,9 +33,7 @@ void print_board_info(void)
 	char buffer[24];
 
 	/* Board name */
-#ifdef BOARD_CUSTOM_STRING
-	printf("%" ALIGN_SIZE "s %s\n", "BOARD:", BOARD_CUSTOM_STRING);
-#endif
+	printf("%" ALIGN_SIZE "s %s\n", "BOARD:", CONFIG_BOARD_CUSTOM_STRING);
 
 	/* SOC name, version and revision */
 	qca_soc_name_rev(buffer);

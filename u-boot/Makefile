@@ -352,7 +352,7 @@ wr703n_config : unconfig hornet_common_config
 	@echo "#define GPIO_RST_BUTTON_BIT                 11" >> include/config.h
 	@echo "#define DEFAULT_FLASH_SIZE_IN_MB             4" >> include/config.h
 	@echo "#define CONFIG_TPLINK_IMAGE_HEADER           1" >> include/config.h
-	@echo "#define BOARD_CUSTOM_STRING                  \"TP-Link TL-WR703N\"" >> include/config.h
+	@echo "#define CONFIG_BOARD_CUSTOM_STRING           \"TP-Link TL-WR703N\"" >> include/config.h
 
 	@./mkconfig -a ap121 mips mips ap121 ar7240 ar7240
 
@@ -362,7 +362,7 @@ wr720n_v3_CN_config : unconfig hornet_common_config
 	@echo "#define GPIO_RST_BUTTON_BIT                 11" >> include/config.h
 	@echo "#define DEFAULT_FLASH_SIZE_IN_MB             4" >> include/config.h
 	@echo "#define CONFIG_TPLINK_IMAGE_HEADER           1" >> include/config.h
-	@echo "#define BOARD_CUSTOM_STRING                  \"TP-Link TL-WR720N v3 CN\"" >> include/config.h
+	@echo "#define CONFIG_BOARD_CUSTOM_STRING           \"TP-Link TL-WR720N v3 CN\"" >> include/config.h
 
 	@./mkconfig -a ap121 mips mips ap121 ar7240 ar7240
 
@@ -372,7 +372,7 @@ wr710n_config : unconfig hornet_common_config
 	@echo "#define GPIO_RST_BUTTON_BIT                 11" >> include/config.h
 	@echo "#define DEFAULT_FLASH_SIZE_IN_MB             8" >> include/config.h
 	@echo "#define CONFIG_TPLINK_IMAGE_HEADER           1" >> include/config.h
-	@echo "#define BOARD_CUSTOM_STRING                  \"TP-Link TL-WR710N\"" >> include/config.h
+	@echo "#define CONFIG_BOARD_CUSTOM_STRING           \"TP-Link TL-WR710N\"" >> include/config.h
 
 	@./mkconfig -a ap121 mips mips ap121 ar7240 ar7240
 
@@ -382,7 +382,7 @@ mr3020_config : unconfig hornet_common_config
 	@echo "#define GPIO_RST_BUTTON_BIT                 11" >> include/config.h
 	@echo "#define DEFAULT_FLASH_SIZE_IN_MB             4" >> include/config.h
 	@echo "#define CONFIG_TPLINK_IMAGE_HEADER           1" >> include/config.h
-	@echo "#define BOARD_CUSTOM_STRING                  \"TP-Link TL-MR3020\"" >> include/config.h
+	@echo "#define CONFIG_BOARD_CUSTOM_STRING           \"TP-Link TL-MR3020\"" >> include/config.h
 
 	@./mkconfig -a ap121 mips mips ap121 ar7240 ar7240
 
@@ -392,7 +392,7 @@ mr3040_config : unconfig hornet_common_config
 	@echo "#define GPIO_RST_BUTTON_BIT                 11" >> include/config.h
 	@echo "#define DEFAULT_FLASH_SIZE_IN_MB             4" >> include/config.h
 	@echo "#define CONFIG_TPLINK_IMAGE_HEADER           1" >> include/config.h
-	@echo "#define BOARD_CUSTOM_STRING                  \"TP-Link TL-MR3040\"" >> include/config.h
+	@echo "#define CONFIG_BOARD_CUSTOM_STRING           \"TP-Link TL-MR3040\"" >> include/config.h
 
 	@./mkconfig -a ap121 mips mips ap121 ar7240 ar7240
 
@@ -402,7 +402,7 @@ mr10u_config : unconfig hornet_common_config
 	@echo "#define GPIO_RST_BUTTON_BIT                 11" >> include/config.h
 	@echo "#define DEFAULT_FLASH_SIZE_IN_MB             4" >> include/config.h
 	@echo "#define CONFIG_TPLINK_IMAGE_HEADER           1" >> include/config.h
-	@echo "#define BOARD_CUSTOM_STRING                  \"TP-Link TL-MR10U\"" >> include/config.h
+	@echo "#define CONFIG_BOARD_CUSTOM_STRING           \"TP-Link TL-MR10U\"" >> include/config.h
 
 	@./mkconfig -a ap121 mips mips ap121 ar7240 ar7240
 
@@ -412,7 +412,7 @@ mr13u_config : unconfig hornet_common_config
 	@echo "#define GPIO_RST_BUTTON_BIT                 11" >> include/config.h
 	@echo "#define DEFAULT_FLASH_SIZE_IN_MB             4" >> include/config.h
 	@echo "#define CONFIG_TPLINK_IMAGE_HEADER           1" >> include/config.h
-	@echo "#define BOARD_CUSTOM_STRING                  \"TP-Link TL-MR13U\"" >> include/config.h
+	@echo "#define CONFIG_BOARD_CUSTOM_STRING           \"TP-Link TL-MR13U\"" >> include/config.h
 
 	@./mkconfig -a ap121 mips mips ap121 ar7240 ar7240
 
@@ -422,7 +422,7 @@ wr740n_v4_config : unconfig hornet_common_config
 	@echo "#define GPIO_RST_BUTTON_BIT                 11" >> include/config.h
 	@echo "#define DEFAULT_FLASH_SIZE_IN_MB             4" >> include/config.h
 	@echo "#define CONFIG_TPLINK_IMAGE_HEADER           1" >> include/config.h
-	@echo "#define BOARD_CUSTOM_STRING                  \"TP-Link TL-WR74xN/D v4\"" >> include/config.h
+	@echo "#define CONFIG_BOARD_CUSTOM_STRING           \"TP-Link TL-WR74xN/D v4\"" >> include/config.h
 
 	@./mkconfig -a ap121 mips mips ap121 ar7240 ar7240
 
@@ -432,7 +432,7 @@ mr3220_v2_config : unconfig hornet_common_config
 	@echo "#define GPIO_RST_BUTTON_BIT                 11" >> include/config.h
 	@echo "#define DEFAULT_FLASH_SIZE_IN_MB             4" >> include/config.h
 	@echo "#define CONFIG_TPLINK_IMAGE_HEADER           1" >> include/config.h
-	@echo "#define BOARD_CUSTOM_STRING                  \"TP-Link TL-MR3220 v2\"" >> include/config.h
+	@echo "#define CONFIG_BOARD_CUSTOM_STRING           \"TP-Link TL-MR3220 v2\"" >> include/config.h
 
 	@./mkconfig -a ap121 mips mips ap121 ar7240 ar7240
 
@@ -442,7 +442,7 @@ dir505_config : unconfig hornet_common_config
 	@echo "#define GPIO_RST_BUTTON_BIT                 11" >> include/config.h
 	@echo "#define GPIO_RST_BUTTON_IS_ACTIVE_LOW        1" >> include/config.h
 	@echo "#define DEFAULT_FLASH_SIZE_IN_MB             8" >> include/config.h
-	@echo "#define BOARD_CUSTOM_STRING                  \"D-Link DIR-505\"" >> include/config.h
+	@echo "#define CONFIG_BOARD_CUSTOM_STRING           \"D-Link DIR-505\"" >> include/config.h
 
 	@./mkconfig -a ap121 mips mips ap121 ar7240 ar7240
 
@@ -451,7 +451,7 @@ gs_oolite_v1_dev_config : unconfig hornet_common_config
 	@echo "#define CONFIG_FOR_GS_OOLITE_V1_DEV          1" >> include/config.h
 	@echo "#define GPIO_RST_BUTTON_BIT                 11" >> include/config.h
 	@echo "#define DEFAULT_FLASH_SIZE_IN_MB            16" >> include/config.h
-	@echo "#define BOARD_CUSTOM_STRING                  \"Gainstrong GS-Oolite v1\"" >> include/config.h
+	@echo "#define CONFIG_BOARD_CUSTOM_STRING           \"Gainstrong GS-Oolite v1\"" >> include/config.h
 
 	@./mkconfig -a ap121 mips mips ap121 ar7240 ar7240
 
@@ -461,7 +461,7 @@ black_swift_board_config : unconfig hornet_common_config
 	@echo "#define GPIO_RST_BUTTON_BIT                 11" >> include/config.h
 	@echo "#define GPIO_RST_BUTTON_IS_ACTIVE_LOW        1" >> include/config.h
 	@echo "#define DEFAULT_FLASH_SIZE_IN_MB            16" >> include/config.h
-	@echo "#define BOARD_CUSTOM_STRING                  \"Black Swift board\"" >> include/config.h
+	@echo "#define CONFIG_BOARD_CUSTOM_STRING           \"Black Swift board\"" >> include/config.h
 
 	@./mkconfig -a ap121 mips mips ap121 ar7240 ar7240
 
@@ -473,7 +473,7 @@ carambola2_config : unconfig hornet_common_config
 	@echo "#define GPIO_RST_BUTTON_BIT                 11" >> include/config.h
 	@echo "#define GPIO_RST_BUTTON_IS_ACTIVE_LOW        1" >> include/config.h
 	@echo "#define DEFAULT_FLASH_SIZE_IN_MB            16" >> include/config.h
-	@echo "#define BOARD_CUSTOM_STRING                  \"8devices Carambola2 v1\"" >> include/config.h
+	@echo "#define CONFIG_BOARD_CUSTOM_STRING           \"8devices Carambola2 v1\"" >> include/config.h
 
 	@./mkconfig -a ap121 mips mips ap121 ar7240 ar7240
 
@@ -486,7 +486,7 @@ dragino_v2_ms14_config : unconfig hornet_common_config
 	@echo "#define DEFAULT_FLASH_SIZE_IN_MB            16" >> include/config.h
 	@echo "#define WEBFAILSAFE_DISABLE_ART_UPGRADE      1" >> include/config.h
 	@echo "#define WEBFAILSAFE_DISABLE_UBOOT_UPGRADE    1" >> include/config.h
-	@echo "#define BOARD_CUSTOM_STRING                  \"Dragino v2 MS14\"" >> include/config.h
+	@echo "#define CONFIG_BOARD_CUSTOM_STRING           \"Dragino v2 MS14\"" >> include/config.h
 
 	@./mkconfig -a ap121 mips mips ap121 ar7240 ar7240
 
@@ -499,7 +499,7 @@ villagetelco_mp2_config : unconfig hornet_common_config
 	@echo "#define DEFAULT_FLASH_SIZE_IN_MB            16" >> include/config.h
 	@echo "#define WEBFAILSAFE_DISABLE_ART_UPGRADE      1" >> include/config.h
 	@echo "#define WEBFAILSAFE_DISABLE_UBOOT_UPGRADE    1" >> include/config.h
-	@echo "#define BOARD_CUSTOM_STRING                  \"Village Telco Mesh Potato 2\"" >> include/config.h
+	@echo "#define CONFIG_BOARD_CUSTOM_STRING           \"Village Telco Mesh Potato 2\"" >> include/config.h
 
 	@./mkconfig -a ap121 mips mips ap121 ar7240 ar7240
 
@@ -508,7 +508,7 @@ gl-inet_config : unconfig hornet_common_config
 	@echo "#define CONFIG_FOR_GL_INET                   1" >> include/config.h
 	@echo "#define GPIO_RST_BUTTON_BIT                 11" >> include/config.h
 	@echo "#define DEFAULT_FLASH_SIZE_IN_MB             8" >> include/config.h
-	@echo "#define BOARD_CUSTOM_STRING                  \"GL.iNet\"" >> include/config.h
+	@echo "#define CONFIG_BOARD_CUSTOM_STRING           \"GL.iNet\"" >> include/config.h
 
 	@./mkconfig -a ap121 mips mips ap121 ar7240 ar7240
 
@@ -528,7 +528,7 @@ wdr3600_43x0_config : unconfig wasp_common_config
 	@echo "#define GPIO_RST_BUTTON_IS_ACTIVE_LOW        1" >> include/config.h
 	@echo "#define DEFAULT_FLASH_SIZE_IN_MB             8" >> include/config.h
 	@echo "#define CONFIG_TPLINK_IMAGE_HEADER           1" >> include/config.h
-	@echo "#define BOARD_CUSTOM_STRING                  \"TP-Link TL-WDR3600/43x0\"" >> include/config.h
+	@echo "#define CONFIG_BOARD_CUSTOM_STRING           \"TP-Link TL-WDR3600/43x0\"" >> include/config.h
 
 	@./mkconfig -a db12x mips mips db12x ar7240 ar7240
 
@@ -543,7 +543,7 @@ wdr3500_config : unconfig wasp_common_config
 	@echo "#define GPIO_RST_BUTTON_IS_ACTIVE_LOW        1" >> include/config.h
 	@echo "#define DEFAULT_FLASH_SIZE_IN_MB             8" >> include/config.h
 	@echo "#define CONFIG_TPLINK_IMAGE_HEADER           1" >> include/config.h
-	@echo "#define BOARD_CUSTOM_STRING                  \"TP-Link TL-WDR3500\"" >> include/config.h
+	@echo "#define CONFIG_BOARD_CUSTOM_STRING           \"TP-Link TL-WDR3500\"" >> include/config.h
 
 	@./mkconfig -a db12x mips mips db12x ar7240 ar7240
 
@@ -559,7 +559,7 @@ mr3420_v2_config : unconfig wasp_common_config
 	@echo "#define GPIO_RST_BUTTON_IS_ACTIVE_LOW        1" >> include/config.h
 	@echo "#define DEFAULT_FLASH_SIZE_IN_MB             4" >> include/config.h
 	@echo "#define CONFIG_TPLINK_IMAGE_HEADER           1" >> include/config.h
-	@echo "#define BOARD_CUSTOM_STRING                  \"TP-Link TL-MR3420 v2\"" >> include/config.h
+	@echo "#define CONFIG_BOARD_CUSTOM_STRING           \"TP-Link TL-MR3420 v2\"" >> include/config.h
 
 	@./mkconfig -a db12x mips mips db12x ar7240 ar7240
 
@@ -575,7 +575,7 @@ wr841n_v8_config : unconfig wasp_common_config
 	@echo "#define GPIO_RST_BUTTON_IS_ACTIVE_LOW        1" >> include/config.h
 	@echo "#define DEFAULT_FLASH_SIZE_IN_MB             4" >> include/config.h
 	@echo "#define CONFIG_TPLINK_IMAGE_HEADER           1" >> include/config.h
-	@echo "#define BOARD_CUSTOM_STRING                  \"TP-Link TL-WR841N/D v8\"" >> include/config.h
+	@echo "#define CONFIG_BOARD_CUSTOM_STRING           \"TP-Link TL-WR841N/D v8\"" >> include/config.h
 
 	@./mkconfig -a db12x mips mips db12x ar7240 ar7240
 
@@ -591,7 +591,7 @@ wa830re_v2_wa801nd_v2_config : unconfig wasp_common_config
 	@echo "#define GPIO_RST_BUTTON_IS_ACTIVE_LOW           1" >> include/config.h
 	@echo "#define DEFAULT_FLASH_SIZE_IN_MB                4" >> include/config.h
 	@echo "#define CONFIG_TPLINK_IMAGE_HEADER              1" >> include/config.h
-	@echo "#define BOARD_CUSTOM_STRING                     \"TP-Link TL-WA830RE/TL-WA801ND v2\"" >> include/config.h
+	@echo "#define CONFIG_BOARD_CUSTOM_STRING              \"TP-Link TL-WA830RE/TL-WA801ND v2\"" >> include/config.h
 
 	@./mkconfig -a db12x mips mips db12x ar7240 ar7240
 
@@ -609,7 +609,7 @@ wr820n_CN_config : unconfig ap143_common_config
 	@echo "#define GPIO_RST_BUTTON_BIT                 12" >> include/config.h
 	@echo "#define GPIO_RST_BUTTON_IS_ACTIVE_LOW        1" >> include/config.h
 	@echo "#define CONFIG_TPLINK_IMAGE_HEADER           1" >> include/config.h
-	@echo "#define BOARD_CUSTOM_STRING                  \"TP-Link TL-WR820N CN\"" >> include/config.h
+	@echo "#define CONFIG_BOARD_CUSTOM_STRING           \"TP-Link TL-WR820N CN\"" >> include/config.h
 
 	@./mkconfig -a ap143 mips mips ap143 ar7240 ar7240
 
@@ -623,7 +623,7 @@ wr841n_v9_config : unconfig ap143_common_config
 	@echo "#define GPIO_RST_BUTTON_BIT                 12" >> include/config.h
 	@echo "#define GPIO_RST_BUTTON_IS_ACTIVE_LOW        1" >> include/config.h
 	@echo "#define CONFIG_TPLINK_IMAGE_HEADER           1" >> include/config.h
-	@echo "#define BOARD_CUSTOM_STRING                  \"TP-Link TL-WR841N/D v9\"" >> include/config.h
+	@echo "#define CONFIG_BOARD_CUSTOM_STRING           \"TP-Link TL-WR841N/D v9\"" >> include/config.h
 
 	@./mkconfig -a ap143 mips mips ap143 ar7240 ar7240
 
