@@ -1,7 +1,7 @@
 /*
- * Copyright (C) 2015 Piotr Dymacz <piotr@dymacz.pl>
+ * Copyright (C) 2016 Piotr Dymacz <piotr@dymacz.pl>
  *
- * SPDX-License-Identifier:GPL-2.0
+ * SPDX-License-Identifier: GPL-2.0
  */
 
 #include <config.h>
@@ -40,6 +40,10 @@ static u32 flash_info_find(flash_info_t *info, u32 jedec_id)
 	return 1;
 }
 
+/*
+ * Scan all configured FLASH banks one by one
+ * and try to get information about the chips
+ */
 u32 flash_init(void)
 {
 	u32 bank, i, jedec_id, sfdp_size, sfdp_ss;
@@ -109,7 +113,7 @@ u32 flash_init(void)
 			info->sector_count = info->size / info->sector_size;
 		}
 
-		for (i = 0; i < info->sector_count; i++){
+		for (i = 0; i < info->sector_count; i++) {
 			info->start[i] = CFG_FLASH_BASE
 							 + total_size + (i * info->sector_size);
 		}
@@ -120,6 +124,12 @@ u32 flash_init(void)
 	return total_size;
 }
 
+/*
+ * Erase all FLASH sectors in provided range
+ *
+ * TODO:
+ * - use some LED for indication that we are erasing?
+ */
 u32 flash_erase(flash_info_t *info,
 				u32 s_first,
 				u32 s_last)
@@ -146,8 +156,6 @@ u32 flash_erase(flash_info_t *info,
 
 	return 0;
 }
-
-
 
 /*
  * Write a buffer from memory to a FLASH:
