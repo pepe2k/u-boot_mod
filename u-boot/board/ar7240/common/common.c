@@ -148,19 +148,19 @@ void macaddr_init(u8 *mac_addr)
  */
 int reset_button_status(void)
 {
-#ifdef GPIO_RST_BUTTON_BIT
+#ifdef CONFIG_GPIO_RESET_BTN
 	u32 gpio;
 
 	gpio = qca_soc_reg_read(QCA_GPIO_IN_REG);
 
-	if (gpio & (1 << GPIO_RST_BUTTON_BIT)) {
-	#if defined(GPIO_RST_BUTTON_IS_ACTIVE_LOW)
+	if (gpio & (1 << CONFIG_GPIO_RESET_BTN)) {
+	#if defined(CONFIG_GPIO_RESET_BTN_ACTIVE_LOW)
 		return 0;
 	#else
 		return 1;
 	#endif
 	} else {
-	#if defined(GPIO_RST_BUTTON_IS_ACTIVE_LOW)
+	#if defined(CONFIG_GPIO_RESET_BTN_ACTIVE_LOW)
 		return 1;
 	#else
 		return 0;
