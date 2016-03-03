@@ -659,7 +659,7 @@ mr3420_v2_config : unconfig wasp_common_config
 	@echo "#define DEFAULT_FLASH_SIZE_IN_MB             4" >> include/config.h
 	@echo "#define BOARD_CUSTOM_STRING                  \"AP123 (AR9341) U-Boot for TL-MR3420 v2\"" >> include/config.h
 
-	@./mkconfig -a db12x mips mips db12x ar7240 ar7240
+	@./mkconfig -a ap121 mips mips ap121 ar7240 ar7240
 
 wr841n_v8_config : unconfig wasp_common_config
 	@/bin/echo -e '\e[32m> Configuring for TP-Link TL-WR841N/D v8 at:' `date` '\e[0m'
