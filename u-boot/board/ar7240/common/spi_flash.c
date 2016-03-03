@@ -11,9 +11,9 @@
 #include <asm/types.h>
 #include <soc/qca_soc_common.h>
 
-/* We need it in case of unknown FLASH chip */
-#ifndef DEFAULT_FLASH_SIZE_IN_MB
-	#error "DEFAULT_FLASH_SIZE_IN_MB not defined!"
+/* Use 4 MB by default */
+#ifndef CONFIG_DEFAULT_FLASH_SIZE_IN_MB
+	#define CONFIG_DEFAULT_FLASH_SIZE_IN_MB	4
 #endif
 
 /*
@@ -85,12 +85,14 @@ u32 flash_init(void)
 
 				printf("   - erase sector command: 0x%02X\n\n", sfdp_ec);
 			} else {
-				#if (DEFAULT_FLASH_SIZE_IN_MB == 4)
+				#if (CONFIG_DEFAULT_FLASH_SIZE_IN_MB == 4)
 				info->size = SIZE_4MiB;
-				#elif (DEFAULT_FLASH_SIZE_IN_MB == 8)
+				#elif (CONFIG_DEFAULT_FLASH_SIZE_IN_MB == 8)
 				info->size = SIZE_8MiB;
-				#elif (DEFAULT_FLASH_SIZE_IN_MB == 16)
+				#elif (CONFIG_DEFAULT_FLASH_SIZE_IN_MB == 16)
 				info->size = SIZE_16MiB;
+				#else
+					#error "Not supported CONFIG_DEFAULT_FLASH_SIZE_IN_MB value!"
 				#endif
 
 				printf("## Error: SPI NOR FLASH chip in bank #%d\n"
