@@ -26,10 +26,39 @@ inline u32 qca_xtal_is_40mhz(void)
 /*
  * Return memory type value from BOOT_STRAP register
  */
-inline u32 qca_mem_type(void)
+u32 qca_dram_type(void)
 {
-	return ((qca_soc_reg_read(QCA_RST_BOOTSTRAP_REG) &
-			QCA_RST_BOOTSTRAP_MEM_TYPE_MASK) >> QCA_RST_BOOTSTRAP_MEM_TYPE_SHIFT);
+#if defined(CONFIG_BOARD_CONST_DRAM_TYPE_SDR)
+	return RAM_MEMORY_TYPE_SDR;
+#elif defined(CONFIG_BOARD_CONST_DRAM_TYPE_DDR1)
+	return RAM_MEMORY_TYPE_DDR1;
+#elif defined(CONFIG_BOARD_CONST_DRAM_TYPE_DDR2)
+	return RAM_MEMORY_TYPE_DDR2;
+#else
+	static u32 dram_type = 0;
+
+	if (dram_type == 0) {
+		dram_type = ((qca_soc_reg_read(QCA_RST_BOOTSTRAP_REG) &
+					 QCA_RST_BOOTSTRAP_MEM_TYPE_MASK) >> QCA_RST_BOOTSTRAP_MEM_TYPE_SHIFT);
+
+		switch (dram_type) {
+		case QCA_RST_BOOTSTRAP_MEM_TYPE_SDR_VAL:
+			dram_type = RAM_MEMORY_TYPE_SDR;
+			break;
+		case QCA_RST_BOOTSTRAP_MEM_TYPE_DDR1_VAL:
+			dram_type = RAM_MEMORY_TYPE_DDR1;
+			break;
+		case QCA_RST_BOOTSTRAP_MEM_TYPE_DDR2_VAL:
+			dram_type = RAM_MEMORY_TYPE_DDR2;
+			break;
+		default:
+			dram_type = RAM_MEMORY_TYPE_UNKNOWN;
+			break;
+		}
+	}
+
+	return dram_type;
+#endif
 }
 
 /*

@@ -47,19 +47,19 @@ void print_board_info(void)
 	printf("%" ALIGN_SIZE "s ", "RAM:");
 	print_size(bd->bi_memsize, "");
 
-	switch (qca_mem_type()) {
-		case QCA_RST_BOOTSTRAP_MEM_TYPE_SDR_VAL:
-			puts(" SDR\n");
-			break;
-		case QCA_RST_BOOTSTRAP_MEM_TYPE_DDR1_VAL:
-			puts(" DDR1\n");
-			break;
-		case QCA_RST_BOOTSTRAP_MEM_TYPE_DDR2_VAL:
-			puts(" DDR2\n");
-			break;
-		default:
-			puts("\n");
-			break;
+	switch (qca_dram_type()) {
+	case RAM_MEMORY_TYPE_SDR:
+		puts(" SDR\n");
+		break;
+	case RAM_MEMORY_TYPE_DDR1:
+		puts(" DDR1\n");
+		break;
+	case RAM_MEMORY_TYPE_DDR2:
+		puts(" DDR2\n");
+		break;
+	default:
+		puts("\n");
+		break;
 	}
 
 	/* SPI NOR FLASH sizes and types */
