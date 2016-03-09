@@ -10,12 +10,13 @@ OBJS	+= meminit.o
 OBJS	+= qca_common.o
 OBJS	+= qca_clocks.o
 OBJS	+= qca_sf.o
+OBJS	+= qca_dram.o
 SOBJS	+= qca_gpio_init.o
 
 ifeq ($(BOARD), ap121)
 	OBJS	+= qca_hs_uart.o
 	OBJS	+= ag7240.o
-	SOBJS	+= ar933x_ddr_init.o
+	OBJS	+= ar933x_dram.o
 	SOBJS	+= ar933x_pll_init.o
 else
 	OBJS	+= qca_ls_uart.o

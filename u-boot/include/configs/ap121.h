@@ -438,35 +438,6 @@
 #define CONFIG_NETCONSOLE
 #define CONFIG_NETCONSOLE_PORT	6666
 
-/* DDR init values */
-#if CONFIG_40MHZ_XTAL_SUPPORT
-	#define CFG_DDR_REFRESH_VAL	0x4270
-#else
-	#define CFG_DDR_REFRESH_VAL	0x4186
-#endif
-
-#define CFG_DDR_CONFIG_VAL		0x7fbc8cd0
-#define CFG_DDR_MODE_VAL_INIT	0x133
-
-#ifdef LOW_DRIVE_STRENGTH
-	#define CFG_DDR_EXT_MODE_VAL	0x2
-#else
-	#define CFG_DDR_EXT_MODE_VAL	0x0
-#endif
-
-#define CFG_DDR_MODE_VAL	0x33
-#define CFG_DDR_TRTW_VAL	0x1f
-#define CFG_DDR_TWTR_VAL	0x1e
-
-//#define CFG_DDR_CONFIG2_VAL			0x99d0e6a8	// HORNET 1.0
-#define CFG_DDR_CONFIG2_VAL				0x9dd0e6a8	// HORNET 1.1
-#define CFG_DDR_RD_DATA_THIS_CYCLE_VAL	0x00ff
-#define CFG_DDR_TAP0_VAL				0x8
-#define CFG_DDR_TAP1_VAL				0x9
-
-/* DDR2 Init values */
-#define CFG_DDR2_EXT_MODE_VAL			0x402
-
 #define CONFIG_NET_MULTI
 
 /* choose eth1 first for tftpboot interface added by ZJin, 110328 */

@@ -4,10 +4,10 @@
 #include <asm/addrspace.h>
 #include <config.h>
 #include <version.h>
+#include <soc/qca_soc_common.h>
 #include "ar7240_soc.h"
 
 extern int wasp_ddr_initial_config(uint32_t refresh);
-extern int ar7240_ddr_find_size(void);
 
 void ath_set_tuning_caps(void)
 {
@@ -66,7 +66,7 @@ int wasp_mem_config(void)
 
 #endif
 	// return memory size
-	return ar7240_ddr_find_size();
+	return (int)qca_dram_size();
 }
 
 long int dram_init()

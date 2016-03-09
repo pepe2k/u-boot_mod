@@ -258,14 +258,6 @@ reset:
 	la   t9, lowlevel_init
 	jalr t9
 	nop
-	nop
-
-#if (SOC_TYPE & QCA_AR933X_SOC)
-	la   t9, ar933x_ddr_init
-	jalr t9
-	nop
-	nop
-#endif
 
 	la t0, rel_start
 	j  t0

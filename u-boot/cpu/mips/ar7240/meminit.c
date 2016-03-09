@@ -53,30 +53,6 @@
 #include <asm/addrspace.h>
 #include "ar7240_soc.h"
 
-// We check for size in 16M increments
-#define AR7240_DDR_SIZE_INCR	(16*1024*1024)
-int ar7240_ddr_find_size(void){
-	uint8_t *p = (uint8_t *)KSEG1, pat = 0x77;
-	int i;
-
-	*p = pat;
-
-	for(i = 1;; i++){
-		*(p + i * AR7240_DDR_SIZE_INCR) = (uint8_t)(i);
-
-		if(*p != pat){
-			break;
-		}
-	}
-#ifndef CONFIG_SKIP_LOWLEVEL_INIT
-	return(i * AR7240_DDR_SIZE_INCR);
-#else
-	// TODO: something is wrong with relocation,
-	// need to fix it for boards with > 32M of RAM
-	return((i * AR7240_DDR_SIZE_INCR) - 1024*1024);
-#endif
-}
-
 #if defined(CONFIG_WASP)
 int wasp_ddr_initial_config(uint32_t refresh){
 	int ddr_config, ddr_config2, ext_mod, mod_val, mod_val_init, cycle_val, tap_val, type;
