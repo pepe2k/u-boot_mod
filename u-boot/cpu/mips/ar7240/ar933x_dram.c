@@ -153,6 +153,9 @@ void qca_dram_init(void)
 {
 	u32 mem_type = qca_dram_type();
 
+	/* AR933x supports only 16-bit memory */
+	qca_soc_reg_write(QCA_DDR_RD_DATA_THIS_CYCLE_REG, 0xFF);
+
 	/* DDR timings (if not defined, use values from old SDK code) */
 #ifdef CONFIG_QCA_DDR_CFG_REG_VAL
 	qca_soc_reg_write(QCA_DDR_CFG_REG, CONFIG_QCA_DDR_CFG_REG_VAL);
@@ -177,9 +180,6 @@ void qca_dram_init(void)
 	qca_soc_reg_write(QCA_DDR_CFG2_REG,
 					  _qca_ddr_cfg2_reg_val(0, 1, 0, 1, 6, 14, 8, 14, 7, 1));
 #endif
-
-	/* AR933x supports only 16-bit memory */
-	qca_soc_reg_write(QCA_DDR_RD_DATA_THIS_CYCLE_REG, 0xFF);
 
 	if (mem_type == RAM_MEMORY_TYPE_SDR) {
 		/* Enable SDR */
