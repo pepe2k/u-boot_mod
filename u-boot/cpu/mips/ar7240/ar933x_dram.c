@@ -178,6 +178,9 @@ void qca_dram_init(void)
 					  _qca_ddr_cfg2_reg_val(0, 1, 0, 1, 6, 14, 8, 14, 7, 1));
 #endif
 
+	/* AR933x supports only 16-bit memory */
+	qca_soc_reg_write(QCA_DDR_RD_DATA_THIS_CYCLE_REG, 0xFF);
+
 	if (mem_type == RAM_MEMORY_TYPE_SDR) {
 		/* Enable SDR */
 		qca_soc_reg_write(QCA_SDR_CFG_REG, 1);
@@ -228,9 +231,6 @@ void qca_dram_init(void)
 
 	/* Enable DDR refresh and setup refresh period */
 	qca_dram_set_en_refresh();
-
-	/* AR933x supports only 16-bit memory */
-	qca_soc_reg_write(QCA_DDR_RD_DATA_THIS_CYCLE_REG, 0xFF);
 
 	ar933x_ddr_tap_tune();
 }
