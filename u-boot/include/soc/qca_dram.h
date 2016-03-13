@@ -95,14 +95,14 @@
 							 _cas,   \
 							 _opage) \
 									 \
-	((_tras  << QCA_DDR_CFG_TRAS_SHIFT)      & QCA_DDR_CFG_TRAS_MASK)      |\
-	((_trcd  << QCA_DDR_CFG_TRCD_SHIFT)      & QCA_DDR_CFG_TRCD_MASK)      |\
-	((_trp   << QCA_DDR_CFG_TRP_SHIFT)       & QCA_DDR_CFG_TRP_MASK)       |\
-	((_trrd  << QCA_DDR_CFG_TRRD_SHIFT)      & QCA_DDR_CFG_TRRD_MASK)      |\
-	((_trfc  << QCA_DDR_CFG_TRFC_SHIFT)      & QCA_DDR_CFG_TRFC_MASK)      |\
-	((_tmrd  << QCA_DDR_CFG_TMRD_SHIFT)      & QCA_DDR_CFG_TMRD_MASK)      |\
-	((_cas   << QCA_DDR_CFG_CAS_3LSB_SHIFT)  & QCA_DDR_CFG_CAS_3LSB_MASK)  |\
-	((_opage << QCA_DDR_CFG_OPEN_PAGE_SHIFT) & QCA_DDR_CFG_OPEN_PAGE_MASK) |\
+	((_tras  << QCA_DDR_CFG_TRAS_SHIFT)       & QCA_DDR_CFG_TRAS_MASK)       |\
+	((_trcd  << QCA_DDR_CFG_TRCD_SHIFT)       & QCA_DDR_CFG_TRCD_MASK)       |\
+	((_trp   << QCA_DDR_CFG_TRP_SHIFT)        & QCA_DDR_CFG_TRP_MASK)        |\
+	((_trrd  << QCA_DDR_CFG_TRRD_SHIFT)       & QCA_DDR_CFG_TRRD_MASK)       |\
+	((_trfc  << QCA_DDR_CFG_TRFC_SHIFT)       & QCA_DDR_CFG_TRFC_MASK)       |\
+	((_tmrd  << QCA_DDR_CFG_TMRD_SHIFT)       & QCA_DDR_CFG_TMRD_MASK)       |\
+	((_cas   << QCA_DDR_CFG_CAS_3LSB_SHIFT)   & QCA_DDR_CFG_CAS_3LSB_MASK)   |\
+	((_opage << QCA_DDR_CFG_PAGE_CLOSE_SHIFT) & QCA_DDR_CFG_PAGE_CLOSE_MASK) |\
 	(((_cas & 0x8) >> 3) << QCA_DDR_CFG_CAS_MSB_SHIFT)
 
 /* DDR_CONFIG2 */
