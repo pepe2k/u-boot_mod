@@ -1,5 +1,5 @@
 /*
- * Qualcomm/Atheros system clocks related functions
+ * Qualcomm/Atheros WiSoCs system clocks related functions
  *
  * Copyright (C) 2016 Piotr Dymacz <piotr@dymacz.pl>
  *
@@ -15,13 +15,6 @@
 #include <asm/addrspace.h>
 #include <soc/qca_soc_common.h>
 
-/* QCA system clocks */
-static u32 qca_cpu_clk;
-static u32 qca_ddr_clk;
-static u32 qca_ahb_clk;
-static u32 qca_spi_clk;
-static u32 qca_ref_clk;
-
 /*
  * Calculates and returns PLL value
  * TODO: check for overflow!
@@ -33,8 +26,7 @@ static u32 qca_get_pll(u32 ref_clk,
 					   u32 nint,
 					   u32 outdiv)
 {
-	u64 pll_mul;
-	u64 pll_div;
+	u64 pll_mul, pll_div;
 
 	pll_mul = ref_clk;
 	pll_div = refdiv;
@@ -64,17 +56,16 @@ void qca_sys_clocks(u32 *cpu_clk,
 					u32 *spi_clk,
 					u32 *ref_clk)
 {
+	u32 qca_ahb_clk, qca_cpu_clk, qca_ddr_clk, qca_ref_clk, qca_spi_clk;
+	u32 nint, outdiv, refdiv;
+	u32 nfrac, nfracdiv;
+	u32 reg_val, temp;
+
+#if (SOC_TYPE & QCA_AR933X_SOC)
 	u32 cpu_pll;
-#if (SOC_TYPE & (~QCA_AR933X_SOC))
-	u32 ddr_pll;
+#else
+	u32 cpu_pll, ddr_pll;
 #endif
-	u32 outdiv;
-	u32 refdiv;
-	u32 reg_val;
-	u32 temp;
-	u32 nfrac;
-	u32 nfracdiv;
-	u32 nint;
 
 	if (qca_xtal_is_40mhz() == 1) {
 		qca_ref_clk = VAL_40MHz;
@@ -104,9 +95,9 @@ void qca_sys_clocks(u32 *cpu_clk,
 
 	if (reg_val & QCA_PLL_CPU_CLK_CTRL_BYPASS_MASK) {
 		/* PLL is bypassed, so all clocks are == reference clock */
-		*cpu_clk = qca_ref_clk;
-		*ddr_clk = qca_ref_clk;
-		*ahb_clk = qca_ref_clk;
+		qca_cpu_clk = qca_ref_clk;
+		qca_ddr_clk = qca_ref_clk;
+		qca_ahb_clk = qca_ref_clk;
 	} else {
 		reg_val = qca_soc_reg_read(QCA_PLL_CPU_PLL_DITHER_REG);
 
@@ -162,9 +153,7 @@ void qca_sys_clocks(u32 *cpu_clk,
 	 * Main AR934x/QCA95xx CPU/DDR PLL clock calculation
 	 */
 
-	/*
-	 * CPU PLL
-	 */
+	/* CPU PLL */
 	reg_val = qca_soc_reg_read(QCA_PLL_SRIF_CPU_DPLL2_REG);
 
 	/* CPU PLL settings from SRIF CPU DPLL2? */
@@ -215,9 +204,7 @@ void qca_sys_clocks(u32 *cpu_clk,
 	cpu_pll = qca_get_pll(qca_ref_clk, refdiv,
 						  nfrac, nfracdiv, nint, outdiv);
 
-	/*
-	 * DDR PLL
-	 */
+	/* DDR PLL */
 	reg_val = qca_soc_reg_read(QCA_PLL_SRIF_DDR_DPLL2_REG);
 
 	/* DDR PLL settings from SRIF DDR DPLL2? */
