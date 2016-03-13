@@ -293,19 +293,22 @@ void qca_sys_clocks(u32 *cpu_clk,
 		qca_ahb_clk = cpu_pll / temp;
 	}
 #endif
-	/* Calculate SPI FLASH clock - first disable SPI */
-	qca_soc_reg_read_set(QCA_SPI_FUNC_SEL_REG,
-						 QCA_SPI_FUNC_SEL_FUNC_SEL_MASK);
+	/* Calculate SPI FLASH clock if needed */
+	if (spi_clk != NULL) {
+		/* First disable SPI */
+		qca_soc_reg_read_set(QCA_SPI_FUNC_SEL_REG,
+							 QCA_SPI_FUNC_SEL_FUNC_SEL_MASK);
 
-	/* SPI clock = AHB clock / ((SPI clock divider + 1) * 2) */
-	reg_val = (qca_soc_reg_read(QCA_SPI_CTRL_REG) & QCA_SPI_CTRL_CLK_DIV_MASK)
-			  >> QCA_SPI_CTRL_CLK_DIV_SHIFT;
+		/* SPI clock = AHB clock / ((SPI clock divider + 1) * 2) */
+		reg_val = (qca_soc_reg_read(QCA_SPI_CTRL_REG) & QCA_SPI_CTRL_CLK_DIV_MASK)
+				  >> QCA_SPI_CTRL_CLK_DIV_SHIFT;
 
-	qca_spi_clk = qca_ahb_clk / ((reg_val + 1) * 2);
+		qca_spi_clk = qca_ahb_clk / ((reg_val + 1) * 2);
 
-	/* Re-enable SPI */
-	qca_soc_reg_read_clear(QCA_SPI_FUNC_SEL_REG,
-						   QCA_SPI_FUNC_SEL_FUNC_SEL_MASK);
+		/* Re-enable SPI */
+		qca_soc_reg_read_clear(QCA_SPI_FUNC_SEL_REG,
+							   QCA_SPI_FUNC_SEL_FUNC_SEL_MASK);
+	}
 
 	/* Return values */
 	if (cpu_clk != NULL)
