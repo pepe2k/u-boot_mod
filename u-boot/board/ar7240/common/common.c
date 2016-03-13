@@ -107,18 +107,23 @@ void print_board_info(void)
 
 	switch (qca_dram_type()) {
 	case RAM_MEMORY_TYPE_SDR:
-		puts(" SDR\n");
+		puts(" SDR ");
 		break;
 	case RAM_MEMORY_TYPE_DDR1:
-		puts(" DDR1\n");
+		puts(" DDR1 ");
 		break;
 	case RAM_MEMORY_TYPE_DDR2:
-		puts(" DDR2\n");
+		puts(" DDR2 ");
 		break;
 	default:
-		puts("\n");
 		break;
 	}
+
+	/* DDR interface width */
+	printf("%d-bit ", qca_dram_ddr_width());
+
+	/* CAS latency */
+	printf("CL%d\n", qca_dram_cas_lat());
 
 	/* SPI NOR FLASH sizes and types */
 	printf("%" ALIGN_SIZE "s ", "FLASH:");

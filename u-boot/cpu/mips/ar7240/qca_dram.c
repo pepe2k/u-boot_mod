@@ -91,3 +91,40 @@ u32 qca_dram_type(void)
 	return dram_type;
 #endif
 }
+
+/*
+ * Returns DDR width (16 or 32)
+ */
+u32 qca_dram_ddr_width(void)
+{
+#ifndef CONFIG_BOARD_DRAM_DDR_WIDTH
+	if (qca_soc_reg_read(QCA_RST_BOOTSTRAP_REG)
+		& QCA_RST_BOOTSTRAP_DDR_WIDTH_32_MASK)
+		return 32;
+
+	return 16;
+#else
+	return CONFIG_BOARD_DRAM_DDR_WIDTH;
+#endif
+}
+
+/*
+ * Returns CAS latency, based on setting in DDR_CONFIG register
+ */
+u32 qca_dram_cas_lat(void)
+{
+#ifndef CONFIG_BOARD_DRAM_CAS_LATENCY
+	u32 reg;
+
+	reg = (qca_soc_reg_read(QCA_DDR_CFG_REG) & QCA_DDR_CFG_CAS_3LSB_MASK)
+		  >> QCA_DDR_CFG_CAS_3LSB_SHIFT;
+
+	if (qca_soc_reg_read(QCA_DDR_CFG_REG) & QCA_DDR_CFG_CAS_MSB_MASK)
+		reg = reg + 8;
+
+	/* CAS_LATENCY value in DDR_CONFIG register == 2 * MEM_CAS */
+	return reg / 2;
+#else
+	return CONFIG_BOARD_DRAM_CAS_LATENCY
+#endif
+}
