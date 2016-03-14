@@ -54,11 +54,18 @@ lowlevel_init:
 	bgtz t9, set_xtal_40mhz
 	nop
 
-	b rtc_reset
+	b ahb_max_timeout
 	nop
 
 set_xtal_40mhz:
 	li reg_ref_clk_val, 40
+
+/* AHB max master timeout */
+ahb_max_timeout:
+	li t8, QCA_AHB_MASTER_TOUT_MAX_REG
+	lw t9, 0(t8)
+	or t9, t9, 0xFFFFF
+	sw t9, 0(t8)
 
 /*
  * Reset RTC:
