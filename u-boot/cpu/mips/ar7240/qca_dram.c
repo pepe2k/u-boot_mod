@@ -98,11 +98,15 @@ u32 qca_dram_type(void)
 u32 qca_dram_ddr_width(void)
 {
 #ifndef CONFIG_BOARD_DRAM_DDR_WIDTH
+	#if (SOC_TYPE & QCA_AR933X_SOC)
+	return 16;
+	#else
 	if (qca_soc_reg_read(QCA_RST_BOOTSTRAP_REG)
 		& QCA_RST_BOOTSTRAP_DDR_WIDTH_32_MASK)
 		return 32;
 
 	return 16;
+	#endif
 #else
 	return CONFIG_BOARD_DRAM_DDR_WIDTH;
 #endif
