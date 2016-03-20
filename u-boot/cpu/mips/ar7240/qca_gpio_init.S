@@ -465,7 +465,7 @@ first_boot:
 	nop
 
 full_reset:
-	li t8, QCA_RST_RST_REG
+	li t8, QCA_RST_RESET_REG
 	lw t9, 0(t8)
 	or t9, t9, QCA_RST_RESET_FULL_CHIP_RST_MASK
 	sw t9, 0(t8)

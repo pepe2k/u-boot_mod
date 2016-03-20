@@ -1,7 +1,7 @@
 /*
  * Qualcomm/Atheros WiSoCs common/helper functions
  *
- * Copyright (C) 2015 Piotr Dymacz <piotr@dymacz.pl>
+ * Copyright (C) 2016 Piotr Dymacz <piotr@dymacz.pl>
  *
  * SPDX-License-Identifier: GPL-2.0
  */
@@ -28,7 +28,7 @@ void qca_full_chip_reset(void)
 	volatile u32 i = 1;
 
 	do {
-		qca_soc_reg_write(QCA_RST_RST_REG,
+		qca_soc_reg_write(QCA_RST_RESET_REG,
 						  QCA_RST_RESET_FULL_CHIP_RST_MASK
 						  | QCA_RST_RESET_DDR_RST_MASK);
 	} while (i);

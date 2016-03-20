@@ -64,7 +64,7 @@ set_xtal_40mhz:
  * Several WLAN module resets as in Atheros (Q)SDK
  */
 wlan_rst_init:
-	li  t8, QCA_RST_RST_REG
+	li  t8, QCA_RST_RESET_REG
 
 	/* 2x WLAN resets */
 	lw  t9, 0(t8)
@@ -90,7 +90,7 @@ wlan_rst_init:
 	nop
 
 wlan_rst:
-	li  t8, QCA_RST_RST_REG
+	li  t8, QCA_RST_RESET_REG
 
 	lw  t9, 0(t8)
 	or  t9, t9, QCA_RST_RESET_WLAN_RST_MASK
