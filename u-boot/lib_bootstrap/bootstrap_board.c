@@ -122,8 +122,7 @@ static int init_func_ram(void)
  */
 typedef int(init_fnc_t)(void);
 
-init_fnc_t *init_sequence[] = { timer_init,
-								init_func_ram,
+init_fnc_t *init_sequence[] = { init_func_ram,
 								NULL, };
 
 void bootstrap_board_init_f(ulong bootflag)
