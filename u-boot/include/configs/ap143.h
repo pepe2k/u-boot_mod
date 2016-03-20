@@ -188,11 +188,6 @@
 #define CONFIG_NETCONSOLE
 #define CONFIG_NETCONSOLE_PORT	6666
 
-/*modify from 0x4138 to 0x40c3, ddr refresh interval: 12uS to 7.8uS. by wkp 
-  from Li Guanwen, 30Dec14. */
-//#define CFG_DDR_REFRESH_VAL		0x40c3 (??????????????????)
-#define CFG_DDR_REFRESH_VAL		0x4138
-
 /*
  * Web Failsafe configuration
  */
