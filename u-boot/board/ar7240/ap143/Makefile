@@ -2,13 +2,11 @@ include $(TOPDIR)/config.mk
 
 LIB	= lib$(BOARD).a
 
-OBJS	= $(BOARD).o ../common/spi_flash.o ../common/common.o ../common/qca-eth-953x.o ../common/ath_pci.o ../common/init-953x.o
+OBJS	= $(BOARD).o ../common/spi_flash.o ../common/common.o ../common/qca-eth-953x.o ../common/ath_pci.o
 
 ifeq ($(ETH_CONFIG), _s27)
 OBJS	+= ../common/athr_s27_phy.o
 endif
-
-SOBJS	= ../common/tap-953x.o
 
 $(LIB):	.depend $(OBJS) $(SOBJS)
 	$(AR) crv $@ $(OBJS) $(SOBJS)
