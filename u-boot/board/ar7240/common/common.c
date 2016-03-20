@@ -122,8 +122,11 @@ void print_board_info(void)
 	/* DDR interface width */
 	printf("%d-bit ", qca_dram_ddr_width());
 
-	/* CAS latency */
-	printf("CL%d\n", qca_dram_cas_lat());
+	/* tCL-tRCD-tRP-tRAS latency */
+	printf("CL%d-%d-%d-%d\n", qca_dram_cas_lat(),
+							  qca_dram_trcd_lat(),
+							  qca_dram_trp_lat(),
+							  qca_dram_tras_lat());
 
 	/* SPI NOR FLASH sizes and types */
 	printf("%" ALIGN_SIZE "s ", "FLASH:");

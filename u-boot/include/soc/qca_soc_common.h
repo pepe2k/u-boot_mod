@@ -1593,9 +1593,12 @@ u32    qca_sf_sfdp_info(u32 bank, u32 *flash_size, u32 *sector_size, u8 *erase_c
 u32    qca_sf_jedec_id(u32 bank);
 u32    qca_dram_type(void);
 u32    qca_dram_size(void);
-u32    qca_dram_cas_lat(void);
 u32    qca_dram_ddr_width(void);
 void   qca_dram_init(void);
+inline u32 qca_dram_cas_lat(void);
+inline u32 qca_dram_trcd_lat(void);
+inline u32 qca_dram_trp_lat(void);
+inline u32 qca_dram_tras_lat(void);
 #endif /* !__ASSEMBLY__ */
 
 /*
