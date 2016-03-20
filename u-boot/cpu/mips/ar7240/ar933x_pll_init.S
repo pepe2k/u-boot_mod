@@ -61,28 +61,58 @@ set_xtal_40mhz:
 	li reg_ref_clk_val,  40
 
 /*
- * Several WLAN module resets as in broken Atheros SDK code
- * TODO: do we really need this?
+ * Several WLAN module resets as in Atheros (Q)SDK
  */
 wlan_rst_init:
-	li reg_loop_counter, 10
-
-wlan_rst:
 	li  t8, QCA_RST_RST_REG
+
+	/* 2x WLAN resets */
 	lw  t9, 0(t8)
 	or  t9, t9, QCA_RST_RESET_WLAN_RST_MASK
 	sw  t9, 0(t8)
 	nop
 	nop
-
 	lw  t9, 0(t8)
 	and t9, t9, ~QCA_RST_RESET_WLAN_RST_MASK
 	sw  t9, 0(t8)
 	nop
 	nop
 
+	lw  t9, 0(t8)
+	or  t9, t9, QCA_RST_RESET_WLAN_RST_MASK
+	sw  t9, 0(t8)
+	nop
+	nop
+	lw  t9, 0(t8)
+	and t9, t9, ~QCA_RST_RESET_WLAN_RST_MASK
+	sw  t9, 0(t8)
+	nop
+	nop
+
+wlan_rst:
+	li  t8, QCA_RST_RST_REG
+
+	lw  t9, 0(t8)
+	or  t9, t9, QCA_RST_RESET_WLAN_RST_MASK
+	sw  t9, 0(t8)
+	nop
+	nop
+	lw  t9, 0(t8)
+	and t9, t9, ~QCA_RST_RESET_WLAN_RST_MASK
+	sw  t9, 0(t8)
+	nop
+	nop
+
+	li reg_loop_counter, 30
+
+eep_busy:
+	beq  zero, reg_loop_counter, wlan_rst
+	nop
 	addi reg_loop_counter, reg_loop_counter, -1
-	bnez reg_loop_counter, wlan_rst
+	li   t8, QCA_RST_BOOTSTRAP_REG
+	lw   t9, 0(t8)
+	and  t9, t9, QCA_RST_BOOTSTRAP_EEPBUSY_MASK
+	bnez t9, eep_busy
 	nop
 
 /*
@@ -266,14 +296,11 @@ xtal_is_40mhz_recovery:
 /*
  * Load target value into CPU_CLOCK_CONTROL register, but for now keep bypass
  * enabled (by default, after reset, it should be bypassed, do it just in case)
- * and AHB_POST_DIV equal to 4
  */
 cpu_clock_control:
 	li   t8, QCA_PLL_CPU_CLK_CTRL_REG
 	move t9, reg_cpu_clk_ctrl
 	or   t9, t9, QCA_PLL_CPU_CLK_CTRL_BYPASS_MASK
-	and  t9, t9, ~QCA_PLL_CPU_CLK_CTRL_AHB_POST_DIV_MASK
-	or   t9, t9, (3 << QCA_PLL_CPU_CLK_CTRL_AHB_POST_DIV_SHIFT)
 	sw   t9, 0(t8)
 
 /*
@@ -311,10 +338,10 @@ cpu_pll_wait:
 
 /* Disable bypassing all clocks, use target AHB_POST_DIV value */
 pll_bypass_disable:
-	li   t8, QCA_PLL_CPU_CLK_CTRL_REG
-	move t9, reg_cpu_clk_ctrl
-	and  t9, t9, ~QCA_PLL_CPU_CLK_CTRL_BYPASS_MASK
-	sw   t9, 0(t8)
+	li  t8, QCA_PLL_CPU_CLK_CTRL_REG
+	lw  t9, 0(t8)
+	and t9, t9, ~QCA_PLL_CPU_CLK_CTRL_BYPASS_MASK
+	sw  t9, 0(t8)
 
 /* Setup SPI (clock and other settings) */
 spi_setup:

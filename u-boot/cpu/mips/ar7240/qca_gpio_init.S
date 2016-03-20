@@ -436,12 +436,49 @@ lowlevel_gpio_init:
 	#endif
 
 	/*
+	 * Workaround for hang issue,
+	 * from original Atheros (Q)SDK:
+	 *
+	 *    "Hornet 1.1 currently need a reset
+	 *     once we boot to let the resetb has
+	 *     enough time to stable, so that
+	 *     trigger reset at 1st boot".
+	 *
+	 * Read one 4 byte value from SRAM base address and compare it with
+	 * known magic number (0x12345678 here), if it's the same, it means
+	 * that this is not first boot and we can continue. Otherwise, make
+	 * full chip reset (it's not power reset, SRAM data will survive).
+	 *
+	 * We need it here as it's first custom asm code executed in start{_bootstrap).S
+	 *
+	 * TODO: FIXME!
+	 */
+first_boot:
+	li  t8, 0xBD000000
+	lw  t9, 0(t8)
+	li  t7, 0x12345678
+	sw  t7, 0(t8)
+	bne t9, t7, full_reset
+	nop
+
+	b gpio_setup
+	nop
+
+full_reset:
+	li t8, QCA_RST_RST_REG
+	lw t9, 0(t8)
+	or t9, t9, QCA_RST_RESET_FULL_CHIP_RST_MASK
+	sw t9, 0(t8)
+	nop
+
+	/*
 	 * GPIO configuration, using GPIO_FUNCTION_1 register:
 	 * 1. Disable JTAG by default
 	 * 2. Enable HSUART on GPIO9 and GPIO10 by default
 	 * 3. Disable HSUART RTS/CTS on GPIO11/12 if needed
 	 * 4. Disable selected Ethernet switch LEDs if needed
 	 */
+gpio_setup:
 	li  t8, QCA_GPIO_FUNC_1_REG
 	lw  t9, 0(t8)
 	#if defined(CONFIG_SKIP_LOWLEVEL_INIT) || \
