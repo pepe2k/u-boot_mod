@@ -216,25 +216,4 @@ static inline void qca_dram_set_emr3(u32 value)
 	qca_dram_force_emr3s();
 }
 
-/* Enables DDR refresh and sets refresh period based on XTAL */
-static inline void qca_dram_set_en_refresh(void)
-{
-	/*
-	 * Enable DDR refresh and setup refresh period:
-	 * 1. We assume 7.8 us maximum average period refresh interval
-	 * 2. 7.8 us ~= 0.1282 MHz
-	 * 3. For 25 MHz XTAL: (25 / 0.1282) ~= 195
-	 * 4. For 40 MHz XTAL: (40 / 0.1282) ~= 312
-	 */
-	if (qca_xtal_is_40mhz()) {
-		qca_soc_reg_write(QCA_DDR_REFRESH_REG,
-						  QCA_DDR_REFRESH_EN_MASK
-						  | (312 << QCA_DDR_REFRESH_PERIOD_SHIFT));
-	} else {
-		qca_soc_reg_write(QCA_DDR_REFRESH_REG,
-						  QCA_DDR_REFRESH_EN_MASK
-						  | (195 << QCA_DDR_REFRESH_PERIOD_SHIFT));
-	}
-}
-
 #endif /* _QCA_DRAM_H_ */
