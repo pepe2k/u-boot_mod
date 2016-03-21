@@ -331,7 +331,6 @@
 #define	CFG_HZ	bd->bi_cfg_hz
 
 #define CONFIG_QCA_PLL 		QCA_PLL_PRESET_400_400_200
-#define CFG_HZ_FALLBACK		(400000000LU/2)
 
 
 /*

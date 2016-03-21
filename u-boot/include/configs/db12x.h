@@ -129,7 +129,6 @@
 
 /* For now, use some safe clocks for all AR934x */
 #define CONFIG_QCA_PLL 		QCA_PLL_PRESET_550_400_200
-#define CFG_HZ_FALLBACK		(550000000LU/2)
 
 
 /*
