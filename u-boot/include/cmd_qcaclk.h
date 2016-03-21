@@ -70,60 +70,65 @@ typedef struct {
 static const clk_profile clk_profiles[] = {
 	#if (SOC_TYPE & QCA_AR933X_SOC)
 	{
+		/* Tested! */
 		100, 100, 50, 12,
 		_ar933x_spi_ctrl_addr_reg_val(4, 1, 0),
 		{
-			_ar933x_cpu_pll_cfg_reg_val(8, 1, 1, 1),
-			_ar933x_cpu_clk_ctrl_reg_val(1, 1, 2),
+			_ar933x_cpu_pll_cfg_reg_val(16, 1, 1, 1),
+			_ar933x_cpu_clk_ctrl_reg_val(2, 2, 4),
 			_ar933x_cpu_pll_dither_frac_reg_val(0)
 		}, {
-			_ar933x_cpu_pll_cfg_reg_val(5, 1, 1, 1),
-			_ar933x_cpu_clk_ctrl_reg_val(1, 1, 2),
+			_ar933x_cpu_pll_cfg_reg_val(10, 1, 1, 1),
+			_ar933x_cpu_clk_ctrl_reg_val(2, 2, 4),
 			_ar933x_cpu_pll_dither_frac_reg_val(0)
 		},
 	},
 	{
-		100, 100, 100, 16,
+		/* Tested! */
+		100, 100, 100, 25,
+		_ar933x_spi_ctrl_addr_reg_val(4, 1, 0),
+		{
+			_ar933x_cpu_pll_cfg_reg_val(32, 1, 0, 1),
+			_ar933x_cpu_clk_ctrl_reg_val(4, 4, 4),
+			_ar933x_cpu_pll_dither_frac_reg_val(0)
+		}, {
+			_ar933x_cpu_pll_cfg_reg_val(20, 1, 0, 1),
+			_ar933x_cpu_clk_ctrl_reg_val(4, 4, 4),
+			_ar933x_cpu_pll_dither_frac_reg_val(0)
+		},
+	},
+	{
+		/* Tested! */
+		150, 150, 150, 25,
 		_ar933x_spi_ctrl_addr_reg_val(6, 1, 0),
 		{
-			_ar933x_cpu_pll_cfg_reg_val(8, 1, 1, 1),
-			_ar933x_cpu_clk_ctrl_reg_val(1, 1, 1),
+			_ar933x_cpu_pll_cfg_reg_val(24, 1, 0, 1),
+			_ar933x_cpu_clk_ctrl_reg_val(2, 2, 2),
 			_ar933x_cpu_pll_dither_frac_reg_val(0)
 		}, {
-			_ar933x_cpu_pll_cfg_reg_val(5, 1, 1, 1),
-			_ar933x_cpu_clk_ctrl_reg_val(1, 1, 1),
+			_ar933x_cpu_pll_cfg_reg_val(15, 1, 0, 1),
+			_ar933x_cpu_clk_ctrl_reg_val(2, 2, 2),
 			_ar933x_cpu_pll_dither_frac_reg_val(0)
 		},
 	},
 	{
-		150, 150, 150, 18,
-		_ar933x_spi_ctrl_addr_reg_val(8, 1, 0),
+		/* Tested! */
+		160, 160, 80, 20,
+		_ar933x_spi_ctrl_addr_reg_val(4, 1, 0),
 		{
-			_ar933x_cpu_pll_cfg_reg_val(12, 1, 1, 1),
-			_ar933x_cpu_clk_ctrl_reg_val(1, 1, 1),
-			_ar933x_cpu_pll_dither_frac_reg_val(0)
+			_ar933x_cpu_pll_cfg_reg_val(25, 1, 0, 1),
+			_ar933x_cpu_clk_ctrl_reg_val(2, 2, 4),
+			_ar933x_cpu_pll_dither_frac_reg_val(615)
 		}, {
-			_ar933x_cpu_pll_cfg_reg_val(7, 1, 1, 1),
-			_ar933x_cpu_clk_ctrl_reg_val(1, 1, 1),
-			_ar933x_cpu_pll_dither_frac_reg_val(512)
-		},
-	},
-	{
-		160, 160, 80, 13,
-		_ar933x_spi_ctrl_addr_reg_val(6, 1, 0),
-		{
-			_ar933x_cpu_pll_cfg_reg_val(12, 1, 1, 1),
-			_ar933x_cpu_clk_ctrl_reg_val(1, 1, 2),
-			_ar933x_cpu_pll_dither_frac_reg_val(820)
-		}, {
-			_ar933x_cpu_pll_cfg_reg_val(8, 1, 1, 1),
-			_ar933x_cpu_clk_ctrl_reg_val(1, 1, 2),
+			_ar933x_cpu_pll_cfg_reg_val(16, 1, 0, 1),
+			_ar933x_cpu_clk_ctrl_reg_val(2, 2, 4),
 			_ar933x_cpu_pll_dither_frac_reg_val(0)
 		},
 	},
 	{
-		200, 200, 100, 16,
-		_ar933x_spi_ctrl_addr_reg_val(6, 1, 0),
+		/* Tested! */
+		200, 200, 100, 25,
+		_ar933x_spi_ctrl_addr_reg_val(4, 1, 0),
 		{
 			_ar933x_cpu_pll_cfg_reg_val(32, 1, 0, 2),
 			_ar933x_cpu_clk_ctrl_reg_val(1, 1, 2),
@@ -135,6 +140,7 @@ static const clk_profile clk_profiles[] = {
 		},
 	},
 	{
+		/* Tested! */
 		200, 200, 200, 25,
 		_ar933x_spi_ctrl_addr_reg_val(8, 1, 0),
 		{
@@ -148,8 +154,9 @@ static const clk_profile clk_profiles[] = {
 		},
 	},
 	{
-		300, 300, 150, 15,
-		_ar933x_spi_ctrl_addr_reg_val(10, 1, 0),
+		/* Tested! */
+		300, 300, 150, 25,
+		_ar933x_spi_ctrl_addr_reg_val(6, 1, 0),
 		{
 			_ar933x_cpu_pll_cfg_reg_val(24, 1, 0, 1),
 			_ar933x_cpu_clk_ctrl_reg_val(1, 1, 2),
@@ -161,8 +168,9 @@ static const clk_profile clk_profiles[] = {
 		},
 	},
 	{
-		350, 350, 175, 17,
-		_ar933x_spi_ctrl_addr_reg_val(10, 1, 0),
+		/* Tested! */
+		350, 350, 175, 29,
+		_ar933x_spi_ctrl_addr_reg_val(6, 1, 0),
 		{
 			_ar933x_cpu_pll_cfg_reg_val(28, 1, 0, 1),
 			_ar933x_cpu_clk_ctrl_reg_val(1, 1, 2),
@@ -174,6 +182,7 @@ static const clk_profile clk_profiles[] = {
 		},
 	},
 	{
+		/* Tested! */
 		400, 400, 200, 25,
 		_ar933x_spi_ctrl_addr_reg_val(8, 1, 0),
 		{
@@ -187,6 +196,7 @@ static const clk_profile clk_profiles[] = {
 		},
 	},
 	{
+		/* Tested! */
 		500, 500, 250, 25,
 		_ar933x_spi_ctrl_addr_reg_val(10, 1, 0),
 		{

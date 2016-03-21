@@ -57,43 +57,44 @@
  */
 #if (CONFIG_QCA_PLL == QCA_PLL_PRESET_100_100_50)
 
-	#define QCA_PLL_CPU_PLL_CFG_REG_VAL_XTAL25			_ar933x_cpu_pll_cfg_reg_val(8, 1, 1, 1)
-	#define QCA_PLL_CPU_CLK_CTRL_REG_VAL_XTAL25			_ar933x_cpu_clk_ctrl_reg_val(1, 1, 2)
+	#define QCA_PLL_CPU_PLL_CFG_REG_VAL_XTAL25			_ar933x_cpu_pll_cfg_reg_val(16, 1, 1, 1)
+	#define QCA_PLL_CPU_CLK_CTRL_REG_VAL_XTAL25			_ar933x_cpu_clk_ctrl_reg_val(2, 2, 4)
 
-	#define QCA_PLL_CPU_PLL_CFG_REG_VAL_XTAL40			_ar933x_cpu_pll_cfg_reg_val(5, 1, 1, 1)
-	#define QCA_PLL_CPU_CLK_CTRL_REG_VAL_XTAL40			_ar933x_cpu_clk_ctrl_reg_val(1, 1, 2)
+	#define QCA_PLL_CPU_PLL_CFG_REG_VAL_XTAL40			_ar933x_cpu_pll_cfg_reg_val(10, 1, 1, 1)
+	#define QCA_PLL_CPU_CLK_CTRL_REG_VAL_XTAL40			_ar933x_cpu_clk_ctrl_reg_val(2, 2, 4)
 
 	#define QCA_SPI_CTRL_REG_VAL						_ar933x_spi_ctrl_addr_reg_val(4, 1, 0)
 
 #elif (CONFIG_QCA_PLL == QCA_PLL_PRESET_100_100_100)
 
-	#define QCA_PLL_CPU_PLL_CFG_REG_VAL_XTAL25			_ar933x_cpu_pll_cfg_reg_val(8, 1, 1, 1)
-	#define QCA_PLL_CPU_CLK_CTRL_REG_VAL_XTAL25			_ar933x_cpu_clk_ctrl_reg_val(1, 1, 1)
+	#define QCA_PLL_CPU_PLL_CFG_REG_VAL_XTAL25			_ar933x_cpu_pll_cfg_reg_val(32, 1, 0, 1)
+	#define QCA_PLL_CPU_CLK_CTRL_REG_VAL_XTAL25			_ar933x_cpu_clk_ctrl_reg_val(4, 4, 4)
 
-	#define QCA_PLL_CPU_PLL_CFG_REG_VAL_XTAL40			_ar933x_cpu_pll_cfg_reg_val(5, 1, 1, 1)
-	#define QCA_PLL_CPU_CLK_CTRL_REG_VAL_XTAL40			_ar933x_cpu_clk_ctrl_reg_val(1, 1, 1)
+	#define QCA_PLL_CPU_PLL_CFG_REG_VAL_XTAL40			_ar933x_cpu_pll_cfg_reg_val(20, 1, 0, 1)
+	#define QCA_PLL_CPU_CLK_CTRL_REG_VAL_XTAL40			_ar933x_cpu_clk_ctrl_reg_val(4, 4, 4)
 
-	#define QCA_SPI_CTRL_REG_VAL						_ar933x_spi_ctrl_addr_reg_val(6, 1, 0)
+	#define QCA_SPI_CTRL_REG_VAL						_ar933x_spi_ctrl_addr_reg_val(4, 1, 0)
 
 #elif (CONFIG_QCA_PLL == QCA_PLL_PRESET_150_150_150)
 
-	#define QCA_PLL_CPU_PLL_CFG_REG_VAL_XTAL25			_ar933x_cpu_pll_cfg_reg_val(12, 1, 1, 1)
-	#define QCA_PLL_CPU_CLK_CTRL_REG_VAL_XTAL25			_ar933x_cpu_clk_ctrl_reg_val(1, 1, 1)
+	#define QCA_PLL_CPU_PLL_CFG_REG_VAL_XTAL25			_ar933x_cpu_pll_cfg_reg_val(24, 1, 0, 1)
+	#define QCA_PLL_CPU_CLK_CTRL_REG_VAL_XTAL25			_ar933x_cpu_clk_ctrl_reg_val(2, 2, 2)
 
-	#define QCA_PLL_CPU_PLL_CFG_REG_VAL_XTAL40			_ar933x_cpu_pll_cfg_reg_val(7, 1, 1, 1)
-	#define QCA_PLL_CPU_CLK_CTRL_REG_VAL_XTAL40			_ar933x_cpu_clk_ctrl_reg_val(1, 1, 1)
-	#define QCA_PLL_CPU_PLL_DITHER_FRAC_REG_VAL_XTAL40	_ar933x_cpu_pll_dither_frac_reg_val(512)
+	#define QCA_PLL_CPU_PLL_CFG_REG_VAL_XTAL40			_ar933x_cpu_pll_cfg_reg_val(15, 1, 0, 1)
+	#define QCA_PLL_CPU_CLK_CTRL_REG_VAL_XTAL40			_ar933x_cpu_clk_ctrl_reg_val(2, 2, 2)
+
+	#define QCA_SPI_CTRL_REG_VAL						_ar933x_spi_ctrl_addr_reg_val(6, 1, 0)
 
 #elif (CONFIG_QCA_PLL == QCA_PLL_PRESET_160_160_80)
 
-	#define QCA_PLL_CPU_PLL_CFG_REG_VAL_XTAL25			_ar933x_cpu_pll_cfg_reg_val(12, 1, 1, 1)
-	#define QCA_PLL_CPU_CLK_CTRL_REG_VAL_XTAL25			_ar933x_cpu_clk_ctrl_reg_val(1, 1, 2)
-	#define QCA_PLL_CPU_PLL_DITHER_FRAC_REG_VAL_XTAL25	_ar933x_cpu_pll_dither_frac_reg_val(820)
+	#define QCA_PLL_CPU_PLL_CFG_REG_VAL_XTAL25			_ar933x_cpu_pll_cfg_reg_val(25, 1, 0, 1)
+	#define QCA_PLL_CPU_CLK_CTRL_REG_VAL_XTAL25			_ar933x_cpu_clk_ctrl_reg_val(2, 2, 4)
+	#define QCA_PLL_CPU_PLL_DITHER_FRAC_REG_VAL_XTAL25	_ar933x_cpu_pll_dither_frac_reg_val(615)
 
-	#define QCA_PLL_CPU_PLL_CFG_REG_VAL_XTAL40			_ar933x_cpu_pll_cfg_reg_val(8, 1, 1, 1)
-	#define QCA_PLL_CPU_CLK_CTRL_REG_VAL_XTAL40			_ar933x_cpu_clk_ctrl_reg_val(1, 1, 2)
+	#define QCA_PLL_CPU_PLL_CFG_REG_VAL_XTAL40			_ar933x_cpu_pll_cfg_reg_val(16, 1, 0, 1)
+	#define QCA_PLL_CPU_CLK_CTRL_REG_VAL_XTAL40			_ar933x_cpu_clk_ctrl_reg_val(2, 2, 4)
 
-	#define QCA_SPI_CTRL_REG_VAL						_ar933x_spi_ctrl_addr_reg_val(6, 1, 0)
+	#define QCA_SPI_CTRL_REG_VAL						_ar933x_spi_ctrl_addr_reg_val(4, 1, 0)
 
 #elif (CONFIG_QCA_PLL == QCA_PLL_PRESET_200_200_100)
 
@@ -103,7 +104,7 @@
 	#define QCA_PLL_CPU_PLL_CFG_REG_VAL_XTAL40			_ar933x_cpu_pll_cfg_reg_val(20, 1, 0, 2)
 	#define QCA_PLL_CPU_CLK_CTRL_REG_VAL_XTAL40			_ar933x_cpu_clk_ctrl_reg_val(1, 1, 2)
 
-	#define QCA_SPI_CTRL_REG_VAL						_ar933x_spi_ctrl_addr_reg_val(6, 1, 0)
+	#define QCA_SPI_CTRL_REG_VAL						_ar933x_spi_ctrl_addr_reg_val(4, 1, 0)
 
 #elif (CONFIG_QCA_PLL == QCA_PLL_PRESET_200_200_200)
 
@@ -121,7 +122,7 @@
 	#define QCA_PLL_CPU_PLL_CFG_REG_VAL_XTAL40			_ar933x_cpu_pll_cfg_reg_val(15, 1, 0, 1)
 	#define QCA_PLL_CPU_CLK_CTRL_REG_VAL_XTAL40			_ar933x_cpu_clk_ctrl_reg_val(1, 1, 2)
 
-	#define QCA_SPI_CTRL_REG_VAL						_ar933x_spi_ctrl_addr_reg_val(10, 1, 0)
+	#define QCA_SPI_CTRL_REG_VAL						_ar933x_spi_ctrl_addr_reg_val(6, 1, 0)
 
 #elif (CONFIG_QCA_PLL == QCA_PLL_PRESET_350_350_175)
 
@@ -132,7 +133,7 @@
 	#define QCA_PLL_CPU_CLK_CTRL_REG_VAL_XTAL40			_ar933x_cpu_clk_ctrl_reg_val(1, 1, 2)
 	#define QCA_PLL_CPU_PLL_DITHER_FRAC_REG_VAL_XTAL40	_ar933x_cpu_pll_dither_frac_reg_val(512)
 
-	#define QCA_SPI_CTRL_REG_VAL						_ar933x_spi_ctrl_addr_reg_val(10, 1, 0)
+	#define QCA_SPI_CTRL_REG_VAL						_ar933x_spi_ctrl_addr_reg_val(6, 1, 0)
 
 #elif (CONFIG_QCA_PLL == QCA_PLL_PRESET_400_400_200)
 
