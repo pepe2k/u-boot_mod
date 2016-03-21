@@ -25,15 +25,28 @@ static void print_reg_values(const clk_cfg_flash *cfg)
 	printf("      CPU_PLL_CFG: 0x%08lX\n", cfg->regs.cpu_pll_cfg);
 	printf("CPU_CLOCK_CONTROL: 0x%08lX\n", cfg->regs.cpu_clk_ctrl);
 	puts("\n");
-	printf("NFRAC_MIN in PLL_DITHER_FRAC: %d\n", cfg->regs.cpu_pll_dit);
+	printf("NFRAC_MIN in PLL_DITHER_FRAC: %d/%d\n",
+		(cfg->regs.cpu_pll_dit & QCA_PLL_CPU_PLL_DITHER_FRAC_NFRAC_MIN_MASK)
+		>> QCA_PLL_CPU_PLL_DITHER_FRAC_NFRAC_MIN_SHIFT,
+		(QCA_PLL_CPU_PLL_DITHER_FRAC_NFRAC_MIN_MASK
+		 >> QCA_PLL_CPU_PLL_DITHER_FRAC_NFRAC_MIN_SHIFT) + 1);
 #else
 	printf("        SPI_CTRL: 0x%08lX\n", cfg->spi_ctrl);
 	printf("     CPU_PLL_CFG: 0x%08lX\n", cfg->regs.cpu_pll_cfg);
 	printf("     DDR_PLL_CFG: 0x%08lX\n", cfg->regs.ddr_pll_cfg);
 	printf("CPU_DDR_CLK_CTRL: 0x%08lX\n", cfg->regs.cpu_ddr_clk_ctrl);
 	puts("\n");
-	printf("NFRAC_MIN in CPU_PLL_DITHER: %d\n", cfg->regs.cpu_pll_dit);
-	printf("NFRAC_MIN in DDR_PLL_DITHER: %d\n", cfg->regs.ddr_pll_dit);
+	printf("NFRAC_MIN in CPU_PLL_DITHER: %d/%d\n",
+		(cfg->regs.cpu_pll_dit & QCA_PLL_CPU_PLL_DITHER_NFRAC_MIN_MASK)
+		>> QCA_PLL_CPU_PLL_DITHER_NFRAC_MIN_SHIFT,
+		(QCA_PLL_CPU_PLL_DITHER_NFRAC_MIN_MASK
+		 >> QCA_PLL_CPU_PLL_DITHER_NFRAC_MIN_SHIFT) + 1);
+
+	printf("NFRAC_MIN in DDR_PLL_DITHER: %d/%d\n",
+		(cfg->regs.ddr_pll_dit & QCA_PLL_DDR_PLL_DITHER_NFRAC_MIN_MASK)
+		>> QCA_PLL_DDR_PLL_DITHER_NFRAC_MIN_SHIFT,
+		(QCA_PLL_DDR_PLL_DITHER_NFRAC_MIN_MASK
+		 >> QCA_PLL_DDR_PLL_DITHER_NFRAC_MIN_SHIFT) + 1);
 #endif /* SOC_TYPE & QCA_AR933X_SOC */
 
 	puts("\n");
@@ -99,16 +112,11 @@ int do_set_clk(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 
 		puts("Clocks in MHz, run 'setclk #' to select\n");
 		puts("one configuration from the below table:\n\n");
-		puts("    # | CPU | RAM | AHB | SPI | [ ]\n"
-			 " ----------------------------------\n");
+		puts("    # [ ] | CPU | RAM | AHB | SPI \n"
+			 " ---------------------------------\n");
 
 		for (i = 0; i < clk_profiles_cnt; i++) {
-			printf("%5d |%4d |%4d |%4d |%4d | ",
-				   i + 1,
-				   clk_profiles[i].cpu_clk,
-				   clk_profiles[i].ddr_clk,
-				   clk_profiles[i].ahb_clk,
-				   clk_profiles[i].spi_clk);
+			printf("%5d", i + 1);
 
 			if (reg == QCA_PLL_IN_FLASH_MAGIC) {
 				if (ref_clk == 25) {
@@ -119,13 +127,19 @@ int do_set_clk(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 
 				if (from_flash.spi_ctrl == clk_profiles[i].spi_ctrl &&
 					compare_pll_regs(&(from_flash.regs), pll_registers)) {
-					puts("[*]\n");
+					puts(" [*] |");
 				} else {
-					puts("[ ]\n");
+					puts(" [ ] |");
 				}
 			} else {
-				puts("[ ]\n");
+				puts(" [ ] |");
 			}
+
+			printf("%4d |%4d |%4d |%4d\n",
+				   clk_profiles[i].cpu_clk,
+				   clk_profiles[i].ddr_clk,
+				   clk_profiles[i].ahb_clk,
+				   clk_profiles[i].spi_clk);
 		}
 
 		puts("\n[*] profile currently stored in FLASH\n\n");
@@ -156,7 +170,7 @@ int do_set_clk(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 		i = simple_strtoul(argv[1], NULL, 10);
 
 		if (i > clk_profiles_cnt || i < 1) {
-			printf("## Error: selected profile should be in range 1..%d!\n",
+			printf("## Error: selected profile should be in range 1..%d!\n\n",
 				   clk_profiles_cnt);
 			return 1;
 		}
@@ -189,7 +203,7 @@ int do_set_clk(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 				CONFIG_QCA_PLL_IN_FLASH_BLOCK_SIZE);
 
 		if (run_command(buf, 0) < 0) {
-			puts("## Error: could not make data backup in RAM!\n");
+			puts("## Error: could not make data backup in RAM!\n\n");
 			return 1;
 		}
 
@@ -220,7 +234,7 @@ int do_set_clk(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 				CONFIG_QCA_PLL_IN_FLASH_BLOCK_SIZE);
 
 		if (run_command(buf, 0) < 0) {
-			puts("## Error: could not erase FLASH and copy data back from RAM!\n");
+			puts("## Error: could not erase FLASH and copy data back from RAM!\n\n");
 			return 1;
 		}
 
