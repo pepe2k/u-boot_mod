@@ -772,7 +772,7 @@ static inline void qca_dram_set_en_refresh(void)
 void qca_dram_init(void)
 {
 	u32 ahb_clk, cpu_clk, ddr_clk, mem_type, tmp_clk;
-	u32 cas_lat, ddr_width, wr_recovery;
+	u32 cas_lat, ddr_width, reg, tmp, wr_recovery;
 
 	mem_type = qca_dram_type();
 
@@ -832,8 +832,36 @@ void qca_dram_init(void)
 		qca_soc_reg_write(QCA_DDR_FSM_WAIT_CTRL_REG, 0xA24);
 #endif
 
-	/* CPU/DDR sync mode */
-	if (cpu_clk == ddr_clk) {
+	/*
+	 * CPU/DDR sync mode only when we don't use
+	 * fractional multipliers in PLL/clocks config
+	 */
+	tmp = 0;
+
+#if (SOC_TYPE & QCA_AR933X_SOC)
+	reg = qca_soc_reg_read(QCA_PLL_CPU_PLL_DITHER_FRAC_REG);
+	reg = (reg & QCA_PLL_CPU_PLL_DITHER_FRAC_NFRAC_MIN_MASK)
+		  >> QCA_PLL_CPU_PLL_DITHER_FRAC_NFRAC_MIN_SHIFT;
+
+	if (reg)
+		tmp = 1;
+#else
+	reg = qca_soc_reg_read(QCA_PLL_CPU_PLL_DITHER_REG);
+	reg = (reg & QCA_PLL_CPU_PLL_DITHER_NFRAC_MIN_MASK)
+		  >> QCA_PLL_CPU_PLL_DITHER_NFRAC_MIN_SHIFT;
+
+	if (reg)
+		tmp = 1;
+
+	reg = qca_soc_reg_read(QCA_PLL_DDR_PLL_DITHER_REG);
+	reg = (reg & QCA_PLL_DDR_PLL_DITHER_NFRAC_MIN_MASK)
+		  >> QCA_PLL_DDR_PLL_DITHER_NFRAC_MIN_SHIFT;
+
+	if (reg)
+		tmp = 1;
+#endif
+
+	if (!tmp && (cpu_clk == ddr_clk)) {
 #if (SOC_TYPE & QCA_AR933X_SOC)
 		qca_soc_reg_read_set(QCA_DDR_TAP_CTRL_3_REG, (1 << 8));
 #else
