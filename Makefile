@@ -184,6 +184,17 @@ tplink_wr820n_CN:
 	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) ENDIANNESS=-EB V=1 all
 	@make --no-print-directory show_size
 
+tplink_wr802n:	export UBOOT_FILE_NAME=uboot_for_tp-link_tl-wr802n
+tplink_wr802n:	export CONFIG_MAX_UBOOT_SIZE_KB=123
+ifndef CONFIG_SKIP_LOWLEVEL_INIT
+tplink_wr802n:	export COMPRESSED_UBOOT=1
+endif
+tplink_wr802n:	export ETH_CONFIG=_s27
+tplink_wr802n:
+	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) wr802n_config
+	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) ENDIANNESS=-EB V=1 all
+	@make --no-print-directory show_size
+
 dlink_dir505:	export UBOOT_FILE_NAME=uboot_for_d-link_dir-505
 dlink_dir505:	export CONFIG_MAX_UBOOT_SIZE_KB=64
 ifndef CONFIG_SKIP_LOWLEVEL_INIT

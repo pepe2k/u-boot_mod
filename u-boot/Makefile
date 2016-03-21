@@ -613,6 +613,20 @@ wr820n_CN_config : unconfig ap143_common_config
 
 	@./mkconfig -a ap143 mips mips ap143 ar7240 ar7240
 
+wr802n_config : unconfig ap143_common_config
+	@/bin/echo -e '\e[32m> Configuring for TP-Link TL-WR802N at:' `date` '\e[0m'
+	@echo "#define SOC_TYPE               QCA_QCA953X_SOC" >> include/config.h
+	@echo "#define CONFIG_FOR_TPLINK_WR802N             1" >> include/config.h
+	@echo "#define CFG_ATHRS27_PHY                      1" >> include/config.h
+	@echo "#define CFG_ATH_GMAC_NMACS                   2" >> include/config.h
+	@echo "#define CONFIG_DEFAULT_FLASH_SIZE_IN_MB      4" >> include/config.h
+	@echo "#define CONFIG_GPIO_RESET_BTN               12" >> include/config.h
+	@echo "#define CONFIG_GPIO_RESET_BTN_ACTIVE_LOW     1" >> include/config.h
+	@echo "#define CONFIG_TPLINK_IMAGE_HEADER           1" >> include/config.h
+	@echo "#define CONFIG_BOARD_CUSTOM_STRING           \"TP-Link TL-WR802N\"" >> include/config.h
+
+	@./mkconfig -a ap143 mips mips ap143 ar7240 ar7240
+
 wr841n_v9_config : unconfig ap143_common_config
 	@/bin/echo -e '\e[32m> Configuring for TP-Link TL-WR841N/D v9 at:' `date` '\e[0m'
 	@echo "#define SOC_TYPE               QCA_QCA953X_SOC" >> include/config.h
