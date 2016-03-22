@@ -2,7 +2,7 @@ export BUILD_TOPDIR=$(PWD)
 export STAGING_DIR=$(BUILD_TOPDIR)/tmp
 
 ifndef CROSS_COMPILE
-CROSS_COMPILE = mips-linux-gnu-
+CROSS_COMPILE = mips-openwrt-linux-musl-
 endif
 export CROSS_COMPILE
 
