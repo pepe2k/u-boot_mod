@@ -6,7 +6,6 @@
 #define _AP143_CONFIG_H
 
 #include <config.h>
-#include <atheros.h>
 #include <soc/soc_common.h>
 
 /*
