@@ -173,7 +173,7 @@ void ath_gmac_mii_setup(ath_gmac_mac_t *mac)
 	ath_reg_wr(SWITCH_CLOCK_SPARE_ADDRESS, 0x231);
 	//ath_reg_wr(SWITCH_CLOCK_SPARE_ADDRESS, 0x520);
 	if ((mac->mac_unit == 1)) {
-		printf("Honey Bee ---->  MAC 1 S27 PHY *\n");
+		//printf("Honey Bee ---->  MAC 1 S27 PHY *\n");
 		ath_reg_wr(ATH_ETH_CFG, ETH_CFG_ETH_RXDV_DELAY_SET(3) |
 					ETH_CFG_ETH_RXD_DELAY_SET(3)|
 					ETH_CFG_RGMII_GE0_SET(1));
@@ -190,7 +190,7 @@ void ath_gmac_mii_setup(ath_gmac_mac_t *mac)
 	}
 
 	if (is_vir_phy()) {
-		printf("Honey Bee ---->VIR PHY*\n");
+		//printf("Honey Bee ---->VIR PHY*\n");
 
 		ath_reg_wr(ATH_ETH_CFG, ETH_CFG_ETH_RXDV_DELAY_SET(3) |
 					ETH_CFG_ETH_RXD_DELAY_SET(3)|
@@ -207,7 +207,7 @@ void ath_gmac_mii_setup(ath_gmac_mac_t *mac)
 	}
 	if (is_s27()) {
         	mgmt_cfg_val = 2;
-        	printf("Scorpion ---->S27 PHY*\n");
+        	//printf("Scorpion ---->S27 PHY*\n");
 		ath_reg_wr(ETH_CFG_ADDRESS, ETH_CFG_MII_GE0_SET(1)|
                                         ETH_CFG_MII_GE0_SLAVE_SET(1));
 		udelay(1000);
@@ -252,8 +252,8 @@ static void ath_gmac_hw_start(ath_gmac_mac_t *mac)
 
 	ath_gmac_reg_wr(mac, ATH_MAC_FIFO_CFG_3, 0x1f00140);
 
-	printf(": cfg1 %#x cfg2 %#x\n", ath_gmac_reg_rd(mac, ATH_MAC_CFG1),
-			ath_gmac_reg_rd(mac, ATH_MAC_CFG2));
+	//printf(": cfg1 %#x cfg2 %#x\n", ath_gmac_reg_rd(mac, ATH_MAC_CFG1),
+	//		ath_gmac_reg_rd(mac, ATH_MAC_CFG2));
 
 
 }
@@ -354,7 +354,7 @@ static int ath_gmac_alloc_fifo(int ndesc, ath_gmac_desc_t ** fifo)
 	size += CFG_CACHELINE_SIZE - 1;
 
 	if ((p = malloc(size)) == NULL) {
-		printf("Cant allocate fifos\n");
+		//printf("Cant allocate fifos\n");
 		return -1;
 	}
 
@@ -433,7 +433,7 @@ static void ath_gmac_get_ethaddr(struct eth_device *dev)
 		eeprom += 6;
 		memcpy(mac, eeprom, 6);
 	} else {
-		printf("%s: unknown ethernet device %s\n", __func__, dev->name);
+		//printf("%s: unknown ethernet device %s\n", __func__, dev->name);
 		return;
 	}
 	/* Use fixed address if the above address is invalid */
@@ -449,8 +449,6 @@ static void ath_gmac_get_ethaddr(struct eth_device *dev)
 		mac[4] = 0x08;
 		mac[5] = 0x41;
 		/*printf("No valid address in Flash. Using fixed address\n");*/
-	} else {
-		printf("Fetching MAC Address from 0x%p\n", __func__, eeprom);
 	}
 }
 
@@ -480,7 +478,7 @@ athr_mgmt_init(void)
 
 	ath_reg_wr(GPIO_OUT_FUNCTION4_ADDRESS, rddata);
 #endif
-	printf ("%s ::done\n",__func__);
+	//printf ("%s ::done\n",__func__);
 }
 
 int ath_gmac_enet_initialize(bd_t * bis)
@@ -489,7 +487,7 @@ int ath_gmac_enet_initialize(bd_t * bis)
 	u32 mask, mac_h, mac_l;
 	int i;
 
-	printf("%s...\n", __func__);
+	//printf("%s...\n", __func__);
 
 	/* Switch Analog and digital reset seq */
 	mask = ATH_RESET_GE1_PHY |  ATH_RESET_GE0_PHY;
@@ -541,7 +539,7 @@ int ath_gmac_enet_initialize(bd_t * bis)
 			mask = (ATH_RESET_GE0_MAC | ATH_RESET_GE1_MAC | ATH_RESET_GE0_MDIO | ATH_RESET_GE1_MDIO);
 
 
-			printf("%s: reset mask:%x \n", __func__, mask);
+			//printf("%s: reset mask:%x \n", __func__, mask);
 
 			ath_reg_rmw_set(RST_RESET_ADDRESS, mask);
 			udelay(1000 * 100);
@@ -570,19 +568,19 @@ int ath_gmac_enet_initialize(bd_t * bis)
 
 		if (ath_gmac_macs[i]->mac_unit == 0) { /* WAN Phy */
 #ifdef  CFG_ATHRS27_PHY
-			printf("S27 reg init\n");
+			//printf("S27 reg init\n");
 			athrs27_reg_init();
 			mask = ATH_RESET_GE0_MAC;
                         ath_reg_rmw_clear(RST_RESET_ADDRESS, mask);
 #endif
 
 #ifdef CONFIG_VIR_PHY
-			printf("VIRPhy reg init \n");
+			//printf("VIRPhy reg init \n");
 			athr_vir_reg_init();
 #endif
 		} else {
 #ifdef  CFG_ATHRS27_PHY
-			printf("S27 reg init\n");
+			//printf("S27 reg init\n");
 			athrs27_reg_init_lan();
 			mask = ATH_RESET_GE1_MAC;
                         ath_reg_rmw_clear(RST_RESET_ADDRESS, mask);
@@ -604,9 +602,9 @@ int ath_gmac_enet_initialize(bd_t * bis)
 		{
 			unsigned char *mac = dev[i]->enetaddr;
 
-			printf("%s: %02x:%02x:%02x:%02x:%02x:%02x\n", dev[i]->name,
-					mac[0] & 0xff, mac[1] & 0xff, mac[2] & 0xff,
-					mac[3] & 0xff, mac[4] & 0xff, mac[5] & 0xff);
+			//printf("%s: %02x:%02x:%02x:%02x:%02x:%02x\n", dev[i]->name,
+			//		mac[0] & 0xff, mac[1] & 0xff, mac[2] & 0xff,
+			//		mac[3] & 0xff, mac[4] & 0xff, mac[5] & 0xff);
 		}
 		mac_l = (dev[i]->enetaddr[4] << 8) | (dev[i]->enetaddr[5]);
 		mac_h = (dev[i]->enetaddr[0] << 24) | (dev[i]->enetaddr[1] << 16) |
@@ -617,7 +615,7 @@ int ath_gmac_enet_initialize(bd_t * bis)
 
 
 	ath_gmac_phy_setup(ath_gmac_macs[i]->mac_unit);
-		printf("%s up\n",dev[i]->name);
+		//printf("%s up\n",dev[i]->name);
 	}
 
 
