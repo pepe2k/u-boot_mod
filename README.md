@@ -44,7 +44,7 @@ You can download original sources from the following pages:
 
 The concept for this project came from another U-Boot modification, dedicated to a small and very popular TP-Link router - model **TL-WR703N**, which includes web fail safe mode: **[wr703n-uboot-with-web-failsafe](http://code.google.com/p/wr703n-uboot-with-web-failsafe/)**. I was using it and decided to make my own version, which could have some improvements, additional capabilities, support for different models and work with all modern web browsers.
 
-First version of this modification was introduced on **OpenWrt** forum in [this thread](https://forum.openwrt.org/viewtopic.php?id=43237), at the end of March 2013 and was dedicated only for TP-Link routers with **Atheros AR9331** SoC. Now, it supports also models from different manufacturers, devices with **Atheros AR934x** (like **TP-Link TL-WDR3600**, **TL-WDR43x0**, **TL-WR841N/D v8**, **TL-WA830RE v2**) and other (in the near future **Qualcomm Atheros QCA955x**) are under development.
+First version of this modification was introduced on **OpenWrt** forum in [this thread](https://forum.openwrt.org/viewtopic.php?id=43237), at the end of March 2013 and was dedicated only for TP-Link routers with **Atheros AR9331** SoC. Now, it supports also models from different manufacturers, devices with **Atheros AR934x**, **Qualcomm Atheros QCA953x**, **Qualcomm Atheros QCA955x** and other (in the near future **Qualcomm Atheros QCA956x** and **MediaTek MT762x**) are under development.
 
 You can find some information about previous versions of this project also on my [blog](http://www.tech-blog.pl), in [this article](http://www.tech-blog.pl/2013/03/29/zmodyfikowany-u-boot-dla-routerow-tp-link-z-atheros-ar9331-z-trybem-aktualizacji-oprogramowania-przez-www-i-konsola-sieciowa-netconsole/). It is in Polish, but [Google Translator](http://translate.google.com/translate?hl=pl&sl=pl&tl=en&u=http%3A%2F%2Fwww.tech-blog.pl%2F2013%2F03%2F29%2Fzmodyfikowany-u-boot-dla-routerow-tp-link-z-atheros-ar9331-z-trybem-aktualizacji-oprogramowania-przez-www-i-konsola-sieciowa-netconsole%2F&sandbox=1) will help you to understand it.
 
@@ -86,6 +86,11 @@ Currently supported devices:
   - TP-Link TL-WDR43x0 v1
   - TP-Link TL-WDR3500 v1
 
+- **Qualcomm Atheros QCA953x**:
+  - TP-Link TL-WR841N/D v9
+  - TP-Link TL-WR820N (version for Chinese market)
+  - TP-Link TL-WR802N
+
 I tested this modification on most of these devices, with OpenWrt and OFW firmware. If you are not sure about the version of your device, please contact with me **before** you try to make an upgrade. Changing bootloader to a wrong version will probably damage your router and you will need special hardware to fix it, so please, **be very careful**.
 
 More information about supported devices:
@@ -115,6 +120,9 @@ More information about supported devices:
 | [TP-Link TL-WDR43x0 v1](http://wiki.openwrt.org/toh/tp-link/tl-wdr4300) | AR9344 | 8 MiB | 128 MiB DDR2 | 64 KiB, LZMA | RO |
 | [TP-Link TL-WDR3500 v1](http://wiki.openwrt.org/toh/tp-link/tl-wdr3500) | AR9344 | 8 MiB | 128 MiB DDR2 | 64 KiB, LZMA | RO |
 | [D-Link DIR-505 H/W ver. A1](http://wiki.openwrt.org/toh/d-link/dir-505) | AR1311 | 8 MiB | 64 MiB DDR2 | 64 KiB, LZMA | RO |
+| [TP-Link TL-WR841N/D v9](https://wiki.openwrt.org/toh/tp-link/tl-wr841nd) | QCA9533 | 4 MiB | 32 MiB DDR1 | 64 KiB, LZMA | RO |
+| [TP-Link TL-WR820N](https://wiki.openwrt.org/toh/tp-link/tl-wr820n) | QCA9531 | 4 MiB | 64 MiB DDR2 | 64 KiB, LZMA | RO |
+| [TP-Link TL-WR802N](https://wikidevi.com/wiki/TP-LINK_TL-WR802N_v1.0) | QCA9533 | 4 MiB | 32 MiB DDR1 | 64 KiB, LZMA | RO |
 
 *(LZMA) - U-Boot binary image is compressed with LZMA.*  
 *(R/W) - environment exists in separate FLASH block which allows you to save it and keep after power down.*
@@ -283,7 +291,7 @@ Moreover:
 
 FLASH type detection may be very useful for people who has exchanged the FLASH chip in their routers. You will not need to recompile U-Boot sources, to have access to overall FLASH space in U-Boot console.
 
-If you use FLASH type which is not listed below, this version of U-Boot will use default size for your router and, in most supported models, updating the ART image will not be available.
+If you use FLASH type which is not listed below, this version of U-Boot will try to get information about the chip using **Serial Flash Discoverable Parameter** (**SFDP**, more information: https://www.jedec.org/standards-documents/docs/jesd216b) standard. If your chip does not support SFDP, it will use default size for your router and, in most supported models, updating the ART image will not be available.
 
 Currently supported FLASH types:
 
@@ -311,6 +319,7 @@ Currently supported FLASH types:
 - Winbond W25Q128 (16 MB, JEDEC ID: EF 4018)*
 - Macronix MX25L128 (16 MB, JEDEC ID: C2 2018, C2 2618)
 - Spansion S25FL127S (16 MB, JEDEC ID: 01 2018)*
+- Micron N25Q128 (16 MB, JEDEC ID: 20 BA18)
 
 (*) tested
 
@@ -360,7 +369,7 @@ All prebuilt images are padded with 0xFF and since change "**![Extend maximum U-
 
 Below image with beginning part of FLASH memory map for TP-Link TL-MR3020 shows differences between stock version and this modification.
 
-![](http://www.tech-blog.pl/wordpress/wp-content/uploads/2015/11/mr3020_u-boot-modification_flash-map_comparison.png)
+![](http://www.tech-blog.pl/wordpress/wp-content/uploads/2016/03/mr3020_u-boot-modification_flash-map_comparison.png)
 
 On the other hand, U-Boot image in **Carambola 2** from **8devices** may have up to **256 KiB** (4x 64 KiB block), they use uncompressed version and environment stored in FLASH. Immediately after the Carambola 2 U-Boot partition is an area which contains U-Boot environment variables (1x 64 KiB block), called `u-boot-env`:
 
@@ -634,12 +643,12 @@ How to compile the code?
 
 You can use one of the free toolchains:
 
-- [Sourcery CodeBench Lite Edition for MIPS GNU/Linux](https://sourcery.mentor.com/GNUToolchain/subscription3130?lite=MIPS),
-- [OpenWrt Toolchain for AR71xx MIPS](http://downloads.openwrt.org/attitude_adjustment/12.09/ar71xx/generic/OpenWrt-Toolchain-ar71xx-for-mips_r2-gcc-4.6-linaro_uClibc-0.9.33.2.tar.bz2),
+- [OpenWrt Toolchain for AR71xx MIPS](https://downloads.openwrt.org/snapshots/trunk/ar71xx/generic/OpenWrt-Toolchain-ar71xx-generic_gcc-5.3.0_musl-1.1.14.Linux-x86_64.tar.bz2),
+- ~~[Sourcery CodeBench Lite Edition for MIPS GNU/Linux](https://sourcery.mentor.com/GNUToolchain/subscription3130?lite=MIPS)~~,
 - [ELDK (Embedded Linux Development Kit)](ftp://ftp.denx.de/pub/eldk/),
 - or any others...
 
-I am using **Sourcery CodeBench Lite Edition for MIPS GNU/Linux** on **Ubuntu 12.04 LTS** (32-bit, virtual machine) and all released binary images were/will be built using this set.
+I am using **OpenWrt Toolchain for AR71xx MIPS** (32-bit, virtual machine) and all released binary images were/will be built using this set.
 
 All you need to do, after choosing a toolchain, is to modify [Makefile](Makefile) - change or remove `export MAKECMD` and if needed add `export PATH`. For example, to use OpenWrt Toolchain instead of Sourcery CodeBench Lite, download it and extract into `toolchain` folder, inside the top dir and change first lines in [Makefile](Makefile):
 
@@ -696,5 +705,7 @@ You should know, that most routers, especially those based on Atheros SoCs, uses
 Credits
 -------
 
+- Thanks to M-K O'Connell for donating a router with QCA9563
+- Thanks to Krzysztof M. for donating a TL-WDR3600 router
 - Thanks to *pupie* from OpenWrt forum for his great help
 - Thanks for all donators and for users who contributed in code development

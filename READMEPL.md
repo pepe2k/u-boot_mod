@@ -43,7 +43,7 @@ Oryginalne wersje źródeł można pobrać z poniższych stron:
 
 Pomysł na tę modyfikację został zaczerpnięty z innego projektu, przeznaczonego dla bardzo popularnego, małego routera mobilnego **TP-Link TL-WR703N**, w którym autor umieścił tryb ratunkowy dostępny przez przeglądarkę: **[wr703n-uboot-with-web-failsafe](http://code.google.com/p/wr703n-uboot-with-web-failsafe/)**. Przez jakiś czas z powodzeniem używałem tej modyfikacji, ale postanowiłem ją ulepszyć, dodać kilka opcji i wsparcie dla innych modeli oraz wszystkich przeglądarek.
 
-Pierwszą wersję mojej modyfikacji zaprezentowałem na forum **OpenWrt**, w [tym wątku](https://forum.openwrt.org/viewtopic.php?id=43237), pod koniec marca 2013 roku. Zawierała ona wsparcie wyłącznie dla modeli TP-Link z układem SoC **Atheros AR9331**. Obecnie, wspierane są również urządzenia innych producentów, w tym z układem SoC **Atheros AR934x** (**TP-Link TL-WDR3600**, **TL-WDR43x0**, **TL-WR841N/D v8**, **TL-WA830RE v2**), a inne (w najbliższych planach jest wsparcie dla routerów z układami z serii **Qualcomm Atheros QCA955x**) są w trakcie opracowania.
+Pierwszą wersję mojej modyfikacji zaprezentowałem na forum **OpenWrt**, w [tym wątku](https://forum.openwrt.org/viewtopic.php?id=43237), pod koniec marca 2013 roku. Zawierała ona wsparcie wyłącznie dla modeli TP-Link z układem SoC **Atheros AR9331**. Obecnie, wspierane są również urządzenia innych producentów, w tym z układami SoC **Atheros AR934x**, **Qualcomm Atheros QCA953x**, **Qualcomm Atheros QCA955x**, a inne (w najbliższych planach jest wsparcie dla routerów z układami z serii **Qualcomm Atheros QCA956x** oraz **MediaTek MT762x**) są w trakcie opracowania.
 
 Dodatkowe informacje o niniejszej modyfikacji można znaleźć również na [moim blogu](http://www.tech-blog.pl), w [tym artykule](http://www.tech-blog.pl/2013/03/29/zmodyfikowany-u-boot-dla-routerow-tp-link-z-atheros-ar9331-z-trybem-aktualizacji-oprogramowania-przez-www-i-konsola-sieciowa-netconsole/).
 
@@ -85,6 +85,11 @@ Lista obecnie wspieranych urządzeń:
   - TP-Link TL-WDR43x0 v1
   - TP-Link TL-WDR3500 v1
 
+- **Qualcomm Atheros QCA953x**:
+  - TP-Link TL-WR841N/D v9
+  - TP-Link TL-WR820N (wersja przeznaczona na rynek chiński)
+  - TP-Link TL-WR802N
+
 Przetestowałem swoją modyfikację na większości z wymienionych powyżej urządzeń, z obrazami OpenWrt i oficjalnym firmware producenta. Jeżeli nie jesteś pewien wersji sprzętowej swojego urządzenia, proszę skontaktuj się ze mną **zanim** dokonasz wymiany obrazu bootloadera. Zmiana na niewłaściwą wersję najprawdopodobniej doprowadzi do uszkodzenia Twojego urządzenia i jedyną możliwością jego ponownego uruchomienia będzie przeprogramowanie kości FLASH w zewnętrznym programatorze.
 
 Dodatkowe informacje o wspieranych urządzeniach:
@@ -114,6 +119,9 @@ Dodatkowe informacje o wspieranych urządzeniach:
 | [TP-Link TL-WDR43x0 v1](http://wiki.openwrt.org/toh/tp-link/tl-wdr4300) | AR9344 | 8 MiB | 128 MiB DDR2 | 64 KiB, LZMA | RO |
 | [TP-Link TL-WDR3500 v1](http://wiki.openwrt.org/toh/tp-link/tl-wdr3500) | AR9344 | 8 MiB | 128 MiB DDR2 | 64 KiB, LZMA | RO |
 | [D-Link DIR-505 H/W ver. A1](http://wiki.openwrt.org/toh/d-link/dir-505) | AR1311 | 8 MiB | 64 MiB DDR2 | 64 KiB, LZMA | RO |
+| [TP-Link TL-WR841N/D v9](https://wiki.openwrt.org/toh/tp-link/tl-wr841nd) | QCA9533 | 4 MiB | 32 MiB DDR1 | 64 KiB, LZMA | RO |
+| [TP-Link TL-WR820N](https://wiki.openwrt.org/toh/tp-link/tl-wr820n) | QCA9531 | 4 MiB | 64 MiB DDR2 | 64 KiB, LZMA | RO |
+| [TP-Link TL-WR802N](https://wikidevi.com/wiki/TP-LINK_TL-WR802N_v1.0) | QCA9533 | 4 MiB | 32 MiB DDR1 | 64 KiB, LZMA | RO |
 
 *(LZMA) - obraz binarny U-Boot został dodatkowo skompresowany przy pomocy LZMA.*  
 *(R/W) - zmienne środowiskowe przechowywane są w osobnym bloku FLASH, co pozwala na ich zachowanie po odłączeniu zasilaniu.*  
@@ -276,7 +284,7 @@ Ponadto:
 
 Automatyczna detekcja typu zastosowanej kości FLASH może być bardzo przydatna jeżeli wymieniłeś FLASH w swoim routerze. Nie musisz dokonywać zmian w oficjalnych źródłach i kompilować ich żeby mieć dostęp do całej zawartości FLASH z poziomu konsoli U-Boot.
 
-Jeżeli wykorzystasz kość, której nie ma na poniższej liście, moja wersja U-Boot będzie traktować ją tak jakby miała rozmiar zgodny z rozmiarem domyślnie zastosowanej kości w danym modelu. W większości urządzeń nie będziesz też miał możliwości aktualizacji obrazu danych kalibracyjnych układu radiowego (ART).
+Jeżeli wykorzystasz kość, której nie ma na poniższej liście, moja wersja U-Boot spróbuje odczytać jej parametry wykorzystując standard **Serial Flash Discoverable Parameter** (**SFDP**, więcej informacji: https://www.jedec.org/standards-documents/docs/jesd216b). Jeżeli Twoja kość nie wspiera SFDP, ta modyfikacja będzie traktować ją tak jakby miała rozmiar zgodny z rozmiarem domyślnie zastosowanej kości w danym modelu. W większości urządzeń nie będziesz też miał możliwości aktualizacji obrazu danych kalibracyjnych układu radiowego (ART).
 
 Pełna lista obsługiwanych kości FLASH:
 
@@ -304,6 +312,7 @@ Pełna lista obsługiwanych kości FLASH:
 - Winbond W25Q128 (16 MB, JEDEC ID: EF 4018)*
 - Macronix MX25L128 (16 MB, JEDEC ID: C2 2018, C2 2618)
 - Spansion S25FL127S (16 MB, JEDEC ID: 01 2018)*
+- Micron N25Q128 (16 MB, JEDEC ID: 20 BA18)
 
 (*) przetestowane
 
@@ -353,7 +362,7 @@ Wszystkie publikowane przeze mnie gotowe obrazy binarne są dopełnione wartośc
 
 Poniższy fragment początkowy mapy pamięci FLASH dla modelu TP-Link TL-MR3020 pokazuje różnice pomiędzy wersją producenta i modyfikacją.
 
-![](http://www.tech-blog.pl/wordpress/wp-content/uploads/2015/11/mr3020_u-boot-modification_flash-map_comparison.png)
+![](http://www.tech-blog.pl/wordpress/wp-content/uploads/2016/03/mr3020_u-boot-modification_flash-map_comparison.png)
 
 Z drugiej strony, obraz U-Boot w module **8devices Carambola 2** może mieć maksymalnie **256 KiB** (4 bloki po 64 KiB każdy), ale obraz nie jest skompresowany. Zaraz za nim, w kolejnym 64 KiB bloku, znajdują się zmienne środowiskowe - partycja ta w OpenWrt, w tym konkretnym przypadku, nosi nazwę `u-boot-env`:
 
@@ -626,12 +635,12 @@ Jak samodzielnie skompilować kod?
 
 Możesz wykorzystać jeden z dostępnych, bezpłatnych i gotowych narzędzi (tzw. toolchain):
 
-- [Sourcery CodeBench Lite Edition for MIPS GNU/Linux](https://sourcery.mentor.com/GNUToolchain/subscription3130?lite=MIPS),
-- [OpenWrt Toolchain for AR71xx MIPS](http://downloads.openwrt.org/attitude_adjustment/12.09/ar71xx/generic/OpenWrt-Toolchain-ar71xx-for-mips_r2-gcc-4.6-linaro_uClibc-0.9.33.2.tar.bz2),
+- [OpenWrt Toolchain for AR71xx MIPS](https://downloads.openwrt.org/snapshots/trunk/ar71xx/generic/OpenWrt-Toolchain-ar71xx-generic_gcc-5.3.0_musl-1.1.14.Linux-x86_64.tar.bz2),
+- ~~[Sourcery CodeBench Lite Edition for MIPS GNU/Linux](https://sourcery.mentor.com/GNUToolchain/subscription3130?lite=MIPS)~~,
 - [ELDK (Embedded Linux Development Kit)](ftp://ftp.denx.de/pub/eldk/),
 - lub innych...
 
-Do kompilacji korzystam z **Sourcery CodeBench Lite Edition for MIPS GNU/Linux**, na maszynie wirtualnej z zainstalowanym **Ubuntu 12.04 LTS** (32-bit). Wszystkie publikowane przeze mnie obrazy budowane są na tej konfiguracji.
+Do kompilacji korzystam z **OpenWrt Toolchain for AR71xx MIPS**, na maszynie wirtualnej z zainstalowanym **Ubuntu 12.04 LTS** (32-bit). Wszystkie publikowane przeze mnie obrazy budowane są na tej konfiguracji.
 
 Wszystko co musisz zrobić, po wybraniu zestawu narzędzi, to dostosowanie pliku [Makefile](Makefile) do własnej konfiguracji (czyli zmiana lub usunięcie `export MAKECMD` i ewentualnie dodanie `export PATH`). Przykładowo, w celu zbudowania obrazów przy pomocy OpenWrt Toolchain, zamiast Sourcery CodeBench Lite, pobierz odpowiednie archiwum i rozpakuj jego zawartość do folderu `toolchain`, w głównym katalogu ze źródłami, a następnie zmień początek pliku [Makefile](Makefile), jak poniżej:
 
@@ -688,5 +697,7 @@ Powinieneś wiedzieć, że większość routerów, szczególnie tych z układami
 Podziękowania
 -------------
 
+- Dziękuję M-K O'Connell za przekazanie routera z QCA9563
+- Dziękuję Krzysztofowi M. za przekazanie routera TL-WDR3600
 - Dziękuję użytkownikowi *pupie* z forum OpenWrt za jego nieocenioną pomoc
 - Dziękuję wszystkim darczyńcom i osobom wspierającym rozwój tej modyfikacji
