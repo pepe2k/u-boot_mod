@@ -12,7 +12,7 @@
 #include <linux/config.h>
 
 #define __HAVE_ARCH_STRCPY
-extern __inline__ char *strcpy(char *__dest, __const__ char *__src)
+static __inline__ char *strcpy(char *__dest, __const__ char *__src)
 {
   char *__xdest = __dest;
 
@@ -34,7 +34,7 @@ extern __inline__ char *strcpy(char *__dest, __const__ char *__src)
 }
 
 #define __HAVE_ARCH_STRNCPY
-extern __inline__ char *strncpy(char *__dest, __const__ char *__src, size_t __n)
+static __inline__ char *strncpy(char *__dest, __const__ char *__src, size_t __n)
 {
   char *__xdest = __dest;
 
@@ -62,7 +62,7 @@ extern __inline__ char *strncpy(char *__dest, __const__ char *__src, size_t __n)
 }
 
 #define __HAVE_ARCH_STRCMP
-extern __inline__ int strcmp(__const__ char *__cs, __const__ char *__ct)
+static __inline__ int strcmp(__const__ char *__cs, __const__ char *__ct)
 {
   int __res;
 
@@ -91,7 +91,7 @@ extern __inline__ int strcmp(__const__ char *__cs, __const__ char *__ct)
 }
 
 #define __HAVE_ARCH_STRNCMP
-extern __inline__ int
+static __inline__ int
 strncmp(__const__ char *__cs, __const__ char *__ct, size_t __count)
 {
 	int __res;
@@ -135,7 +135,7 @@ extern void *memmove(void *__dest, __const__ void *__src, size_t __n);
 #define __HAVE_ARCH_BCOPY
 
 #define __HAVE_ARCH_MEMSCAN
-extern __inline__ void *memscan(void *__addr, int __c, size_t __size)
+static __inline__ void *memscan(void *__addr, int __c, size_t __size)
 {
 	char *__end = (char *)__addr + __size;
 

@@ -104,12 +104,12 @@ extern unsigned long mips_io_port_base;
  * Change virtual addresses to physical addresses and vv.
  * These are trivial on the 1:1 Linux/MIPS mapping
  */
-extern inline unsigned long virt_to_phys(volatile void * address)
+static inline unsigned long virt_to_phys(volatile void * address)
 {
 	return PHYSADDR(address);
 }
 
-extern inline void * phys_to_virt(unsigned long address)
+static inline void * phys_to_virt(unsigned long address)
 {
 	return (void *)KSEG0ADDR(address);
 }
@@ -117,12 +117,12 @@ extern inline void * phys_to_virt(unsigned long address)
 /*
  * IO bus memory addresses are also 1:1 with the physical address
  */
-extern inline unsigned long virt_to_bus(volatile void * address)
+static inline unsigned long virt_to_bus(volatile void * address)
 {
 	return PHYSADDR(address);
 }
 
-extern inline void * bus_to_virt(unsigned long address)
+static inline void * bus_to_virt(unsigned long address)
 {
 	return (void *)KSEG0ADDR(address);
 }
@@ -224,7 +224,7 @@ out:
  */
 
 #define __OUT1(s) \
-extern inline void __out##s(unsigned int value, unsigned int port) {
+static inline void __out##s(unsigned int value, unsigned int port) {
 
 #define __OUT2(m) \
 __asm__ __volatile__ ("s" #m "\t%0,%1(%2)"
@@ -238,7 +238,7 @@ __OUT1(s##c_p) __OUT2(m) : : "r" (__ioswab##w(value)), "ir" (port), "r" (mips_io
 	SLOW_DOWN_IO; }
 
 #define __IN1(t,s) \
-extern __inline__ t __in##s(unsigned int port) { t _v;
+static __inline__ t __in##s(unsigned int port) { t _v;
 
 /*
  * Required nops will be inserted by the assembler
@@ -253,7 +253,7 @@ __IN1(t,s##_p) __IN2(m) : "=r" (_v) : "i" (0), "r" (mips_io_port_base+port)); SL
 __IN1(t,s##c_p) __IN2(m) : "=r" (_v) : "ir" (port), "r" (mips_io_port_base)); SLOW_DOWN_IO; return __ioswab##w(_v); }
 
 #define __INS1(s) \
-extern inline void __ins##s(unsigned int port, void * addr, unsigned long count) {
+static inline void __ins##s(unsigned int port, void * addr, unsigned long count) {
 
 #define __INS2(m) \
 if (count) \
@@ -281,7 +281,7 @@ __INS1(s##c) __INS2(m) \
 	: "$1");}
 
 #define __OUTS1(s) \
-extern inline void __outs##s(unsigned int port, const void * addr, unsigned long count) {
+static inline void __outs##s(unsigned int port, const void * addr, unsigned long count) {
 
 #define __OUTS2(m) \
 if (count) \
