@@ -123,7 +123,7 @@ u32 qca_dram_ddr_width(void)
 /*
  * Returns CAS latency, based on setting in DDR_CONFIG register
  */
-inline u32 qca_dram_cas_lat(void)
+u32 qca_dram_cas_lat(void)
 {
 #ifndef CONFIG_BOARD_DRAM_CAS_LATENCY
 	u32 reg;
@@ -144,7 +144,7 @@ inline u32 qca_dram_cas_lat(void)
 /*
  * Returns tRCD latency
  */
-inline u32 qca_dram_trcd_lat(void)
+u32 qca_dram_trcd_lat(void)
 {
 	u32 reg;
 
@@ -157,7 +157,7 @@ inline u32 qca_dram_trcd_lat(void)
 /*
  * Returns tRP latency
  */
-inline u32 qca_dram_trp_lat(void)
+u32 qca_dram_trp_lat(void)
 {
 	u32 reg;
 
@@ -170,7 +170,7 @@ inline u32 qca_dram_trp_lat(void)
 /*
  * Returns tRAS latency
  */
-inline u32 qca_dram_tras_lat(void)
+u32 qca_dram_tras_lat(void)
 {
 	u32 reg;
 

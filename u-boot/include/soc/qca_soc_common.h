@@ -1618,23 +1618,23 @@
  * Functions
  */
 #ifndef __ASSEMBLY__
-inline u32 qca_xtal_is_40mhz(void);
-void   qca_soc_name_rev(char *buf);
-void   qca_full_chip_reset(void);
-void   qca_sys_clocks(u32 *cpu_clk, u32 *ddr_clk, u32 *ahb_clk, u32 *spi_clk, u32 *ref_clk);
-void   qca_sf_bulk_erase(u32 bank);
-void   qca_sf_write_page(u32 bank, u32 address, u32 length, u8 *data);
-u32    qca_sf_sect_erase(u32 bank, u32 address, u32 sect_size, u8 erase_cmd);
-u32    qca_sf_sfdp_info(u32 bank, u32 *flash_size, u32 *sector_size, u8 *erase_cmd);
-u32    qca_sf_jedec_id(u32 bank);
-u32    qca_dram_type(void);
-u32    qca_dram_size(void);
-u32    qca_dram_ddr_width(void);
-void   qca_dram_init(void);
-inline u32 qca_dram_cas_lat(void);
-inline u32 qca_dram_trcd_lat(void);
-inline u32 qca_dram_trp_lat(void);
-inline u32 qca_dram_tras_lat(void);
+u32  qca_dram_cas_lat(void);
+u32  qca_dram_ddr_width(void);
+void qca_dram_init(void);
+u32  qca_dram_size(void);
+u32  qca_dram_tras_lat(void);
+u32  qca_dram_trcd_lat(void);
+u32  qca_dram_trp_lat(void);
+u32  qca_dram_type(void);
+void qca_full_chip_reset(void);
+void qca_sf_bulk_erase(u32 bank);
+u32  qca_sf_jedec_id(u32 bank);
+u32  qca_sf_sect_erase(u32 bank, u32 address, u32 sect_size, u8 erase_cmd);
+u32  qca_sf_sfdp_info(u32 bank, u32 *flash_size, u32 *sector_size, u8 *erase_cmd);
+void qca_sf_write_page(u32 bank, u32 address, u32 length, u8 *data);
+void qca_soc_name_rev(char *buf);
+void qca_sys_clocks(u32 *cpu_clk, u32 *ddr_clk, u32 *ahb_clk, u32 *spi_clk, u32 *ref_clk);
+u32  qca_xtal_is_40mhz(void);
 #endif /* !__ASSEMBLY__ */
 
 /*

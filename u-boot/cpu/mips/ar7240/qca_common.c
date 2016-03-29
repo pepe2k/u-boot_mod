@@ -14,7 +14,7 @@
 /*
  * Returns 1 if reference clock is 40 MHz
  */
-inline u32 qca_xtal_is_40mhz(void)
+u32 qca_xtal_is_40mhz(void)
 {
 	return ((qca_soc_reg_read(QCA_RST_BOOTSTRAP_REG) &
 			QCA_RST_BOOTSTRAP_REF_CLK_MASK) >> QCA_RST_BOOTSTRAP_REF_CLK_SHIFT);
