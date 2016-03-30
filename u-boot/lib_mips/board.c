@@ -160,7 +160,8 @@ init_fnc_t *init_sequence[] = { timer_init,
 								init_func_ram,
 								NULL, };
 #else
-init_fnc_t *init_sequence[] = { env_init,
+init_fnc_t *init_sequence[] = { timer_init,
+								env_init,
 								baudrate_init,
 								serial_init,
 								console_init_f,
