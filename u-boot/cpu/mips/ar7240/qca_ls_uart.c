@@ -1,10 +1,10 @@
 /*
  * Qualcomm/Atheros Low-Speed UART driver
  *
- * Copyright (C) 2015 Piotr Dymacz <piotr@dymacz.pl>
+ * Copyright (C) 2016 Piotr Dymacz <piotr@dymacz.pl>
  * Copyright (C) 2008-2010 Atheros Communications Inc.
  *
- * SPDX-License-Identifier:GPL-2.0
+ * SPDX-License-Identifier: GPL-2.0
  */
 
 #include <config.h>
@@ -21,8 +21,6 @@ void serial_setbrg(void)
 	/*
 	 * TODO: prepare list of supported range of baudrate values
 	 * For 40 MHz ref_clk, successfully tested up to 1152000 on AR9344
-	 *
-	 * TODO: support 100 MHz reference clocks on AR934x and QCA955x
 	 */
 
 	/* Round to closest, final baudrate = ref_clk / (16 * div) */
@@ -45,8 +43,6 @@ void serial_setbrg(void)
 
 int serial_init(void)
 {
-	u32 uart_lcr;
-
 	serial_setbrg();
 
 	/* No interrupt */
@@ -61,11 +57,8 @@ int serial_init(void)
 	 * - stop: 1bit
 	 * - parity: no
 	 */
-	uart_lcr = (QCA_LSUART_LCR_CLS_8BIT_VAL << QCA_LSUART_LCR_CLS_SHIFT)
-			   | (0 << QCA_LSUART_LCR_STOP_SHIFT)
-			   | (0 << QCA_LSUART_LCR_PEN_SHIFT);
-
-	qca_soc_reg_write(QCA_LSUART_LCR_REG, uart_lcr);
+	qca_soc_reg_write(QCA_LSUART_LCR_REG,
+					  QCA_LSUART_LCR_CLS_8BIT_VAL << QCA_LSUART_LCR_CLS_SHIFT);
 
 	return 0;
 }
@@ -79,9 +72,9 @@ void serial_putc(const char c)
 
 	/* Wait for empty THR */
 	do {
-		line_status = qca_soc_reg_read(QCA_LSUART_LSR_REG);
-	} while (((line_status & QCA_LSUART_LSR_THRE_MASK)
-			  >> QCA_LSUART_LSR_THRE_SHIFT)  == 0);
+		line_status = qca_soc_reg_read(QCA_LSUART_LSR_REG)
+					  & QCA_LSUART_LSR_THRE_MASK;
+	} while (line_status == 0);
 
 	/* Put data in THR */
 	qca_soc_reg_write(QCA_LSUART_THR_REG, (u32)c);
@@ -93,17 +86,15 @@ int serial_getc(void)
 		;
 
 	/* Get data from RBR */
-	return (qca_soc_reg_read(QCA_LSUART_RBR_REG)
-		   & QCA_LSUART_RBR_RBR_MASK);
+	return qca_soc_reg_read(QCA_LSUART_RBR_REG)
+		   & QCA_LSUART_RBR_RBR_MASK;
 }
 
 int serial_tstc(void)
 {
-	u32 uart_data = qca_soc_reg_read(QCA_LSUART_LSR_REG);
-
 	/* Check data ready bit */
-	return ((uart_data & QCA_LSUART_LSR_DR_MASK)
-			>> QCA_LSUART_LSR_DR_SHIFT);
+	return qca_soc_reg_read(QCA_LSUART_LSR_REG)
+		   & QCA_LSUART_LSR_DR_MASK;
 }
 
 void serial_puts(const char *s)
