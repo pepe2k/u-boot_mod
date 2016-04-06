@@ -25,6 +25,10 @@
 /* PHY selections and access functions */
 #define DRV_PRINT(DBG_SW,X)
 
+#ifdef S27_PHY_DEBUG
+	#undef S27_PHY_DEBUG
+#endif
+
 #define ATHR_LAN_PORT_VLAN	1
 #define ATHR_WAN_PORT_VLAN	2
 #define ENET_UNIT_LAN		1
@@ -158,12 +162,12 @@ int athrs27_reg_init_lan(void){
 	int i = 60;
 	int phyUnit;
 	uint32_t phyAddr = 0;
-	#if S27_PHY_DEBUG
+	#ifdef S27_PHY_DEBUG
 	uint32_t rd_val;
 	#endif
 
 	/* reset switch */
-#if S27_PHY_DEBUG
+#ifdef S27_PHY_DEBUG
 	printf(MODULE_NAME ": resetting s27\n");
 #endif
 
@@ -177,7 +181,7 @@ int athrs27_reg_init_lan(void){
 		}
 	}
 
-#if S27_PHY_DEBUG
+#ifdef S27_PHY_DEBUG
 	printf(MODULE_NAME ": s27 reset done\n");
 #endif
 
@@ -200,7 +204,7 @@ int athrs27_reg_init_lan(void){
 		s27_wr_phy(phyAddr, ATHR_PHY_CONTROL, 0x9000);
 #endif
 
-#if S27_PHY_DEBUG
+#ifdef S27_PHY_DEBUG
 		rd_val = s27_rd_phy(phyAddr, ATHR_PHY_FUNC_CONTROL);
 		printf("S27 ATHR_PHY_FUNC_CONTROL (%d):%x\n", phyAddr, rd_val);
 
@@ -303,7 +307,7 @@ int athrs27_phy_setup(int ethUnit){
 	uint16_t phyHwStatus;
 	uint16_t timeout;
 	uint32_t phyAddr = 0;
-#if S27_PHY_DEBUG
+#ifdef S27_PHY_DEBUG
 	uint32_t rd_val = 0;
 #endif
 
@@ -334,7 +338,7 @@ int athrs27_phy_setup(int ethUnit){
 			}
 		}
 
-#if S27_PHY_DEBUG
+#ifdef S27_PHY_DEBUG
 		rd_val = s27_rd_phy(phyAddr,ATHR_PHY_CONTROL);
 		printf("%s ATHR_PHY_CONTROL %d: 0x%x\n",__func__,phyAddr,rd_val);
 

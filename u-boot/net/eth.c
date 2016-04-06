@@ -27,7 +27,11 @@
 #include <miiphy.h>
 
 #if (CONFIG_COMMANDS & CFG_CMD_NET) && defined(CONFIG_NET_MULTI)
-extern int ag7240_enet_initialize(bd_t * bis);
+#if defined(CONFIG_ATHEROS)
+	extern int ath_gmac_enet_initialize(bd_t * bis);
+#else
+	extern int ag7240_enet_initialize(bd_t * bis);
+#endif
 
 /*
 static struct eth_device *eth_devices, *eth_current;
@@ -120,7 +124,11 @@ int eth_initialize(bd_t *bis){
 #endif
 
 	// ag7240 initialization
+#if defined(CONFIG_ATHEROS)
+	ath_gmac_enet_initialize(bis);
+#else
 	ag7240_enet_initialize(bis);
+#endif
 
 	if(!eth_devices){
 		puts("## Error: no ethernet found\n");

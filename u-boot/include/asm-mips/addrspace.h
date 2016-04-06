@@ -44,15 +44,7 @@
  * Returns the uncached address of a sdram address
  */
 #ifndef __ASSEMBLY__
-#if defined(CONFIG_AU1X00) || defined(CONFIG_TB0229)
-/* We use a 36 bit physical address map here and
-   cannot access physical memory directly from core */
-#define UNCACHED_SDRAM(a) (((unsigned long)(a)) | 0x20000000)
-#elif defined(CONFIG_AR7100) || defined(CONFIG_AR7240)
 #define UNCACHED_SDRAM(a)   KSEG1ADDR((a))
-#else	/* !CONFIG_AR7100 */
-#define UNCACHED_SDRAM(a) PHYSADDR(a)
-#endif	/* CONFIG_AU1X00 */
 #endif	/* __ASSEMBLY__ */
 /*
  * Map an address to a certain kernel segment

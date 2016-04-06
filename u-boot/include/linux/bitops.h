@@ -1,13 +1,19 @@
 #ifndef _LINUX_BITOPS_H
 #define _LINUX_BITOPS_H
 
+/*
+ * Helper macros
+ */
+#define BIT(_x)					(1 << (_x))
+#define BITS(_start, _bits)		(((1 << (_bits)) - 1) << _start)
+#define CHECK_BIT(_var, _pos)	((_var) & (1 << (_pos)))
 
+#ifndef __ASSEMBLY__
 /*
  * ffs: find first bit set. This is defined the same way as
  * the libc and compiler builtin ffs routines, therefore
  * differs in spirit from the above ffz (man ffs).
  */
-
 static inline int generic_ffs(int x)
 {
 	int r = 1;
@@ -41,7 +47,6 @@ static inline int generic_ffs(int x)
  * hweightN: returns the hamming weight (i.e. the number
  * of bits set) of a N-bit word
  */
-
 static inline unsigned int generic_hweight32(unsigned int w)
 {
 	unsigned int res = (w & 0x55555555) + ((w >> 1) & 0x55555555);
@@ -68,5 +73,6 @@ static inline unsigned int generic_hweight8(unsigned int w)
 
 #include <asm/bitops.h>
 
+#endif /* !__ASSEMBLY__ */
 
 #endif

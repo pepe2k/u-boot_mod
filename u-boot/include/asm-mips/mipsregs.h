@@ -174,6 +174,21 @@
 /*
  * Macros to access the system control coprocessor
  */
+#define __read_32bit_c0_register(source, sel)		\
+({ int __res;										\
+	if (sel == 0)									\
+		__asm__ __volatile__(						\
+			"mfc0\t%0, " #source "\n\t"				\
+			: "=r" (__res));						\
+	else											\
+		__asm__ __volatile__(						\
+			".set\tmips32\n\t"						\
+			"mfc0\t%0, " #source ", " #sel "\n\t"	\
+			".set\tmips0\n\t"						\
+			: "=r" (__res));						\
+	__res;											\
+})
+
 #define read_32bit_cp0_register(source)                         \
 ({ int __res;                                                   \
 	__asm__ __volatile__(                                   \
@@ -276,7 +291,7 @@
  * Mostly used to access the interrupt bits.
  */
 #define __BUILD_SET_CP0(name,register)                          \
-extern __inline__ unsigned int                                  \
+static __inline__ unsigned int                                  \
 set_cp0_##name(unsigned int set)				\
 {                                                               \
 	unsigned int res;                                       \
@@ -288,7 +303,7 @@ set_cp0_##name(unsigned int set)				\
 	return res;                                             \
 }								\
 								\
-extern __inline__ unsigned int                                  \
+static __inline__ unsigned int                                  \
 clear_cp0_##name(unsigned int clear)				\
 {                                                               \
 	unsigned int res;                                       \
@@ -300,7 +315,7 @@ clear_cp0_##name(unsigned int clear)				\
 	return res;                                             \
 }								\
 								\
-extern __inline__ unsigned int                                  \
+static __inline__ unsigned int                                  \
 change_cp0_##name(unsigned int change, unsigned int new)	\
 {                                                               \
 	unsigned int res;                                       \
@@ -543,5 +558,38 @@ __BUILD_SET_CP0(config,CP0_CONFIG)
 #define CEB_SUPERVISOR	4	/* Count events in supvervisor mode EXL = ERL = 0 */
 #define CEB_KERNEL	2	/* Count events in kernel mode EXL = ERL = 0 */
 #define CEB_EXL		1	/* Count events with EXL = 1, ERL = 0 */
+
+/*
+ * MIPS processor ID, based on:
+ * Linux/arch/mips/include/asm/cpu.h
+ */
+#define read_c0_prid()			__read_32bit_c0_register($15, 0)
+#define PRID_IMP_MASK			0xFF00
+
+#define PRID_IMP_QEMU_GENERIC	0x0000
+#define PRID_IMP_4KC			0x8000
+#define PRID_IMP_5KC			0x8100
+#define PRID_IMP_20KC			0x8200
+#define PRID_IMP_4KEC			0x8400
+#define PRID_IMP_4KSC			0x8600
+#define PRID_IMP_25KF			0x8800
+#define PRID_IMP_5KE			0x8900
+#define PRID_IMP_4KECR2			0x9000
+#define PRID_IMP_4KEMPR2		0x9100
+#define PRID_IMP_4KSD			0x9200
+#define PRID_IMP_24K			0x9300
+#define PRID_IMP_34K			0x9500
+#define PRID_IMP_24KE			0x9600
+#define PRID_IMP_74K			0x9700
+#define PRID_IMP_1004K			0x9900
+#define PRID_IMP_1074K			0x9a00
+#define PRID_IMP_M14KC			0x9c00
+#define PRID_IMP_M14KEC			0x9e00
+#define PRID_IMP_INTERAPTIV_UP	0xa000
+#define PRID_IMP_INTERAPTIV_MP	0xa100
+#define PRID_IMP_PROAPTIV_UP	0xa200
+#define PRID_IMP_PROAPTIV_MP	0xa300
+#define PRID_IMP_M5150			0xa700
+#define PRID_IMP_P5600			0xa800
 
 #endif /* _ASM_MIPSREGS_H */

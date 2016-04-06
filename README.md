@@ -12,6 +12,7 @@ Table of contents
 - [Modifications, changes](#modifications-changes)
 	- [Web server](#web-server)
 	- [Network Console](#network-console)
+	- [Writable environment variables](#writable-environment-variables)
 	- [Other](#other)
 	- [Supported FLASH chips](#supported-flash-chips)
 - [How to install it?](#how-to-install-it)
@@ -19,7 +20,7 @@ Table of contents
 	- [Using external programmer](#using-external-programmer)
 	- [Using UART, U-Boot console and TFTP server](#using-uart-u-boot-console-and-tftp-server)
 		- [Important notice!](#important-notice)
-		- [Step by step instruction](#step-by-step-instruction)
+		- [Step by step instructions](#step-by-step-instructions)
 	- [Using OpenWrt](#using-openwrt)
 	- [Using DD-WRT](#using-dd-wrt)
 - [How to use it?](#how-to-use-it)
@@ -31,16 +32,19 @@ Table of contents
 Introduction
 ------------
 
-In short, this project is a deep modification of **U-Boot 1.1.4** sources, mostly from **TP-Link**, but some code fragments were taken also from **D-Link**.
+In short, this project is a deep modification of **U-Boot 1.1.4** sources, mostly from **TP-Link**, but some code fragments were taken also from **D-Link**, **Netgear**, **ZyXEL** and **Belkin**. All these companies are using SDK from Qualcomm/Atheros which includes modified version of **U-Boot 1.1.4**.
 
 You can download original sources from the following pages:
 
 - [TP-Link GPL Code Center](http://www.tp-link.com/en/support/gpl/ "TP-Link GPL Code Center")
 - [D-Link GPL Source Code Support](http://tsd.dlink.com.tw/GPL.asp "D-Link GPL Source Code Support")
+- [NETGEAR Open Source Code for Programmers (GPL)](http://kb.netgear.com/app/answers/detail/a_id/2649/~/netgear-open-source-code-for-programmers-%28gpl%29 "NETGEAR Open Source Code for Programmers (GPL)")
+- [ZyXEL GPL-OSS](http://www.zyxel.com/us/en/form/gpl_oss_form.shtml "ZyXEL GPL-OSS")
+- [Belkin Open Source Code Center](http://www.belkin.com/us/support-article?articleNum=51238 "Belkin Open Source Code Center")
 
 The concept for this project came from another U-Boot modification, dedicated to a small and very popular TP-Link router - model **TL-WR703N**, which includes web fail safe mode: **[wr703n-uboot-with-web-failsafe](http://code.google.com/p/wr703n-uboot-with-web-failsafe/)**. I was using it and decided to make my own version, which could have some improvements, additional capabilities, support for different models and work with all modern web browsers.
 
-First version of this modification was introduced on **OpenWrt** forum in [this thread](https://forum.openwrt.org/viewtopic.php?id=43237), at the end of March 2013 and was dedicated only for TP-Link routers with **Atheros AR9331** SoC. Now, it supports also models from different manufacturers, devices with **Atheros AR934x** (like **TP-Link TL-WDR3600**, **TL-WDR43x0**, **TL-WR841N/D v8**, **TL-WA830RE v2**) and other (in the near future **Qualcomm Atheros QCA955x**) are under development.
+First version of this modification was introduced on **OpenWrt** forum in [this thread](https://forum.openwrt.org/viewtopic.php?id=43237), at the end of March 2013 and was dedicated only for TP-Link routers with **Atheros AR9331** SoC. Now, it supports also models from different manufacturers, devices with **Atheros AR934x**, **Qualcomm Atheros QCA953x**, **Qualcomm Atheros QCA955x** and other (in the near future **Qualcomm Atheros QCA956x** and **MediaTek MT762x**) are under development.
 
 You can find some information about previous versions of this project also on my [blog](http://www.tech-blog.pl), in [this article](http://www.tech-blog.pl/2013/03/29/zmodyfikowany-u-boot-dla-routerow-tp-link-z-atheros-ar9331-z-trybem-aktualizacji-oprogramowania-przez-www-i-konsola-sieciowa-netconsole/). It is in Polish, but [Google Translator](http://translate.google.com/translate?hl=pl&sl=pl&tl=en&u=http%3A%2F%2Fwww.tech-blog.pl%2F2013%2F03%2F29%2Fzmodyfikowany-u-boot-dla-routerow-tp-link-z-atheros-ar9331-z-trybem-aktualizacji-oprogramowania-przez-www-i-konsola-sieciowa-netconsole%2F&sandbox=1) will help you to understand it.
 
@@ -66,6 +70,7 @@ Currently supported devices:
   - Dragino 2 (MS14)
   - Village Telco Mesh Potato 2 (based on Dragino MS14)
   - GL.iNet 64xxA ([photos in my gallery](http://galeria.tech-blog.pl/GLiNet/))
+  - Black Swift
 
 - **Atheros AR1311 (similar to AR9331)**
   - D-Link DIR-505 H/W ver. A1 ([photos in my gallery](http://galeria.tech-blog.pl/D-Link_DIR-505/))
@@ -80,6 +85,11 @@ Currently supported devices:
   - TP-Link TL-WDR3600 v1
   - TP-Link TL-WDR43x0 v1
   - TP-Link TL-WDR3500 v1
+
+- **Qualcomm Atheros QCA953x**:
+  - TP-Link TL-WR841N/D v9
+  - TP-Link TL-WR820N (version for Chinese market)
+  - TP-Link TL-WR802N
 
 I tested this modification on most of these devices, with OpenWrt and OFW firmware. If you are not sure about the version of your device, please contact with me **before** you try to make an upgrade. Changing bootloader to a wrong version will probably damage your router and you will need special hardware to fix it, so please, **be very careful**.
 
@@ -101,6 +111,7 @@ More information about supported devices:
 | [Dragino 2 (MS14)](http://wiki.openwrt.org/toh/dragino/ms14) | AR9331 | 16 MiB | 64 MiB DDR1 | 192 KiB | R/W |
 | Village Telco Mesh Potato 2 | AR9331 | 16 MiB | 64 MiB DDR1 | 192 KiB | R/W |
 | [GL.iNet](http://wiki.openwrt.org/toh/gl-inet/gl-inet) | AR9331 | 8/16 MiB | 64 MiB DDR1 | 64 KiB | RO |
+| [Black Swift](http://www.black-swift.com) | AR9331 | 16 MiB | 64 MiB DDR2 | 128 KiB, LZMA | R/W |
 | [TP-Link TL-MR3420 v2](http://wikidevi.com/wiki/TP-LINK_TL-MR3420_v2) | AR9341 | 4 MiB | 32 MiB DDR1 | 64 KiB, LZMA | RO |
 | [TP-Link TL-WR841N/D v8](http://wiki.openwrt.org/toh/tp-link/tl-wr841nd) | AR9341 | 4 MiB | 32 MiB DDR1 | 64 KiB, LZMA | RO |
 | [TP-Link TL-WA830RE v2](http://wikidevi.com/wiki/TP-LINK_TL-WA830RE_v2) | AR9341 | 4 MiB | 32 MiB DDR1 | 64 KiB, LZMA | RO |
@@ -109,6 +120,9 @@ More information about supported devices:
 | [TP-Link TL-WDR43x0 v1](http://wiki.openwrt.org/toh/tp-link/tl-wdr4300) | AR9344 | 8 MiB | 128 MiB DDR2 | 64 KiB, LZMA | RO |
 | [TP-Link TL-WDR3500 v1](http://wiki.openwrt.org/toh/tp-link/tl-wdr3500) | AR9344 | 8 MiB | 128 MiB DDR2 | 64 KiB, LZMA | RO |
 | [D-Link DIR-505 H/W ver. A1](http://wiki.openwrt.org/toh/d-link/dir-505) | AR1311 | 8 MiB | 64 MiB DDR2 | 64 KiB, LZMA | RO |
+| [TP-Link TL-WR841N/D v9](https://wiki.openwrt.org/toh/tp-link/tl-wr841nd) | QCA9533 | 4 MiB | 32 MiB DDR1 | 64 KiB, LZMA | RO |
+| [TP-Link TL-WR820N](https://wiki.openwrt.org/toh/tp-link/tl-wr820n) | QCA9531 | 4 MiB | 64 MiB DDR2 | 64 KiB, LZMA | RO |
+| [TP-Link TL-WR802N](https://wikidevi.com/wiki/TP-LINK_TL-WR802N_v1.0) | QCA9533 | 4 MiB | 32 MiB DDR1 | 64 KiB, LZMA | RO |
 
 *(LZMA) - U-Boot binary image is compressed with LZMA.*  
 *(R/W) - environment exists in separate FLASH block which allows you to save it and keep after power down.*
@@ -124,7 +138,7 @@ Modifications, changes
 
 ### Web server
 
-The most important change is an inclusion of a web server, based on **[uIP 0.9 TCP/IP stack](http://www.gaisler.com/doc/net/uip-0.9/doc/html/main.html)**. It allows to upgrade **firmware**, **U-Boot** and **ART** (Atheros Radio Test) images, directly from your web browser, without need to access serial console and running a TFTP server. You can find similar firmware recovery mode, also based on uIP 0.9 TCP/IP stack, in **D-Link** routers.
+The most important change is an inclusion of a web server, based on **[uIP 0.9 TCP/IP stack](https://github.com/adamdunkels/uip/tags)**. It allows to upgrade **firmware**, **U-Boot** and **ART** (Atheros Radio Test) images, directly from your web browser, without need to access serial console and running a TFTP server. You can find similar firmware recovery mode, also based on uIP 0.9 TCP/IP stack, in **D-Link** routers.
 
 Web server contains 7 pages:
 
@@ -136,7 +150,12 @@ Web server contains 7 pages:
 6. fail.html
 7. style.css
 
-![](http://www.tech-blog.pl/wordpress/wp-content/uploads/2013/08/uboot_mod_firmware_upgrade.jpg)
+![](http://www.tech-blog.pl/wordpress/wp-content/uploads/2015/11/uboot_mod_firmware_upgrade.jpg)
+
+![](http://www.tech-blog.pl/wordpress/wp-content/uploads/2015/11/uboot_mod_firmware_upgrade_progress.jpg)
+
+![](http://www.tech-blog.pl/wordpress/wp-content/uploads/2015/11/uboot_mod_uboot_upgrade.jpg)
+
 
 ### Network Console
 
@@ -149,6 +168,93 @@ You could also use netcat instead of Hercules utility on Mac/Linux:
 # nc -u -p 6666 192.168.1.1 6666
 ```
 
+### Writable environment variables
+
+U-Boot uses special "**environment variables**" which are used for storing values of many different settings, like IP addresses of device and remote server for TFTP transaction, serial console baud rate, boot command, etc. Environment is usually stored in separate FLASH sector or its part, so all changes can be saved permanently.
+
+None of the popular manufacturers provides this feature and use so called "**read-only environment**" (embedded in U-Boot image), which means that all changes made during a runtime will be lost after device restart and there is no way to store them in FLASH.
+
+This modification uses writable environment variables in almost all supported devices, so you can do for example:
+
+```
+uboot> setenv ipaddr 192.168.1.100
+uboot> saveenv
+Saving environment to FLASH...
+
+Erase FLASH from 0x9F010000 to 0x9F01FFFF in bank #1
+Erasing: #
+
+Erased sectors: 1
+
+Writting at address: 0x9F010000
+
+uboot> reset
+```
+
+Which will change device IP address and save updated environment variables in FLASH. From next power up, the device will use new value for its IP address.
+
+Using command **run** and writable environment variables you are able to write custom, small scripts like below example, used for firmware upgrade using TFTP method:
+
+```
+uboot> printenv
+[...]
+firmware_addr=0x9F020000
+firmware_name=firmware.bin
+firmware_upg=if ping $serverip; then tftp $loadaddr $firmware_name && erase $firmware_addr +$filesize && cp.b $loadaddr $firmware_addr $filesize && echo OK!; else echo ERROR! Server not reachable!; fi
+[...]
+
+uboot> run firmware_upg
+Ethernet mode (duplex/speed): 1/100 Mbps
+Using eth0 device
+
+Ping OK, host 192.168.1.2 is alive!
+
+
+TFTP from IP: 192.168.1.2
+      Our IP: 192.168.1.1
+    Filename: 'firmware.bin'
+Load address: 0x80800000
+       Using: eth0
+
+     Loading: ########################################
+              ########################################
+              ########################################
+              ########################################
+              ########################################
+              ########################################
+              ########################################
+              ########################################
+              ########################################
+              ########################################
+              ########################################
+              ########################################
+              ########################################
+              ########################################
+              ########################################
+              ########################################
+              ########################################
+              ########################################
+              ########################################
+              #########
+
+TFTP transfer complete!
+
+Bytes transferred: 3932160 (0x3c0000)
+Erase FLASH from 0x9F020000 to 0x9F3DFFFF in bank #1
+Erasing: #######################################
+         #####################
+
+Erased sectors: 60
+
+Copying to FLASH...
+Writting at address: 0x9F020000
+
+Done!
+
+OK!
+uboot>
+```
+
 ### Other
 
 Moreover:
@@ -158,19 +264,23 @@ Moreover:
 - FLASH chip is automatically recognized (using JEDEC ID)
 - Ethernet MAC is set from FLASH (no more "No valid address in FLASH. Using fixed address")
 - Automatic kernel booting can be interrupted using any key
+- Better UART serial console driver with support for different baud rates
 - Press and hold reset button to run:
   - Web server (min. 3 seconds)
   - U-Boot serial console (min. 5 seconds)
   - U-Boot network console (min. 7 seconds)
 - Additional commands (in comparison to the default version; availability depends on router model):
+  -  defenv
   -  httpd
+  -  itest
+  -  loadb
+  -  loady
   -  printmac
   -  setmac
   -  printmodel
   -  printpin
   -  startnc
   -  startsc
-  -  eraseenv
   -  ping
   -  dhcp
   -  sntp
@@ -181,7 +291,7 @@ Moreover:
 
 FLASH type detection may be very useful for people who has exchanged the FLASH chip in their routers. You will not need to recompile U-Boot sources, to have access to overall FLASH space in U-Boot console.
 
-If you use FLASH type which is not listed below, this version of U-Boot will use default size for your router and, in most supported models, updating the ART image will not be available.
+If you use FLASH type which is not listed below, this version of U-Boot will try to get information about the chip using **Serial Flash Discoverable Parameter** (**SFDP**, more information: https://www.jedec.org/standards-documents/docs/jesd216b) standard. If your chip does not support SFDP, it will use default size for your router and, in most supported models, updating the ART image will not be available.
 
 Currently supported FLASH types:
 
@@ -209,6 +319,7 @@ Currently supported FLASH types:
 - Winbond W25Q128 (16 MB, JEDEC ID: EF 4018)*
 - Macronix MX25L128 (16 MB, JEDEC ID: C2 2018, C2 2618)
 - Spansion S25FL127S (16 MB, JEDEC ID: 01 2018)*
+- Micron N25Q128 (16 MB, JEDEC ID: 20 BA18)
 
 (*) tested
 
@@ -240,7 +351,7 @@ mtd4: 00010000 00010000 "art"
 mtd5: 00fd0000 00010000 "firmware"
 ```
 
-As you can see, `u-boot` partition size is **0x20000** (128 KiB) and my image for this model has size of **0x10000** (64 KiB) - it is a very important difference! You should remember about this if you want to use `mtd` utility, to change U-Boot.
+As you can see, `u-boot` partition size is **0x20000** (128 KiB) and my image for this model has smaller size: **0x1EC00** (123 KiB) - it is a very important difference! You should remember about this if you want to use `mtd` utility or serial console and U-Boot command line, to change the bootloader.
 
 To backup `u-boot` partition in RAM, run:
 
@@ -254,7 +365,11 @@ And then connect to your router using `SCP protocol` and download from `/tmp` th
 
 If you have an external FLASH programmer (all supported devices have **SPI NOR FLASH** chips), you probably know how to use it. Download package with prebuilt images or compile the code, choose right file for your device and put it on FLASH at the beginning (offset `0x00000`). Remember to first erase block(s) - with high probability, if you use some kind of automatic mode, the programmer will do it for you.
 
-All prebuilt images are padded with 0xFF, so their size will always be a **multiple of 64 KiB block** and they will not be bigger than the original versions. For example, **TP-Link** uses only first **64 KiB** block to store compressed U-Boot image (in most of their modern devices). In the second 64 KiB block they store additional information like MAC address, model number and WPS pin number.
+All prebuilt images are padded with 0xFF and since change "**![Extend maximum U-Boot image size up to 123 KB](https://github.com/pepe2k/u-boot_mod/commit/7829f50c0e92024fde613cb01e65cbdeae1f126b)**", in most supported devices, **their size is no longer a multiple of 64 KiB block**. For example, **TP-Link** uses only first **64 KiB** block to store compressed U-Boot image (in most of their modern devices). In the second 64 KiB block they store additional information like MAC address, model number and WPS pin number. This modification will use both sectors for U-Boot image and also other data, including small block for writable environment variables.
+
+Below image with beginning part of FLASH memory map for TP-Link TL-MR3020 shows differences between stock version and this modification.
+
+![](http://www.tech-blog.pl/wordpress/wp-content/uploads/2016/03/mr3020_u-boot-modification_flash-map_comparison.png)
 
 On the other hand, U-Boot image in **Carambola 2** from **8devices** may have up to **256 KiB** (4x 64 KiB block), they use uncompressed version and environment stored in FLASH. Immediately after the Carambola 2 U-Boot partition is an area which contains U-Boot environment variables (1x 64 KiB block), called `u-boot-env`:
 
@@ -271,6 +386,8 @@ mtd6: 00010000 00010000 "art"
 
 ### Using UART, U-Boot console and TFTP server
 
+**WARNING! This method is highly not recommended!**
+
 It is probably the most common method to change firmware in case of any problems. Main disadvantage of this approach is the need to connect with device using a serial port (this does not apply to Carambola 2 with development board, which already has a built-in USB-UART adapter, based on FTDI FT232RQ).
 
 #### Important notice!
@@ -281,7 +398,7 @@ Please, **do not** connect any RS232 +/- 12 V cable or any adapter without logic
 
 For a long time I have been using without any problems a small and very cheap (about 1-2 USD) **CP2102** based adapter. Go to [Serial Console article in OpenWrt Wiki](http://wiki.openwrt.org/doc/hardware/port.serial) for more, detailed information.
 
-#### Step by step instruction
+#### Step by step instructions
 
 1. Install and configure any **TFTP server** on your PC (on Windows, you can use [TFTP32](http://tftpd32.jounin.net)).
 
@@ -315,48 +432,60 @@ Configure adapter to use the following settings:
   serverip=192.168.1.2
   ```
 
-7. Download and store in RAM proper image for your router, using `tftpboot` command in U-Boot console (in this example, for **TP-Link TL-MR3020**):
+7. Due to differences in FLASH memory map and sizes of original and modified version of U-Boot, you must first make a backup of the partition with original version in RAM. **If you skip this step or make a mistake, your device will be probably broken!**
+
+  This step is different between supported models, so you should pay attention to the size of image with modified version of U-Boot, **round it to the nearest multiple of 64 KiB** and use this value in all next steps.
+
+  For example, if image of the modified version is **123 KiB** (**0x1EC00**) you must first make a backup of **128 KiB** (**0x20000**) in RAM, at the same address where you are going to download the image:
 
   ```
-  tftpboot 0x80800000 uboot_for_tp-link_tl-mr3020.bin
+  hornet> cp.b 0x9F000000 0x80800000 0x20000
+  ```
 
+  Using the same offset address in RAM for backup and new image will end up with combination of both images and preserve additional data like MAC address, model number and PIN.
+
+8. Download and store in RAM proper image for your router, using `tftpboot` command in U-Boot console (in this example, for **TP-Link TL-MR3020**):
+
+  ```
+  hornet> tftpboot 0x80800000 uboot_for_tp-link_tl-mr3020.bin
   eth1 link down
   Using eth0 device
   TFTP from server 192.168.1.2; our IP address is 192.168.1.1
   Filename 'uboot_for_tp-link_tl-mr3020.bin'.
   Load address: 0x80800000
-  Loading: #############
+  Loading: #########################
   done
-  Bytes transferred = 65536 (10000 hex)
+  Bytes transferred = 125952 (1ec00 hex)
+
   hornet>
   ```
 
-8. Next step is very risky! You are going to delete existing U-Boot image from FLASH in your device and copy from RAM the new one. If something goes wrong (for example, a power failure), your router, without bootloader, will not boot again!
+9. Next step is very risky! You are going to delete existing U-Boot image from FLASH in your device and copy from RAM the new one. If something goes wrong (for example, a power failure), your router, without bootloader, will not boot again!
 
-  You should also note the size of downloaded image. For supported **TP-Link** and **D-Link** routers it will be always **0x10000** (64 KiB), but for Carambola 2 image size is different: **0x40000** (256 KiB). In all cases, the start address of FLASH is **0x9F000000** and for RAM: **0x80000000** (as you may noticed, I did not use start address of RAM to store image and you should follow this approach).
+  You should also note the size of image and use value from step 7. In all cases, the start address of FLASH is **0x9F000000** and for RAM: **0x80000000** (as you may noticed, I did not use start address of RAM to store image and you should follow this approach).
 
   Please, do not make any mistake with offsets and sizes during next steps!
 
-9. Erase appropriate FLASH space for new U-Boot image (this command will remove default U-Boot image!):
+10. Erase appropriate FLASH space for new U-Boot image (this command will remove default U-Boot image!):
 
   ```
-  hornet> erase 0x9F000000 +0x10000   
+  hornet> erase 0x9F000000 +0x20000
 
-  First 0x0 last 0x0 sector size 0x10000
-  0
-  Erased 1 sectors
+  First 0x0 last 0x1 sector size 0x10000
+  Erased 2 sectors
+  hornet>
   ```
 
-10. Now your router does not have U-Boot, so do not wait and copy to FLASH the new one, stored earlier in RAM:
+11. Now your router does not have U-Boot, so do not wait and copy to FLASH the new one, stored earlier in RAM:
 
   ```
-  hornet> cp.b 0x80800000 0x9F000000 0x10000   
+  hornet> cp.b 0x80800000 0x9F000000 0x20000
 
   Copy to Flash... write addr: 9f000000
   done
   ```
 
-11. If you want, you can check content of the newly written FLASH and compare it to the image on your PC (or better also do such a "legit memory content" comparison prior to writing!), using `md` command in U-Boot console, which prints indicated memory area (press only ENTER after first execution of this command to move further in memory):
+12. If you want, you can check content of the newly written FLASH and compare it to the image on your PC (or better also do such a "legit memory content" comparison prior to writing!), using `md` command in U-Boot console, which prints indicated memory area (press only ENTER after first execution of this command to move further in memory):
 
   ```
   hornet> md 0x9F000000
@@ -379,7 +508,7 @@ Configure adapter to use the following settings:
   9f0000f0: 100001ea 00000000 100001e8 00000000    ................
   ```
 
-12. If you are sure that everything went OK, you may reset the board:
+12. If you are sure that everything went OK, you may reset the board using below command or just reset power:
 
   ```
   hornet> reset
@@ -387,100 +516,122 @@ Configure adapter to use the following settings:
 
 ### Using OpenWrt
 
-1. Compile and flash OpenWrt with an unlocked U-Boot partition.
-  - This is done by removing the `MTD_WRITEABLE` from the `mask_flags` of the `u-boot` partition.
-  - To put it simply, for TP-Link products, just remove [this line](https://dev.openwrt.org/browser/trunk/target/linux/ar71xx/files/drivers/mtd/tplinkpart.c?rev=41580#L152), compile and flash the image as usual. 
-2. Find out which mtd partition is the `u-boot` partition:
+**This method is recommended!**
+
+Starting from official release "**[2014-11-19](https://github.com/pepe2k/u-boot_mod/releases/tag/2014-11-19)**", you will find ready **OpenWrt** images, with unlocked `u-boot` partition, embedded U-Boot image and dedicated small script for easy update process inside release tarball. All you need to do is download last release, select proper OpenWrt image for your device, install it and invoke one command: `u-boot-upgrade`:
+
+```
+root@OpenWrt:/# u-boot-upgrade
+
+=================================================================
+     DISCLAIMER: you are using this script at your own risk!
+
+     The author of U-Boot modification and this script takes
+     no responsibility for any of the results of using them.
+
+          Updating U-Boot is a very dangerous operation
+        and may damage your device! You have been warned!
+=================================================================
+   Are you sure you want to continue (type 'yes' or 'no')? yes
+=================================================================
+
+[ ok ] Found U-Boot image file: uboot_for_tp-link_tl-mr3020.bin
+       Do you want to use this file (type 'yes' or 'no')? yes
+[ ok ] MD5 checksum of new U-Boot image file is correct
+[ ok ] Backup of /dev/mtd0 successfully created
+       Do you want to store backup in /etc/u-boot_mod/backup/ (recommended, type 'yes' or 'no')? no
+[ ok ] New U-Boot image successfully combined with backup file
+[info] New U-Boot image is ready to be written into FLASH
+       Are you sure you want to continue (type 'yes' or 'no')? yes
+[ ok ] New U-Boot image successfully written info FLASH
+[ ok ] MD5 checksum of mtd0 and new U-Boot image are equal
+[info] Done!
+```
+
+### Using DD-WRT
+
+**WARNING! This method is not recommended!**
+
+1. Login into the router using telnet or SSH and find out which of the mtd partitions is the first one. In DD-WRT it is usally called `RedBoot`:
 
   ```
-  root@OpenWrt:/tmp/uboot-work# cat /proc/mtd
+  root@DD-WRT:~# cat /proc/mtd
   dev:    size   erasesize  name
-  mtd0: 00020000 00010000 "u-boot"
-  mtd1: 000feba0 00010000 "kernel"
-  mtd2: 002d1460 00010000 "rootfs"
-  mtd3: 00100000 00010000 "rootfs_data"
-  mtd4: 00010000 00010000 "art"
-  mtd5: 003d0000 00010000 "firmware"
+  mtd0: 00020000 00010000 "RedBoot"
+  mtd1: 003c0000 00010000 "linux"
+  mtd2: 002c0000 00010000 "rootfs"
+  mtd3: 00010000 00010000 "ddwrt"
+  mtd4: 00010000 00010000 "nvram"
+  mtd5: 00010000 00010000 "board_config"
+  mtd6: 00400000 00010000 "fullflash"
+  mtd7: 00020000 00010000 "fullboot"
   ```
 
-3. Transfer the new U-Boot image to the device:
+  In this case, for **TP-Link TL-MR3020**, the `RedBoot` partition is the one, which contains U-Boot and additional data (MAC address, model number, PIN).
+
+  **Warning!** If size of the first partition is smaller than the size of the modified U-Boot image, you should not continue!
+
+2. Using SCP or other method, transfer the new U-Boot image and corresponding MD5 file to the `/tmp` folder in device.
 
   ```
-  me@laptop:~# scp uboot_for_tp-link_tl-mr3220_v2.bin root@192.168.1.1:/tmp/
-  uboot_for_tp-link_tl-mr3220_v2.bin            100%   64KB  64.0KB/s   00:00
+  root@DD-WRT:/tmp# ls -la
+  [...]
+  -rw-r--r--    1 root     root        125952 Nov  5  2015 uboot_for_tp-link_tl-mr3020.bin
+  -rw-r--r--    1 root     root            66 Nov  5  2015 uboot_for_tp-link_tl-mr3020.md5
+  [...]
   ```
 
-4. Verify the MD5 sum of the image:
+3. Verify the MD5 sum of the image:
 
   ```
-  me@laptop:~# md5sum uboot_for_tp-link_tl-mr3220_v2.bin
-  cefad12aa9fbd04291652dae3eb7650c  uboot_for_tp-link_tl-mr3220_v2.bin
+  root@DD-WRT:/tmp# md5sum uboot_for_tp-link_tl-mr3020.bin
+  aaae0f772ce007f7d1542b9233dd765b  uboot_for_tp-link_tl-mr3020.bin
 
-  root@OpenWrt:/tmp# md5sum uboot_for_tp-link_tl-mr3220_v2.bin
-  cefad12aa9fbd04291652dae3eb7650c  uboot_for_tp-link_tl-mr3220_v2.bin
+  root@DD-WRT:/tmp# cat uboot_for_tp-link_tl-mr3020.md5
+  aaae0f772ce007f7d1542b9233dd765b *uboot_for_tp-link_tl-mr3020.bin
   ```
 
-5. Take a backup of the current u-boot partition (`mtd0`):
+4. Make a backup of the current `RedBoot` partition (`mtd0`):
 
   ```
-  root@OpenWrt:/tmp# dd if=/dev/mtd0 of=uboot_orig.bin
+  root@DD-WRT:/tmp# dd if=/dev/mtd0 of=uboot_factory.bin
   256+0 records in
   256+0 records out
   ```
 
-6. Transfer the backup off the device and to a safe place:
+5. Using SCP or other method, transfer backuped `RedBoot` original partition to some safe place (I highly recommended you to save backup somewhere!).
+
+6. You need to combine together original image and the one with U-Boot modification, but it seems that `dd` from DD-WRT does not support `conv=notrunc`, so we will use different approach:
 
   ```
-  me@laptop:~# scp root@192.168.1.1:/tmp/uboot_orig.bin .
-  uboot_orig.bin                                100%  128KB 128.0KB/s   00:00
+  root@DD-WRT:/tmp# dd if=uboot_factory.bin of=uboot_rest.bin bs=1 skip=$(wc -c < uboot_for_tp-link_tl-mr3020.bin)
+  5120+0 records in
+  5120+0 records out
+
+  root@DD-WRT:/tmp# cat uboot_for_tp-link_tl-mr3020.bin uboot_rest.bin > uboot_new.bin
   ```
 
-7. **Beware**: This step may differ for other devices. I'm using TP-Link TL-MR3220v2 and it uses the first 64 KiB block to store compressed U-Boot image. In the second 64 KiB block they store additional information like MAC address, model number and WPS pin number. This means the old backup is bigger than the new one we're going to flash. To store the old settings we're going to modify only the compressed U-Boot image and leave the additional information intact. To do that, take a copy of the original file, and copy the new image over it without truncating the leftover bytes:
+7. **Danger**: This is the point of no return, if you have any errors or problems, please revert the original image at any time using:
 
   ```
-  root@OpenWrt:/tmp# cp uboot_orig.bin uboot_new.bin
-  root@OpenWrt:/tmp# dd if=uboot_for_tp-link_tl-mr3220_v2.bin of=uboot_new.bin conv=notrunc
-  128+0 records in
-  128+0 records out
+  root@DD-WRT:/tmp# mtd write uboot_factory.bin "RedBoot"
+  Unlocking RedBoot ...
+  Writing from uboot_orig.bin to RedBoot ...
   ```
 
-9. **Danger**: This is the point of no return, if you have any errors or problems, please revert the original image at any time using:
+8. Now, to actually flash the new image, run:
 
   ```
-  root@OpenWrt:/tmp# mtd write uboot_orig.bin "u-boot"
-  Unlocking u-boot ...
-
-  Writing from uboot_orig.bin to u-boot ...
+  root@DD-WRT:/tmp# mtd write uboot_new.bin "RedBoot"
+  Unlocking RedBoot ...
+  Writing from uboot_new.bin to RedBoot ...
   ```
 
-10. Now, to actually flash the new image, run:
+9. If you are sure that everything went OK, you may reboot the device:
 
   ```
-  root@OpenWrt:/tmp# mtd write uboot_new.bin "u-boot"
-  Unlocking u-boot ...
-
-  Writing from uboot_new.bin to u-boot ...
+  root@DD-WRT:/tmp# reboot
   ```
-
-11. To verify that the image was flashed correctly, you should verify it:
-
-  ```
-  root@OpenWrt:/tmp# mtd verify uboot_new.bin "u-boot"
-  Verifying u-boot against uboot_new.bin ...
-  a80c3a8683345a3fb311555c5d4194c5 - u-boot
-  a80c3a8683345a3fb311555c5d4194c5 - uboot_new.bin
-  Success
-  ```
-
-12. To restart with the new bootloader, reboot the router:
-
-  ```
-  root@OpenWrt:/tmp# reboot
-  ```
-
-### Using DD-WRT
-
-[TODO]
 
 How to use it?
 --------------
@@ -492,12 +643,12 @@ How to compile the code?
 
 You can use one of the free toolchains:
 
-- [Sourcery CodeBench Lite Edition for MIPS GNU/Linux](https://sourcery.mentor.com/GNUToolchain/subscription3130?lite=MIPS),
-- [OpenWrt Toolchain for AR71xx MIPS](http://downloads.openwrt.org/attitude_adjustment/12.09/ar71xx/generic/OpenWrt-Toolchain-ar71xx-for-mips_r2-gcc-4.6-linaro_uClibc-0.9.33.2.tar.bz2),
+- [OpenWrt Toolchain for AR71xx MIPS](https://downloads.openwrt.org/snapshots/trunk/ar71xx/generic/OpenWrt-Toolchain-ar71xx-generic_gcc-5.3.0_musl-1.1.14.Linux-x86_64.tar.bz2),
+- ~~[Sourcery CodeBench Lite Edition for MIPS GNU/Linux](https://sourcery.mentor.com/GNUToolchain/subscription3130?lite=MIPS)~~,
 - [ELDK (Embedded Linux Development Kit)](ftp://ftp.denx.de/pub/eldk/),
 - or any others...
 
-I am using **Sourcery CodeBench Lite Edition for MIPS GNU/Linux** on **Ubuntu 12.04 LTS** (32-bit, virtual machine) and all released binary images were/will be built using this set.
+I am using **OpenWrt Toolchain for AR71xx MIPS** (32-bit, virtual machine) and all released binary images were/will be built using this set.
 
 All you need to do, after choosing a toolchain, is to modify [Makefile](Makefile) - change or remove `export MAKECMD` and if needed add `export PATH`. For example, to use OpenWrt Toolchain instead of Sourcery CodeBench Lite, download it and extract into `toolchain` folder, inside the top dir and change first lines in [Makefile](Makefile):
 
@@ -542,7 +693,7 @@ FAQ
 
 #### 5. My device does not boot after upgrade!
 
-*I told you... bootloader, in this case U-Boot, is the most important piece of code inside your device. It is responsible for hardware initialization and booting an OS (kernel in this case), i.e. it's the bridge head for delegating to / flashing kernel and rootfs images. So, if during the upgrade something went wrong, your device will not boot any more. The only way to recover from such a situation in a mild way is via a JTAG adapter connection. In case of a lack of JTAG connection, you would even need to remove the FLASH chip, load proper image using an external programmer and solder it back.*
+*I told you... bootloader, in this case U-Boot, is the most important piece of code inside your device. It is responsible for hardware initialization and booting an OS (kernel in this case), i.e. it is the bridge head for delegating to / flashing kernel and rootfs images. So, if during the upgrade something went wrong, your device will not boot any more. The only way to recover from such a situation in a mild way is via a JTAG adapter connection. In case of a lack of JTAG connection, you would even need to remove the FLASH chip, load proper image using an external programmer and solder it back.*
 
 License, outdated sources etc.
 ------------------------------
@@ -554,5 +705,7 @@ You should know, that most routers, especially those based on Atheros SoCs, uses
 Credits
 -------
 
+- Thanks to M-K O'Connell for donating a router with QCA9563
+- Thanks to Krzysztof M. for donating a TL-WDR3600 router
 - Thanks to *pupie* from OpenWrt forum for his great help
 - Thanks for all donators and for users who contributed in code development

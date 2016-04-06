@@ -24,15 +24,11 @@
 #include <common.h>
 #include <command.h>
 #include <image.h>
-#include <zlib.h>
 #include <asm/byteorder.h>
 #include <asm/addrspace.h>
+#include <ar7240_soc.h>
 
 //#define DEBUG
-
-#ifdef CONFIG_AR7240
-#include <ar7240_soc.h>
-#endif
 
 DECLARE_GLOBAL_DATA_PTR;
 
@@ -69,21 +65,13 @@ void wasp_set_cca(void){
 
 void do_bootm_linux(cmd_tbl_t * cmdtp, int flag, int argc, char *argv[]){
 	//ulong initrd_start = 0, initrd_end = 0;
-#if defined(CONFIG_AR7100) || defined(CONFIG_AR7240)
 	int flash_size_mbytes;
 	void(*theKernel)(int, char **, char **, int);
-#else
-	void(*theKernel)(int, char **, char **, int *);
-#endif
 	image_header_t *hdr = &header;
 	char *commandline = getenv("bootargs");
 	char env_buf[12];
 
-#if defined(CONFIG_AR7100) || defined(CONFIG_AR7240)
 	theKernel = (void (*)(int, char **, char **, int))ntohl(hdr->ih_ep);
-#else
-	theKernel = (void (*)(int, char **, char **, int *))ntohl(hdr->ih_ep);
-#endif
 
 #ifdef DEBUG
 	printf("## Bootargs: %s\n", commandline);
@@ -124,13 +112,9 @@ void do_bootm_linux(cmd_tbl_t * cmdtp, int flag, int argc, char *argv[]){
 	ar7240_reg_wr(AR7240_GPIO_FUNC, (ar7240_reg_rd(AR7240_GPIO_FUNC) | 0x88));
 #endif
 
-#if defined(CONFIG_AR7100) || defined(CONFIG_AR7240)
 	// Pass the flash size as expected by current Linux kernel for AR7100
 	flash_size_mbytes = gd->bd->bi_flashsize/(1024 * 1024);
 	theKernel(linux_argc, linux_argv, linux_env, flash_size_mbytes);
-#else
-	theKernel(linux_argc, linux_argv, linux_env, 0);
-#endif
 }
 
 static void linux_params_init(ulong start, char *line){
@@ -172,18 +156,6 @@ static void linux_params_init(ulong start, char *line){
 		linux_argv[linux_argc] = argp;
 		memcpy(argp, line, next - line);
 		argp[next - line] = 0;
-#if defined(CONFIG_AR7240)
-#define REVSTR	"REVISIONID"
-#define PYTHON	"python"
-#define VIRIAN	"virian"
-		if(strcmp(argp, REVSTR) == 0){
-			if(is_ar7241() || is_ar7242()){
-				strcpy(argp, VIRIAN);
-			} else {
-				strcpy(argp, PYTHON);
-			}
-		}
-#endif
 
 		argp += next - line + 1;
 		linux_argc++;
@@ -195,7 +167,6 @@ static void linux_params_init(ulong start, char *line){
 		line = next;
 	}
 
-#if defined(CONFIG_AR9100) || defined(CONFIG_AR7240)
 	/* Add mem size to command line */
 	if(memstr[0]){
 		sprintf(memstr, "mem=%luM", gd->ram_size >> 20);
@@ -204,7 +175,6 @@ static void linux_params_init(ulong start, char *line){
 		linux_argc++;
 		argp += strlen(memstr) + 1;
 	}
-#endif
 
 	linux_env = (char **)(((ulong)argp + 15) & ~15);
 	linux_env[0] = 0;

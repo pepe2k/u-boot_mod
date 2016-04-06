@@ -24,6 +24,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <tinf.h>
 
 #ifndef __ASSEMBLY__
 #define	__ASSEMBLY__			/* Dirty trick to get only #defines	*/
@@ -66,8 +67,6 @@
 #define ENV_SIZE (CFG_ENV_SIZE - ENV_HEADER_SIZE)
 
 
-extern unsigned long crc32 (unsigned long, const unsigned char *, unsigned int);
-
 #ifdef	ENV_IS_EMBEDDED
 extern unsigned int env_size;
 extern unsigned char environment;
@@ -81,7 +80,7 @@ int main (int argc, char **argv)
 		*dataptr = envptr + ENV_HEADER_SIZE;
 	unsigned int datasize = ENV_SIZE;
 
-	crc = crc32 (0, dataptr, datasize);
+	crc = tinf_crc32 (dataptr, datasize);
 
 	/* Check if verbose mode is activated passing a parameter to the program */
 	if (argc > 1) {

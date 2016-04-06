@@ -58,6 +58,7 @@ static char tab_seq[] = "        "; /* used to expand TABs	*/
  */
 #if defined(CONFIG_BOOTDELAY) && (CONFIG_BOOTDELAY >= 0)
 static __inline__ int abortboot(int bootdelay){
+	char stopc;
 	int abort = 0;
 
 #ifdef CONFIG_SILENT_CONSOLE
@@ -82,16 +83,19 @@ static __inline__ int abortboot(int bootdelay){
 
 			/* delay 100 * 10ms */
 			for(i = 0; !abort && i < 100; ++i){
-
 				/* we got a key press	*/
 				if(tstc()){
-					/* don't auto boot	*/
-					abort = 1;
-					/* no more delay	*/
-					bootdelay = 0;
-					/* consume input	*/
-					(void) getc();
-					break;
+					stopc = getc();
+#ifdef CONFIG_AUTOBOOT_STOP_CHAR
+					if (stopc == CONFIG_AUTOBOOT_STOP_CHAR) {
+#else
+					if (stopc != 0) {
+#endif
+						abort = 1;
+						bootdelay = 0;
+
+						break;
+					}
 				}
 				udelay(10000);
 			}

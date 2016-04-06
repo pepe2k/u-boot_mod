@@ -1,51 +1,35 @@
 /*
- *  Startup Code for MIPS32 CPU-core
+ * Startup Code for MIPS32 CPU-core
  *
- *  Copyright (c) 2003	Wolfgang Denk <wd@denx.de>
+ * Copyright (C) 2015 Piotr Dymacz <piotr@dymacz.pl>
+ * Copyright (C) 2013 Qualcomm Atheros, Inc.
+ * Copyright (C) 2003 Wolfgang Denk, DENX Software Engineering, <wd@denx.de>
  *
- * See file CREDITS for list of people who contributed to this
- * project.
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License as
- * published by the Free Software Foundation; either version 2 of
- * the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
- * MA 02111-1307 USA
+ * SPDX-License-Identifier:GPL-2.0
  */
-
 
 #include <config.h>
 #include <version.h>
 #include <asm/regdef.h>
 #include <asm/mipsregs.h>
 #include <asm/addrspace.h>
-#include <ar7240_soc.h>
+#include <soc/qca_soc_common.h>
 
-#define AR7100_SPI_CLOCK  0x1F000004
+#define RVECENT(f,n)	\
+	b f; nop
 
-#define RVECENT(f,n) \
-   b f; nop
-
-#define XVECENT(f,bev) \
-   b f     ;           \
-   li k0,bev
+#define XVECENT(f,bev)	\
+	b f;				\
+	li k0, bev
 
 	.set noreorder
 
 	.globl _start_bootstrap
 	.text
+
 _start_bootstrap:
-	RVECENT(reset,0)	/* U-boot entry point */
-	RVECENT(reset,1)	/* software reboot */
+	RVECENT(reset,0)			/* U-boot entry point */
+	RVECENT(reset,1)			/* Software reboot */
 	RVECENT(romReserved,2)
 	RVECENT(romReserved,3)
 	RVECENT(romReserved,4)
@@ -173,481 +157,146 @@ _start_bootstrap:
 	RVECENT(romReserved,126)
 	RVECENT(romReserved,127)
 
-	/* We hope there are no more reserved vectors!
+	/*
+	 * We hope there are no more reserved vectors!
 	 * 128 * 8 == 1024 == 0x400
 	 * so this is address R_VEC+0x400 == 0xbfc00400
 	 */
+
 	.align 4
 reset:
-
-#if defined(CONFIG_WASP_SUPPORT)
-
-	// Disable JTAG (bit 1 set) and ALL clock observation (bit 2~9 reset)
-	li  a1, AR934X_GPIO_FUNCTION
-	li  v1, 0x2
-	sw  v1, 0(a1)
-
-#if defined(CONFIG_FOR_TPLINK_WDR3600_WDR43X0_V1)
-	/*
-	 * LEDs and buttons GPIOs on WDR3600/WDR43x0 v1:
-	 *
-	 * 11 => USB1 LED
-	 * 12 => USB2 LED
-	 * 13 => WLAN2G
-	 * 14 => SYS
-	 * 15 => QSS
-	 * 21 => USB2 POWER (active high)
-	 * 22 => USB1 POWER (active high)
-	 *
-	 * 16 => Reset button
-	 * 17 => Wi-Fi ON/OFF switch
-	 *
-	 * All OUT GPIOs are active LOW if not stated otherwise
-	 */
-
-	// GPIO Init
-	li  a1, AR934X_GPIO_OE
-	lw  v1, 0(a1)
-	// Set GPIOs 11~15 and 21~22 as outputs
-	and v1, v1, 0xFF9F07FF
-	// Set GPIOs 16~17 as inputs
-	or  v1, v1, 0x30000
-	sw  v1, 0(a1)
-
-	// Set GPIO function for GPIO 11
-	li	a1, AR934X_GPIO_OUT_FUNCTION2
-	lw	v1, 0(a1)
-	and v1, v1, 0x00FFFFFF
-	sw	v1, 0(a1)
-
-	// Set GPIO function for GPIOs 12~15
-	li	a1, AR934X_GPIO_OUT_FUNCTION3
-	li	v1, 0x0
-	sw	v1, 0(a1)
-
-	// Turn on power on both USB
-	li  a1, AR934X_GPIO_SET
-	li	v1, 0x600000
-	sw	v1, 0(a1)
-
-	// Turn on all LEDs
-	li  a1, AR934X_GPIO_CLEAR
-	li	v1, 0xF800
-	sw	v1, 0(a1)
-
-	// Wait for a while, for leds bootup blink
-	li  a1, 0
-	li  v1, 0x70000
-
-1:
-	addi a1, a1, 1
-	bne  a1, v1, 1b
-	nop
-
-	// Turn off all LEDs
-	li  a1, AR934X_GPIO_SET
-	li	v1, 0xF800
-	sw	v1, 0(a1)
-
-#elif defined(CONFIG_FOR_TPLINK_WDR3500_V1)
-	/*
-	 * LEDs and buttons GPIOs on WDR3500 v1:
-	 *
-	 * 11 => USB LED
-	 * 12 => USB POWER (active high)
-	 * 13 => WLAN2G
-	 * 14 => SYS
-	 * 15 => QSS
-	 * 18 => WAN
-	 * 19 => LAN1
-	 * 20 => LAN2
-	 * 21 => LAN3
-	 * 22 => LAN4
-	 *
-	 * 16 => Reset button
-	 * 17 => Wi-Fi ON/OFF switch
-	 *
-	 * All OUT GPIOs are active LOW if not stated otherwise
-	 */
-
-	// GPIO Init
-	li  a1, AR934X_GPIO_OE
-	lw  v1, 0(a1)
-	// Set GPIOs 11~15 and 18~22 as outputs
-	and v1, v1, 0xFF8307FF
-	// Set GPIOs 16~17 as inputs
-	or  v1, v1, 0x30000
-	sw  v1, 0(a1)
-
-	// Set GPIO function for GPIO 11
-	li	a1, AR934X_GPIO_OUT_FUNCTION2
-	lw	v1, 0(a1)
-	and v1, v1, 0x00FFFFFF
-	sw	v1, 0(a1)
-
-	// Set GPIO function for GPIOs 12~15
-	li	a1, AR934X_GPIO_OUT_FUNCTION3
-	li	v1, 0x0
-	sw	v1, 0(a1)
-
-	// Set GPIO function for GPIOs 18~19
-	li	a1, AR934X_GPIO_OUT_FUNCTION4
-	lw	v1, 0(a1)
-	and v1, v1, 0xFFFF
-	sw	v1, 0(a1)
-
-	// Turn on power on USB
-	li  a1, AR934X_GPIO_SET
-	li	v1, 0x1000
-	sw	v1, 0(a1)
-
-	// Turn off all LEDs
-	li  a1, AR934X_GPIO_SET
-	li	v1, 0x7CF800
-	sw	v1, 0(a1)
-
-#elif defined(CONFIG_FOR_TPLINK_WR841N_V8)
-	/*
-	 * LEDs and buttons GPIOs on WR841N/D v8:
-	 *
-	 * 12 => LAN4
-	 * 13 => WLAN
-	 * 14 => SYS
-	 * 15 => QSS
-	 * 18 => WAN
-	 * 19 => LAN1
-	 * 20 => LAN2
-	 * 21 => LAN3
-	 *
-	 * 16 => Wi-Fi ON/OFF switch
-	 * 17 => Reset button
-	 *
-	 * All OUT GPIOs are active LOW if not stated otherwise
-	 */
-
-	// GPIOs init
-	li  a1, AR934X_GPIO_OE
-	lw  v1, 0(a1)
-	// Set GPIOs 12~15 and 18~21 as outputs
-	and v1, v1, 0xFFC30FFF
-	// Set GPIOs 16~17 as inputs
-	or  v1, v1, 0x30000
-	sw  v1, 0(a1)
-
-	// Set gpio function for GPIOs 12~15
-	li	a1, AR934X_GPIO_OUT_FUNCTION3
-	li	v1, 0x0
-	sw	v1, 0(a1)
-
-	// Set GPIO function for GPIOs 18~19
-	li	a1, AR934X_GPIO_OUT_FUNCTION4
-	lw	v1, 0(a1)
-	and v1, v1, 0xFFFF
-	sw	v1, 0(a1)
-
-	// Turn off all LEDs
-	li  a1, AR934X_GPIO_SET
-	li	v1, 0x3CF000
-	sw	v1, 0(a1)
-
-#elif defined(CONFIG_FOR_TPLINK_MR3420_V2)
-	/*
-	 * LEDs and buttons GPIOs on MR3420 v2:
-	 *
-	 * 4  => USB Power (active high)
-	 * 11 => USB/3G LED
-	 * 12 => LAN4
-	 * 13 => WLAN
-	 * 14 => SYS
-	 * 15 => QSS
-	 * 18 => WAN
-	 * 19 => LAN1
-	 * 20 => LAN2
-	 * 21 => LAN3
-	 *
-	 * 16 => WPS button
-	 * 17 => Reset button
-	 *
-	 * All OUT GPIOs are active LOW if not stated otherwise
-	 */
-
-	// GPIOs init
-	li  a1, AR934X_GPIO_OE
-	lw  v1, 0(a1)
-	// Set GPIOs 4, 11~15 and 18~21 as outputs
-	and v1, v1, 0xFFC307EF
-	// Set GPIOs 16~17 as inputs
-	or  v1, v1, 0x30000
-	sw  v1, 0(a1)
-
-	// Set GPIO function for GPIO 4
-	li	a1, AR934X_GPIO_OUT_FUNCTION1
-	lw	v1, 0(a1)
-	and v1, v1, 0xFFFFFF00
-	sw	v1, 0(a1)
-
-	// Set GPIO function for GPIO 11
-	li	a1, AR934X_GPIO_OUT_FUNCTION2
-	lw	v1, 0(a1)
-	and v1, v1, 0x00FFFFFF
-	sw	v1, 0(a1)
-
-	// Set GPIO function for GPIOs 12~15
-	li	a1, AR934X_GPIO_OUT_FUNCTION3
-	li	v1, 0x0
-	sw	v1, 0(a1)
-
-	// Set GPIO function for GPIOs 18~19
-	li	a1, AR934X_GPIO_OUT_FUNCTION4
-	lw	v1, 0(a1)
-	and v1, v1, 0xFFFF
-	sw	v1, 0(a1)
-
-	// Turn on power on USB
-	li  a1, AR934X_GPIO_SET
-	li	v1, 0x10
-	sw	v1, 0(a1)
-
-	// Turn off all LEDs
-	li  a1, AR934X_GPIO_SET
-	li	v1, 0x3CF800
-	sw	v1, 0(a1)
-
-#elif defined(CONFIG_FOR_TPLINK_WA830RE_V2_WA801ND_V2)
-	/*
-	 * LEDs and buttons GPIOs on WA830REv2 and WA801ND v2:
-	 *
-	 * 13 => WLAN
-	 * 14 => SYS
-	 * 15 => QSS
-	 * 18 => LAN
-	 *
-	 * 16 => Range Extender
-	 * 17 => Reset button
-	 *
-	 * All OUT GPIOs are active LOW if not stated otherwise
-	 */
-
-	// GPIOs init
-	li  a1, AR934X_GPIO_OE
-	lw  v1, 0(a1)
-	// Set GPIOs 13~15 and 18 as outputs
-	and v1, v1, 0xFFFB1FFF
-	// Set GPIOs 16~17 as inputs
-	or  v1, v1, 0x30000
-	sw  v1, 0(a1)
-
-	// Set GPIO function for GPIOs 13~15
-	li	a1, AR934X_GPIO_OUT_FUNCTION3
-	lw	v1, 0(a1)
-	and v1, v1, 0xFF
-	sw	v1, 0(a1)
-
-	// Set GPIO function for GPIO 18
-	li	a1, AR934X_GPIO_OUT_FUNCTION4
-	lw	v1, 0(a1)
-	and v1, v1, 0xFF00FFFF
-	sw	v1, 0(a1)
-
-	// Turn off all LEDs
-	li  a1, AR934X_GPIO_SET
-	li	v1, 0x4E000
-	sw	v1, 0(a1)
-
-#endif
-
-#endif /* #if defined(CONFIG_WASP_SUPPORT) */
-
 	/*
 	 * Clearing CP0 registers - This is generally required for the MIPS-24k
-     * core used by Atheros.
+	 * core used by Atheros.
 	 */
-	mtc0	zero, $0
-	mtc0	zero, $1
-	mtc0	zero, $2
-	mtc0	zero, $3
-	mtc0	zero, $4
-	mtc0	zero, $5
-	mtc0	zero, $6
-	mtc0	zero, $7
-	mtc0	zero, $8
-	mtc0	zero, $9
-	mtc0	zero, $10
-	mtc0	zero, $11
-	li	t0, 0x10000004
-	mtc0	t0, $12
-	mtc0	zero, $13
-	mtc0	zero, $14
-	mtc0	zero, $15
-	mtc0	zero, $16
-	mtc0	zero, $17
-	mtc0	zero, $18
-	mtc0	zero, $19
-	mtc0	zero, $20
-	mtc0	zero, $21
-	mtc0	zero, $22
-	mtc0	zero, $23
-	mtc0	zero, $24
-	mtc0	zero, $25
-	mtc0	zero, $26
-	mtc0	zero, $27
-	mtc0	zero, $28
+	mtc0 zero, $0
+	mtc0 zero, $1
+	mtc0 zero, $2
+	mtc0 zero, $3
+	mtc0 zero, $4
+	mtc0 zero, $5
+	mtc0 zero, $6
+	mtc0 zero, $7
+	mtc0 zero, $8
+	mtc0 zero, $9
+	mtc0 zero, $10
+	mtc0 zero, $11
+	li   t0,   0x10000004
+	mtc0 t0,   $12
+	mtc0 zero, $13
+	mtc0 zero, $14
+	mtc0 zero, $15
+	mtc0 zero, $16
+	mtc0 zero, $17
+	mtc0 zero, $18
+	mtc0 zero, $19
+	mtc0 zero, $20
+	mtc0 zero, $21
+	mtc0 zero, $22
+	mtc0 zero, $23
+	mtc0 zero, $24
+	mtc0 zero, $25
+	mtc0 zero, $26
+	mtc0 zero, $27
+	mtc0 zero, $28
 
-#ifdef CONFIG_WASP_SUPPORT
+#if (SOC_TYPE & QCA_AR934X_SOC)  | \
+	(SOC_TYPE & QCA_QCA953X_SOC) | \
+	(SOC_TYPE & QCA_QCA955X_SOC) | \
+	(SOC_TYPE & QCA_QCA956X_SOC)
 	mtc0	zero, $29		# C0_TagHi
 	mtc0	zero, $28, 2	# C0_DTagLo
 	mtc0	zero, $29, 2	# C0_DTagHi
 #endif
 
-	/*
-	 * Clear watch registers.
-	 */
-
-	mtc0	zero, CP0_WATCHLO
-	mtc0	zero, CP0_WATCHHI
+	/* Clear watch registers */
+	mtc0 zero, CP0_WATCHLO
+	mtc0 zero, CP0_WATCHHI
 
 	/* STATUS register */
-	mfc0	k0, CP0_STATUS
-	li	k1, ~ST0_IE
-	and	k0, k1
-        mtc0	zero, CP0_CAUSE
-	mtc0	k0, CP0_STATUS
+	mfc0 k0,   CP0_STATUS
+	li   k1,   ~ST0_IE
+	and  k0,   k1
+	mtc0 zero, CP0_CAUSE
+	mtc0 k0,   CP0_STATUS
 
 	/* CAUSE register */
-	mtc0	zero, CP0_CAUSE
+	mtc0 zero, CP0_CAUSE
 
 	/* Init Timer */
-	mtc0	zero, CP0_COUNT
-	mtc0	zero, CP0_COMPARE
+	mtc0 zero, CP0_COUNT
+	mtc0 zero, CP0_COMPARE
 
 	/* CONFIG0 register */
-	li	t0, CONF_CM_UNCACHED
-	mtc0	t0, CP0_CONFIG
+	li   t0, CONF_CM_UNCACHED
+	mtc0 t0, CP0_CONFIG
 
-
-    /* Initialize GOT pointer.*/
-	bal     1f
+	 /* Initialize GOT pointer.*/
+	bal   1f
 	nop
-	.word   _GLOBAL_OFFSET_TABLE_
+	.word _GLOBAL_OFFSET_TABLE_
 	1:
-	move    gp, ra
-	lw      t1, 0(ra)
-	move	gp, t1
+	move  gp, ra
+	lw    t1, 0(ra)
+	move  gp, t1
 
-#if defined(CONFIG_MACH_HORNET) && defined(CONFIG_HORNET_1_1_WAR)
-/**************************************************************************/
-/*
- * WAR: Hornet 1.1 currently need a reset once we boot to let the resetb has
- *      enough time to stable, so that trigger reset at 1st boot, system team
- *      is investigaing the issue, will remove in short
- */
-
-do_reset_normal:
-
-    li  t7, 0xbd000000
-    lw  t8, 0(t7)            // t8 : value of 0xbd000000
-    li  t9, 0x12345678
-    bne t8, t9, do_reset     // if value of 0xbd000000 != 0x12345678 , go to do_reset
-    nop
-    li  t9, 0xffffffff
-    sw  t9, 0(t7) 
-    b   normal_path
-    nop
-
-do_reset:
-    sw  t9, 0(t7)
-    li  t7, 0xb806001c       // load reset register 0x1806001c
-    lw  t8, 0(t7)
-    li  t9, 0x1000000        // bit24, fullchip reset
-    or  t8, t8, t9
-    sw  t8, 0(t7)
-do_reset_loop:    
-    b   do_reset_loop
-    nop
-
-normal_path:
-#endif /* CONFIG_MACH_HORNET */
-
-/**************************************************************************/
-
-	/* Initialize any external memory.
-	 */
-#if defined(CONFIG_AR7100) || defined(CONFIG_AR7240)
-	la      t9, lowlevel_init
-	jalr    t9
-	nop
+	/* Lowlevel initialization of GPIO */
+	la   t7, lowlevel_gpio_init
+	jalr t7
 	nop
 
-#if defined(CONFIG_MACH_HORNET)
-	la      t9, hornet_ddr_init
-	jalr    t9
+	/* Initialize any external memory */
+	la   t9, lowlevel_init
+	jalr t9
 	nop
-	nop
-#endif
 
-	la	t0, rel_start
-	j	t0
+	la t0, rel_start
+	j  t0
 	nop
-#endif
 
 rel_start:
-
-#if defined(CONFIG_AR7100) || defined(CONFIG_AR7240)
-	/* REMAP_DISABLE */
-	// TODO: SPI clock from FLASH?
-	// for now we will use divider = 10 ( (4+1)*2 )
-	li	a0, KSEG1ADDR(AR7100_SPI_CLOCK)
-	li	t0, 0x44
-	sw	t0, 0(a0)
-#endif
-
-#if defined(CONFIG_AR9100) && defined(CFG_HOWL_1_2)
-    /* Disable remap for parallel flash */
-    li  t7, AR9100_FLASH_CONFIG;
-    lw  t8, 0(t7);
-    li  t9, 0xffbf0000;
-    and t8, t8, t9;
-    li  t9, 0x22fc;
-    or  t8, t8, t9;
-    li  t9, 0xffcfffff; /* scale = 0 */
-    and t8, t8, t9;
-    sw  t8, 0(t7);
-
-#endif
-
-	/* Initialize caches...
-	 */
-	la      t9, simple_mips_cache_reset
-	jalr    t9
+	/* Initialize caches... */
+	la   t9, simple_mips_cache_reset
+	jalr t9
 	nop
 
-	/* ... and enable them.
-	 */
-	li	t0, CONF_CM_CACHABLE_NONCOHERENT
-	mtc0	t0, CP0_CONFIG
+	/* ... and enable them */
+#if (SOC_TYPE & QCA_AR934X_SOC)
+	li   t7,   KSEG1ADDR(QCA_RST_REVISION_ID_REG)
+	lw   t7,   0(t7)
+	andi t9,   t7, 0xf
+	bne  zero, t9, 1f
+	nop
 
-#if !defined(CONFIG_AR7100) && !defined(CONFIG_AR7240)
-	/* Set up temporary stack.
-	 */
-	li	a0, CFG_INIT_SP_OFFSET
-	la      t9, mips_cache_lock
-	jalr    t9
+	li t0, CONF_CM_UNCACHED
+	j  2f
 	nop
 #endif
 
-#if defined(CONFIG_AR7100) || defined(CONFIG_AR7240)
-    la      t9, mips_cache_lock_24k
-    jalr    t9
-    nop
+1:
+	li   t0, CONF_CM_CACHABLE_NONCOHERENT
+2:
+	mtc0 t0, CP0_CONFIG
+
+#if (SOC_TYPE & QCA_AR933X_SOC) || \
+	(SOC_TYPE & QCA_AR934X_SOC)
+	la   t9, mips_cache_lock_24k
+	jalr t9
+	nop
 #endif
 
-	li	t0, CFG_SDRAM_BASE + CFG_INIT_SP_OFFSET
-	la	sp, 0(t0)
+#if (SOC_TYPE & QCA_AR934X_SOC) || \
+	(SOC_TYPE & QCA_QCA953X_SOC)
+	/* Setup stack in SRAM */
+	li t0, CONFIG_INIT_SRAM_SP_OFFSET
+#else
+	li t0, CFG_SDRAM_BASE + CFG_INIT_SP_OFFSET
+#endif
+	la sp, 0(t0)
 
-	la	t9, bootstrap_board_init_f
-	j	t9
+	la t9, bootstrap_board_init_f
+	j  t9
 	nop
-
 
 /*
  * void bootstrap_relocate_code (addr_sp, gd, addr_moni)
@@ -659,14 +308,17 @@ rel_start:
  * a1 = gd
  * a2 = destination address
  */
-	.globl	bootstrap_relocate_code
-	.ent	bootstrap_relocate_code
-bootstrap_relocate_code:
-	move	sp, a0		/* Set new stack pointer		*/
+	.globl bootstrap_relocate_code
+	.ent   bootstrap_relocate_code
 
-	li	t0, BOOTSTRAP_CFG_MONITOR_BASE
-	la	t3, in_ram
-	lw	t2, -12(t3)	/* t2 <-- uboot_end_data_bootsrap	*/
+bootstrap_relocate_code:
+	/* Set new stack pointer */
+	move sp, a0
+
+	li   t0, BOOTSTRAP_CFG_MONITOR_BASE
+	la   t3, in_ram
+	lw   t2, -12(t3)	/* t2 <-- uboot_end_data_bootsrap	*/
+
 
 	/*
 	 * Ideally, following line is not needed. However,
@@ -677,20 +329,19 @@ bootstrap_relocate_code:
 	 * Adding 256k to what needs to be read in actually.
 	 * This introduces some delay that seems to help boot.
 	 */
-	li	t3, (256 << 10)
+	li   t3, (256 << 10)
 
-	add	t2, t3
-	move	t1, a2
+	add  t2, t3
+	move t1, a2
 
 	/*
 	 * Fix GOT pointer:
-	 *
-	 * New GOT-PTR = (old GOT-PTR - BOOTSTRAP_CFG_MONITOR_BASE) + Destination Address
+	 * New GOT-PTR = (old GOT-PTR - CFG_MONITOR_BASE) + Destination Address
 	 */
-	move	t6, gp
-	sub	gp, BOOTSTRAP_CFG_MONITOR_BASE
-	add	gp, a2			/* gp now adjusted		*/
-	sub	t6, gp, t6		/* t6 <-- relocation offset	*/
+	move t6, gp
+	sub  gp, BOOTSTRAP_CFG_MONITOR_BASE
+	add  gp, a2			/* gp now adjusted */
+	sub  t6, gp, t6		/* t6 - relocation offset */
 
 	/*
 	 * t0 = source address
@@ -698,62 +349,58 @@ bootstrap_relocate_code:
 	 * t2 = source end address
 	 */
 1:
-	lw	t3, 0(t0)
-	sw	t3, 0(t1)
-	addu	t0, 4
-	ble	t0, t2, 1b
-	addu	t1, 4			/* delay slot			*/
+	lw   t3, 0(t0)
+	sw   t3, 0(t1)
+	addu t0, 4
+	ble  t0, t2, 1b
+	addu t1, 4			/* Delay slot */
 
-	/* If caches were enabled, we would have to flush them here.
-	 */
+	/* If caches were enabled, we would have to flush them here */
 
-	/* Jump to where we've relocated ourselves.
-	 */
-	addi	t0, a2, in_ram - _start_bootstrap
-	j	t0
+	/* Jump to where we've relocated ourselves */
+	addi t0, a2, in_ram - _start_bootstrap
+	j    t0
 	nop
 
-	.word	uboot_end_data_bootstrap
-	.word	uboot_end_bootstrap
-	.word	num_got_entries
+	.word uboot_end_data_bootstrap
+	.word uboot_end_bootstrap
+	.word num_got_entries
 
 in_ram:
-	/* Now we want to update GOT.
-	 */
-	lw	t3, -4(t0)	/* t3 <-- num_got_entries	*/
-	addi	t4, gp, 8	/* Skipping first two entries.	*/
-	li	t2, 2
+	/* Now we want to update GOT */
+	lw   t3, -4(t0)		/* t3 - num_got_entries */
+	addi t4, gp, 8		/* Skipping first two entries */
+	li   t2, 2
 1:
-	lw	t1, 0(t4)
-	beqz	t1, 2f
-	add	t1, t6
-	sw	t1, 0(t4)
+	lw   t1, 0(t4)
+	beqz t1, 2f
+	add  t1, t6
+	sw   t1, 0(t4)
 2:
-	addi	t2, 1
-	blt	t2, t3, 1b
-	addi	t4, 4		/* delay slot			*/
+	addi t2, 1
+	blt  t2, t3, 1b
+	addi t4, 4			/* Delay slot */
 
-	/* Clear BSS.
-	 */
-	lw	t1, -12(t0)	/* t1 <-- uboot_end_data_bootstrap	*/
-	lw	t2, -8(t0)	/* t2 <-- uboot_end_bootstrap		*/
-	add	t1, t6		/* adjust pointers		*/
-	add	t2, t6
+	/* Clear BSS */
+	lw  t1, -12(t0)		/* t1 - uboot_end_data */
+	lw  t2, -8(t0)		/* t2 - uboot_end */
+	add t1, t6			/* Adjust pointers */
+	add t2, t6
 
 	sub	t1, 4
-1:	addi	t1, 4
-	bltl	t1, t2, 1b
-	sw	zero, 0(t1)	/* delay slot			*/
+1:
+	addi t1, 4
+	bltl t1, t2, 1b
+	sw   zero, 0(t1)	/* Delay slot */
 
-	move	a0, a1
-	la	t9, bootstrap_board_init_r
-	j	t9
-	move	a1, a2		/* delay slot			*/
+	move a0, a1
+	la   t9, bootstrap_board_init_r
+	j    t9
+	move a1, a2			/* Delay slot */
 
-	.end	bootstrap_relocate_code
+	.end bootstrap_relocate_code
 
-	/* Exception handlers.
-	 */
+	/* Exception handlers */
 romReserved:
 	b romReserved
 

@@ -37,6 +37,7 @@ COBJS	= main.o \
 		  cmd_nvedit.o \
 		  cmd_itest.o \
 		  cmd_load.o \
+		  cmd_qcaclk.o \
 		  command.o \
 		  console.o \
 		  devices.o \

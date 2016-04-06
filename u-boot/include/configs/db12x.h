@@ -7,6 +7,70 @@
 
 #include <configs/ar7240.h>
 #include <config.h>
+#include <soc/soc_common.h>
+
+/*
+ * GPIO configuration
+ */
+#if defined(CONFIG_FOR_TPLINK_WDR3600_WDR43X0_V1)
+	/* LEDs */
+	#define CONFIG_QCA_GPIO_MASK_LEDS_ACTIVE_LO		(GPIO11 | GPIO12 | GPIO13 | GPIO14 | GPIO15)
+
+	/* Outputs, inputs */
+	#define CONFIG_QCA_GPIO_MASK_OUTPUTS			(CONFIG_QCA_GPIO_MASK_LEDS_ACTIVE_LO | GPIO21 | GPIO22)
+	#define CONFIG_QCA_GPIO_MASK_INPUTS				(GPIO16 | GPIO17)
+
+	/* Initial states */
+	#define CONFIG_QCA_GPIO_MASK_OUTPUTS_INIT_HI	(CONFIG_QCA_GPIO_MASK_LEDS_ACTIVE_LO | GPIO21 | GPIO22)
+
+#elif defined(CONFIG_FOR_TPLINK_WDR3500_V1)
+	/* LEDs */
+	#define CONFIG_QCA_GPIO_MASK_LEDS_ACTIVE_LO		(GPIO11 | GPIO13 | GPIO14 | GPIO15 | GPIO18 |\
+													 GPIO19 | GPIO20 | GPIO21 | GPIO22)
+
+	/* Outputs, inputs */
+	#define CONFIG_QCA_GPIO_MASK_OUTPUTS			(CONFIG_QCA_GPIO_MASK_LEDS_ACTIVE_LO | GPIO12)
+	#define CONFIG_QCA_GPIO_MASK_INPUTS				(GPIO16 | GPIO17)
+
+	/* Initial states */
+	#define CONFIG_QCA_GPIO_MASK_OUTPUTS_INIT_HI	(CONFIG_QCA_GPIO_MASK_LEDS_ACTIVE_LO | GPIO12)
+
+#elif defined(CONFIG_FOR_TPLINK_MR3420_V2)
+	/* LEDs */
+	#define CONFIG_QCA_GPIO_MASK_LEDS_ACTIVE_LO		(GPIO11 | GPIO12 | GPIO13 | GPIO14 | GPIO15 |\
+													 GPIO18 | GPIO19 | GPIO20 | GPIO21)
+
+	/* Outputs, inputs */
+	#define CONFIG_QCA_GPIO_MASK_OUTPUTS			(CONFIG_QCA_GPIO_MASK_LEDS_ACTIVE_LO | GPIO4)
+	#define CONFIG_QCA_GPIO_MASK_INPUTS				(GPIO16 | GPIO17)
+
+	/* Initial states */
+	#define CONFIG_QCA_GPIO_MASK_OUTPUTS_INIT_HI	(CONFIG_QCA_GPIO_MASK_LEDS_ACTIVE_LO | GPIO4)
+
+#elif defined(CONFIG_FOR_TPLINK_WR841N_V8)
+	/* LEDs */
+	#define CONFIG_QCA_GPIO_MASK_LEDS_ACTIVE_LO		(GPIO12 | GPIO13 | GPIO14 | GPIO15 | GPIO18 |\
+													 GPIO19 | GPIO20 | GPIO21)
+
+	/* Outputs, inputs */
+	#define CONFIG_QCA_GPIO_MASK_OUTPUTS			CONFIG_QCA_GPIO_MASK_LEDS_ACTIVE_LO
+	#define CONFIG_QCA_GPIO_MASK_INPUTS				(GPIO16 | GPIO17)
+
+	/* Initial states */
+	#define CONFIG_QCA_GPIO_MASK_OUTPUTS_INIT_HI	CONFIG_QCA_GPIO_MASK_LEDS_ACTIVE_LO
+
+#elif defined(CONFIG_FOR_TPLINK_WA830RE_V2_WA801ND_V2)
+	/* LEDs */
+	#define CONFIG_QCA_GPIO_MASK_LEDS_ACTIVE_LO		(GPIO13 | GPIO14 | GPIO15 | GPIO18)
+
+	/* Outputs, inputs */
+	#define CONFIG_QCA_GPIO_MASK_OUTPUTS			CONFIG_QCA_GPIO_MASK_LEDS_ACTIVE_LO
+	#define CONFIG_QCA_GPIO_MASK_INPUTS				(GPIO16 | GPIO17)
+
+	/* Initial states */
+	#define CONFIG_QCA_GPIO_MASK_OUTPUTS_INIT_HI	CONFIG_QCA_GPIO_MASK_LEDS_ACTIVE_LO
+
+#endif
 
 /*
  * FLASH and environment organization
@@ -55,21 +119,29 @@
 #define CONFIG_IPADDR		192.168.1.1
 #define CONFIG_SERVERIP		192.168.1.2
 
-#undef CFG_PLL_FREQ
-#undef CFG_HZ
+/*
+ * PLL/Clocks configuration
+ */
+#ifdef CFG_HZ
+	#undef	CFG_HZ
+#endif
+#define	CFG_HZ	bd->bi_cfg_hz
 
-// CPU-RAM-AHB frequency setting
-#if !defined(CONFIG_AP123)
-#define CFG_PLL_FREQ    			CFG_PLL_560_480_240
-#define CFG_HZ_FALLBACK				(560000000LU/2)
-#else
-#define CFG_PLL_FREQ    			CFG_PLL_533_400_200
-#define CFG_HZ_FALLBACK				(535000000LU/2)
+/* For now, use some safe clocks for all AR934x */
+#define CONFIG_QCA_PLL 		QCA_PLL_PRESET_550_400_200
+
+
+/*
+ * For PLL/clocks recovery use reset button by default
+ */
+#ifdef CONFIG_GPIO_RESET_BTN
+	#define CONFIG_QCA_GPIO_OC_RECOVERY_BTN		CONFIG_GPIO_RESET_BTN
 #endif
 
-#define	CFG_HZ						bd->bi_cfg_hz
-#define AR7240_SPI_CONTROL			0x43
-#define AR7240_SPI_CONTROL_DEFAULT	AR7240_SPI_CONTROL
+#ifdef CONFIG_GPIO_RESET_BTN_ACTIVE_LOW
+	#define CONFIG_QCA_GPIO_OC_RECOVERY_BTN_ACTIVE_LOW	1
+#endif
+
 /*
  * MIPS32 24K Processor Core Family Software User's Manual
  *
@@ -87,7 +159,8 @@
 /*
  * Cache lock for stack
  */
-#define CFG_INIT_SP_OFFSET		0x1000
+#define CFG_INIT_SP_OFFSET			0x1000
+#define CONFIG_INIT_SRAM_SP_OFFSET	0xbd007000
 
 /*
  * Address and size of Primary Environment Sector
@@ -119,31 +192,6 @@
 // Enable NetConsole and custom NetConsole port
 #define CONFIG_NETCONSOLE
 #define CONFIG_NETCONSOLE_PORT	6666
-
-/* DDR settings for WASP */
-#define CFG_DDR_REFRESH_VAL     0x4270
-#define CFG_DDR_CONFIG_VAL      0xc7bc8cd0
-#define CFG_DDR_MODE_VAL_INIT   0x133
-#define CFG_DDR_EXT_MODE_VAL    0x0
-#define CFG_DDR_MODE_VAL        0x33
-#define CFG_DDR_TRTW_VAL        0x1f
-#define CFG_DDR_TWTR_VAL        0x1e
-#define CFG_DDR_CONFIG2_VAL     0x9dd0e6a8
-
-#define CFG_DDR2_RD_DATA_THIS_CYCLE_VAL_32	0xff
-#define CFG_DDR2_RD_DATA_THIS_CYCLE_VAL_16	0xffff
-
-#if DDR2_32BIT_SUPPORT
-	#define CFG_DDR2_RD_DATA_THIS_CYCLE_VAL		CFG_DDR2_RD_DATA_THIS_CYCLE_VAL_32
-#else
-	#define CFG_DDR2_RD_DATA_THIS_CYCLE_VAL		CFG_DDR2_RD_DATA_THIS_CYCLE_VAL_16
-#endif
-
-#define CFG_DDR1_RD_DATA_THIS_CYCLE_VAL		0xffff
-#define CFG_SDRAM_RD_DATA_THIS_CYCLE_VAL	0xffffffff
-
-/* DDR2 Init values */
-#define CFG_DDR2_EXT_MODE_VAL    0x402
 
 #define CONFIG_NET_MULTI
 
@@ -234,7 +282,6 @@
 #define CFG_BOOTM_LEN				(16 << 20) /* 16 MB */
 
 #undef DEBUG
-#define milisecdelay(_x)			udelay((_x) * 1000)
 
 /* MAC address, model and PIN number offsets in FLASH */
 #define OFFSET_MAC_DATA_BLOCK			0x010000
@@ -242,6 +289,32 @@
 #define OFFSET_MAC_ADDRESS				0x00FC00
 #define OFFSET_ROUTER_MODEL				0x00FD00
 #define OFFSET_PIN_NUMBER				0x00FE00
+
+/*
+ * PLL and clocks configurations from FLASH
+ */
+#if defined(CONFIG_FOR_TPLINK_WDR3600_WDR43X0_V1) || \
+	defined(CONFIG_FOR_TPLINK_WDR3500_V1)         || \
+	defined(CONFIG_FOR_TPLINK_MR3420_V2)          || \
+	defined(CONFIG_FOR_TPLINK_WR841N_V8)          || \
+	defined(CONFIG_FOR_TPLINK_WA830RE_V2_WA801ND_V2)
+	/*
+	 * All TP-Link routers have a lot of unused space
+	 * in FLASH, in second 64 KiB block.
+	 * We will store there PLL and CLOCK
+	 * registers configuration.
+	 */
+	#define CONFIG_QCA_PLL_IN_FLASH_BLOCK_OFFSET	0x00010000
+	#define CONFIG_QCA_PLL_IN_FLASH_BLOCK_SIZE		0x00010000
+
+#endif
+
+#if defined(CONFIG_QCA_PLL_IN_FLASH_BLOCK_OFFSET)
+	/* Use last 32 bytes */
+	#define CONFIG_QCA_PLL_IN_FLASH_MAGIC_OFFSET	(CFG_FLASH_BASE + \
+													 CONFIG_QCA_PLL_IN_FLASH_BLOCK_OFFSET + \
+													 0x0000FFE0)
+#endif
 
 #include <cmd_confdefs.h>
 

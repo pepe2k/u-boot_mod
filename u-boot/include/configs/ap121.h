@@ -7,6 +7,186 @@
 
 #include <configs/ar7240.h>
 #include <config.h>
+#include <soc/soc_common.h>
+
+/*
+ * GPIO configuration
+ */
+#if defined(CONFIG_FOR_TPLINK_WR703N_V1) ||\
+	defined(CONFIG_FOR_TPLINK_WR710N_V1)
+	/* LEDs */
+	#define CONFIG_QCA_GPIO_MASK_LEDS_ACTIVE_LO		GPIO27
+
+	/* Outputs, inputs */
+	#define CONFIG_QCA_GPIO_MASK_OUTPUTS			(CONFIG_QCA_GPIO_MASK_LEDS_ACTIVE_LO | GPIO8)
+	#define CONFIG_QCA_GPIO_MASK_INPUTS				GPIO11
+
+	/* Initial states */
+	#define CONFIG_QCA_GPIO_MASK_OUTPUTS_INIT_HI	(CONFIG_QCA_GPIO_MASK_LEDS_ACTIVE_LO | GPIO8)
+
+#elif defined(CONFIG_FOR_TPLINK_MR10U_V1)
+	/* LEDs */
+	#define CONFIG_QCA_GPIO_MASK_LEDS_ACTIVE_LO		GPIO27
+
+	/* Outputs, inputs */
+	#define CONFIG_QCA_GPIO_MASK_OUTPUTS			(CONFIG_QCA_GPIO_MASK_LEDS_ACTIVE_LO | GPIO18)
+	#define CONFIG_QCA_GPIO_MASK_INPUTS				GPIO11
+
+	/* Initial states */
+	#define CONFIG_QCA_GPIO_MASK_OUTPUTS_INIT_HI	(CONFIG_QCA_GPIO_MASK_LEDS_ACTIVE_LO | GPIO18)
+
+#elif defined(CONFIG_FOR_TPLINK_WR720N_V3)
+	/* LEDs */
+	#define CONFIG_QCA_GPIO_MASK_LEDS_ACTIVE_LO		GPIO27
+
+	/* Outputs, inputs */
+	#define CONFIG_QCA_GPIO_MASK_OUTPUTS			(CONFIG_QCA_GPIO_MASK_LEDS_ACTIVE_LO | GPIO8)
+	#define CONFIG_QCA_GPIO_MASK_INPUTS				(GPIO11 | GPIO18 | GPIO20)
+
+	/* Initial states */
+	#define CONFIG_QCA_GPIO_MASK_OUTPUTS_INIT_HI	(CONFIG_QCA_GPIO_MASK_LEDS_ACTIVE_LO | GPIO8)
+
+#elif defined(CONFIG_FOR_TPLINK_MR13U_V1)
+	/* LEDs */
+	#define CONFIG_QCA_GPIO_MASK_LEDS_ACTIVE_LO		GPIO27
+
+	/* Outputs, inputs */
+	#define CONFIG_QCA_GPIO_MASK_OUTPUTS			(CONFIG_QCA_GPIO_MASK_LEDS_ACTIVE_LO | GPIO18)
+	#define CONFIG_QCA_GPIO_MASK_INPUTS				(GPIO6 | GPIO7 | GPIO11)
+
+	/* Initial states */
+	#define CONFIG_QCA_GPIO_MASK_OUTPUTS_INIT_HI	(CONFIG_QCA_GPIO_MASK_LEDS_ACTIVE_LO | GPIO18)
+
+#elif defined(CONFIG_FOR_DLINK_DIR505_A1)
+	/* LEDs */
+	#define CONFIG_QCA_GPIO_MASK_LEDS_ACTIVE_LO		(GPIO26 | GPIO27)
+
+	/* Outputs, inputs */
+	#define CONFIG_QCA_GPIO_MASK_OUTPUTS			CONFIG_QCA_GPIO_MASK_LEDS_ACTIVE_LO
+	#define CONFIG_QCA_GPIO_MASK_INPUTS				GPIO11
+
+	/* Initial states */
+	#define CONFIG_QCA_GPIO_MASK_OUTPUTS_INIT_HI	CONFIG_QCA_GPIO_MASK_LEDS_ACTIVE_LO
+
+#elif defined(CONFIG_FOR_BLACK_SWIFT_BOARD)
+	/* LEDs */
+	#define CONFIG_QCA_GPIO_MASK_LEDS_ACTIVE_LO		GPIO27
+
+	/* Outputs, inputs */
+	#define CONFIG_QCA_GPIO_MASK_OUTPUTS			CONFIG_QCA_GPIO_MASK_LEDS_ACTIVE_LO
+	#define CONFIG_QCA_GPIO_MASK_INPUTS				GPIO11
+
+	/* Initial states */
+	#define CONFIG_QCA_GPIO_MASK_OUTPUTS_INIT_HI	CONFIG_QCA_GPIO_MASK_LEDS_ACTIVE_LO
+
+#elif defined(CONFIG_FOR_TPLINK_MR3020_V1)
+	/* LEDs */
+	#define CONFIG_QCA_GPIO_MASK_LEDS_ACTIVE_HI		GPIO0
+	#define CONFIG_QCA_GPIO_MASK_LEDS_ACTIVE_LO		(GPIO17 | GPIO26 | GPIO27)
+
+	/* Outputs, inputs */
+	#define CONFIG_QCA_GPIO_MASK_OUTPUTS			(CONFIG_QCA_GPIO_MASK_LEDS_ACTIVE_LO |\
+													 CONFIG_QCA_GPIO_MASK_LEDS_ACTIVE_HI |\
+													 GPIO8)
+	#define CONFIG_QCA_GPIO_MASK_INPUTS				(GPIO11 | GPIO18 | GPIO20)
+
+	/* Initial states */
+	#define CONFIG_QCA_GPIO_MASK_OUTPUTS_INIT_HI	(CONFIG_QCA_GPIO_MASK_LEDS_ACTIVE_LO | GPIO8)
+	#define CONFIG_QCA_GPIO_MASK_OUTPUTS_INIT_LO	CONFIG_QCA_GPIO_MASK_LEDS_ACTIVE_HI
+
+#elif defined(CONFIG_FOR_TPLINK_MR3040_V1V2)
+	/* LEDs */
+	#define CONFIG_QCA_GPIO_MASK_LEDS_ACTIVE_LO		(GPIO17 | GPIO26 | GPIO27)
+
+	/* Outputs, inputs */
+	#define CONFIG_QCA_GPIO_MASK_OUTPUTS			(CONFIG_QCA_GPIO_MASK_LEDS_ACTIVE_LO | GPIO18)
+	#define CONFIG_QCA_GPIO_MASK_INPUTS				GPIO11
+
+	/* Initial states */
+	#define CONFIG_QCA_GPIO_MASK_OUTPUTS_INIT_HI	(CONFIG_QCA_GPIO_MASK_LEDS_ACTIVE_LO | GPIO18)
+	#define CONFIG_QCA_GPIO_MASK_OUTPUTS_INIT_LO	CONFIG_QCA_GPIO_MASK_LEDS_ACTIVE_HI
+
+#elif defined(CONFIG_FOR_TPLINK_WR740N_V4)
+	/* LEDs */
+	#define CONFIG_QCA_GPIO_MASK_LEDS_ACTIVE_HI		(GPIO0  | GPIO1 | GPIO13 | GPIO14 | GPIO15 | GPIO16)
+	#define CONFIG_QCA_GPIO_MASK_LEDS_ACTIVE_LO		(GPIO17 | GPIO27)
+
+	/* Outputs, inputs */
+	#define CONFIG_QCA_GPIO_MASK_OUTPUTS			(CONFIG_QCA_GPIO_MASK_LEDS_ACTIVE_LO |\
+													 CONFIG_QCA_GPIO_MASK_LEDS_ACTIVE_HI)
+	#define CONFIG_QCA_GPIO_MASK_INPUTS				(GPIO11 | GPIO26)
+
+	/* Initial states */
+	#define CONFIG_QCA_GPIO_MASK_OUTPUTS_INIT_HI	CONFIG_QCA_GPIO_MASK_LEDS_ACTIVE_LO
+	#define CONFIG_QCA_GPIO_MASK_OUTPUTS_INIT_LO	CONFIG_QCA_GPIO_MASK_LEDS_ACTIVE_HI
+
+#elif defined(CONFIG_FOR_TPLINK_MR3220_V2)
+	/* LEDs */
+	#define CONFIG_QCA_GPIO_MASK_LEDS_ACTIVE_HI		(GPIO0  | GPIO1 | GPIO13 | GPIO14 | GPIO15 | GPIO16 | GPIO26)
+	#define CONFIG_QCA_GPIO_MASK_LEDS_ACTIVE_LO		(GPIO17 | GPIO27)
+
+	/* Outputs, inputs */
+	#define CONFIG_QCA_GPIO_MASK_OUTPUTS			(CONFIG_QCA_GPIO_MASK_LEDS_ACTIVE_LO |\
+													 CONFIG_QCA_GPIO_MASK_LEDS_ACTIVE_HI |\
+													 GPIO8)
+	#define CONFIG_QCA_GPIO_MASK_INPUTS				(GPIO11)
+
+	/* Initial states */
+	#define CONFIG_QCA_GPIO_MASK_OUTPUTS_INIT_HI	(CONFIG_QCA_GPIO_MASK_LEDS_ACTIVE_LO | GPIO8)
+	#define CONFIG_QCA_GPIO_MASK_OUTPUTS_INIT_LO	CONFIG_QCA_GPIO_MASK_LEDS_ACTIVE_HI
+
+#elif defined(CONFIG_FOR_GS_OOLITE_V1_DEV)
+	/* LEDs */
+	#define CONFIG_QCA_GPIO_MASK_LEDS_ACTIVE_LO		(GPIO13 | GPIO15 | GPIO17 | GPIO27)
+
+	/* Outputs, inputs */
+	#define CONFIG_QCA_GPIO_MASK_OUTPUTS			CONFIG_QCA_GPIO_MASK_LEDS_ACTIVE_LO
+	#define CONFIG_QCA_GPIO_MASK_INPUTS				(GPIO11)
+
+	/* Initial states */
+	#define CONFIG_QCA_GPIO_MASK_OUTPUTS_INIT_HI	CONFIG_QCA_GPIO_MASK_LEDS_ACTIVE_LO
+
+#elif defined(CONFIG_FOR_8DEVICES_CARAMBOLA2)
+	/* LEDs */
+	#define CONFIG_QCA_GPIO_MASK_LEDS_ACTIVE_HI		(GPIO13 | GPIO14)
+	#define CONFIG_QCA_GPIO_MASK_LEDS_ACTIVE_LO		GPIO0
+
+	/* Outputs, inputs */
+	#define CONFIG_QCA_GPIO_MASK_OUTPUTS			(CONFIG_QCA_GPIO_MASK_LEDS_ACTIVE_LO |\
+													 CONFIG_QCA_GPIO_MASK_LEDS_ACTIVE_HI)
+	#define CONFIG_QCA_GPIO_MASK_INPUTS				GPIO11
+
+	/* Initial states */
+	#define CONFIG_QCA_GPIO_MASK_OUTPUTS_INIT_HI	CONFIG_QCA_GPIO_MASK_LEDS_ACTIVE_LO
+	#define CONFIG_QCA_GPIO_MASK_OUTPUTS_INIT_LO	CONFIG_QCA_GPIO_MASK_LEDS_ACTIVE_HI
+
+#elif defined(CONFIG_FOR_DRAGINO_V2) ||\
+	  defined(CONFIG_FOR_MESH_POTATO_V2)
+	/* LEDs */
+	#define CONFIG_QCA_GPIO_MASK_LEDS_ACTIVE_HI		(GPIO0  | GPIO28)
+	#define CONFIG_QCA_GPIO_MASK_LEDS_ACTIVE_LO		(GPIO13 | GPIO17)
+
+	/* Outputs, inputs */
+	#define CONFIG_QCA_GPIO_MASK_OUTPUTS			(CONFIG_QCA_GPIO_MASK_LEDS_ACTIVE_LO |\
+													 CONFIG_QCA_GPIO_MASK_LEDS_ACTIVE_HI)
+	#define CONFIG_QCA_GPIO_MASK_INPUTS				GPIO11
+
+	/* Initial states */
+	#define CONFIG_QCA_GPIO_MASK_OUTPUTS_INIT_HI	CONFIG_QCA_GPIO_MASK_LEDS_ACTIVE_LO
+	#define CONFIG_QCA_GPIO_MASK_OUTPUTS_INIT_LO	CONFIG_QCA_GPIO_MASK_LEDS_ACTIVE_HI
+
+#elif defined(CONFIG_FOR_GL_INET)
+	/* LEDs */
+	#define CONFIG_QCA_GPIO_MASK_LEDS_ACTIVE_HI		(GPIO0 | GPIO13)
+
+	/* Outputs, inputs */
+	#define CONFIG_QCA_GPIO_MASK_OUTPUTS			CONFIG_QCA_GPIO_MASK_LEDS_ACTIVE_HI
+	#define CONFIG_QCA_GPIO_MASK_INPUTS				GPIO11
+
+	/* Initial states */
+	#define CONFIG_QCA_GPIO_MASK_OUTPUTS_INIT_LO	CONFIG_QCA_GPIO_MASK_LEDS_ACTIVE_HI
+
+#endif
 
 /*
  * FLASH and environment organization
@@ -58,6 +238,10 @@
 
 	#define	CONFIG_BOOTARGS	"console=ttyS0,115200 root=31:02 rootfstype=squashfs init=/sbin/init mtdparts=ar7240-nor0:128k(u-boot),1024k(kernel),2816k(rootfs),64k(config),64k(ART)"
 
+#elif defined(CONFIG_FOR_BLACK_SWIFT_BOARD)
+
+	#define	CONFIG_BOOTARGS	"console=ttyS0,115200 root=31:02 rootfstype=squashfs init=/sbin/init mtdparts=ar7240-nor0:128k(u-boot),64k(u-boot-env),16128k(firmware),64k(ART)"
+
 #elif defined(CONFIG_FOR_8DEVICES_CARAMBOLA2)
 
 	#define	CONFIG_BOOTARGS "console=ttyS0,115200 root=31:02 rootfstype=squashfs init=/sbin/init mtdparts=ar7240-nor0:256k(u-boot),64k(u-boot-env),16000k(firmware),64k(ART)"
@@ -88,6 +272,9 @@
       defined(CONFIG_FOR_MESH_POTATO_V2)
 	#define	CFG_LOAD_ADDR			 0x9F040000
 	#define UPDATE_SCRIPT_FW_ADDR	"0x9F040000"
+#elif defined(CONFIG_FOR_BLACK_SWIFT_BOARD)
+	#define	CFG_LOAD_ADDR			 0x9F030000
+	#define UPDATE_SCRIPT_FW_ADDR	"0x9F030000"
 #else
 	#define	CFG_LOAD_ADDR			 0x9F020000
 	#define UPDATE_SCRIPT_FW_ADDR	"0x9F020000"
@@ -100,6 +287,8 @@
 #elif defined(CONFIG_FOR_DRAGINO_V2) || \
       defined(CONFIG_FOR_MESH_POTATO_V2)
 	#define CONFIG_BOOTCOMMAND "bootm 0x9F040000"
+#elif defined(CONFIG_FOR_BLACK_SWIFT_BOARD)
+	#define CONFIG_BOOTCOMMAND "bootm 0x9F030000"
 #else
 	#define CONFIG_BOOTCOMMAND "bootm 0x9F020000"
 #endif
@@ -126,631 +315,33 @@
 	#define	CFG_PROMPT "dr_boot> "
 #endif
 
-#undef	CFG_HZ
-#define	CFG_HZ				bd->bi_cfg_hz
-#undef	CPU_PLL_CONFIG_VAL
-#undef	CPU_CLK_CONTROL_VAL
-
-// CPU-RAM-AHB frequency setting
-#ifndef CFG_PLL_FREQ
-	#define CFG_PLL_FREQ    CFG_PLL_400_400_200
+#if defined(CONFIG_FOR_BLACK_SWIFT_BOARD)
+	#if defined(CFG_PROMPT)
+		#undef CFG_PROMPT
+	#endif
+	#define	CFG_PROMPT "BSB> "
 #endif
 
 /*
- * CPU_PLL_DITHER_FRAC_VAL
- *
- * Value written into CPU PLL Dither FRAC Register (PLL_DITHER_FRAC)
- *
- * bits	0..9	NFRAC_MAX	=>	1000 (0x3E8)
- * bits	10..13	NFRAC_MIN	=>	0 (minimum value is used)
- * bits	20..29	NFRAC_STEP	=>	1
- *
+ * PLL/Clocks configuration
  */
-#define CPU_PLL_DITHER_FRAC_VAL		0x001003E8
+#ifdef CFG_HZ
+	#undef	CFG_HZ
+#endif
+#define	CFG_HZ	bd->bi_cfg_hz
+
+#define CONFIG_QCA_PLL 		QCA_PLL_PRESET_400_400_200
+
 
 /*
- * CPU_PLL_SETTLE_TIME_VAL
- *
- * Value written into CPU Phase Lock Loop Configuration Register 2 (CPU_PLL_CONFIG2)
- *
- * bits	0..11	SETTLE_TIME	=>	850 (0x352)
- *
+ * For PLL/clocks recovery use reset button by default
  */
-#if CONFIG_40MHZ_XTAL_SUPPORT
-	#define CPU_PLL_SETTLE_TIME_VAL		0x00000550
-#else
-	#define CPU_PLL_SETTLE_TIME_VAL		0x00000352
+#ifdef CONFIG_GPIO_RESET_BTN
+	#define CONFIG_QCA_GPIO_OC_RECOVERY_BTN		CONFIG_GPIO_RESET_BTN
 #endif
 
-/*
- * CPU_CLK_CONTROL_VAL
- *
- * In CPU_CLK_CONTROL_VAL bit 2 is set (BYPASS = 1 -> bypass PLL)
- * After PLL configuration we nedd to clear this bit
- *
- * Values written into CPU Clock Control Register CLOCK_CONTROL
- *
- * bits	2		(1bit)	BYPASS (Bypass PLL. This defaults to 1 for test purposes. Software must enable the CPU PLL for normal operation and then set this bit to 0)
- * bits	5..6	(2bit)	CPU_POST_DIV	=>	0	(DEFAULT, Ratio = 1)
- * bits	10..11	(2bit)	DDR_POST_DIV 	=>	0	(DEFAULT, Ratio = 1)
- * bits	15..16	(2bit)	AHB_POST_DIV	=>	1	(DEFAULT, Ratio = 2)
- *
- */
-
-/*
- * CPU_PLL_CONFIG_VAL
- *
- * In CPU_PLL_CONFIG_VAL bit 30 is set (CPU_PLLPWD = 1 -> power down control for CPU PLL)
- * After PLL configuration we need to clear this bit
- *
- * Values written into CPU Phase Lock Loop Configuration (CPU_PLL_CONFIG)
- *
- * bits 10..15	(6bit)	DIV_INT	(The integer part of the DIV to CPU PLL)			=>	32	(0x20)
- * bits 16..20	(5bit)	REFDIV	(Reference clock divider)							=>	1	(0x1)	[doesn't start at values different than 1 (maybe need to change other dividers?)]
- * bits 21		(1bit)	RANGE	(Determine the VCO frequency range of the CPU PLL)	=>	0	(0x0)	[doesn't have impact on clock values]
- * bits 23..25	(3bit)	OUTDIV	(Define the ratio between VCO output and PLL output	=>	1	(0x1)	[value == 0 is illegal!]
- * 								VCOOUT * (1/2^OUTDIV) = PLLOUT)
- */
-
-/*
- * = PLL CALCULATION =============
- * PLL = ((25 MHz / REFDIV) * DIV_INT) / (2 ^ OUTDIV)	// XTAL=25 MHz
- * OR
- * PLL = ((40 MHz / REFDIV) * DIV_INT) / (2 ^ OUTDIV)	// XTAL=40 MHz
- *
- * CPU = PLL / CPU_POST_DIV
- * DDR = PLL / DDR_POST_DIV
- * AHB = PLL / AHB_POST_DIV
- *
- */
-
-/*
- * AR7240_SPI_CONTROL
- *
- * Value written into SPI Control (SPI_CONTROL) register
- *
- * bits	0..5	(6bit)	CLOCK_DIVIDER	(Specifies the clock divider setting. Actual clock frequency would be (AHB_CLK / ((CLOCK_DIVIDER+1)*2)) )
- * bits	6		(1bit)	REMAP_DISABLE	(Remaps 4 MB space over unless explicitly disabled by setting this bit to 1. If set to 1, 16 MB is accessible.)
- *
- */
-
-/*
- * CPU_PLL_CONFIG and CPU_CLK_CONTROL registers values generator
- */
-#define MAKE_AR9331_CPU_PLL_CONFIG_VAL(divint, refdiv, range, outdiv)  ( ((0x3F & divint) << 10) | \
-                                                                         ((0x1F & refdiv) << 16) | \
-                                                                         ((0x1 & range)   << 21) | \
-                                                                         ((0x7 & outdiv)  << 23) )
-
-#define MAKE_AR9331_CPU_CLK_CONTROL_VAL(cpudiv, ddrdiv, ahbdiv)        ( ((0x3 & (cpudiv - 1)) << 5)  | \
-                                                                         ((0x3 & (ddrdiv - 1)) << 10) | \
-                                                                         ((0x3 & (ahbdiv - 1)) << 15) )
-
-#define MAKE_AR9331_SPI_CONTROL_VAL(spidiv)                            ( ((spidiv >> 1) - 1) | 0x40 )
-
-/*
- * Default values (400/400/200 MHz) for O/C recovery mode
- */
-
-// CPU_DIV = 1, RAM_DIV = 1, AHB_DIV = 2
-#define CPU_CLK_CONTROL_VAL_DEFAULT		MAKE_AR9331_CPU_CLK_CONTROL_VAL(1, 1, 2)
-
-#if CONFIG_40MHZ_XTAL_SUPPORT
-	// DIV_INT = 20 (40 MHz * 20/2 = 400 MHz), REFDIV = 1, RANGE = 0, OUTDIV = 1
-	#define CPU_PLL_CONFIG_VAL_DEFAULT	MAKE_AR9331_CPU_PLL_CONFIG_VAL(20, 1, 0, 1)
-#else
-	// DIV_INT = 32 (25 MHz * 32/2 = 400 MHz), REFDIV = 1, RANGE = 0, OUTDIV = 1
-	#define CPU_PLL_CONFIG_VAL_DEFAULT	MAKE_AR9331_CPU_PLL_CONFIG_VAL(32, 1, 0, 1)
-#endif
-
-// CLOCK_DIVIDER = 2 (SPI clock = 200 / 6 ~ 33 MHz)
-#define AR7240_SPI_CONTROL_DEFAULT	MAKE_AR9331_SPI_CONTROL_VAL(6)
-
-#if (CFG_PLL_FREQ == CFG_PLL_200_200_100)
-
-	// CPU_DIV = 1, RAM_DIV = 1, AHB_DIV = 2
-	#define CPU_CLK_CONTROL_VAL		MAKE_AR9331_CPU_CLK_CONTROL_VAL(1, 1, 2)
-
-	#if CONFIG_40MHZ_XTAL_SUPPORT
-		// DIV_INT = 20 (40 MHz * 20/4 = 200 MHz), REFDIV = 1, RANGE = 0, OUTDIV = 2
-		#define CPU_PLL_CONFIG_VAL	MAKE_AR9331_CPU_PLL_CONFIG_VAL(20, 1, 0, 2)
-	#else
-		// DIV_INT = 32 (25 MHz * 32/4 = 200 MHz), REFDIV = 1, RANGE = 0, OUTDIV = 2
-		#define CPU_PLL_CONFIG_VAL	MAKE_AR9331_CPU_PLL_CONFIG_VAL(32, 1, 0, 2)
-	#endif
-
-	// CLOCK_DIVIDER = 1 (SPI clock = 100 / 4 ~ 25 MHz)
-	#define AR7240_SPI_CONTROL	MAKE_AR9331_SPI_CONTROL_VAL(4)
-
-	#define CFG_HZ_FALLBACK	(200000000LU/2)
-
-#elif (CFG_PLL_FREQ == CFG_PLL_200_200_200)
-
-	// CPU_DIV = 1, RAM_DIV = 1, AHB_DIV = 1
-	#define CPU_CLK_CONTROL_VAL		MAKE_AR9331_CPU_CLK_CONTROL_VAL(1, 1, 1)
-
-	#if CONFIG_40MHZ_XTAL_SUPPORT
-		// DIV_INT = 20 (40 MHz * 20/4 = 200 MHz), REFDIV = 1, RANGE = 0, OUTDIV = 2
-		#define CPU_PLL_CONFIG_VAL	MAKE_AR9331_CPU_PLL_CONFIG_VAL(20, 1, 0, 2)
-	#else
-		// DIV_INT = 32 (25 MHz * 32/4 = 200 MHz), REFDIV = 1, RANGE = 0, OUTDIV = 2
-		#define CPU_PLL_CONFIG_VAL	MAKE_AR9331_CPU_PLL_CONFIG_VAL(32, 1, 0, 2)
-	#endif
-
-	// CLOCK_DIVIDER = 2 (SPI clock = 200 / 6 ~ 33 MHz)
-	#define AR7240_SPI_CONTROL	MAKE_AR9331_SPI_CONTROL_VAL(6)
-
-	#define CFG_HZ_FALLBACK	(200000000LU/2)
-
-#elif (CFG_PLL_FREQ == CFG_PLL_225_225_112)
-
-	// CPU_DIV = 1, RAM_DIV = 1, AHB_DIV = 2
-	#define CPU_CLK_CONTROL_VAL		MAKE_AR9331_CPU_CLK_CONTROL_VAL(1, 1, 2)
-
-	#if CONFIG_40MHZ_XTAL_SUPPORT
-		#define FREQUENCY_NOT_SUPPORTED
-	#else
-		// DIV_INT = 36 (25 MHz * 36/4 = 225 MHz), REFDIV = 1, RANGE = 0, OUTDIV = 2
-		#define CPU_PLL_CONFIG_VAL	MAKE_AR9331_CPU_PLL_CONFIG_VAL(36, 1, 0, 2)
-	#endif
-
-	// CLOCK_DIVIDER = 1 (SPI clock = 112 / 4 ~ 28 MHz)
-	#define AR7240_SPI_CONTROL	MAKE_AR9331_SPI_CONTROL_VAL(4)
-
-	#define CFG_HZ_FALLBACK	(225000000LU/2)
-
-#elif (CFG_PLL_FREQ == CFG_PLL_225_225_225)
-
-	// CPU_DIV = 1, RAM_DIV = 1, AHB_DIV = 1
-	#define CPU_CLK_CONTROL_VAL		MAKE_AR9331_CPU_CLK_CONTROL_VAL(1, 1, 1)
-
-	#if CONFIG_40MHZ_XTAL_SUPPORT
-		#define FREQUENCY_NOT_SUPPORTED
-	#else
-		// DIV_INT = 36 (25 MHz * 36/4 = 225 MHz), REFDIV = 1, RANGE = 0, OUTDIV = 2
-		#define CPU_PLL_CONFIG_VAL	MAKE_AR9331_CPU_PLL_CONFIG_VAL(36, 1, 0, 2)
-	#endif
-
-	// CLOCK_DIVIDER = 3 (SPI clock = 225 / 8 ~ 28 MHz)
-	#define AR7240_SPI_CONTROL	MAKE_AR9331_SPI_CONTROL_VAL(8)
-
-	#define CFG_HZ_FALLBACK	(225000000LU/2)
-
-#elif (CFG_PLL_FREQ == CFG_PLL_250_250_125)
-
-	// CPU_DIV = 1, RAM_DIV = 1, AHB_DIV = 2
-	#define CPU_CLK_CONTROL_VAL		MAKE_AR9331_CPU_CLK_CONTROL_VAL(1, 1, 2)
-
-	#if CONFIG_40MHZ_XTAL_SUPPORT
-		// DIV_INT = 25 (40 MHz * 25/4 = 250 MHz), REFDIV = 1, RANGE = 0, OUTDIV = 2
-		#define CPU_PLL_CONFIG_VAL	MAKE_AR9331_CPU_PLL_CONFIG_VAL(25, 1, 0, 2)
-	#else
-		// DIV_INT = 20 (25 MHz * 20/2 = 250 MHz), REFDIV = 1, RANGE = 0, OUTDIV = 1
-		#define CPU_PLL_CONFIG_VAL	MAKE_AR9331_CPU_PLL_CONFIG_VAL(20, 1, 0, 1)
-	#endif
-
-	// CLOCK_DIVIDER = 1 (SPI clock = 125 / 4 ~ 31 MHz)
-	#define AR7240_SPI_CONTROL	MAKE_AR9331_SPI_CONTROL_VAL(4)
-
-	#define CFG_HZ_FALLBACK	(250000000LU/2)
-
-#elif (CFG_PLL_FREQ == CFG_PLL_250_250_250)
-
-	// CPU_DIV = 1, RAM_DIV = 1, AHB_DIV = 1
-	#define CPU_CLK_CONTROL_VAL		MAKE_AR9331_CPU_CLK_CONTROL_VAL(1, 1, 1)
-
-	#if CONFIG_40MHZ_XTAL_SUPPORT
-		// DIV_INT = 25 (40 MHz * 25/4 = 250 MHz), REFDIV = 1, RANGE = 0, OUTDIV = 2
-		#define CPU_PLL_CONFIG_VAL	MAKE_AR9331_CPU_PLL_CONFIG_VAL(25, 1, 0, 2)
-	#else
-		// DIV_INT = 20 (25 MHz * 20/2 = 250 MHz), REFDIV = 1, RANGE = 0, OUTDIV = 1
-		#define CPU_PLL_CONFIG_VAL	MAKE_AR9331_CPU_PLL_CONFIG_VAL(20, 1, 0, 1)
-	#endif
-
-	// CLOCK_DIVIDER = 3 (SPI clock = 250 / 8 ~ 31 MHz)
-	#define AR7240_SPI_CONTROL	MAKE_AR9331_SPI_CONTROL_VAL(8)
-
-	#define CFG_HZ_FALLBACK	(250000000LU/2)
-
-#elif (CFG_PLL_FREQ == CFG_PLL_300_300_150)
-
-	// CPU_DIV = 1, RAM_DIV = 1, AHB_DIV = 2
-	#define CPU_CLK_CONTROL_VAL		MAKE_AR9331_CPU_CLK_CONTROL_VAL(1, 1, 2)
-
-	#if CONFIG_40MHZ_XTAL_SUPPORT
-		// DIV_INT = 15 (40 MHz * 15/2 = 300 MHz), REFDIV = 1, RANGE = 0, OUTDIV = 1
-		#define CPU_PLL_CONFIG_VAL	MAKE_AR9331_CPU_PLL_CONFIG_VAL(15, 1, 0, 1)
-	#else
-		// DIV_INT = 24 (25 MHz * 24/2 = 300 MHz), REFDIV = 1, RANGE = 0, OUTDIV = 1
-		#define CPU_PLL_CONFIG_VAL	MAKE_AR9331_CPU_PLL_CONFIG_VAL(24, 1, 0, 1)
-	#endif
-
-	// CLOCK_DIVIDER = 2 (SPI clock = 150 / 6 ~ 25 MHz)
-	#define AR7240_SPI_CONTROL	MAKE_AR9331_SPI_CONTROL_VAL(6)
-
-	#define CFG_HZ_FALLBACK	(300000000LU/2)
-
-#elif (CFG_PLL_FREQ == CFG_PLL_325_325_162)
-
-	// CPU_DIV = 1, RAM_DIV = 1, AHB_DIV = 2
-	#define CPU_CLK_CONTROL_VAL		MAKE_AR9331_CPU_CLK_CONTROL_VAL(1, 1, 2)
-
-	#if CONFIG_40MHZ_XTAL_SUPPORT
-		#define FREQUENCY_NOT_SUPPORTED
-	#else
-		// DIV_INT = 26 (25 MHz * 26/2 = 325 MHz), REFDIV = 1, RANGE = 0, OUTDIV = 1
-		#define CPU_PLL_CONFIG_VAL	MAKE_AR9331_CPU_PLL_CONFIG_VAL(26, 1, 0, 1)
-	#endif
-
-	// CLOCK_DIVIDER = 2 (SPI clock = 162 / 6 ~ 27 MHz)
-	#define AR7240_SPI_CONTROL	MAKE_AR9331_SPI_CONTROL_VAL(6)
-
-	#define CFG_HZ_FALLBACK	(325000000LU/2)
-
-#elif (CFG_PLL_FREQ == CFG_PLL_350_350_175)
-
-	// CPU_DIV = 1, RAM_DIV = 1, AHB_DIV = 2
-	#define CPU_CLK_CONTROL_VAL		MAKE_AR9331_CPU_CLK_CONTROL_VAL(1, 1, 2)
-
-	#if CONFIG_40MHZ_XTAL_SUPPORT
-		#define FREQUENCY_NOT_SUPPORTED
-	#else
-		// DIV_INT = 28 (25 MHz * 28/2 = 350 MHz), REFDIV = 1, RANGE = 0, OUTDIV = 1
-		#define CPU_PLL_CONFIG_VAL	MAKE_AR9331_CPU_PLL_CONFIG_VAL(28, 1, 0, 1)
-	#endif
-
-	// CLOCK_DIVIDER = 2 (SPI clock = 175 / 6 ~ 29 MHz)
-	#define AR7240_SPI_CONTROL	MAKE_AR9331_SPI_CONTROL_VAL(6)
-
-	#define CFG_HZ_FALLBACK	(350000000LU/2)
-
-#elif (CFG_PLL_FREQ == CFG_PLL_360_360_180)
-
-	// CPU_DIV = 1, RAM_DIV = 1, AHB_DIV = 2
-	#define CPU_CLK_CONTROL_VAL		MAKE_AR9331_CPU_CLK_CONTROL_VAL(1, 1, 2)
-
-	#if CONFIG_40MHZ_XTAL_SUPPORT
-		// DIV_INT = 18 (40 MHz * 18/2 = 360 MHz), REFDIV = 1, RANGE = 0, OUTDIV = 1
-		#define CPU_PLL_CONFIG_VAL	MAKE_AR9331_CPU_PLL_CONFIG_VAL(18, 1, 0, 1)
-	#else
-		// DIV_INT = 29 (25 MHz * 28/2 = 362 MHz), REFDIV = 1, RANGE = 0, OUTDIV = 1
-		#define CPU_PLL_CONFIG_VAL	MAKE_AR9331_CPU_PLL_CONFIG_VAL(29, 1, 0, 1)
-	#endif
-
-	// CLOCK_DIVIDER = 2 (SPI clock = 180 / 6 ~ 30 MHz)
-	#define AR7240_SPI_CONTROL	MAKE_AR9331_SPI_CONTROL_VAL(6)
-
-	#define CFG_HZ_FALLBACK	(360000000LU/2)
-
-#elif (CFG_PLL_FREQ == CFG_PLL_380_380_190)
-
-	// CPU_DIV = 1, RAM_DIV = 1, AHB_DIV = 2
-	#define CPU_CLK_CONTROL_VAL		MAKE_AR9331_CPU_CLK_CONTROL_VAL(1, 1, 2)
-
-	#if CONFIG_40MHZ_XTAL_SUPPORT
-		// DIV_INT = 19 (40 MHz * 19/2 = 380 MHz), REFDIV = 1, RANGE = 0, OUTDIV = 1
-		#define CPU_PLL_CONFIG_VAL	MAKE_AR9331_CPU_PLL_CONFIG_VAL(19, 1, 0, 1)
-	#else
-		#define FREQUENCY_NOT_SUPPORTED
-	#endif
-
-	// CLOCK_DIVIDER = 2 (SPI clock = 190 / 6 ~ 32 MHz)
-	#define AR7240_SPI_CONTROL	MAKE_AR9331_SPI_CONTROL_VAL(6)
-
-	#define CFG_HZ_FALLBACK	(380000000LU/2)
-
-#elif (CFG_PLL_FREQ == CFG_PLL_400_400_200)
-
-	// default configuration
-	#define CPU_CLK_CONTROL_VAL	CPU_CLK_CONTROL_VAL_DEFAULT
-	#define CPU_PLL_CONFIG_VAL	CPU_PLL_CONFIG_VAL_DEFAULT
-	#define AR7240_SPI_CONTROL	AR7240_SPI_CONTROL_DEFAULT
-
-	#define CFG_HZ_FALLBACK	(400000000LU/2)
-
-#elif (CFG_PLL_FREQ == CFG_PLL_412_412_206)
-
-	// CPU_DIV = 1, RAM_DIV = 1, AHB_DIV = 2
-	#define CPU_CLK_CONTROL_VAL		MAKE_AR9331_CPU_CLK_CONTROL_VAL(1, 1, 2)
-
-	#if CONFIG_40MHZ_XTAL_SUPPORT
-		#define FREQUENCY_NOT_SUPPORTED
-	#else
-		// DIV_INT = 33 (25 MHz * 33/2 = 412 MHz), REFDIV = 1, RANGE = 0, OUTDIV = 1
-		#define CPU_PLL_CONFIG_VAL	MAKE_AR9331_CPU_PLL_CONFIG_VAL(33, 1, 0, 1)
-	#endif
-
-	// CLOCK_DIVIDER = 2 (SPI clock = 206 / 6 ~ 34 MHz)
-	#define AR7240_SPI_CONTROL	MAKE_AR9331_SPI_CONTROL_VAL(6)
-
-	#define CFG_HZ_FALLBACK	(412000000LU/2)
-
-#elif (CFG_PLL_FREQ == CFG_PLL_420_420_210)
-
-	// CPU_DIV = 1, RAM_DIV = 1, AHB_DIV = 2
-	#define CPU_CLK_CONTROL_VAL		MAKE_AR9331_CPU_CLK_CONTROL_VAL(1, 1, 2)
-
-	#if CONFIG_40MHZ_XTAL_SUPPORT
-		// DIV_INT = 21 (40 MHz * 21/2 = 420 MHz), REFDIV = 1, RANGE = 0, OUTDIV = 1
-		#define CPU_PLL_CONFIG_VAL	MAKE_AR9331_CPU_PLL_CONFIG_VAL(21, 1, 0, 1)
-	#else
-		#define FREQUENCY_NOT_SUPPORTED
-	#endif
-
-	// CLOCK_DIVIDER = 2 (SPI clock = 210 / 6 ~ 35 MHz)
-	#define AR7240_SPI_CONTROL	MAKE_AR9331_SPI_CONTROL_VAL(6)
-
-	#define CFG_HZ_FALLBACK	(420000000LU/2)
-
-#elif (CFG_PLL_FREQ == CFG_PLL_425_425_212)
-
-	// CPU_DIV = 1, RAM_DIV = 1, AHB_DIV = 2
-	#define CPU_CLK_CONTROL_VAL		MAKE_AR9331_CPU_CLK_CONTROL_VAL(1, 1, 2)
-
-	#if CONFIG_40MHZ_XTAL_SUPPORT
-		#define FREQUENCY_NOT_SUPPORTED
-	#else
-		// DIV_INT = 34 (25 MHz * 34/2 = 425 MHz), REFDIV = 1, RANGE = 0, OUTDIV = 1
-		#define CPU_PLL_CONFIG_VAL	MAKE_AR9331_CPU_PLL_CONFIG_VAL(34, 1, 0, 1)
-	#endif
-
-	// CLOCK_DIVIDER = 2 (SPI clock = 212 / 6 ~ 35 MHz)
-	#define AR7240_SPI_CONTROL	MAKE_AR9331_SPI_CONTROL_VAL(6)
-
-	#define CFG_HZ_FALLBACK	(425000000LU/2)
-
-#elif (CFG_PLL_FREQ == CFG_PLL_437_437_218)
-
-	// CPU_DIV = 1, RAM_DIV = 1, AHB_DIV = 2
-	#define CPU_CLK_CONTROL_VAL		MAKE_AR9331_CPU_CLK_CONTROL_VAL(1, 1, 2)
-
-	#if CONFIG_40MHZ_XTAL_SUPPORT
-		#define FREQUENCY_NOT_SUPPORTED
-	#else
-		// DIV_INT = 35 (25 MHz * 35/2 = 437 MHz), REFDIV = 1, RANGE = 0, OUTDIV = 1
-		#define CPU_PLL_CONFIG_VAL	MAKE_AR9331_CPU_PLL_CONFIG_VAL(35, 1, 0, 1)
-	#endif
-
-	// CLOCK_DIVIDER = 3 (SPI clock = 218 / 8 ~ 27 MHz)
-	#define AR7240_SPI_CONTROL	MAKE_AR9331_SPI_CONTROL_VAL(8)
-
-	#define CFG_HZ_FALLBACK	(437000000LU/2)
-
-#elif (CFG_PLL_FREQ == CFG_PLL_440_440_220)
-
-	// CPU_DIV = 1, RAM_DIV = 1, AHB_DIV = 2
-	#define CPU_CLK_CONTROL_VAL		MAKE_AR9331_CPU_CLK_CONTROL_VAL(1, 1, 2)
-
-	#if CONFIG_40MHZ_XTAL_SUPPORT
-		// DIV_INT = 22 (40 MHz * 22/2 = 440 MHz), REFDIV = 1, RANGE = 0, OUTDIV = 1
-		#define CPU_PLL_CONFIG_VAL	MAKE_AR9331_CPU_PLL_CONFIG_VAL(22, 1, 0, 1)
-	#else
-		#define FREQUENCY_NOT_SUPPORTED
-	#endif
-
-	// CLOCK_DIVIDER = 3 (SPI clock = 220 / 8 ~ 27 MHz)
-	#define AR7240_SPI_CONTROL	MAKE_AR9331_SPI_CONTROL_VAL(8)
-
-	#define CFG_HZ_FALLBACK	(440000000LU/2)
-
-#elif (CFG_PLL_FREQ == CFG_PLL_450_450_225)
-
-	// CPU_DIV = 1, RAM_DIV = 1, AHB_DIV = 2
-	#define CPU_CLK_CONTROL_VAL		MAKE_AR9331_CPU_CLK_CONTROL_VAL(1, 1, 2)
-
-	#if CONFIG_40MHZ_XTAL_SUPPORT
-		#define FREQUENCY_NOT_SUPPORTED
-	#else
-		// DIV_INT = 36 (25 MHz * 36/2 = 450 MHz), REFDIV = 1, RANGE = 0, OUTDIV = 1
-		#define CPU_PLL_CONFIG_VAL	MAKE_AR9331_CPU_PLL_CONFIG_VAL(36, 1, 0, 1)
-	#endif
-
-	// CLOCK_DIVIDER = 3 (SPI clock = 225 / 8 ~ 28 MHz)
-	#define AR7240_SPI_CONTROL	MAKE_AR9331_SPI_CONTROL_VAL(8)
-
-	#define CFG_HZ_FALLBACK	(450000000LU/2)
-
-#elif (CFG_PLL_FREQ == CFG_PLL_460_460_230)
-
-	// CPU_DIV = 1, RAM_DIV = 1, AHB_DIV = 2
-	#define CPU_CLK_CONTROL_VAL		MAKE_AR9331_CPU_CLK_CONTROL_VAL(1, 1, 2)
-
-	#if CONFIG_40MHZ_XTAL_SUPPORT
-		// DIV_INT = 23 (40 MHz * 23/2 = 460 MHz), REFDIV = 1, RANGE = 0, OUTDIV = 1
-		#define CPU_PLL_CONFIG_VAL	MAKE_AR9331_CPU_PLL_CONFIG_VAL(23, 1, 0, 1)
-	#else
-		// DIV_INT = 37 (25 MHz * 36/2 = 462 MHz), REFDIV = 1, RANGE = 0, OUTDIV = 1
-		#define CPU_PLL_CONFIG_VAL	MAKE_AR9331_CPU_PLL_CONFIG_VAL(37, 1, 0, 1)
-	#endif
-
-	// CLOCK_DIVIDER = 3 (SPI clock = 230 / 8 ~ 29 MHz)
-	#define AR7240_SPI_CONTROL	MAKE_AR9331_SPI_CONTROL_VAL(8)
-
-	#define CFG_HZ_FALLBACK	(460000000LU/2)
-
-#elif (CFG_PLL_FREQ == CFG_PLL_475_475_237)
-
-	// CPU_DIV = 1, RAM_DIV = 1, AHB_DIV = 2
-	#define CPU_CLK_CONTROL_VAL		MAKE_AR9331_CPU_CLK_CONTROL_VAL(1, 1, 2)
-
-	#if CONFIG_40MHZ_XTAL_SUPPORT
-		#define FREQUENCY_NOT_SUPPORTED
-	#else
-		// DIV_INT = 38 (25 MHz * 38/2 = 475 MHz), REFDIV = 1, RANGE = 0, OUTDIV = 1
-		#define CPU_PLL_CONFIG_VAL	MAKE_AR9331_CPU_PLL_CONFIG_VAL(38, 1, 0, 1)
-	#endif
-
-	// CLOCK_DIVIDER = 3 (SPI clock = 237 / 8 ~ 30 MHz)
-	#define AR7240_SPI_CONTROL	MAKE_AR9331_SPI_CONTROL_VAL(8)
-
-	#define CFG_HZ_FALLBACK	(475000000LU/2)
-
-#elif (CFG_PLL_FREQ == CFG_PLL_480_480_240)
-
-	// CPU_DIV = 1, RAM_DIV = 1, AHB_DIV = 2
-	#define CPU_CLK_CONTROL_VAL		MAKE_AR9331_CPU_CLK_CONTROL_VAL(1, 1, 2)
-
-	#if CONFIG_40MHZ_XTAL_SUPPORT
-		// DIV_INT = 24 (40 MHz * 24/2 = 480 MHz), REFDIV = 1, RANGE = 0, OUTDIV = 1
-		#define CPU_PLL_CONFIG_VAL	MAKE_AR9331_CPU_PLL_CONFIG_VAL(24, 1, 0, 1)
-	#else
-		#define FREQUENCY_NOT_SUPPORTED
-	#endif
-
-	// CLOCK_DIVIDER = 3 (SPI clock = 240 / 8 ~ 30 MHz)
-	#define AR7240_SPI_CONTROL	MAKE_AR9331_SPI_CONTROL_VAL(8)
-
-	#define CFG_HZ_FALLBACK	(480000000LU/2)
-
-#elif (CFG_PLL_FREQ == CFG_PLL_487_487_243)
-
-	// CPU_DIV = 1, RAM_DIV = 1, AHB_DIV = 2
-	#define CPU_CLK_CONTROL_VAL		MAKE_AR9331_CPU_CLK_CONTROL_VAL(1, 1, 2)
-
-	#if CONFIG_40MHZ_XTAL_SUPPORT
-		#define FREQUENCY_NOT_SUPPORTED
-	#else
-		// DIV_INT = 39 (25 MHz * 39/2 = 487 MHz), REFDIV = 1, RANGE = 0, OUTDIV = 1
-		#define CPU_PLL_CONFIG_VAL	MAKE_AR9331_CPU_PLL_CONFIG_VAL(39, 1, 0, 1)
-	#endif
-
-	// CLOCK_DIVIDER = 3 (SPI clock = 243 / 8 ~ 30 MHz)
-	#define AR7240_SPI_CONTROL	MAKE_AR9331_SPI_CONTROL_VAL(8)
-
-	#define CFG_HZ_FALLBACK	(487000000LU/2)
-
-#elif (CFG_PLL_FREQ == CFG_PLL_500_500_250)
-
-	// CPU_DIV = 1, RAM_DIV = 1, AHB_DIV = 2
-	#define CPU_CLK_CONTROL_VAL		MAKE_AR9331_CPU_CLK_CONTROL_VAL(1, 1, 2)
-
-	#if CONFIG_40MHZ_XTAL_SUPPORT
-		// DIV_INT = 25 (40 MHz * 25/2 = 500 MHz), REFDIV = 1, RANGE = 0, OUTDIV = 1
-		#define CPU_PLL_CONFIG_VAL	MAKE_AR9331_CPU_PLL_CONFIG_VAL(25, 1, 0, 1)
-	#else
-		// DIV_INT = 40 (25 MHz * 40/2 = 500 MHz), REFDIV = 1, RANGE = 0, OUTDIV = 1
-		#define CPU_PLL_CONFIG_VAL	MAKE_AR9331_CPU_PLL_CONFIG_VAL(40, 1, 0, 1)
-	#endif
-
-	// CLOCK_DIVIDER = 3 (SPI clock = 250 / 8 ~ 31 MHz)
-	#define AR7240_SPI_CONTROL	MAKE_AR9331_SPI_CONTROL_VAL(8)
-
-	#define CFG_HZ_FALLBACK	(500000000LU/2)
-
-#elif (CFG_PLL_FREQ == CFG_PLL_500_250_250)
-
-	// CPU_DIV = 1, RAM_DIV = 2, AHB_DIV = 2
-	#define CPU_CLK_CONTROL_VAL		MAKE_AR9331_CPU_CLK_CONTROL_VAL(1, 2, 2)
-
-	#if CONFIG_40MHZ_XTAL_SUPPORT
-		// DIV_INT = 25 (40 MHz * 25/2 = 500 MHz), REFDIV = 1, RANGE = 0, OUTDIV = 1
-		#define CPU_PLL_CONFIG_VAL	MAKE_AR9331_CPU_PLL_CONFIG_VAL(25, 1, 0, 1)
-	#else
-		// DIV_INT = 40 (25 MHz * 40/2 = 500 MHz), REFDIV = 1, RANGE = 0, OUTDIV = 1
-		#define CPU_PLL_CONFIG_VAL	MAKE_AR9331_CPU_PLL_CONFIG_VAL(40, 1, 0, 1)
-	#endif
-
-	// CLOCK_DIVIDER = 3 (SPI clock = 250 / 8 ~ 31 MHz)
-	#define AR7240_SPI_CONTROL	MAKE_AR9331_SPI_CONTROL_VAL(8)
-
-	#define CFG_HZ_FALLBACK	(500000000LU/2)
-
-#elif (CFG_PLL_FREQ == CFG_PLL_520_520_260)
-
-	// CPU_DIV = 1, RAM_DIV = 1, AHB_DIV = 2
-	#define CPU_CLK_CONTROL_VAL		MAKE_AR9331_CPU_CLK_CONTROL_VAL(1, 1, 2)
-
-	#if CONFIG_40MHZ_XTAL_SUPPORT
-		// DIV_INT = 26 (40 MHz * 26/2 = 520 MHz), REFDIV = 1, RANGE = 0, OUTDIV = 1
-		#define CPU_PLL_CONFIG_VAL	MAKE_AR9331_CPU_PLL_CONFIG_VAL(26, 1, 0, 1)
-	#else
-		#define FREQUENCY_NOT_SUPPORTED
-	#endif
-
-	// CLOCK_DIVIDER = 3 (SPI clock = 260 / 8 ~ 32 MHz)
-	#define AR7240_SPI_CONTROL	MAKE_AR9331_SPI_CONTROL_VAL(8)
-
-	#define CFG_HZ_FALLBACK	(520000000LU/2)
-
-#elif (CFG_PLL_FREQ == CFG_PLL_525_262_131)
-
-	// CPU_DIV = 1, RAM_DIV = 2, AHB_DIV = 4
-	#define CPU_CLK_CONTROL_VAL		MAKE_AR9331_CPU_CLK_CONTROL_VAL(1, 2, 4)
-
-	#if CONFIG_40MHZ_XTAL_SUPPORT
-		#define FREQUENCY_NOT_SUPPORTED
-	#else
-		// DIV_INT = 42 (25 MHz * 42/2 = 525 MHz), REFDIV = 1, RANGE = 0, OUTDIV = 1
-		#define CPU_PLL_CONFIG_VAL	MAKE_AR9331_CPU_PLL_CONFIG_VAL(42, 1, 0, 1)
-	#endif
-
-	// CLOCK_DIVIDER = 1 (SPI clock = 131 / 4 ~ 33 MHz)
-	#define AR7240_SPI_CONTROL	MAKE_AR9331_SPI_CONTROL_VAL(4)
-
-	#define CFG_HZ_FALLBACK	(525000000LU/2)
-
-#elif (CFG_PLL_FREQ == CFG_PLL_560_280_140)
-
-	// CPU_DIV = 1, RAM_DIV = 2, AHB_DIV = 4
-	#define CPU_CLK_CONTROL_VAL		MAKE_AR9331_CPU_CLK_CONTROL_VAL(1, 2, 4)
-
-	#if CONFIG_40MHZ_XTAL_SUPPORT
-		// DIV_INT = 28 (40 MHz * 28/2 = 560 MHz), REFDIV = 1, RANGE = 0, OUTDIV = 1
-		#define CPU_PLL_CONFIG_VAL	MAKE_AR9331_CPU_PLL_CONFIG_VAL(28, 1, 0, 1)
-	#else
-		// DIV_INT = 45 (25 MHz * 45/2 = 562 MHz), REFDIV = 1, RANGE = 0, OUTDIV = 1
-		#define CPU_PLL_CONFIG_VAL	MAKE_AR9331_CPU_PLL_CONFIG_VAL(45, 1, 0, 1)
-	#endif
-
-	// CLOCK_DIVIDER = 1 (SPI clock = 140 / 4 ~ 35 MHz)
-	#define AR7240_SPI_CONTROL	MAKE_AR9331_SPI_CONTROL_VAL(4)
-
-	#define CFG_HZ_FALLBACK	(560000000LU/2)
-
-#elif (CFG_PLL_FREQ == CFG_PLL_580_290_145)
-
-	// CPU_DIV = 1, RAM_DIV = 2, AHB_DIV = 4
-	#define CPU_CLK_CONTROL_VAL		MAKE_AR9331_CPU_CLK_CONTROL_VAL(1, 2, 4)
-
-	#if CONFIG_40MHZ_XTAL_SUPPORT
-		// DIV_INT = 29 (40 MHz * 29/2 = 580 MHz), REFDIV = 1, RANGE = 0, OUTDIV = 1
-		#define CPU_PLL_CONFIG_VAL	MAKE_AR9331_CPU_PLL_CONFIG_VAL(29, 1, 0, 1)
-	#else
-		#define FREQUENCY_NOT_SUPPORTED
-	#endif
-
-	// CLOCK_DIVIDER = 1 (SPI clock = 145 / 4 ~ 36 MHz)
-	#define AR7240_SPI_CONTROL	MAKE_AR9331_SPI_CONTROL_VAL(4)
-
-	#define CFG_HZ_FALLBACK	(580000000LU/2)
-
-#elif (CFG_PLL_FREQ == CFG_PLL_600_300_200)
-
-	// CPU_DIV = 1, RAM_DIV = 2, AHB_DIV = 3
-	#define CPU_CLK_CONTROL_VAL		MAKE_AR9331_CPU_CLK_CONTROL_VAL(1, 2, 3)
-
-	#if CONFIG_40MHZ_XTAL_SUPPORT
-		// DIV_INT = 30 (40 MHz * 30/2 = 600 MHz), REFDIV = 1, RANGE = 0, OUTDIV = 1
-		#define CPU_PLL_CONFIG_VAL	MAKE_AR9331_CPU_PLL_CONFIG_VAL(30, 1, 0, 1)
-	#else
-		// DIV_INT = 48 (25 MHz * 48/2 = 600 MHz), REFDIV = 1, RANGE = 0, OUTDIV = 1
-		#define CPU_PLL_CONFIG_VAL	MAKE_AR9331_CPU_PLL_CONFIG_VAL(48, 1, 0, 1)
-	#endif
-
-	// CLOCK_DIVIDER = 2 (SPI clock = 200 / 6 ~ 33 MHz)
-	#define AR7240_SPI_CONTROL	MAKE_AR9331_SPI_CONTROL_VAL(6)
-
-	#define CFG_HZ_FALLBACK	(600000000LU/2)
-
-#elif defined(CFG_PLL_FREQ)
-	#error Unknown frequency setting!
-#endif
-
-/*
- * Check if clocks configuration is valid
- */
-#ifdef FREQUENCY_NOT_SUPPORTED
-	#error Selected frequency setting is not supported with your reference clock!
+#ifdef CONFIG_GPIO_RESET_BTN_ACTIVE_LOW
+	#define CONFIG_QCA_GPIO_OC_RECOVERY_BTN_ACTIVE_LOW	1
 #endif
 
 /*
@@ -778,6 +369,10 @@
 	#define CFG_ENV_ADDR		0x9F040000
 	#define CFG_ENV_SIZE		0x8000
 	#define CFG_ENV_SECT_SIZE	0x10000
+#elif defined(CONFIG_FOR_BLACK_SWIFT_BOARD)
+	#define CFG_ENV_ADDR		0x9F020000
+	#define CFG_ENV_SIZE		0x8000
+	#define CFG_ENV_SECT_SIZE	0x10000
 #else
 	#define CFG_ENV_ADDR		0x9F01EC00
 	#define CFG_ENV_SIZE		0x1000
@@ -802,7 +397,8 @@
 
 #elif defined(CONFIG_FOR_8DEVICES_CARAMBOLA2) || \
       defined(CONFIG_FOR_DRAGINO_V2) || \
-      defined(CONFIG_FOR_MESH_POTATO_V2)
+      defined(CONFIG_FOR_MESH_POTATO_V2) || \
+      defined(CONFIG_FOR_BLACK_SWIFT_BOARD)
 
 	#define CONFIG_COMMANDS (CFG_CMD_MEMORY | \
 							 CFG_CMD_DHCP   | \
@@ -841,35 +437,6 @@
 #define CONFIG_NETCONSOLE
 #define CONFIG_NETCONSOLE_PORT	6666
 
-/* DDR init values */
-#if CONFIG_40MHZ_XTAL_SUPPORT
-	#define CFG_DDR_REFRESH_VAL	0x4270
-#else
-	#define CFG_DDR_REFRESH_VAL	0x4186
-#endif
-
-#define CFG_DDR_CONFIG_VAL		0x7fbc8cd0
-#define CFG_DDR_MODE_VAL_INIT	0x133
-
-#ifdef LOW_DRIVE_STRENGTH
-	#define CFG_DDR_EXT_MODE_VAL	0x2
-#else
-	#define CFG_DDR_EXT_MODE_VAL	0x0
-#endif
-
-#define CFG_DDR_MODE_VAL	0x33
-#define CFG_DDR_TRTW_VAL	0x1f
-#define CFG_DDR_TWTR_VAL	0x1e
-
-//#define CFG_DDR_CONFIG2_VAL			0x99d0e6a8	// HORNET 1.0
-#define CFG_DDR_CONFIG2_VAL				0x9dd0e6a8	// HORNET 1.1
-#define CFG_DDR_RD_DATA_THIS_CYCLE_VAL	0x00ff
-#define CFG_DDR_TAP0_VAL				0x8
-#define CFG_DDR_TAP1_VAL				0x9
-
-/* DDR2 Init values */
-#define CFG_DDR2_EXT_MODE_VAL			0x402
-
 #define CONFIG_NET_MULTI
 
 /* choose eth1 first for tftpboot interface added by ZJin, 110328 */
@@ -894,6 +461,9 @@
       defined(CONFIG_FOR_MESH_POTATO_V2)
 	#define UPDATE_SCRIPT_UBOOT_SIZE_IN_BYTES			"0x30000"
 	#define UPDATE_SCRIPT_UBOOT_BACKUP_SIZE_IN_BYTES	UPDATE_SCRIPT_UBOOT_SIZE_IN_BYTES
+#elif defined(CONFIG_FOR_BLACK_SWIFT_BOARD)
+	#define UPDATE_SCRIPT_UBOOT_SIZE_IN_BYTES			"0x20000"
+	#define UPDATE_SCRIPT_UBOOT_BACKUP_SIZE_IN_BYTES	UPDATE_SCRIPT_UBOOT_SIZE_IN_BYTES
 #else
 	// TODO: should be == CONFIG_MAX_UBOOT_SIZE_KB
 	#define UPDATE_SCRIPT_UBOOT_SIZE_IN_BYTES			"0x1EC00"
@@ -908,6 +478,8 @@
 #elif defined(CONFIG_FOR_DRAGINO_V2) || \
       defined(CONFIG_FOR_MESH_POTATO_V2)
 	#define WEBFAILSAFE_UPLOAD_KERNEL_ADDRESS			WEBFAILSAFE_UPLOAD_UBOOT_ADDRESS + 0x40000
+#elif defined(CONFIG_FOR_BLACK_SWIFT_BOARD)
+	#define WEBFAILSAFE_UPLOAD_KERNEL_ADDRESS			WEBFAILSAFE_UPLOAD_UBOOT_ADDRESS + 0x30000
 #else
 	#define WEBFAILSAFE_UPLOAD_KERNEL_ADDRESS			WEBFAILSAFE_UPLOAD_UBOOT_ADDRESS + 0x20000
 #endif
@@ -933,6 +505,9 @@
 #elif defined(CONFIG_FOR_GS_OOLITE_V1_DEV)
 	// GS-Oolite v1: 128k(U-Boot + MAC),64k(ART)
 	#define WEBFAILSAFE_UPLOAD_LIMITED_AREA_IN_BYTES	(192 * 1024)
+#elif defined(CONFIG_FOR_BLACK_SWIFT_BOARD)
+	// Black Swift board: 128k(U-Boot),64k(U-Boot env),64k(ART)
+	#define WEBFAILSAFE_UPLOAD_LIMITED_AREA_IN_BYTES	(256 * 1024)
 #else
 	// TP-Link: 64k(U-Boot),64k(MAC/model/WPS pin block),64k(ART)
 	#define WEBFAILSAFE_UPLOAD_LIMITED_AREA_IN_BYTES	(192 * 1024)
@@ -993,7 +568,6 @@
 #define CFG_BOOTM_LEN				(16 << 20) /* 16 MB */
 
 #undef DEBUG
-#define milisecdelay(_x)			udelay((_x) * 1000)
 
 /* MAC address, model and PIN number offsets in FLASH */
 #if defined(CONFIG_FOR_DLINK_DIR505_A1)
@@ -1017,6 +591,11 @@
 	#define OFFSET_MAC_DATA_BLOCK			0x010000
 	#define OFFSET_MAC_DATA_BLOCK_LENGTH	0x010000
 	#define OFFSET_MAC_ADDRESS				0x00FC00
+#elif defined(CONFIG_FOR_BLACK_SWIFT_BOARD)
+	// Black Swift board has only one MAC address at the beginning of ART partition
+	#define OFFSET_MAC_DATA_BLOCK		0xFF0000
+	#define OFFSET_MAC_DATA_BLOCK_LENGTH	0x010000
+	#define OFFSET_MAC_ADDRESS		0x000000
 #else
 	#define OFFSET_MAC_DATA_BLOCK			0x010000
 	#define OFFSET_MAC_DATA_BLOCK_LENGTH	0x010000
@@ -1028,7 +607,8 @@
 	!defined(CONFIG_FOR_GS_OOLITE_V1_DEV)    && \
 	!defined(CONFIG_FOR_DRAGINO_V2)          && \
 	!defined(CONFIG_FOR_MESH_POTATO_V2)      && \
-	!defined(CONFIG_FOR_GL_INET)
+	!defined(CONFIG_FOR_GL_INET)             && \
+	!defined(CONFIG_FOR_BLACK_SWIFT_BOARD)
 #define OFFSET_ROUTER_MODEL					0x00FD00
 #endif
 
@@ -1041,34 +621,32 @@
 
 /*
  * PLL and clocks configurations from FLASH
- *
- * We need space for 4x 32-bit variables:
- * - PLL_MAGIC_VARIABLE
- * - values of registers:
- *   - CPU_PLL_CONFIG (page 70 in datasheet)
- *   - CLOCK_CONTROL  (page 71)
- *   - SPI_CONTROL    (page 261)
  */
-#if defined(CONFIG_FOR_DLINK_DIR505_A1)
+#if defined(CONFIG_FOR_DLINK_DIR505_A1) || \
+    defined(CONFIG_FOR_BLACK_SWIFT_BOARD)
 	/*
+	 * For DIR505 A1:
 	 * We will store PLL and CLOCK registers
 	 * configuration at the end of MAC data
 	 * partition (3rd 64 KiB block)
+	 * ----
+	 * For Black Swift board:
+	 * We will store PLL and CLOCK registers
+	 * configuration at the end of environment
+	 * sector (64 KB, environment uses only part!)
 	 */
-	#define PLL_IN_FLASH_MAGIC				0x504C4C73
-	#define PLL_IN_FLASH_DATA_BLOCK_OFFSET	0x00020000
-	#define PLL_IN_FLASH_DATA_BLOCK_LENGTH	0x00010000
-	#define PLL_IN_FLASH_MAGIC_OFFSET		0x0000FFF0	// last 16 bytes
+	#define CONFIG_QCA_PLL_IN_FLASH_BLOCK_OFFSET	0x00020000
+	#define CONFIG_QCA_PLL_IN_FLASH_BLOCK_SIZE		0x00010000
+
 #elif defined(CONFIG_FOR_8DEVICES_CARAMBOLA2)
 	/*
 	 * We will store PLL and CLOCK registers
 	 * configuration at the end of environment
 	 * sector (64 KB, environment uses only half!)
 	 */
-	#define PLL_IN_FLASH_MAGIC				0x504C4C73
-	#define PLL_IN_FLASH_DATA_BLOCK_OFFSET	0x00040000
-	#define PLL_IN_FLASH_DATA_BLOCK_LENGTH	0x00010000
-	#define PLL_IN_FLASH_MAGIC_OFFSET		0x0000FFF0	// last 16 bytes
+	#define CONFIG_QCA_PLL_IN_FLASH_BLOCK_OFFSET	0x00040000
+	#define CONFIG_QCA_PLL_IN_FLASH_BLOCK_SIZE		0x00010000
+
 #elif defined(CONFIG_FOR_DRAGINO_V2) || \
       defined(CONFIG_FOR_MESH_POTATO_V2)
 	/*
@@ -1076,10 +654,9 @@
 	 * configuration at the end of environment
 	 * sector (64 KB, environment uses only half!)
 	 */
-	#define PLL_IN_FLASH_MAGIC				0x504C4C73
-	#define PLL_IN_FLASH_DATA_BLOCK_OFFSET	0x00030000
-	#define PLL_IN_FLASH_DATA_BLOCK_LENGTH	0x00010000
-	#define PLL_IN_FLASH_MAGIC_OFFSET		0x0000FFF0	// last 16 bytes
+	#define CONFIG_QCA_PLL_IN_FLASH_BLOCK_OFFSET	0x00030000
+	#define CONFIG_QCA_PLL_IN_FLASH_BLOCK_SIZE		0x00010000
+
 #else
 	/*
 	 * All TP-Link routers have a lot of unused space
@@ -1087,10 +664,16 @@
 	 * We will store there PLL and CLOCK
 	 * registers configuration.
 	 */
-	#define PLL_IN_FLASH_MAGIC				0x504C4C73
-	#define PLL_IN_FLASH_DATA_BLOCK_OFFSET	0x00010000
-	#define PLL_IN_FLASH_DATA_BLOCK_LENGTH	0x00010000
-	#define PLL_IN_FLASH_MAGIC_OFFSET		0x0000FFF0	// last 16 bytes
+	#define CONFIG_QCA_PLL_IN_FLASH_BLOCK_OFFSET	0x00010000
+	#define CONFIG_QCA_PLL_IN_FLASH_BLOCK_SIZE		0x00010000
+
+#endif
+
+#if defined(CONFIG_QCA_PLL_IN_FLASH_BLOCK_OFFSET)
+	/* Use last 32 bytes */
+	#define CONFIG_QCA_PLL_IN_FLASH_MAGIC_OFFSET	(CFG_FLASH_BASE + \
+													 CONFIG_QCA_PLL_IN_FLASH_BLOCK_OFFSET + \
+													 0x0000FFE0)
 #endif
 
 #include <cmd_confdefs.h>

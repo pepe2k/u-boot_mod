@@ -52,6 +52,9 @@
 # TODO: broken symbolic link
 /u-boot/include/asm-*/arch
 
+# Do not ignore original u-boot images
+!/original_u-boot_images/*.bin
+
 #
 # git files that we don't want to ignore even it they are dot-files
 #

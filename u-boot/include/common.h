@@ -164,8 +164,17 @@ typedef void (interrupt_handler_t)(void *);
 void hang(void) __attribute__ ((noreturn));
 
 /* */
-long int initdram(void);
-void print_size(ulong, const char *);
+long int dram_init(void);
+int      timer_init(void);
+void     full_reset(void);
+void     all_led_on(void);
+void     all_led_off(void);
+void     print_size(ulong, const char *);
+void     print_board_info(void);
+void     macaddr_init(unsigned char *);
+void     flash_print_name(void);
+void     cpu_name(char *name);
+unsigned int main_cpu_clk(void);
 
 /* common/main.c */
 void	main_loop		(void);
@@ -194,22 +203,12 @@ int	autoscript (ulong addr);
  * Only TP-Link OFW and OpenWrt for TP-Link routers
  * use different (simply) image header
  */
-#if !defined(CONFIG_FOR_8DEVICES_CARAMBOLA2) && \
-	!defined(CONFIG_FOR_DLINK_DIR505_A1)     && \
-	!defined(CONFIG_FOR_DRAGINO_V2)          && \
-	!defined(CONFIG_FOR_MESH_POTATO_V2)
+#ifdef CONFIG_TPLINK_IMAGE_HEADER
 #include "tpLinuxTag.h"
-#endif
-
-/* common/cmd_bootm.c */
-#if defined(CONFIG_FOR_8DEVICES_CARAMBOLA2) || \
-	defined(CONFIG_FOR_DLINK_DIR505_A1)     || \
-	defined(CONFIG_FOR_DRAGINO_V2)          || \
-	defined(CONFIG_FOR_MESH_POTATO_V2)
-void print_image_hdr(image_header_t *hdr);
-#else
 void print_image_hdr(tplink_image_header_t *hdr);
-#endif
+#else
+void print_image_hdr(image_header_t *hdr);
+#endif /* CONFIG_TPLINK_IMAGE_HEADER */
 
 extern ulong load_addr;		/* Default Load Address */
 
@@ -520,6 +519,7 @@ void	wait_ticks    (unsigned long);
 
 /* lib_$(ARCH)/time.c */
 void	udelay	      (unsigned long);
+#define milisecdelay(_x)                        udelay((_x) * 1000)
 ulong	usec2ticks    (unsigned long usec);
 ulong	ticks2usec    (unsigned long ticks);
 int	init_timebase (void);
@@ -532,10 +532,6 @@ unsigned long long	simple_strtoull(const char *cp,char **endp,unsigned int base)
 long	simple_strtol(const char *cp,char **endp,unsigned int base);
 int	sprintf(char * buf, const char *fmt, ...);
 int	vsprintf(char *buf, const char *fmt, va_list args);
-
-/* lib_generic/crc32.c */
-ulong crc32 (ulong, const unsigned char *, uint);
-ulong crc32_no_comp (ulong, const unsigned char *, uint);
 
 /* common/console.c */
 int	console_init_f(void);	/* Before relocation; uses the serial  stuff	*/

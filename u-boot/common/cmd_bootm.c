@@ -28,11 +28,10 @@
 #include <command.h>
 #include <image.h>
 #include <malloc.h>
-#include <zlib.h>
-#include <bzlib.h>
 #include <LzmaWrapper.h>
 #include <environment.h>
 #include <asm/byteorder.h>
+#include <tinf.h>
 
 DECLARE_GLOBAL_DATA_PTR;
 
@@ -71,10 +70,7 @@ static int image_info(unsigned long addr);
 image_header_t header;
 ulong load_addr = CFG_LOAD_ADDR; /* default load address */
 
-#if !defined(CONFIG_FOR_8DEVICES_CARAMBOLA2) && \
-	!defined(CONFIG_FOR_DLINK_DIR505_A1)     && \
-	!defined(CONFIG_FOR_DRAGINO_V2)          && \
-	!defined(CONFIG_FOR_MESH_POTATO_V2)
+#ifdef CONFIG_TPLINK_IMAGE_HEADER
 void fake_image_header(image_header_t *hdr, tplink_image_header_t *tpl_hdr){
 	memset(hdr, 0, sizeof(image_header_t));
 
@@ -93,17 +89,14 @@ void fake_image_header(image_header_t *hdr, tplink_image_header_t *tpl_hdr){
 
 	strncpy((char *)hdr->ih_name, (char *)tpl_hdr->signiture_1, IH_NMLEN);
 }
-#endif /* if !defined(CONFIG_FOR_8DEVICES_CARAMBOLA2) && !defined(CONFIG_FOR_DLINK_DIR505_A1) && !defined(CONFIG_FOR_DRAGINO_V2) && !defined(CONFIG_FOR_MESH_POTATO_V2) */
+#endif /* CONFIG_TPLINK_IMAGE_HEADER */
 
 int do_bootm(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[]){
 	ulong addr, data, len;
 	uint unc_len = CFG_BOOTM_LEN;
 	int i;
 	image_header_t *hdr = &header;
-#if !defined(CONFIG_FOR_8DEVICES_CARAMBOLA2) && \
-	!defined(CONFIG_FOR_DLINK_DIR505_A1)     && \
-	!defined(CONFIG_FOR_DRAGINO_V2)          && \
-	!defined(CONFIG_FOR_MESH_POTATO_V2)
+#ifdef CONFIG_TPLINK_IMAGE_HEADER
 	tplink_image_header_t *fileTag;
 #endif
 
@@ -115,10 +108,7 @@ int do_bootm(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[]){
 
 	printf("Booting image at: 0x%08lX\n", addr);
 
-#if defined(CONFIG_FOR_8DEVICES_CARAMBOLA2) || \
-	defined(CONFIG_FOR_DLINK_DIR505_A1)     || \
-	defined(CONFIG_FOR_DRAGINO_V2)          || \
-	defined(CONFIG_FOR_MESH_POTATO_V2)
+#ifndef CONFIG_TPLINK_IMAGE_HEADER
 	memmove(&header, (char *)addr, sizeof(image_header_t));
 	print_image_hdr(hdr);
 
@@ -130,7 +120,7 @@ int do_bootm(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[]){
 	fake_image_header(hdr, fileTag);
 
 	data = addr + TAG_LEN;
-#endif
+#endif /* !CONFIG_TPLINK_IMAGE_HEADER */
 
 	len = ntohl(hdr->ih_size);
 
@@ -147,7 +137,7 @@ int do_bootm(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[]){
 	eth_halt();
 #endif
 
-#if defined(CONFIG_AR7100) || defined(CONFIG_AR7240)
+	/* TODO: should we flush caches for kernel? */
 	/*
 	 * Flush everything, restore caches for linux
 	 */
@@ -156,7 +146,6 @@ int do_bootm(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[]){
 
 	/* XXX - this causes problems when booting from flash */
 	/* dcache_disable(); */
-#endif
 
 	/*	case IH_COMP_LZMA:*/
 	puts("Uncompressing kernel image... ");
@@ -223,10 +212,7 @@ static void fixup_silent_linux(){
 }
 #endif /* CONFIG_SILENT_CONSOLE */
 
-#if defined(CONFIG_FOR_8DEVICES_CARAMBOLA2) || \
-	defined(CONFIG_FOR_DLINK_DIR505_A1)     || \
-	defined(CONFIG_FOR_DRAGINO_V2)          || \
-	defined(CONFIG_FOR_MESH_POTATO_V2)
+#ifndef CONFIG_TPLINK_IMAGE_HEADER
 static void print_type(image_header_t *hdr){
 	char *os, *arch, *type, *comp;
 
@@ -403,7 +389,7 @@ void print_image_hdr(tplink_image_header_t *hdr){
 	print_size(ntohl(hdr->kernelLen), "\n");
 	printf("   Load address: 0x%08X\n   Entry point:  0x%08X\n\n", ntohl(hdr->kernelTextAddr), ntohl(hdr->kernelEntryPoint));
 }
-#endif /* defined(CONFIG_FOR_8DEVICES_CARAMBOLA2) || defined(CONFIG_FOR_DLINK_DIR505_A1) || defined(CONFIG_FOR_DRAGINO_V2) || defined(CONFIG_FOR_MESH_POTATO_V2) */
+#endif /* !CONFIG_TPLINK_IMAGE_HEADER */
 
 #if (CONFIG_COMMANDS & CFG_CMD_BOOTD)
 int do_bootd(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[]){
@@ -466,7 +452,7 @@ static int image_info(ulong addr){
 	checksum = ntohl(hdr->ih_hcrc);
 	hdr->ih_hcrc = 0;
 
-	if(crc32(0, (uchar *)data, len) != checksum){
+	if(tinf_crc32((uchar *)data, len) != checksum){
 		puts("## Error: bad header checksum!\n");
 		return 1;
 	}
@@ -479,7 +465,7 @@ static int image_info(ulong addr){
 
 	puts("   Verifying checksum... ");
 
-	if(crc32(0, (uchar *)data, len) != ntohl(hdr->ih_dcrc)){
+	if(tinf_crc32((uchar *)data, len) != ntohl(hdr->ih_dcrc)){
 		puts("bad data CRC!\n");
 		return(1);
 	}

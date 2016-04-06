@@ -1,7 +1,12 @@
 export BUILD_TOPDIR=$(PWD)
 export STAGING_DIR=$(BUILD_TOPDIR)/tmp
 
-export MAKECMD=make --silent --no-print-directory ARCH=mips CROSS_COMPILE=mips-linux-gnu-
+ifndef CROSS_COMPILE
+CROSS_COMPILE = mips-openwrt-linux-musl-
+endif
+export CROSS_COMPILE
+
+export MAKECMD=make --silent --no-print-directory ARCH=mips
 
 # boot delay (time to autostart boot command)
 export CONFIG_BOOTDELAY=1
@@ -32,13 +37,13 @@ tplink_wr703n:
 	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) ENDIANNESS=-EB V=1 all
 	@make --no-print-directory show_size
 
-tplink_wr720n_v3_CH:	export UBOOT_FILE_NAME=uboot_for_tp-link_tl-wr720n_v3_CH
-tplink_wr720n_v3_CH:	export CONFIG_MAX_UBOOT_SIZE_KB=123
+tplink_wr720n_v3_CN:	export UBOOT_FILE_NAME=uboot_for_tp-link_tl-wr720n_v3_CN
+tplink_wr720n_v3_CN:	export CONFIG_MAX_UBOOT_SIZE_KB=123
 ifndef CONFIG_SKIP_LOWLEVEL_INIT
-tplink_wr720n_v3_CH:	export COMPRESSED_UBOOT=1
+tplink_wr720n_v3_CN:	export COMPRESSED_UBOOT=1
 endif
-tplink_wr720n_v3_CH:
-	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) wr720n_v3_CH_config
+tplink_wr720n_v3_CN:
+	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) wr720n_v3_CN_config
 	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) ENDIANNESS=-EB V=1 all
 	@make --no-print-directory show_size
 
@@ -146,6 +151,17 @@ tplink_wr841n_v8:
 	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) ENDIANNESS=-EB V=1 all
 	@make --no-print-directory show_size
 
+tplink_wr841n_v9:	export UBOOT_FILE_NAME=uboot_for_tp-link_tl-wr841n_v9
+tplink_wr841n_v9:	export CONFIG_MAX_UBOOT_SIZE_KB=123
+ifndef CONFIG_SKIP_LOWLEVEL_INIT
+tplink_wr841n_v9:	export COMPRESSED_UBOOT=1
+endif
+tplink_wr841n_v9:	export ETH_CONFIG=_s27
+tplink_wr841n_v9:
+	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) wr841n_v9_config
+	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) ENDIANNESS=-EB V=1 all
+	@make --no-print-directory show_size
+
 tplink_wa830re_v2_wa801nd_v2:	export UBOOT_FILE_NAME=uboot_for_tp-link_tl-wa830re_v2_tl-wa801nd_v2
 tplink_wa830re_v2_wa801nd_v2:	export CONFIG_MAX_UBOOT_SIZE_KB=123
 ifndef CONFIG_SKIP_LOWLEVEL_INIT
@@ -154,6 +170,28 @@ endif
 tplink_wa830re_v2_wa801nd_v2:	export ETH_CONFIG=_s27
 tplink_wa830re_v2_wa801nd_v2:
 	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) wa830re_v2_wa801nd_v2_config
+	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) ENDIANNESS=-EB V=1 all
+	@make --no-print-directory show_size
+
+tplink_wr820n_CN:	export UBOOT_FILE_NAME=uboot_for_tp-link_tl-wr820n_CN
+tplink_wr820n_CN:	export CONFIG_MAX_UBOOT_SIZE_KB=123
+ifndef CONFIG_SKIP_LOWLEVEL_INIT
+tplink_wr820n_CN:	export COMPRESSED_UBOOT=1
+endif
+tplink_wr820n_CN:	export ETH_CONFIG=_s27
+tplink_wr820n_CN:
+	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) wr820n_CN_config
+	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) ENDIANNESS=-EB V=1 all
+	@make --no-print-directory show_size
+
+tplink_wr802n:	export UBOOT_FILE_NAME=uboot_for_tp-link_tl-wr802n
+tplink_wr802n:	export CONFIG_MAX_UBOOT_SIZE_KB=123
+ifndef CONFIG_SKIP_LOWLEVEL_INIT
+tplink_wr802n:	export COMPRESSED_UBOOT=1
+endif
+tplink_wr802n:	export ETH_CONFIG=_s27
+tplink_wr802n:
+	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) wr802n_config
 	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) ENDIANNESS=-EB V=1 all
 	@make --no-print-directory show_size
 
@@ -189,6 +227,15 @@ dragino_v2_ms14:	export CONFIG_MAX_UBOOT_SIZE_KB=192
 dragino_v2_ms14:	export DEVICE_VENDOR=dragino
 dragino_v2_ms14:
 	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) dragino_v2_ms14_config
+	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) ENDIANNESS=-EB V=1 all
+	@make --no-print-directory show_size
+
+black_swift_board:	export UBOOT_FILE_NAME=uboot_for_black_swift_board
+black_swift_board:	export CONFIG_MAX_UBOOT_SIZE_KB=128
+black_swift_board:	export COMPRESSED_UBOOT=1
+black_swift_board:	export DEVICE_VENDOR=SE
+black_swift_board:
+	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) black_swift_board_config
 	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) ENDIANNESS=-EB V=1 all
 	@make --no-print-directory show_size
 
