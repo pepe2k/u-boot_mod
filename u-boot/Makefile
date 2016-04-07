@@ -503,6 +503,15 @@ villagetelco_mp2_config : unconfig hornet_common_config
 
 	@./mkconfig -a ap121 mips mips ap121 ar7240 ar7240
 
+map2n_config : unconfig hornet_common_config
+	@/bin/echo -e '\e[32m> Configuring for mAP2n at:' `date` '\e[0m'
+	@echo "#define CONFIG_GPIO_RESET_BTN                6" >> include/config.h
+	@echo "#define CONFIG_GPIO_RESET_BTN_ACTIVE_LOW     1" >> include/config.h
+	@echo "#define CONFIG_DEFAULT_FLASH_SIZE_IN_MB     16" >> include/config.h
+	@echo "#define CONFIG_BOARD_CUSTOM_STRING           \"mAP2n\"" >> include/config.h
+
+	@./mkconfig -a ap121 mips mips ap121 ar7240 ar7240
+
 gl-inet_config : unconfig hornet_common_config
 	@/bin/echo -e '\e[32m> Configuring for GL.iNet at:' `date` '\e[0m'
 	@echo "#define CONFIG_FOR_GL_INET                   1" >> include/config.h
