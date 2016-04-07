@@ -69,6 +69,7 @@ Lista obecnie wspieranych urządzeń:
   - Dragino 2 (MS14)
   - Village Telco Mesh Potato 2 (bazuje na Dragino MS14)
   - GL.iNet 64xxA ([zdjęcia w mojej galerii](http://galeria.tech-blog.pl/GLiNet/))
+  - Routerboard Mikrotik mAP2n
   - Black Swift
 
 - **Atheros AR1311 (bliźniaczy układ AR9331)**
