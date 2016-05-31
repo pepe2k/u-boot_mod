@@ -1,3 +1,14 @@
+SHELL = bash
+UNAME_S := $(shell uname -s)
+
+ifeq ($(UNAME_S), Darwin)
+HOSTOS = osx
+else ifeq ($(UNAME_S), Linux)
+HOSTOS = linux
+else
+$(error Error! Unsupported Host Operating System!)
+endif
+
 export BUILD_TOPDIR=$(PWD)
 export STAGING_DIR=$(BUILD_TOPDIR)/tmp
 
@@ -285,7 +296,7 @@ ifdef COMPRESSED_UBOOT
 else
 	@cp $(BUILD_TOPDIR)/u-boot/u-boot.bin $(BUILD_TOPDIR)/bin/temp.bin
 endif
-	@/bin/echo -ne "\e[32m"
+	@echo -ne "\e[32m"
 ifndef CONFIG_SKIP_LOWLEVEL_INIT
 	@echo "> Preparing $(CONFIG_MAX_UBOOT_SIZE_KB)KB file filled with 0xFF..."
 	@`tr "\000" "\377" < /dev/zero | dd ibs=1k count=$(CONFIG_MAX_UBOOT_SIZE_KB) of=$(BUILD_TOPDIR)/bin/$(UBOOT_FILE_NAME)$(UBOOT_FILE_NAME_SUFFIX).bin 2> /dev/null`
@@ -301,19 +312,19 @@ endif
 	@`echo ' *'$(UBOOT_FILE_NAME)$(UBOOT_FILE_NAME_SUFFIX).bin >> $(BUILD_TOPDIR)/bin/$(UBOOT_FILE_NAME)$(UBOOT_FILE_NAME_SUFFIX).md5`
 # Do not check image size for RAM version
 ifndef CONFIG_SKIP_LOWLEVEL_INIT
-	@if [ "`wc -c < $(BUILD_TOPDIR)/bin/$(UBOOT_FILE_NAME)$(UBOOT_FILE_NAME_SUFFIX).bin`" -gt "`/bin/echo '$(CONFIG_MAX_UBOOT_SIZE_KB)*1024' | bc`" ]; then \
-			/bin/echo -e "\e[31m\n**************************************************"; \
-			/bin/echo "*     WARNING: U-BOOT IMAGE SIZE IS TOO BIG!     *"; \
-			/bin/echo -e "**************************************************"; \
+	@if [ "`wc -c < $(BUILD_TOPDIR)/bin/$(UBOOT_FILE_NAME)$(UBOOT_FILE_NAME_SUFFIX).bin`" -gt "`echo '$(CONFIG_MAX_UBOOT_SIZE_KB)*1024' | bc`" ]; then \
+			echo -e "\e[31m\n**************************************************"; \
+			echo "*     WARNING: U-BOOT IMAGE SIZE IS TOO BIG!     *"; \
+			echo -e "**************************************************"; \
 	fi;
 endif
-	@/bin/echo -ne "\e[0m"
+	@echo -ne "\e[0m"
 
 clean:
 	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) --no-print-directory distclean
 	@rm -f $(BUILD_TOPDIR)/u-boot/httpd/fsdata.c
 
 clean_all:	clean
-	@/bin/echo -e "\e[32m> Removing all binary images...\e[0m"
+	@echo -e "\e[32m> Removing all binary images...\e[0m"
 	@rm -f $(BUILD_TOPDIR)/bin/*.bin
 	@rm -f $(BUILD_TOPDIR)/bin/*.md5
