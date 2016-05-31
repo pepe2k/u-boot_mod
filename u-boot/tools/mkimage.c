@@ -441,7 +441,7 @@ NXTARG:		;
 	}
 
 	/* We're a bit of paranoid */
-#if defined(_POSIX_SYNCHRONIZED_IO) && !defined(__sun__) && !defined(__FreeBSD__)
+#if defined(_POSIX_SYNCHRONIZED_IO) && !defined(__sun__) && !defined(__FreeBSD__) && !defined(__APPLE__)
 	(void) fdatasync (ifd);
 #else
 	(void) fsync (ifd);
@@ -491,7 +491,7 @@ NXTARG:		;
 	(void) munmap((void *)ptr, sbuf.st_size);
 
 	/* We're a bit of paranoid */
-#if defined(_POSIX_SYNCHRONIZED_IO) && !defined(__sun__) && !defined(__FreeBSD__)
+#if defined(_POSIX_SYNCHRONIZED_IO) && !defined(__sun__) && !defined(__FreeBSD__) && !defined(__APPLE__)
 	(void) fdatasync (ifd);
 #else
 	(void) fsync (ifd);

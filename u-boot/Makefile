@@ -124,12 +124,6 @@ endif
 
 LIBS  = lib_generic/libgeneric.a
 LIBS += common/libcommon.a
-LIBS += board/$(BOARDDIR)/lib$(BOARD).a
-LIBS += cpu/$(CPU)/lib$(CPU).a
-
-ifdef SOC
-LIBS += cpu/$(CPU)/$(SOC)/lib$(SOC).a
-endif
 
 LIBS += lib_$(ARCH)/lib$(ARCH).a
 LIBS += drivers/libdrivers.a
@@ -138,22 +132,27 @@ LIBS += rtc/librtc.a
 LIBS += httpd/libhttpd.a
 LIBS += $(BOARDLIBS)
 
+LIBS_SHARED = board/$(BOARDDIR)/lib$(BOARD).a 
+ifdef SOC
+LIBS_SHARED += cpu/$(CPU)/$(SOC)/lib$(SOC).a
+endif
+LIBS_SHARED += cpu/$(CPU)/lib$(CPU).a
+
 ifdef COMPRESSED_UBOOT
 	ifndef CONFIG_SKIP_LOWLEVEL_INIT
 LIBS_BOOTSTRAP = lib_bootstrap/libbootstrap.a 
-LIBS_BOOTSTRAP += board/$(BOARDDIR)/lib$(BOARD).a 
-LIBS_BOOTSTRAP += cpu/$(CPU)/lib$(CPU).a
-LIBS_BOOTSTRAP += cpu/$(CPU)/$(SOC)/lib$(SOC).a
 	endif
 endif
 
-.PHONY : $(LIBS)
+PHONY_LIBS = $(LIBS) $(LIBS_SHARED)
 
 ifdef COMPRESSED_UBOOT
-	ifndef CONFIG_SKIP_LOWLEVEL_INIT
-.PHONY : $(LIBS_BOOTSTRAP)
-	endif
+ifndef CONFIG_SKIP_LOWLEVEL_INIT
+PHONY_LIBS = $(LIBS_BOOTSTRAP) $(LIBS_SHARED)
 endif
+endif
+
+.PHONY : $(PHONY_LIBS)
 
 # Add GCC lib
 PLATFORM_LIBS += -L $(shell dirname `$(CC) $(CFLAGS) -print-libgcc-file-name`) -lgcc
@@ -199,11 +198,14 @@ u-boot.img:	u-boot.bin
 u-boot.dis:	u-boot
 	$(OBJDUMP) -d $< > $@
 
-u-boot:	depend version $(SUBDIRS) $(OBJS) $(LIBS) $(LDSCRIPT)
-	UNDEF_SYM=`$(OBJDUMP) -x $(LIBS) |sed  -n -e 's/.*\(__u_boot_cmd_.*\)/-u\1/p'|sort|uniq`;\
+u-boot:	depend version $(SUBDIRS) $(OBJS) $(LIBS) $(LIBS_SHARED) $(LDSCRIPT)
+	UNDEF_SYM=`$(OBJDUMP) -x $(LIBS) $(LIBS_SHARED) |sed  -n -e 's/.*\(__u_boot_cmd_.*\)/-u\1/p'|sort|uniq`;\
 		$(LD) $(LDFLAGS) $$UNDEF_SYM $(OBJS) \
-		--start-group $(LIBS) --end-group $(PLATFORM_LIBS) \
+		--start-group $(LIBS) $(LIBS_SHARED) --end-group $(PLATFORM_LIBS) \
 		-Map u-boot.map -o u-boot
+
+$(LIBS_SHARED):
+	$(MAKE) -C `dirname $@`
 
 $(LIBS):
 	$(MAKE) -C `dirname $@`
@@ -213,7 +215,7 @@ $(SUBDIRS):
 
 ifdef COMPRESSED_UBOOT
 ifndef CONFIG_SKIP_LOWLEVEL_INIT
-LZMA = $(BUILD_TOPDIR)/host_util/lzma
+LZMA = $(BUILD_TOPDIR)/host_util/$(HOSTOS)-$(HOSTARCH)/lzma
 
 tuboot.bin:	System.map bootstrap.bin u-boot.lzimg	
 	@cat bootstrap.bin > $@
@@ -231,10 +233,10 @@ u-boot.lzimg: $(obj)u-boot.bin System.map
 bootstrap.bin:	bootstrap
 	$(OBJCOPY) ${OBJCFLAGS} -O binary $< $@
 
-bootstrap:	depend version $(SUBDIRS) $(OBJS_BOOTSTRAP) $(LIBS_BOOTSTRAP) $(LDSCRIPT_BOOTSTRAP)
+bootstrap:	depend version $(SUBDIRS) $(OBJS_BOOTSTRAP) $(LIBS_BOOTSTRAP) $(LIBS_SHARED) $(LDSCRIPT_BOOTSTRAP)
 	UNDEF_SYM=`$(OBJDUMP) -x $(LIBS_BOOTSTRAP) |sed  -n -e 's/.*\(__u_boot_cmd_.*\)/-u\1/p'|sort|uniq`;\
 		$(LD) $(LDFLAGS_BOOTSTRAP) $$UNDEF_SYM $(OBJS_BOOTSTRAP) \
-		--start-group $(LIBS_BOOTSTRAP) --end-group $(PLATFORM_LIBS) \
+		--start-group $(LIBS_BOOTSTRAP) $(LIBS_SHARED) --end-group $(PLATFORM_LIBS) \
 		-Map bootstrap.map -o bootstrap
 
 $(LIBS_BOOTSTRAP):
