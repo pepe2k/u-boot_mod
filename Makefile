@@ -279,6 +279,17 @@ wallys_dr531:
 	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) ENDIANNESS=-EB V=1 all
 	@make --no-print-directory show_size
 
+zsun_sd:	export UBOOT_FILE_NAME=uboot_for_zsun_sd
+zsun_sd:	export CONFIG_MAX_UBOOT_SIZE_KB=123
+#ifndef CONFIG_SKIP_LOWLEVEL_INIT
+zsun_sd:	export COMPRESSED_UBOOT=1
+#endif
+zsun_sd:
+	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) zsun_sd_config
+	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) ENDIANNESS=-EB V=1 all
+	@cp $(BUILD_TOPDIR)/u-boot/u-boot.bin $(BUILD_TOPDIR)/bin/temp.bin
+	@make --no-print-directory show_size
+
 ifdef CONFIG_SKIP_LOWLEVEL_INIT
   ifdef DISABLE_CONSOLE_OUTPUT
 show_size:	export UBOOT_FILE_NAME_SUFFIX=__SILENT-CONSOLE__RAM

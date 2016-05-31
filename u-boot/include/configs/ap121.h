@@ -251,6 +251,10 @@
 
 	#define	CONFIG_BOOTARGS "console=ttyS0,115200 root=31:02 rootfstype=squashfs init=/sbin/init mtdparts=ar7240-nor0:192k(u-boot),64k(u-boot-env),16064k(firmware),64k(ART)"
 
+#elif defined(CONFIG_FOR_ZSUN_SD)
+
+	#define	CONFIG_BOOTARGS "console=ttySO,115200 root=31:02 rootfstype=squashfs init=/sbin/init mtdparts=ar7240-nor0:128k(u-boot),64k(u-boot-env),16128k(firmware),64k(ART)"
+
 #endif
 
 /*
@@ -275,6 +279,9 @@
 #elif defined(CONFIG_FOR_BLACK_SWIFT_BOARD)
 	#define	CFG_LOAD_ADDR			 0x9F030000
 	#define UPDATE_SCRIPT_FW_ADDR	"0x9F030000"
+#elif defined(CONFIG_FOR_ZSUN_SD)
+	#define	CFG_LOAD_ADDR			 0x9F030000
+	#define UPDATE_SCRIPT_FW_ADDR	"0x9F030000"      
 #else
 	#define	CFG_LOAD_ADDR			 0x9F020000
 	#define UPDATE_SCRIPT_FW_ADDR	"0x9F020000"
@@ -289,6 +296,8 @@
 	#define CONFIG_BOOTCOMMAND "bootm 0x9F040000"
 #elif defined(CONFIG_FOR_BLACK_SWIFT_BOARD)
 	#define CONFIG_BOOTCOMMAND "bootm 0x9F030000"
+#elif defined(CONFIG_FOR_ZSUN_SD)
+    #define CONFIG_BOOTCOMMAND "bootm 0x9F030000"
 #else
 	#define CONFIG_BOOTCOMMAND "bootm 0x9F020000"
 #endif
@@ -373,6 +382,10 @@
 	#define CFG_ENV_ADDR		0x9F020000
 	#define CFG_ENV_SIZE		0x8000
 	#define CFG_ENV_SECT_SIZE	0x10000
+#elif defined(CONFIG_FOR_ZSUN_SD)
+	#define CFG_ENV_ADDR		0x9F020000
+	#define CFG_ENV_SIZE		0x8000
+	#define CFG_ENV_SECT_SIZE	0x10000
 #else
 	#define CFG_ENV_ADDR		0x9F01EC00
 	#define CFG_ENV_SIZE		0x1000
@@ -398,7 +411,8 @@
 #elif defined(CONFIG_FOR_8DEVICES_CARAMBOLA2) || \
       defined(CONFIG_FOR_DRAGINO_V2) || \
       defined(CONFIG_FOR_MESH_POTATO_V2) || \
-      defined(CONFIG_FOR_BLACK_SWIFT_BOARD)
+      defined(CONFIG_FOR_BLACK_SWIFT_BOARD) || \
+      defined(CONFIG_FOR_ZSUN_SD)
 
 	#define CONFIG_COMMANDS (CFG_CMD_MEMORY | \
 							 CFG_CMD_DHCP   | \
@@ -464,6 +478,9 @@
 #elif defined(CONFIG_FOR_BLACK_SWIFT_BOARD)
 	#define UPDATE_SCRIPT_UBOOT_SIZE_IN_BYTES			"0x20000"
 	#define UPDATE_SCRIPT_UBOOT_BACKUP_SIZE_IN_BYTES	UPDATE_SCRIPT_UBOOT_SIZE_IN_BYTES
+#elif defined(CONFIG_FOR_ZSUN_SD)
+    #define UPDATE_SCRIPT_UBOOT_SIZE_IN_BYTES			"0x20000"
+	#define UPDATE_SCRIPT_UBOOT_BACKUP_SIZE_IN_BYTES	UPDATE_SCRIPT_UBOOT_SIZE_IN_BYTES
 #else
 	// TODO: should be == CONFIG_MAX_UBOOT_SIZE_KB
 	#define UPDATE_SCRIPT_UBOOT_SIZE_IN_BYTES			"0x1EC00"
@@ -480,6 +497,8 @@
 	#define WEBFAILSAFE_UPLOAD_KERNEL_ADDRESS			WEBFAILSAFE_UPLOAD_UBOOT_ADDRESS + 0x40000
 #elif defined(CONFIG_FOR_BLACK_SWIFT_BOARD)
 	#define WEBFAILSAFE_UPLOAD_KERNEL_ADDRESS			WEBFAILSAFE_UPLOAD_UBOOT_ADDRESS + 0x30000
+#elif defined(CONFIG_FOR_ZSUN_SD)
+    #define WEBFAILSAFE_UPLOAD_KERNEL_ADDRESS			WEBFAILSAFE_UPLOAD_UBOOT_ADDRESS + 0x30000
 #else
 	#define WEBFAILSAFE_UPLOAD_KERNEL_ADDRESS			WEBFAILSAFE_UPLOAD_UBOOT_ADDRESS + 0x20000
 #endif
@@ -508,6 +527,9 @@
 #elif defined(CONFIG_FOR_BLACK_SWIFT_BOARD)
 	// Black Swift board: 128k(U-Boot),64k(U-Boot env),64k(ART)
 	#define WEBFAILSAFE_UPLOAD_LIMITED_AREA_IN_BYTES	(256 * 1024)
+#elif defined(CONFIG_FOR_ZSUN_SD)
+    // ZSun SD: 128k(u-boot),64k(u-boot-env),...,64k(ART)
+    #define WEBFAILSAFE_UPLOAD_LIMITED_AREA_IN_BYTES	(256 * 1024)
 #else
 	// TP-Link: 64k(U-Boot),64k(MAC/model/WPS pin block),64k(ART)
 	#define WEBFAILSAFE_UPLOAD_LIMITED_AREA_IN_BYTES	(192 * 1024)
@@ -593,9 +615,13 @@
 	#define OFFSET_MAC_ADDRESS				0x00FC00
 #elif defined(CONFIG_FOR_BLACK_SWIFT_BOARD)
 	// Black Swift board has only one MAC address at the beginning of ART partition
-	#define OFFSET_MAC_DATA_BLOCK		0xFF0000
+	#define OFFSET_MAC_DATA_BLOCK			0xFF0000
 	#define OFFSET_MAC_DATA_BLOCK_LENGTH	0x010000
-	#define OFFSET_MAC_ADDRESS		0x000000
+	#define OFFSET_MAC_ADDRESS				0x000000
+#elif defined(CONFIG_FOR_ZSUN_SD)
+	#define OFFSET_MAC_DATA_BLOCK			0xFF0000
+	#define OFFSET_MAC_DATA_BLOCK_LENGTH	0x010000
+	#define OFFSET_MAC_ADDRESS				0x000000
 #else
 	#define OFFSET_MAC_DATA_BLOCK			0x010000
 	#define OFFSET_MAC_DATA_BLOCK_LENGTH	0x010000
@@ -608,7 +634,8 @@
 	!defined(CONFIG_FOR_DRAGINO_V2)          && \
 	!defined(CONFIG_FOR_MESH_POTATO_V2)      && \
 	!defined(CONFIG_FOR_GL_INET)             && \
-	!defined(CONFIG_FOR_BLACK_SWIFT_BOARD)
+	!defined(CONFIG_FOR_BLACK_SWIFT_BOARD)   && \
+	!defined(CONFIG_FOR_ZSUN_SD)
 #define OFFSET_ROUTER_MODEL					0x00FD00
 #endif
 
@@ -656,7 +683,14 @@
 	 */
 	#define CONFIG_QCA_PLL_IN_FLASH_BLOCK_OFFSET	0x00030000
 	#define CONFIG_QCA_PLL_IN_FLASH_BLOCK_SIZE		0x00010000
-
+#elif defined(CONFIG_FOR_ZSUN_SD)
+	/*
+	 * We will store PLL and CLOCK registers
+	 * configuration at the end of environment
+	 * sector (64 KB, environment uses only half!)
+	 */
+	#define CONFIG_QCA_PLL_IN_FLASH_BLOCK_OFFSET	0x00010000
+	#define CONFIG_QCA_PLL_IN_FLASH_BLOCK_SIZE		0x00010000
 #else
 	/*
 	 * All TP-Link routers have a lot of unused space
