@@ -142,13 +142,6 @@ lowlevel_gpio_init:
 		#endif
 	#endif
 
-	/* Setup GPIO number for LSUART RX in GPIO IN MUX */
-	li  t8, QCA_GPIO_IN_EN0_REG
-	lw  t9, 0(t8)
-	and t9, t9, ~(QCA_GPIO_IN_EN0_LSUART_RXD_MASK)
-	or  t9, t9, (CONFIG_QCA_GPIO_LSUART_RX << QCA_GPIO_IN_EN0_LSUART_RXD_SHIFT)
-	sw  t9, 0(t8)
-
 	/*
 	 * Target regular GPIO and LSUART TX line configuration
 	 *
@@ -171,6 +164,33 @@ lowlevel_gpio_init:
 	#ifdef CONFIG_QCA_GPIO_MASK_OUTPUTS_INIT_LO
 	and t9, t9, ~(CONFIG_QCA_GPIO_MASK_OUTPUTS_INIT_LO)
 	#endif
+	sw  t9, 0(t8)
+
+	/*
+	 * Setup GPIO type (out/in) in GPIO_OE
+	 * register for all configured regular
+	 * GPIOs and LSUART TX/RX lines
+	 */
+	li  t8, QCA_GPIO_OE_REG
+	lw  t9, 0(t8)
+		#ifdef CONFIG_QCA_GPIO_MASK_OUTPUTS
+	and t9, t9, ~(CONFIG_QCA_GPIO_MASK_OUTPUTS | \
+				  CONFIG_QCA_GPIO_MASK_LSUART_TX)
+		#else
+	and t9, t9, ~(CONFIG_QCA_GPIO_MASK_LSUART_TX)
+		#endif
+		#ifdef CONFIG_QCA_GPIO_MASK_INPUTS
+	or  t9, t9, (CONFIG_QCA_GPIO_MASK_INPUTS | CONFIG_QCA_GPIO_MASK_LSUART_RX)
+		#else
+	or  t9, t9, CONFIG_QCA_GPIO_MASK_LSUART_RX
+		#endif
+	sw  t9, 0(t8)
+
+	/* Setup GPIO number for LSUART RX in GPIO IN MUX */
+	li  t8, QCA_GPIO_IN_EN0_REG
+	lw  t9, 0(t8)
+	and t9, t9, ~(QCA_GPIO_IN_EN0_LSUART_RXD_MASK)
+	or  t9, t9, (CONFIG_QCA_GPIO_LSUART_RX << QCA_GPIO_IN_EN0_LSUART_RXD_SHIFT)
 	sw  t9, 0(t8)
 
 	/*
@@ -382,26 +402,6 @@ lowlevel_gpio_init:
 			#endif
 	sw  t9, 0(t8)
 		#endif
-
-	/*
-	 * And finally, setup GPIO type (out/in)
-	 * in GPIO_OE register for all configured
-	 * regular GPIOs and LSUART TX/RX lines
-	 */
-	li  t8, QCA_GPIO_OE_REG
-	lw  t9, 0(t8)
-		#ifdef CONFIG_QCA_GPIO_MASK_OUTPUTS
-	and t9, t9, ~(CONFIG_QCA_GPIO_MASK_OUTPUTS | \
-				  CONFIG_QCA_GPIO_MASK_LSUART_TX)
-		#else
-	and t9, t9, ~(CONFIG_QCA_GPIO_MASK_LSUART_TX)
-		#endif
-		#ifdef CONFIG_QCA_GPIO_MASK_INPUTS
-	or  t9, t9, (CONFIG_QCA_GPIO_MASK_INPUTS | CONFIG_QCA_GPIO_MASK_LSUART_RX)
-		#else
-	or  t9, t9, CONFIG_QCA_GPIO_MASK_LSUART_RX
-		#endif
-	sw  t9, 0(t8)
 
 	#endif /* CONFIG_QCA_GPIO_MASK_OUTPUTS || CONFIG_QCA_GPIO_MASK_INPUTS || CONFIG_QCA_GPIO_MASK_LSUART_TX */
 
