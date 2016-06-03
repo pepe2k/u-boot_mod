@@ -23,7 +23,8 @@
 	/* Initial states */
 	#define CONFIG_QCA_GPIO_MASK_OUTPUTS_INIT_HI	CONFIG_QCA_GPIO_MASK_LEDS_ACTIVE_LO
 
-#elif defined(CONFIG_FOR_TPLINK_WR841N_V9)
+#elif defined(CONFIG_FOR_TPLINK_WR841N_V9) ||\
+	defined(CONFIG_FOR_TPLINK_WR841N_V10)
 	/* LEDs */
 	#define CONFIG_QCA_GPIO_MASK_LEDS_ACTIVE_LO		(GPIO3 | GPIO4  | GPIO11 | GPIO13 |\
 													GPIO14 | GPIO15 | GPIO16)
@@ -104,7 +105,8 @@
 #if defined(CONFIG_FOR_TPLINK_WR820N_CN)
 	#define	CONFIG_BOOTARGS	"console=ttyS0,115200 root=31:02 rootfstype=squashfs init=/sbin/init mtdparts=ath-nor0:32k(u-boot1),32k(u-boot2),3008k(rootfs),896k(uImage),64k(mib0),64k(ART)"
 #elif defined(CONFIG_FOR_TPLINK_WR841N_V9) ||\
-	  defined(CONFIG_FOR_TPLINK_WR802N)
+	defined(CONFIG_FOR_TPLINK_WR841N_V10) ||\
+	defined(CONFIG_FOR_TPLINK_WR802N)
 	#define	CONFIG_BOOTARGS	"console=ttyS0,115200 root=31:02 rootfstype=squashfs init=/sbin/init mtdparts=ath-nor0:128k(u-boot),1024k(kernel),2816k(rootfs),64k(config),64k(art)"
 #endif
 
@@ -119,7 +121,8 @@
 
 #if defined(CONFIG_FOR_TPLINK_WR820N_CN) ||\
 	defined(CONFIG_FOR_TPLINK_WR802N)    ||\
-	defined(CONFIG_FOR_TPLINK_WR841N_V9)
+	defined(CONFIG_FOR_TPLINK_WR841N_V9) ||\
+	defined(CONFIG_FOR_TPLINK_WR841N_V10)
 	#define	CFG_LOAD_ADDR			 0x9F020000
 	#define UPDATE_SCRIPT_FW_ADDR	"0x9F020000"
 	#define CONFIG_BOOTCOMMAND 		"bootm 0x9F020000"
@@ -138,7 +141,8 @@
 
 #if defined(CONFIG_FOR_TPLINK_WR820N_CN) ||\
 	defined(CONFIG_FOR_TPLINK_WR802N)    ||\
-	defined(CONFIG_FOR_TPLINK_WR841N_V9)
+	defined(CONFIG_FOR_TPLINK_WR841N_V9) ||\
+	defined(CONFIG_FOR_TPLINK_WR841N_V10)
 	#define CONFIG_QCA_PLL		QCA_PLL_PRESET_550_400_200
 #endif
 
@@ -161,7 +165,8 @@
 
 #if defined(CONFIG_FOR_TPLINK_WR820N_CN) ||\
 	defined(CONFIG_FOR_TPLINK_WR802N)    ||\
-	defined(CONFIG_FOR_TPLINK_WR841N_V9)
+	defined(CONFIG_FOR_TPLINK_WR841N_V9) ||\
+	defined(CONFIG_FOR_TPLINK_WR841N_V10)
 	#define CFG_ENV_ADDR		0x9F01EC00
 	#define CFG_ENV_SIZE		0x1000
 	#define CFG_ENV_SECT_SIZE	0x10000
@@ -172,7 +177,8 @@
  */
 #if defined(CONFIG_FOR_TPLINK_WR820N_CN) ||\
 	defined(CONFIG_FOR_TPLINK_WR802N)    ||\
-	defined(CONFIG_FOR_TPLINK_WR841N_V9)
+	defined(CONFIG_FOR_TPLINK_WR841N_V9) ||\
+	defined(CONFIG_FOR_TPLINK_WR841N_V10)
 	#define CONFIG_COMMANDS (CFG_CMD_MEMORY | \
 							 CFG_CMD_DHCP   | \
 							 CFG_CMD_PING   | \
@@ -201,7 +207,8 @@
 // Firmware partition offset
 #if defined(CONFIG_FOR_TPLINK_WR820N_CN) ||\
 	defined(CONFIG_FOR_TPLINK_WR802N)    ||\
-	defined(CONFIG_FOR_TPLINK_WR841N_V9)
+	defined(CONFIG_FOR_TPLINK_WR841N_V9) ||\
+	defined(CONFIG_FOR_TPLINK_WR841N_V10)
 	#define WEBFAILSAFE_UPLOAD_KERNEL_ADDRESS		WEBFAILSAFE_UPLOAD_UBOOT_ADDRESS + 0x20000
 #endif
 
@@ -211,7 +218,8 @@
 // TODO: should be == CONFIG_MAX_UBOOT_SIZE_KB
 #if defined(CONFIG_FOR_TPLINK_WR820N_CN) ||\
 	defined(CONFIG_FOR_TPLINK_WR802N)    ||\
-	defined(CONFIG_FOR_TPLINK_WR841N_V9)
+	defined(CONFIG_FOR_TPLINK_WR841N_V9) ||\
+	defined(CONFIG_FOR_TPLINK_WR841N_V10)
 	#define UPDATE_SCRIPT_UBOOT_SIZE_IN_BYTES			"0x1EC00"
 	#define UPDATE_SCRIPT_UBOOT_BACKUP_SIZE_IN_BYTES	"0x20000"
 #endif
@@ -223,7 +231,8 @@
 // TP-Link: 64k(U-Boot),64k(MAC/model/WPS pin block),64k(ART)
 #if defined(CONFIG_FOR_TPLINK_WR820N_CN) ||\
 	defined(CONFIG_FOR_TPLINK_WR802N)    ||\
-	defined(CONFIG_FOR_TPLINK_WR841N_V9)
+	defined(CONFIG_FOR_TPLINK_WR841N_V9) ||\
+	defined(CONFIG_FOR_TPLINK_WR841N_V10)
 	#define WEBFAILSAFE_UPLOAD_LIMITED_AREA_IN_BYTES	(192 * 1024)
 #endif
 
@@ -279,7 +288,8 @@
 #define CONFIG_PCI 1
 #if defined(CONFIG_FOR_TPLINK_WR820N_CN) ||\
 	defined(CONFIG_FOR_TPLINK_WR802N)    ||\
-	defined(CONFIG_FOR_TPLINK_WR841N_V9)
+	defined(CONFIG_FOR_TPLINK_WR841N_V9) ||\
+	defined(CONFIG_FOR_TPLINK_WR841N_V10)
 	#define WLANCAL					0x9fff1000
 	#define BOARDCAL				0x9fff0000
 #endif
@@ -291,7 +301,8 @@
 /* MAC address, model and PIN number offsets in FLASH */
 #if defined(CONFIG_FOR_TPLINK_WR820N_CN) ||\
 	defined(CONFIG_FOR_TPLINK_WR802N)    ||\
-	defined(CONFIG_FOR_TPLINK_WR841N_V9)
+	defined(CONFIG_FOR_TPLINK_WR841N_V9) ||\
+	defined(CONFIG_FOR_TPLINK_WR841N_V10)
 	#define OFFSET_MAC_DATA_BLOCK			0x010000
 	#define OFFSET_MAC_DATA_BLOCK_LENGTH	0x010000
 	#define OFFSET_MAC_ADDRESS				0x00FC00
@@ -304,7 +315,8 @@
  */
 #if defined(CONFIG_FOR_TPLINK_WR820N_CN) ||\
 	defined(CONFIG_FOR_TPLINK_WR802N)    ||\
-	defined(CONFIG_FOR_TPLINK_WR841N_V9)
+	defined(CONFIG_FOR_TPLINK_WR841N_V9) ||\
+	defined(CONFIG_FOR_TPLINK_WR841N_V10)
 	/*
 	 * All TP-Link routers have a lot of unused space
 	 * in FLASH, in second 64 KiB block.
