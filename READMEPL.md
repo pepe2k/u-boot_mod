@@ -89,6 +89,7 @@ Lista obecnie wspieranych urządzeń:
   - TP-Link TL-WR841N/D v9
   - TP-Link TL-WR820N (wersja przeznaczona na rynek chiński)
   - TP-Link TL-WR802N
+  - Wallys DR531
 
 Przetestowałem swoją modyfikację na większości z wymienionych powyżej urządzeń, z obrazami OpenWrt i oficjalnym firmware producenta. Jeżeli nie jesteś pewien wersji sprzętowej swojego urządzenia, proszę skontaktuj się ze mną **zanim** dokonasz wymiany obrazu bootloadera. Zmiana na niewłaściwą wersję najprawdopodobniej doprowadzi do uszkodzenia Twojego urządzenia i jedyną możliwością jego ponownego uruchomienia będzie przeprogramowanie kości FLASH w zewnętrznym programatorze.
 
@@ -122,6 +123,7 @@ Dodatkowe informacje o wspieranych urządzeniach:
 | [TP-Link TL-WR841N/D v9](https://wiki.openwrt.org/toh/tp-link/tl-wr841nd) | QCA9533 | 4 MiB | 32 MiB DDR1 | 64 KiB, LZMA | RO |
 | [TP-Link TL-WR820N](https://wiki.openwrt.org/toh/tp-link/tl-wr820n) | QCA9531 | 4 MiB | 64 MiB DDR2 | 64 KiB, LZMA | RO |
 | [TP-Link TL-WR802N](https://wikidevi.com/wiki/TP-LINK_TL-WR802N_v1.0) | QCA9533 | 4 MiB | 32 MiB DDR1 | 64 KiB, LZMA | RO |
+| Wallys DR531 | QCA9531 | 8 MiB | 64 MiB DDR2 | 192 KiB | R/W |
 
 *(LZMA) - obraz binarny U-Boot został dodatkowo skompresowany przy pomocy LZMA.*  
 *(R/W) - zmienne środowiskowe przechowywane są w osobnym bloku FLASH, co pozwala na ich zachowanie po odłączeniu zasilaniu.*  
