@@ -324,7 +324,7 @@
 /* use eth1(LAN) as the net interface */
 #define CONFIG_AG7240_SPEPHY
 #define CONFIG_NET_MULTI
-#define CONFIG_PCI 1
+
 #if defined(CONFIG_FOR_TPLINK_WR820N_CN) ||\
 	defined(CONFIG_FOR_TPLINK_WR802N)    ||\
 	defined(CONFIG_FOR_TPLINK_WR841N_V9) ||\

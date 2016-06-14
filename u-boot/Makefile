@@ -523,6 +523,7 @@ wdr3600_43x0_config : unconfig wasp_common_config
 	@echo "#define DDR2_32BIT_SUPPORT                   1" >> include/config.h
 	@echo "#define CFG_ATHRS17_PHY                      1" >> include/config.h
 	@echo "#define CFG_AG7240_NMACS                     1" >> include/config.h
+	@echo "#define CONFIG_PCI                           1" >> include/config.h
 	@echo "#define CFG_DUAL_PHY_SUPPORT                 1" >> include/config.h
 	@echo "#define CONFIG_GPIO_RESET_BTN               16" >> include/config.h
 	@echo "#define CONFIG_GPIO_RESET_BTN_ACTIVE_LOW     1" >> include/config.h
@@ -539,6 +540,7 @@ wdr3500_config : unconfig wasp_common_config
 	@echo "#define DDR2_32BIT_SUPPORT                   1" >> include/config.h
 	@echo "#define CFG_ATHRS27_PHY                      1" >> include/config.h
 	@echo "#define CFG_AG7240_NMACS                     2" >> include/config.h
+	@echo "#define CONFIG_PCI                           1" >> include/config.h
 	@echo "#define CONFIG_GPIO_RESET_BTN               16" >> include/config.h
 	@echo "#define CONFIG_GPIO_RESET_BTN_ACTIVE_LOW     1" >> include/config.h
 	@echo "#define CONFIG_DEFAULT_FLASH_SIZE_IN_MB      8" >> include/config.h
@@ -605,6 +607,7 @@ dr531_config : unconfig ap143_common_config
 	@echo "#define CONFIG_FOR_WALLYS_DR531              1" >> include/config.h
 	@echo "#define CFG_ATHRS27_PHY                      1" >> include/config.h
 	@echo "#define CFG_ATH_GMAC_NMACS                   2" >> include/config.h
+	@echo "#define CONFIG_PCI                           1" >> include/config.h
 	@echo "#define CONFIG_DEFAULT_FLASH_SIZE_IN_MB      8" >> include/config.h
 	@echo "#define CONFIG_GPIO_RESET_BTN               17" >> include/config.h
 	@echo "#define CONFIG_GPIO_RESET_BTN_ACTIVE_LOW     1" >> include/config.h

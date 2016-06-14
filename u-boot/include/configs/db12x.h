@@ -200,8 +200,6 @@
 	#define CONFIG_AG7240_SPEPHY
 #endif
 
-#define CONFIG_PCI 1
-
 /*
  * Web Failsafe configuration
  */
