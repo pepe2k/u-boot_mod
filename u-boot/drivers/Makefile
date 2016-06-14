@@ -25,8 +25,7 @@ include $(TOPDIR)/config.mk
 
 LIB	= libdrivers.a
 
-OBJS	= netconsole.o \
-		  pci.o
+OBJS	= netconsole.o
 
 all:	$(LIB)
 
