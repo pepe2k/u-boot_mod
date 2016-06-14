@@ -468,8 +468,6 @@ black_swift_board_config : unconfig hornet_common_config
 carambola2_config : unconfig hornet_common_config
 	@/bin/echo -e '\e[32m> Configuring for 8devices Carambola 2 at:' `date` '\e[0m'
 	@echo "#define CONFIG_FOR_8DEVICES_CARAMBOLA2       1" >> include/config.h
-	@echo "#undef COMPRESSED_UBOOT"                        >> include/config.h
-	@echo "#define CONFIG_40MHZ_XTAL_SUPPORT            1" >> include/config.h
 	@echo "#define CONFIG_GPIO_RESET_BTN               11" >> include/config.h
 	@echo "#define CONFIG_GPIO_RESET_BTN_ACTIVE_LOW     1" >> include/config.h
 	@echo "#define CONFIG_DEFAULT_FLASH_SIZE_IN_MB     16" >> include/config.h
@@ -480,7 +478,6 @@ carambola2_config : unconfig hornet_common_config
 dragino_v2_ms14_config : unconfig hornet_common_config
 	@/bin/echo -e '\e[32m> Configuring for Dragino Dragino v2 (MS14) at:' `date` '\e[0m'
 	@echo "#define CONFIG_FOR_DRAGINO_V2                1" >> include/config.h
-	@echo "#undef  COMPRESSED_UBOOT"                       >> include/config.h
 	@echo "#define CONFIG_GPIO_RESET_BTN               11" >> include/config.h
 	@echo "#define CONFIG_GPIO_RESET_BTN_ACTIVE_LOW     1" >> include/config.h
 	@echo "#define CONFIG_DEFAULT_FLASH_SIZE_IN_MB     16" >> include/config.h
@@ -493,7 +490,6 @@ dragino_v2_ms14_config : unconfig hornet_common_config
 villagetelco_mp2_config : unconfig hornet_common_config
 	@/bin/echo -e '\e[32m> Configuring for Village Telco Mesh Potato 2 at:' `date` '\e[0m'
 	@echo "#define CONFIG_FOR_MESH_POTATO_V2            1" >> include/config.h
-	@echo "#undef  COMPRESSED_UBOOT"                       >> include/config.h
 	@echo "#define CONFIG_GPIO_RESET_BTN               11" >> include/config.h
 	@echo "#define CONFIG_GPIO_RESET_BTN_ACTIVE_LOW     1" >> include/config.h
 	@echo "#define CONFIG_DEFAULT_FLASH_SIZE_IN_MB     16" >> include/config.h
@@ -520,7 +516,6 @@ wdr3600_43x0_config : unconfig wasp_common_config
 	@/bin/echo -e '\e[32m> Configuring for TP-Link TL-WDR3600/43x0 at:' `date` '\e[0m'
 	@echo "#define SOC_TYPE                QCA_AR9344_SOC" >> include/config.h
 	@echo "#define CONFIG_FOR_TPLINK_WDR3600_WDR43X0_V1 1" >> include/config.h
-	@echo "#define DDR2_32BIT_SUPPORT                   1" >> include/config.h
 	@echo "#define CFG_ATHRS17_PHY                      1" >> include/config.h
 	@echo "#define CFG_AG7240_NMACS                     1" >> include/config.h
 	@echo "#define CONFIG_PCI                           1" >> include/config.h
@@ -537,7 +532,6 @@ wdr3500_config : unconfig wasp_common_config
 	@/bin/echo -e '\e[32m> Configuring for TP-Link TL-WDR3500 at:' `date` '\e[0m'
 	@echo "#define SOC_TYPE                QCA_AR9344_SOC" >> include/config.h
 	@echo "#define CONFIG_FOR_TPLINK_WDR3500_V1         1" >> include/config.h
-	@echo "#define DDR2_32BIT_SUPPORT                   1" >> include/config.h
 	@echo "#define CFG_ATHRS27_PHY                      1" >> include/config.h
 	@echo "#define CFG_AG7240_NMACS                     2" >> include/config.h
 	@echo "#define CONFIG_PCI                           1" >> include/config.h
@@ -553,8 +547,6 @@ mr3420_v2_config : unconfig wasp_common_config
 	@/bin/echo -e '\e[32m> Configuring for TP-Link TL-MR3420 v2 at:' `date` '\e[0m'
 	@echo "#define SOC_TYPE                QCA_AR9341_SOC" >> include/config.h
 	@echo "#define CONFIG_FOR_TPLINK_MR3420_V2          1" >> include/config.h
-	@echo "#define CONFIG_AP123                         1" >> include/config.h
-	@echo "#define DDR2_32BIT_SUPPORT                   1" >> include/config.h
 	@echo "#define CFG_ATHRS27_PHY                      1" >> include/config.h
 	@echo "#define CFG_AG7240_NMACS                     2" >> include/config.h
 	@echo "#define CONFIG_GPIO_RESET_BTN               17" >> include/config.h
@@ -569,8 +561,6 @@ wr841n_v8_config : unconfig wasp_common_config
 	@/bin/echo -e '\e[32m> Configuring for TP-Link TL-WR841N/D v8 at:' `date` '\e[0m'
 	@echo "#define SOC_TYPE                QCA_AR9341_SOC" >> include/config.h
 	@echo "#define CONFIG_FOR_TPLINK_WR841N_V8          1" >> include/config.h
-	@echo "#define CONFIG_AP123                         1" >> include/config.h
-	@echo "#define DDR2_32BIT_SUPPORT                   1" >> include/config.h
 	@echo "#define CFG_ATHRS27_PHY                      1" >> include/config.h
 	@echo "#define CFG_AG7240_NMACS                     2" >> include/config.h
 	@echo "#define CONFIG_GPIO_RESET_BTN               17" >> include/config.h
@@ -585,8 +575,6 @@ wa830re_v2_wa801nd_v2_config : unconfig wasp_common_config
 	@/bin/echo -e '\e[32m> Configuring for TP-Link TL-WA830RE/TL-WA801ND v2 at:' `date` '\e[0m'
 	@echo "#define SOC_TYPE                   QCA_AR9341_SOC" >> include/config.h
 	@echo "#define CONFIG_FOR_TPLINK_WA830RE_V2_WA801ND_V2 1" >> include/config.h
-	@echo "#define CONFIG_AP123                            1" >> include/config.h
-	@echo "#define DDR2_32BIT_SUPPORT                      1" >> include/config.h
 	@echo "#define CFG_ATHRS27_PHY                         1" >> include/config.h
 	@echo "#define CFG_AG7240_NMACS                        2" >> include/config.h
 	@echo "#define CONFIG_GPIO_RESET_BTN                  17" >> include/config.h
