@@ -274,10 +274,6 @@
 										"fi\0" \
 									SILENT_ENV_VARIABLE
 
-/* For Merlin, both PCI, PCI-E interfaces are valid */
-#define AR7240_ART_PCICFG_OFFSET	12
-
-#define WLANCAL						0x9fff1000
 #define CFG_MII0_RMII				1
 #define CFG_BOOTM_LEN				(16 << 20) /* 16 MB */
 

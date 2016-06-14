@@ -321,8 +321,6 @@
 #define CFG_INIT_SP_OFFSET			0x1000
 #define CONFIG_INIT_SRAM_SP_OFFSET	0xbd001800
 
-/* For Merlin, both PCI, PCI-E interfaces are valid */
-#define ATH_ART_PCICFG_OFFSET		12
 /* use eth1(LAN) as the net interface */
 #define CONFIG_AG7240_SPEPHY
 #define CONFIG_NET_MULTI
@@ -331,7 +329,6 @@
 	defined(CONFIG_FOR_TPLINK_WR802N)    ||\
 	defined(CONFIG_FOR_TPLINK_WR841N_V9) ||\
 	defined(CONFIG_FOR_WALLYS_DR531)
-	#define WLANCAL					0x9fff1000
 	#define BOARDCAL				0x9fff0000
 #endif
 #define CFG_MII0_RMII				1
