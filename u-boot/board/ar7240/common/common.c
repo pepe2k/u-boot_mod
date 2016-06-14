@@ -86,6 +86,9 @@ void qca_soc_name_rev(char *buf)
 void print_board_info(void)
 {
 	u32 ahb_clk, cpu_clk, ddr_clk, spi_clk, ref_clk;
+#if defined(CONFIG_PCI)
+	u32 did, vid;
+#endif
 	u32 bank;
 	bd_t *bd = gd->bd;
 	char buffer[24];
@@ -148,6 +151,46 @@ void print_board_info(void)
 
 		puts("\n");
 	}
+
+	/* PCIE device/s info */
+#if defined(CONFIG_PCI)
+	printf("%" ALIGN_SIZE "s ", "PCIe:");
+
+	#if (SOC_TYPE & QCA_AR934X_SOC) |\
+		(SOC_TYPE & QCA_QCA955X_SOC)
+	if (!qca_pcie0_in_ep_mode()) {
+		if (qca_pcie_dev_info(0, &vid, &did)) {
+			printf("%04X:%04X", vid, did);
+		} else {
+			puts("no device");
+		}
+	} else {
+		puts("EP mode");
+	}
+	#elif (SOC_TYPE & QCA_QCA953X_SOC)
+	if (qca_pcie_dev_info(0, &vid, &did)) {
+		printf("%04X:%04X", vid, did);
+	} else {
+		puts("no device");
+	}
+	#endif
+
+	#if (SOC_TYPE & QCA_QCA956X_SOC)
+	if (qca_pcie_dev_info(1, &vid, &did)) {
+		printf("%04X:%04X", vid, did);
+	} else {
+		puts("no device");
+	}
+	#elif (SOC_TYPE & QCA_QCA955X_SOC)
+	if (qca_pcie_dev_info(1, &vid, &did)) {
+		printf(", %04X:%04X", vid, did);
+	} else {
+		puts(", no device");
+	}
+	#endif
+
+	puts("\n");
+#endif
 
 	/* MAC address */
 	printf("%" ALIGN_SIZE "s %02X:%02X:%02X:%02X:%02X:%02X", "MAC:",
