@@ -35,6 +35,18 @@
 	/* Initial states */
 	#define CONFIG_QCA_GPIO_MASK_OUTPUTS_INIT_HI	CONFIG_QCA_GPIO_MASK_LEDS_ACTIVE_LO
 
+#elif defined(CONFIG_FOR_WALLYS_DR531)
+	/* LEDs */
+	#define CONFIG_QCA_GPIO_MASK_LEDS_ACTIVE_LO		(GPIO11 | GPIO12 | GPIO13 | GPIO14 |\
+													 GPIO15 | GPIO16)
+
+	/* Outputs, inputs */
+	#define CONFIG_QCA_GPIO_MASK_OUTPUTS			CONFIG_QCA_GPIO_MASK_LEDS_ACTIVE_LO
+	#define CONFIG_QCA_GPIO_MASK_INPUTS				GPIO17
+
+	/* Initial states */
+	#define CONFIG_QCA_GPIO_MASK_OUTPUTS_INIT_HI	CONFIG_QCA_GPIO_MASK_LEDS_ACTIVE_LO
+
 #endif
 
 /*
@@ -106,6 +118,8 @@
 #elif defined(CONFIG_FOR_TPLINK_WR841N_V9) ||\
 	  defined(CONFIG_FOR_TPLINK_WR802N)
 	#define	CONFIG_BOOTARGS	"console=ttyS0,115200 root=31:02 rootfstype=squashfs init=/sbin/init mtdparts=ath-nor0:128k(u-boot),1024k(kernel),2816k(rootfs),64k(config),64k(art)"
+#elif defined(CONFIG_FOR_WALLYS_DR531)
+	#define	CONFIG_BOOTARGS	"console=ttyS0,115200 root=31:02 rootfstype=jffs2 init=/sbin/init mtdparts=ath-nor0:256k(u-boot),64k(u-boot-env),6336k(rootfs),1408k"
 #endif
 
 /*
@@ -123,6 +137,10 @@
 	#define	CFG_LOAD_ADDR			 0x9F020000
 	#define UPDATE_SCRIPT_FW_ADDR	"0x9F020000"
 	#define CONFIG_BOOTCOMMAND 		"bootm 0x9F020000"
+#elif defined(CONFIG_FOR_WALLYS_DR531)
+	#define	CFG_LOAD_ADDR			 0x9F050000
+	#define UPDATE_SCRIPT_FW_ADDR	"0x9F050000"
+	#define CONFIG_BOOTCOMMAND 		"bootm 0x9F050000"
 #endif
 
 #define CONFIG_IPADDR			192.168.1.1
@@ -140,6 +158,8 @@
 	defined(CONFIG_FOR_TPLINK_WR802N)    ||\
 	defined(CONFIG_FOR_TPLINK_WR841N_V9)
 	#define CONFIG_QCA_PLL		QCA_PLL_PRESET_550_400_200
+#elif defined(CONFIG_FOR_WALLYS_DR531)
+	#define CONFIG_QCA_PLL		QCA_PLL_PRESET_650_400_200
 #endif
 
 /*
@@ -165,6 +185,10 @@
 	#define CFG_ENV_ADDR		0x9F01EC00
 	#define CFG_ENV_SIZE		0x1000
 	#define CFG_ENV_SECT_SIZE	0x10000
+#elif defined(CONFIG_FOR_WALLYS_DR531)
+	#define CFG_ENV_ADDR		0x9F030000
+	#define CFG_ENV_SIZE		0xF800
+	#define CFG_ENV_SECT_SIZE	0x10000
 #endif
 
 /*
@@ -186,6 +210,24 @@
 							 CFG_CMD_ITEST  | \
 							 CFG_CMD_ENV    | \
 							 CFG_CMD_LOADB)
+
+#elif defined(CONFIG_FOR_WALLYS_DR531)
+
+	#define CONFIG_COMMANDS (CFG_CMD_MEMORY | \
+							 CFG_CMD_DHCP   | \
+							 CFG_CMD_PING   | \
+							 CFG_CMD_FLASH  | \
+							 CFG_CMD_NET    | \
+							 CFG_CMD_RUN    | \
+							 CFG_CMD_DATE   | \
+							 CFG_CMD_SNTP   | \
+							 CFG_CMD_ECHO   | \
+							 CFG_CMD_BOOTD  | \
+							 CFG_CMD_ITEST  | \
+							 CFG_CMD_IMI    | \
+							 CFG_CMD_ENV    | \
+							 CFG_CMD_LOADB)
+
 #endif
 
 // Enable NetConsole and custom NetConsole port
@@ -203,6 +245,8 @@
 	defined(CONFIG_FOR_TPLINK_WR802N)    ||\
 	defined(CONFIG_FOR_TPLINK_WR841N_V9)
 	#define WEBFAILSAFE_UPLOAD_KERNEL_ADDRESS		WEBFAILSAFE_UPLOAD_UBOOT_ADDRESS + 0x20000
+#elif defined(CONFIG_FOR_WALLYS_DR531)
+	#define WEBFAILSAFE_UPLOAD_KERNEL_ADDRESS		WEBFAILSAFE_UPLOAD_UBOOT_ADDRESS + 0x50000
 #endif
 
 // U-Boot partition size
@@ -214,6 +258,9 @@
 	defined(CONFIG_FOR_TPLINK_WR841N_V9)
 	#define UPDATE_SCRIPT_UBOOT_SIZE_IN_BYTES			"0x1EC00"
 	#define UPDATE_SCRIPT_UBOOT_BACKUP_SIZE_IN_BYTES	"0x20000"
+#elif defined(CONFIG_FOR_WALLYS_DR531)
+	#define UPDATE_SCRIPT_UBOOT_SIZE_IN_BYTES			"0x30000"
+	#define UPDATE_SCRIPT_UBOOT_BACKUP_SIZE_IN_BYTES	UPDATE_SCRIPT_UBOOT_SIZE_IN_BYTES
 #endif
 
 // ART partition size
@@ -225,6 +272,9 @@
 	defined(CONFIG_FOR_TPLINK_WR802N)    ||\
 	defined(CONFIG_FOR_TPLINK_WR841N_V9)
 	#define WEBFAILSAFE_UPLOAD_LIMITED_AREA_IN_BYTES	(192 * 1024)
+#elif defined(CONFIG_FOR_WALLYS_DR531)
+	// Wallys DR531: 192k(U-Boot),64k(U-Boot env),64k(partition-table),64k(ART)
+	#define WEBFAILSAFE_UPLOAD_LIMITED_AREA_IN_BYTES	(384 * 1024)
 #endif
 
 // progress state info
@@ -279,7 +329,8 @@
 #define CONFIG_PCI 1
 #if defined(CONFIG_FOR_TPLINK_WR820N_CN) ||\
 	defined(CONFIG_FOR_TPLINK_WR802N)    ||\
-	defined(CONFIG_FOR_TPLINK_WR841N_V9)
+	defined(CONFIG_FOR_TPLINK_WR841N_V9) ||\
+	defined(CONFIG_FOR_WALLYS_DR531)
 	#define WLANCAL					0x9fff1000
 	#define BOARDCAL				0x9fff0000
 #endif
@@ -297,6 +348,10 @@
 	#define OFFSET_MAC_ADDRESS				0x00FC00
 	#define OFFSET_ROUTER_MODEL				0x00FD00
 	#define OFFSET_PIN_NUMBER				0x00FE00
+#elif defined(CONFIG_FOR_WALLYS_DR531)
+	#define OFFSET_MAC_DATA_BLOCK			0x030000
+	#define OFFSET_MAC_DATA_BLOCK_LENGTH	0x010000
+	#define OFFSET_MAC_ADDRESS				0x00F810
 #endif
 
 /*
@@ -314,6 +369,9 @@
 	#define CONFIG_QCA_PLL_IN_FLASH_BLOCK_OFFSET	0x00010000
 	#define CONFIG_QCA_PLL_IN_FLASH_BLOCK_SIZE		0x00010000
 
+#elif defined(CONFIG_FOR_WALLYS_DR531)
+	#define CONFIG_QCA_PLL_IN_FLASH_BLOCK_OFFSET	0x00030000
+	#define CONFIG_QCA_PLL_IN_FLASH_BLOCK_SIZE		0x00010000
 #endif
 
 #if defined(CONFIG_QCA_PLL_IN_FLASH_BLOCK_OFFSET)

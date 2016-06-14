@@ -257,6 +257,17 @@ gl-inet:
 	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) ENDIANNESS=-EB V=1 all
 	@make --no-print-directory show_size
 
+wallys_dr531:	export UBOOT_FILE_NAME=uboot_for_wallys_dr531
+wallys_dr531:	export CONFIG_MAX_UBOOT_SIZE_KB=192
+ifndef CONFIG_SKIP_LOWLEVEL_INIT
+wallys_dr531:	export COMPRESSED_UBOOT=1
+endif
+wallys_dr531:	export ETH_CONFIG=_s27
+wallys_dr531:
+	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) dr531_config
+	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) ENDIANNESS=-EB V=1 all
+	@make --no-print-directory show_size
+
 ifdef CONFIG_SKIP_LOWLEVEL_INIT
   ifdef DISABLE_CONSOLE_OUTPUT
 show_size:	export UBOOT_FILE_NAME_SUFFIX=__SILENT-CONSOLE__RAM

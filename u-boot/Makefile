@@ -599,6 +599,19 @@ ap143_common_config : common_config
 	@echo "#define CONFIG_ATHEROS                       1" >> include/config.h
 	@echo "#define CONFIG_MACH_QCA953x                  1" >> include/config.h
 
+dr531_config : unconfig ap143_common_config
+	@/bin/echo -e '\e[32m> Configuring for Wallys DR531 at:' `date` '\e[0m'
+	@echo "#define SOC_TYPE               QCA_QCA953X_SOC" >> include/config.h
+	@echo "#define CONFIG_FOR_WALLYS_DR531              1" >> include/config.h
+	@echo "#define CFG_ATHRS27_PHY                      1" >> include/config.h
+	@echo "#define CFG_ATH_GMAC_NMACS                   2" >> include/config.h
+	@echo "#define CONFIG_DEFAULT_FLASH_SIZE_IN_MB      8" >> include/config.h
+	@echo "#define CONFIG_GPIO_RESET_BTN               17" >> include/config.h
+	@echo "#define CONFIG_GPIO_RESET_BTN_ACTIVE_LOW     1" >> include/config.h
+	@echo "#define CONFIG_BOARD_CUSTOM_STRING           \"Wallys DR531\"" >> include/config.h
+
+	@./mkconfig -a ap143 mips mips ap143 ar7240 ar7240
+
 wr820n_CN_config : unconfig ap143_common_config
 	@/bin/echo -e '\e[32m> Configuring for TP-Link TL-WR820N CN at:' `date` '\e[0m'
 	@echo "#define SOC_TYPE               QCA_QCA953X_SOC" >> include/config.h
