@@ -25,6 +25,8 @@ Table of contents
 	- [Using DD-WRT](#using-dd-wrt)
 - [How to use it?](#how-to-use-it)
 - [How to compile the code?](#how-to-compile-the-code)
+    - [Building on Linux](#building-on-linux)
+    - [Building on OS X](#building-on-os-x)
 - [FAQ](#faq)
 - [License, outdated sources etc.](#license-outdated-sources-etc)
 - [Credits](#credits)
@@ -642,6 +644,8 @@ How to use it?
 
 How to compile the code?
 ------------------------
+
+### Building on Linux
 
 You can use one of the free toolchains:
 
