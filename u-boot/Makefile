@@ -591,7 +591,7 @@ ap143_common_config : common_config
 	@echo "#define CONFIG_MACH_QCA953x                  1" >> include/config.h
 
 dr531_config : unconfig ap143_common_config
-	@/bin/echo -e '\e[32m> Configuring for Wallys DR531 at:' `date` '\e[0m'
+	@echo -e '\e[32m> Configuring for Wallys DR531 at:' `date` '\e[0m'
 	@echo "#define SOC_TYPE               QCA_QCA953X_SOC" >> include/config.h
 	@echo "#define CONFIG_FOR_WALLYS_DR531              1" >> include/config.h
 	@echo "#define CFG_ATHRS27_PHY                      1" >> include/config.h
@@ -633,7 +633,7 @@ wr802n_config : unconfig ap143_common_config
 	@./mkconfig -a ap143 mips mips ap143 ar7240 ar7240
 
 wr841n_v9_config : unconfig ap143_common_config
-	@/bin/echo -e '\e[32m> Configuring for TP-Link TL-WR841N/D v9 at:' `date` '\e[0m'
+	@echo -e '\e[32m> Configuring for TP-Link TL-WR841N/D v9 at:' `date` '\e[0m'
 	@echo "#define SOC_TYPE               QCA_QCA953X_SOC" >> include/config.h
 	@echo "#define CONFIG_FOR_TPLINK_WR841N_V9          1" >> include/config.h
 	@echo "#define CFG_ATHRS27_PHY                      1" >> include/config.h
