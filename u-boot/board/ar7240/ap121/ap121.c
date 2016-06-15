@@ -14,7 +14,9 @@
  */
 long int dram_init()
 {
+#ifndef CONFIG_SKIP_LOWLEVEL_INIT
 	qca_dram_init();
+#endif
 
 	return (long int)qca_dram_size();
 }
