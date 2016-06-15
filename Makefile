@@ -258,6 +258,16 @@ villagetelco_mp2:
 	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) ENDIANNESS=-EB V=1 all
 	@make --no-print-directory show_size
 
+map2n:        export UBOOT_FILE_NAME=uboot_for_map2n
+map2n:        export CONFIG_MAX_UBOOT_SIZE_KB=123
+ifndef CONFIG_SKIP_LOWLEVEL_INIT
+map2n:        export COMPRESSED_UBOOT=1
+endif
+map2n:
+	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) map2n_config
+	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) ENDIANNESS=-EB V=1 all
+	@make --no-print-directory show_size
+
 gl-inet:	export UBOOT_FILE_NAME=uboot_for_gl-inet
 gl-inet:	export CONFIG_MAX_UBOOT_SIZE_KB=123
 ifndef CONFIG_SKIP_LOWLEVEL_INIT
