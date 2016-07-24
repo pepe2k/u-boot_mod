@@ -647,6 +647,15 @@ wr841n_v9_config : unconfig ap143_common_config
 
 	@./mkconfig -a ap143 mips mips ap143 ar7240 ar7240
 
+zsun_sd_config : unconfig hornet_common_config
+	@echo '======= Configuring for ZSun SDReader at:' `date` '======='
+	@echo "#define CONFIG_FOR_ZSUN_SD				   	1" >> include/config.h
+
+	@echo "#define CONFIG_DEFAULT_FLASH_SIZE_IN_MB     16" >> include/config.h
+	@echo "#define CONFIG_BOARD_CUSTOM_STRING          \"ZSUN SD v1\"" >> include/config.h
+
+	@./mkconfig -a ap121 mips mips ap121 ar7240 ar7240
+
 #########################################################################
 #########################################################################
 #########################################################################

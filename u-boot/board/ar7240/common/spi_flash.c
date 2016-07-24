@@ -171,7 +171,7 @@ u32 write_buff(flash_info_t *info, uchar *source, ulong addr, ulong len)
 	u32 dst;
 	u8 *src;
 
-	printf("Writting at address: 0x%08lX\n", addr);
+	printf("Writing at address: 0x%08lX\n", addr);
 	addr = addr - CFG_FLASH_BASE;
 
 	while (total < len) {
