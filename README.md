@@ -674,9 +674,9 @@ make tplink_wr703n
 
 will start building U-Boot image for **TP-Link TL-WR703N**.
 
-### Building on OS X
+### Building on macOS (OS X)
 
-You can build using the openwrt/lede toolchain as above under OS X as long as you install several gnu command line tools via brew. Note that bash is required to correct the usage of colorized echo output within the Makefiles (I was suprised how inconsistent FreeBSD is with Linux in this regard).
+You can build using the openwrt/lede toolchain as above under macOS (OS X) as long as you install several gnu command line tools via brew. Note that bash is required to correct the usage of colorized echo output within the Makefiles (I was suprised how inconsistent FreeBSD is with Linux/GNU in this regard).
 
 ```
 brew install bash coreutils gnu-sed
@@ -687,8 +687,6 @@ Subsequently, in addition to the toolchain being in your path, you will need to 
 ```
 export PATH=/usr/local/opt/coreutils/libexec/gnubin:/usr/local/opt/gnu-sed/libexec/gnubin:$PATH
 ```
-
-Lastly, you will need a localised (osx) build of lzma replacing the supplied ELF32 binary in the host_utils folder. I have tested with [lzma-4.32.7](http://tukaani.org/lzma/lzma-4.32.7.tar.gz) ; just run ./configure and then make and grab the executable from src/lzma.
 
 This process was tested on Yosemite and El Capitan.
 

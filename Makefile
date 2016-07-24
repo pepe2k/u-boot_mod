@@ -1,16 +1,31 @@
 SHELL = bash
-UNAME_S := $(shell uname -s)
 
-ifeq ($(UNAME_S), Darwin)
-HOSTOS = osx
-else ifeq ($(UNAME_S), Linux)
-HOSTOS = linux
-else
-$(error Error! Unsupported Host Operating System!)
+HOSTARCH := $(shell uname -m | \
+	sed -e s/i.86/i386/ \
+	    -e s/sun4u/sparc64/ \
+	    -e s/arm.*/arm/ \
+	    -e s/sa110/arm/ \
+	    -e s/powerpc/ppc/ \
+	    -e s/macppc/ppc/)
+
+HOSTOS := $(shell uname -s | tr '[:upper:]' '[:lower:]' | \
+	    sed -e 's/\(cygwin\).*/cygwin/')
+
+ifneq ($(HOSTOS), darwin) 
+ifneq ($(HOSTOS), linux)
+$(error Error! Unsupported Host Operating System $(HOSTOS) - $(HOSTARCH)!)
+endif
 endif
 
 export BUILD_TOPDIR=$(PWD)
 export STAGING_DIR=$(BUILD_TOPDIR)/tmp
+
+# -------------------------------------------------------------------------
+# Place the location to your toolchain here, for example: -
+#
+# export TOOLCHAIN_DIR:=$(BUILD_TOPDIR)/../tools/$(HOSTOS)/toolchain-mips_34kc_gcc-5.3.0_musl-1.1.14
+# export PATH:=$(TOOLCHAIN_DIR)/bin:$(PATH)
+# -------------------------------------------------------------------------
 
 ifndef CROSS_COMPILE
 CROSS_COMPILE = mips-openwrt-linux-musl-
