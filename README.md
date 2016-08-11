@@ -190,7 +190,7 @@ Erasing: #
 
 Erased sectors: 1
 
-Writting at address: 0x9F010000
+Writing at address: 0x9F010000
 
 uboot> reset
 ```
@@ -251,7 +251,7 @@ Erasing: #######################################
 Erased sectors: 60
 
 Copying to FLASH...
-Writting at address: 0x9F020000
+Writing at address: 0x9F020000
 
 Done!
 
