@@ -312,6 +312,7 @@ Pełna lista obsługiwanych kości FLASH:
 **16 MiB**:
 
 - Winbond W25Q128 (16 MB, JEDEC ID: EF 4018)*
+- Winbond W25Q128FW (16 MB, JEDEC ID: EF 6018, 1,8 V)*
 - Macronix MX25L128 (16 MB, JEDEC ID: C2 2018, C2 2618)
 - Spansion S25FL127S (16 MB, JEDEC ID: 01 2018)*
 - Micron N25Q128 (16 MB, JEDEC ID: 20 BA18)
