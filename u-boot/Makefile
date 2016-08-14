@@ -352,7 +352,6 @@ wr703n_config : unconfig hornet_common_config
 	@echo "#define CONFIG_FOR_TPLINK_WR703N_V1          1" >> include/config.h
 	@echo "#define CONFIG_GPIO_RESET_BTN               11" >> include/config.h
 	@echo "#define CONFIG_DEFAULT_FLASH_SIZE_IN_MB      4" >> include/config.h
-	@echo "#define CONFIG_TPLINK_IMAGE_HEADER           1" >> include/config.h
 	@echo "#define CONFIG_BOARD_CUSTOM_STRING           \"TP-Link TL-WR703N\"" >> include/config.h
 
 	@./mkconfig -a ap121 mips mips ap121 ar7240 ar7240
@@ -362,7 +361,6 @@ wr720n_v3_CN_config : unconfig hornet_common_config
 	@echo "#define CONFIG_FOR_TPLINK_WR720N_V3          1" >> include/config.h
 	@echo "#define CONFIG_GPIO_RESET_BTN               11" >> include/config.h
 	@echo "#define CONFIG_DEFAULT_FLASH_SIZE_IN_MB      4" >> include/config.h
-	@echo "#define CONFIG_TPLINK_IMAGE_HEADER           1" >> include/config.h
 	@echo "#define CONFIG_BOARD_CUSTOM_STRING           \"TP-Link TL-WR720N v3 CN\"" >> include/config.h
 
 	@./mkconfig -a ap121 mips mips ap121 ar7240 ar7240
@@ -372,7 +370,6 @@ wr710n_config : unconfig hornet_common_config
 	@echo "#define CONFIG_FOR_TPLINK_WR710N_V1          1" >> include/config.h
 	@echo "#define CONFIG_GPIO_RESET_BTN               11" >> include/config.h
 	@echo "#define CONFIG_DEFAULT_FLASH_SIZE_IN_MB      8" >> include/config.h
-	@echo "#define CONFIG_TPLINK_IMAGE_HEADER           1" >> include/config.h
 	@echo "#define CONFIG_BOARD_CUSTOM_STRING           \"TP-Link TL-WR710N\"" >> include/config.h
 
 	@./mkconfig -a ap121 mips mips ap121 ar7240 ar7240
@@ -382,7 +379,6 @@ mr3020_config : unconfig hornet_common_config
 	@echo "#define CONFIG_FOR_TPLINK_MR3020_V1          1" >> include/config.h
 	@echo "#define CONFIG_GPIO_RESET_BTN               11" >> include/config.h
 	@echo "#define CONFIG_DEFAULT_FLASH_SIZE_IN_MB      4" >> include/config.h
-	@echo "#define CONFIG_TPLINK_IMAGE_HEADER           1" >> include/config.h
 	@echo "#define CONFIG_BOARD_CUSTOM_STRING           \"TP-Link TL-MR3020\"" >> include/config.h
 
 	@./mkconfig -a ap121 mips mips ap121 ar7240 ar7240
@@ -392,7 +388,6 @@ mr3040_config : unconfig hornet_common_config
 	@echo "#define CONFIG_FOR_TPLINK_MR3040_V1V2        1" >> include/config.h
 	@echo "#define CONFIG_GPIO_RESET_BTN               11" >> include/config.h
 	@echo "#define CONFIG_DEFAULT_FLASH_SIZE_IN_MB      4" >> include/config.h
-	@echo "#define CONFIG_TPLINK_IMAGE_HEADER           1" >> include/config.h
 	@echo "#define CONFIG_BOARD_CUSTOM_STRING           \"TP-Link TL-MR3040\"" >> include/config.h
 
 	@./mkconfig -a ap121 mips mips ap121 ar7240 ar7240
@@ -402,7 +397,6 @@ mr10u_config : unconfig hornet_common_config
 	@echo "#define CONFIG_FOR_TPLINK_MR10U_V1           1" >> include/config.h
 	@echo "#define CONFIG_GPIO_RESET_BTN               11" >> include/config.h
 	@echo "#define CONFIG_DEFAULT_FLASH_SIZE_IN_MB      4" >> include/config.h
-	@echo "#define CONFIG_TPLINK_IMAGE_HEADER           1" >> include/config.h
 	@echo "#define CONFIG_BOARD_CUSTOM_STRING           \"TP-Link TL-MR10U\"" >> include/config.h
 
 	@./mkconfig -a ap121 mips mips ap121 ar7240 ar7240
@@ -412,7 +406,6 @@ mr13u_config : unconfig hornet_common_config
 	@echo "#define CONFIG_FOR_TPLINK_MR13U_V1           1" >> include/config.h
 	@echo "#define CONFIG_GPIO_RESET_BTN               11" >> include/config.h
 	@echo "#define CONFIG_DEFAULT_FLASH_SIZE_IN_MB      4" >> include/config.h
-	@echo "#define CONFIG_TPLINK_IMAGE_HEADER           1" >> include/config.h
 	@echo "#define CONFIG_BOARD_CUSTOM_STRING           \"TP-Link TL-MR13U\"" >> include/config.h
 
 	@./mkconfig -a ap121 mips mips ap121 ar7240 ar7240
@@ -422,7 +415,6 @@ wr740n_v4_config : unconfig hornet_common_config
 	@echo "#define CONFIG_FOR_TPLINK_WR740N_V4          1" >> include/config.h
 	@echo "#define CONFIG_GPIO_RESET_BTN               11" >> include/config.h
 	@echo "#define CONFIG_DEFAULT_FLASH_SIZE_IN_MB      4" >> include/config.h
-	@echo "#define CONFIG_TPLINK_IMAGE_HEADER           1" >> include/config.h
 	@echo "#define CONFIG_BOARD_CUSTOM_STRING           \"TP-Link TL-WR74xN/D v4\"" >> include/config.h
 
 	@./mkconfig -a ap121 mips mips ap121 ar7240 ar7240
@@ -432,7 +424,6 @@ mr3220_v2_config : unconfig hornet_common_config
 	@echo "#define CONFIG_FOR_TPLINK_MR3220_V2          1" >> include/config.h
 	@echo "#define CONFIG_GPIO_RESET_BTN               11" >> include/config.h
 	@echo "#define CONFIG_DEFAULT_FLASH_SIZE_IN_MB      4" >> include/config.h
-	@echo "#define CONFIG_TPLINK_IMAGE_HEADER           1" >> include/config.h
 	@echo "#define CONFIG_BOARD_CUSTOM_STRING           \"TP-Link TL-MR3220 v2\"" >> include/config.h
 
 	@./mkconfig -a ap121 mips mips ap121 ar7240 ar7240
@@ -505,7 +496,6 @@ gl-inet_config : unconfig hornet_common_config
 	@echo "#define CONFIG_FOR_GL_INET                   1" >> include/config.h
 	@echo "#define CONFIG_GPIO_RESET_BTN               11" >> include/config.h
 	@echo "#define CONFIG_DEFAULT_FLASH_SIZE_IN_MB      8" >> include/config.h
-	@echo "#define CONFIG_TPLINK_IMAGE_HEADER           1" >> include/config.h
 	@echo "#define CONFIG_BOARD_CUSTOM_STRING           \"GL.iNet\"" >> include/config.h
 
 	@./mkconfig -a ap121 mips mips ap121 ar7240 ar7240
@@ -525,7 +515,6 @@ wdr3600_43x0_config : unconfig wasp_common_config
 	@echo "#define CONFIG_GPIO_RESET_BTN               16" >> include/config.h
 	@echo "#define CONFIG_GPIO_RESET_BTN_ACTIVE_LOW     1" >> include/config.h
 	@echo "#define CONFIG_DEFAULT_FLASH_SIZE_IN_MB      8" >> include/config.h
-	@echo "#define CONFIG_TPLINK_IMAGE_HEADER           1" >> include/config.h
 	@echo "#define CONFIG_BOARD_CUSTOM_STRING           \"TP-Link TL-WDR3600/43x0\"" >> include/config.h
 
 	@./mkconfig -a db12x mips mips db12x ar7240 ar7240
@@ -540,7 +529,6 @@ wdr3500_config : unconfig wasp_common_config
 	@echo "#define CONFIG_GPIO_RESET_BTN               16" >> include/config.h
 	@echo "#define CONFIG_GPIO_RESET_BTN_ACTIVE_LOW     1" >> include/config.h
 	@echo "#define CONFIG_DEFAULT_FLASH_SIZE_IN_MB      8" >> include/config.h
-	@echo "#define CONFIG_TPLINK_IMAGE_HEADER           1" >> include/config.h
 	@echo "#define CONFIG_BOARD_CUSTOM_STRING           \"TP-Link TL-WDR3500\"" >> include/config.h
 
 	@./mkconfig -a db12x mips mips db12x ar7240 ar7240
@@ -554,7 +542,6 @@ mr3420_v2_config : unconfig wasp_common_config
 	@echo "#define CONFIG_GPIO_RESET_BTN               17" >> include/config.h
 	@echo "#define CONFIG_GPIO_RESET_BTN_ACTIVE_LOW     1" >> include/config.h
 	@echo "#define CONFIG_DEFAULT_FLASH_SIZE_IN_MB      4" >> include/config.h
-	@echo "#define CONFIG_TPLINK_IMAGE_HEADER           1" >> include/config.h
 	@echo "#define CONFIG_BOARD_CUSTOM_STRING           \"TP-Link TL-MR3420 v2\"" >> include/config.h
 
 	@./mkconfig -a db12x mips mips db12x ar7240 ar7240
@@ -568,7 +555,6 @@ wr841n_v8_config : unconfig wasp_common_config
 	@echo "#define CONFIG_GPIO_RESET_BTN               17" >> include/config.h
 	@echo "#define CONFIG_GPIO_RESET_BTN_ACTIVE_LOW     1" >> include/config.h
 	@echo "#define CONFIG_DEFAULT_FLASH_SIZE_IN_MB      4" >> include/config.h
-	@echo "#define CONFIG_TPLINK_IMAGE_HEADER           1" >> include/config.h
 	@echo "#define CONFIG_BOARD_CUSTOM_STRING           \"TP-Link TL-WR841N/D v8\"" >> include/config.h
 
 	@./mkconfig -a db12x mips mips db12x ar7240 ar7240
@@ -582,7 +568,6 @@ wa830re_v2_wa801nd_v2_config : unconfig wasp_common_config
 	@echo "#define CONFIG_GPIO_RESET_BTN                  17" >> include/config.h
 	@echo "#define CONFIG_GPIO_RESET_BTN_ACTIVE_LOW        1" >> include/config.h
 	@echo "#define CONFIG_DEFAULT_FLASH_SIZE_IN_MB         4" >> include/config.h
-	@echo "#define CONFIG_TPLINK_IMAGE_HEADER              1" >> include/config.h
 	@echo "#define CONFIG_BOARD_CUSTOM_STRING              \"TP-Link TL-WA830RE/TL-WA801ND v2\"" >> include/config.h
 
 	@./mkconfig -a db12x mips mips db12x ar7240 ar7240
@@ -614,7 +599,6 @@ wr820n_CN_config : unconfig ap143_common_config
 	@echo "#define CONFIG_DEFAULT_FLASH_SIZE_IN_MB      4" >> include/config.h
 	@echo "#define CONFIG_GPIO_RESET_BTN               12" >> include/config.h
 	@echo "#define CONFIG_GPIO_RESET_BTN_ACTIVE_LOW     1" >> include/config.h
-	@echo "#define CONFIG_TPLINK_IMAGE_HEADER           1" >> include/config.h
 	@echo "#define CONFIG_BOARD_CUSTOM_STRING           \"TP-Link TL-WR820N CN\"" >> include/config.h
 
 	@./mkconfig -a ap143 mips mips ap143 ar7240 ar7240
@@ -628,7 +612,6 @@ wr802n_config : unconfig ap143_common_config
 	@echo "#define CONFIG_DEFAULT_FLASH_SIZE_IN_MB      4" >> include/config.h
 	@echo "#define CONFIG_GPIO_RESET_BTN               12" >> include/config.h
 	@echo "#define CONFIG_GPIO_RESET_BTN_ACTIVE_LOW     1" >> include/config.h
-	@echo "#define CONFIG_TPLINK_IMAGE_HEADER           1" >> include/config.h
 	@echo "#define CONFIG_BOARD_CUSTOM_STRING           \"TP-Link TL-WR802N\"" >> include/config.h
 
 	@./mkconfig -a ap143 mips mips ap143 ar7240 ar7240
@@ -642,7 +625,6 @@ wr841n_v9_config : unconfig ap143_common_config
 	@echo "#define CONFIG_DEFAULT_FLASH_SIZE_IN_MB      4" >> include/config.h
 	@echo "#define CONFIG_GPIO_RESET_BTN               12" >> include/config.h
 	@echo "#define CONFIG_GPIO_RESET_BTN_ACTIVE_LOW     1" >> include/config.h
-	@echo "#define CONFIG_TPLINK_IMAGE_HEADER           1" >> include/config.h
 	@echo "#define CONFIG_BOARD_CUSTOM_STRING           \"TP-Link TL-WR841N/D v9\"" >> include/config.h
 
 	@./mkconfig -a ap143 mips mips ap143 ar7240 ar7240
