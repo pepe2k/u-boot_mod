@@ -395,26 +395,6 @@
 							 CFG_CMD_ITEST  | \
 							 CFG_CMD_IMI)
 
-#elif defined(CONFIG_FOR_8DEVICES_CARAMBOLA2) || \
-      defined(CONFIG_FOR_DRAGINO_V2) || \
-      defined(CONFIG_FOR_MESH_POTATO_V2) || \
-      defined(CONFIG_FOR_BLACK_SWIFT_BOARD)
-
-	#define CONFIG_COMMANDS (CFG_CMD_MEMORY | \
-							 CFG_CMD_DHCP   | \
-							 CFG_CMD_PING   | \
-							 CFG_CMD_FLASH  | \
-							 CFG_CMD_NET    | \
-							 CFG_CMD_RUN    | \
-							 CFG_CMD_DATE   | \
-							 CFG_CMD_SNTP   | \
-							 CFG_CMD_ECHO   | \
-							 CFG_CMD_BOOTD  | \
-							 CFG_CMD_ITEST  | \
-							 CFG_CMD_IMI    | \
-							 CFG_CMD_ENV    | \
-							 CFG_CMD_LOADB)
-
 #else
 
 	#define CONFIG_COMMANDS (CFG_CMD_MEMORY | \
@@ -428,6 +408,7 @@
 							 CFG_CMD_ECHO   | \
 							 CFG_CMD_BOOTD  | \
 							 CFG_CMD_ITEST  | \
+							 CFG_CMD_IMI    | \
 							 CFG_CMD_ENV    | \
 							 CFG_CMD_LOADB)
 

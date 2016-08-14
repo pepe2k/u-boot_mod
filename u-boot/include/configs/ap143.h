@@ -188,41 +188,20 @@
 /*
  * Available commands
  */
-#if defined(CONFIG_FOR_TPLINK_WR820N_CN) ||\
-	defined(CONFIG_FOR_TPLINK_WR802N)    ||\
-	defined(CONFIG_FOR_TPLINK_WR841N_V9)
-	#define CONFIG_COMMANDS (CFG_CMD_MEMORY | \
-							 CFG_CMD_DHCP   | \
-							 CFG_CMD_PING   | \
-							 CFG_CMD_FLASH  | \
-							 CFG_CMD_NET    | \
-							 CFG_CMD_RUN    | \
-							 CFG_CMD_DATE   | \
-							 CFG_CMD_SNTP   | \
-							 CFG_CMD_ECHO   | \
-							 CFG_CMD_BOOTD  | \
-							 CFG_CMD_ITEST  | \
-							 CFG_CMD_ENV    | \
-							 CFG_CMD_LOADB)
-
-#elif defined(CONFIG_FOR_WALLYS_DR531)
-
-	#define CONFIG_COMMANDS (CFG_CMD_MEMORY | \
-							 CFG_CMD_DHCP   | \
-							 CFG_CMD_PING   | \
-							 CFG_CMD_FLASH  | \
-							 CFG_CMD_NET    | \
-							 CFG_CMD_RUN    | \
-							 CFG_CMD_DATE   | \
-							 CFG_CMD_SNTP   | \
-							 CFG_CMD_ECHO   | \
-							 CFG_CMD_BOOTD  | \
-							 CFG_CMD_ITEST  | \
-							 CFG_CMD_IMI    | \
-							 CFG_CMD_ENV    | \
-							 CFG_CMD_LOADB)
-
-#endif
+#define CONFIG_COMMANDS (CFG_CMD_MEMORY | \
+						 CFG_CMD_DHCP   | \
+						 CFG_CMD_PING   | \
+						 CFG_CMD_FLASH  | \
+						 CFG_CMD_NET    | \
+						 CFG_CMD_RUN    | \
+						 CFG_CMD_DATE   | \
+						 CFG_CMD_SNTP   | \
+						 CFG_CMD_ECHO   | \
+						 CFG_CMD_BOOTD  | \
+						 CFG_CMD_ITEST  | \
+						 CFG_CMD_IMI    | \
+						 CFG_CMD_ENV    | \
+						 CFG_CMD_LOADB)
 
 // Enable NetConsole and custom NetConsole port
 #define CONFIG_NETCONSOLE
