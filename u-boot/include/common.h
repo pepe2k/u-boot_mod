@@ -199,18 +199,8 @@ void flash_perror (int);
 /* common/cmd_autoscript.c */
 int	autoscript (ulong addr);
 
-/*
- * Only TP-Link OFW and OpenWrt for TP-Link routers
- * use different (simply) image header
- */
-#ifdef CONFIG_TPLINK_IMAGE_HEADER
-#include "tpLinuxTag.h"
-void print_image_hdr(tplink_image_header_t *hdr);
-#else
-void print_image_hdr(image_header_t *hdr);
-#endif /* CONFIG_TPLINK_IMAGE_HEADER */
-
-extern ulong load_addr;		/* Default Load Address */
+/* Default Load Address */
+extern u32 load_addr;
 
 /* common/cmd_nvedit.c */
 int		env_init     (void);
