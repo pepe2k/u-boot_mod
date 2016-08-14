@@ -559,8 +559,7 @@
 											"echo OK!; " \
 										"else " \
 											"echo ERROR! Server not reachable!; " \
-										"fi\0" \
-									SILENT_ENV_VARIABLE
+										"fi\0"
 
 #define CFG_ATHRS26_PHY				1
 #define CFG_AG7240_NMACS			2

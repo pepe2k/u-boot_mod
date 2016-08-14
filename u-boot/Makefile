@@ -324,15 +324,12 @@ ifdef CONFIG_MAX_UBOOT_SIZE_KB
 	@echo "#define CONFIG_MAX_UBOOT_SIZE_KB "$(CONFIG_MAX_UBOOT_SIZE_KB) >> include/config.h
 endif
 
-ifdef DISABLE_CONSOLE_OUTPUT
-	@echo "#define CONFIG_SILENT_CONSOLE                1" >> include/config.h
-endif
-
 ifdef CONFIG_SKIP_LOWLEVEL_INIT
 	@echo "#define CONFIG_SKIP_LOWLEVEL_INIT            1" >> include/config.h
 	@echo "#undef COMPRESSED_UBOOT"                        >> include/config.h
 endif
 
+	@echo "#define CONFIG_SILENT_CONSOLE                1" >> include/config.h
 	@echo "#define CONFIG_DELAY_TO_AUTORUN_HTTPD        3" >> include/config.h
 	@echo "#define CONFIG_DELAY_TO_AUTORUN_CONSOLE      5" >> include/config.h
 	@echo "#define CONFIG_DELAY_TO_AUTORUN_NETCONSOLE   7" >> include/config.h

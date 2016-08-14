@@ -77,12 +77,6 @@
 #define CFG_MEMTEST_END		(CFG_SDRAM_BASE + bd->bi_memsize - 0x200001)	/* RAM test end   = CFG_SDRAM_BASE + RAM size - 2 MB - 1 Byte */
 #define CFG_RX_ETH_BUFFER   16
 
-#if defined(CONFIG_SILENT_CONSOLE)
-	#define SILENT_ENV_VARIABLE	"silent=1\0"
-#else
-	#define SILENT_ENV_VARIABLE	""
-#endif
-
 #define CFG_DCACHE_SIZE		32768
 #define CFG_ICACHE_SIZE		65536
 #define CFG_CACHELINE_SIZE	32
@@ -312,9 +306,7 @@
 											"fi; " \
 										"else " \
 											"echo ERROR! Server not reachable!; " \
-										"fi\0" \
-									SILENT_ENV_VARIABLE
-
+										"fi\0"
 /*
  * Cache lock for stack
  */

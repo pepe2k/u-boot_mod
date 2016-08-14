@@ -22,9 +22,6 @@ export MAKECMD=make --silent --no-print-directory ARCH=mips
 # boot delay (time to autostart boot command)
 export CONFIG_BOOTDELAY=1
 
-# uncomment following line, to disable output in U-Boot console
-#export DISABLE_CONSOLE_OUTPUT=1
-
 # uncomment following line, to build RAM version images (without low level initialization)
 #export CONFIG_SKIP_LOWLEVEL_INIT=1
 
@@ -280,15 +277,7 @@ wallys_dr531:
 	@make --no-print-directory show_size
 
 ifdef CONFIG_SKIP_LOWLEVEL_INIT
-  ifdef DISABLE_CONSOLE_OUTPUT
-show_size:	export UBOOT_FILE_NAME_SUFFIX=__SILENT-CONSOLE__RAM
-  else
 show_size:	export UBOOT_FILE_NAME_SUFFIX=__RAM
-  endif
-else
-  ifdef DISABLE_CONSOLE_OUTPUT
-show_size:	export UBOOT_FILE_NAME_SUFFIX=__SILENT-CONSOLE
-  endif
 endif
 show_size:
 ifdef COMPRESSED_UBOOT

@@ -38,12 +38,6 @@
 #define CFG_MEMTEST_END		(CFG_SDRAM_BASE + bd->bi_memsize - 0x200001)	/* RAM test end   = CFG_SDRAM_BASE + RAM size - 2 MB - 1 Byte */
 #define CFG_RX_ETH_BUFFER   16
 
-#if defined(CONFIG_SILENT_CONSOLE)
-	#define SILENT_ENV_VARIABLE	"silent=1\0"
-#else
-	#define SILENT_ENV_VARIABLE	""
-#endif
-
 /*-----------------------------------------------------------------------
  * Cache Configuration
  */

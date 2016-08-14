@@ -269,8 +269,7 @@
 											"echo OK!; " \
 										"else " \
 											"echo ERROR! Server not reachable!; " \
-										"fi\0" \
-									SILENT_ENV_VARIABLE
+										"fi\0"
 
 #define CFG_MII0_RMII				1
 #define CFG_BOOTM_LEN				(16 << 20) /* 16 MB */
