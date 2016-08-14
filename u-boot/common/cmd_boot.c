@@ -37,15 +37,7 @@ int do_go(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[]){
 	int rcode = 0;
 
 	if(argc < 2){
-#ifdef CFG_LONGHELP
-		if(cmdtp->help != NULL){
-			printf("Usage:\n%s %s\n", cmdtp->name, cmdtp->help);
-		} else {
-			printf("Usage:\n%s %s\n", cmdtp->name, cmdtp->usage);
-		}
-#else
-		printf("Usage:\n%s %s\n", cmdtp->name, cmdtp->usage);
-#endif
+		print_cmd_help(cmdtp);
 		return(1);
 	}
 

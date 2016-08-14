@@ -9,6 +9,19 @@
 #include <common.h>
 #include <command.h>
 
+void print_cmd_help(cmd_tbl_t *cmdtp)
+{
+#ifdef CFG_LONGHELP
+	if (cmdtp->help != NULL) {
+		printf("Usage:\n%s %s\n", cmdtp->name, cmdtp->help);
+	} else {
+		printf("Usage:\n%s %s\n", cmdtp->name, cmdtp->usage);
+	}
+#else
+	printf("Usage:\n%s %s\n", cmdtp->name, cmdtp->usage);
+#endif
+}
+
 int do_version(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 {
 	extern char version_string[];
@@ -23,9 +36,7 @@ int do_version(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 	return 0;
 }
 
-U_BOOT_CMD(version, 1, 1, do_version,
-		   "print U-Boot version\n",
-		   NULL);
+U_BOOT_CMD(version, 1, 1, do_version, "print U-Boot version\n", NULL);
 
 #if (CONFIG_COMMANDS & CFG_CMD_ECHO)
 int do_echo(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
@@ -55,15 +66,15 @@ int do_echo(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 }
 
 U_BOOT_CMD(echo, CFG_MAXARGS, 1, do_echo,
-		   "echo args to console\n",
-		   "[args..]\n" "\t- echo args to console; \\c suppresses newline\n");
-#endif	/*  CFG_CMD_ECHO */
+	"echo args to console\n", "[args..]\n"
+	"\t- echo args to console; \\c suppresses newline\n");
+#endif /* CFG_CMD_ECHO */
 
 #ifdef CFG_HUSH_PARSER
 int do_test(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 {
-	int left, adv, expr, last_expr, neg, last_cmp;
 	char **ap;
+	int adv, expr, last_expr, last_cmp, left, neg;
 
 	/* args? */
 	if (argc < 3)
@@ -86,9 +97,11 @@ int do_test(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 	last_expr = -1;
 
 	while (left > 0) {
-		if (strcmp(ap[0], "-o") == 0 || strcmp(ap[0], "-a") == 0) {
+		if (strcmp(ap[0], "-o") == 0 ||
+		    strcmp(ap[0], "-a") == 0) {
 			adv = 1;
-		} else if (strcmp(ap[0], "-z") == 0 || strcmp(ap[0], "-n") == 0) {
+		} else if (strcmp(ap[0], "-z") == 0 ||
+			   strcmp(ap[0], "-n") == 0) {
 			adv = 2;
 		} else {
 			adv = 3;
@@ -141,17 +154,23 @@ int do_test(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 			} else if (strcmp(ap[1], "<") == 0) {
 				expr = strcmp(ap[0], ap[2]) < 0;
 			} else if (strcmp(ap[1], "-eq") == 0) {
-				expr = simple_strtol(ap[0], NULL, 10) == simple_strtol(ap[2], NULL, 10);
+				expr = simple_strtol(ap[0], NULL, 10)
+				       == simple_strtol(ap[2], NULL, 10);
 			} else if (strcmp(ap[1], "-ne") == 0) {
-				expr = simple_strtol(ap[0], NULL, 10) != simple_strtol(ap[2], NULL, 10);
+				expr = simple_strtol(ap[0], NULL, 10)
+				       != simple_strtol(ap[2], NULL, 10);
 			} else if (strcmp(ap[1], "-lt") == 0) {
-				expr = simple_strtol(ap[0], NULL, 10) < simple_strtol(ap[2], NULL, 10);
+				expr = simple_strtol(ap[0], NULL, 10)
+				       < simple_strtol(ap[2], NULL, 10);
 			} else if (strcmp(ap[1], "-le") == 0) {
-				expr = simple_strtol(ap[0], NULL, 10) <= simple_strtol(ap[2], NULL, 10);
+				expr = simple_strtol(ap[0], NULL, 10)
+				       <= simple_strtol(ap[2], NULL, 10);
 			} else if (strcmp(ap[1], "-gt") == 0) {
-				expr = simple_strtol(ap[0], NULL, 10) > simple_strtol(ap[2], NULL, 10);
+				expr = simple_strtol(ap[0], NULL, 10)
+				       > simple_strtol(ap[2], NULL, 10);
 			} else if (strcmp(ap[1], "-ge") == 0) {
-				expr = simple_strtol(ap[0], NULL, 10) >= simple_strtol(ap[2], NULL, 10);
+				expr = simple_strtol(ap[0], NULL, 10)
+				       >= simple_strtol(ap[2], NULL, 10);
 			} else {
 				expr = 1;
 				break;
@@ -178,8 +197,8 @@ int do_test(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 }
 
 U_BOOT_CMD(test, CFG_MAXARGS, 1, do_test,
-		   "minimal test like /bin/sh\n",
-		   "[args..]\n\t- test functionality\n");
+	"minimal test like /bin/sh\n", "[args..]\n"
+	"\t- test functionality\n");
 
 int do_exit(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 {
@@ -192,8 +211,7 @@ int do_exit(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 }
 
 U_BOOT_CMD(exit, 2, 1, do_exit,
-		   "exit script\n",
-		   "\n\t- exit functionality\n");
+	"exit script\n", "\n\t- exit functionality\n");
 #endif /* CFG_HUSH_PARSER */
 
 /*
@@ -229,7 +247,8 @@ int do_help(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 				if (strlen(name) >= max_len)
 					max_len = strlen(name);
 
-				if (strcmp(cmd_array[j]->name, cmd_array[j + 1]->name) > 0) {
+				if (strcmp(cmd_array[j]->name,
+					   cmd_array[j + 1]->name) > 0) {
 					cmd_tbl_t *tmp;
 					tmp = cmd_array[j];
 					cmd_array[j] = cmd_array[j + 1];
@@ -282,7 +301,7 @@ int do_help(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 #else
 			if (cmdtp->usage)
 				puts(cmdtp->usage);
-#endif	/* CFG_LONGHELP */
+#endif /* CFG_LONGHELP */
 		} else {
 			printf("Unknown command '%s' - try 'help' without arguments\n\n", argv[i]);
 			rcode = 1;
@@ -293,10 +312,8 @@ int do_help(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 }
 
 U_BOOT_CMD(help, CFG_MAXARGS, 1, do_help,
-		   "print embedded help\n",
-		   "[command ...]\n"
-		   "\t- show help information (for 'command')\n"
-			"\twithout arguments, it prints a short usage message for available commands.\n");
+	"print embedded help\n", "[command ...]\n"
+	"\t- show help information for 'command' or short usage of all commands\n");
 
 /* This do not ust the U_BOOT_CMD macro as ? can't be used in symbol names */
 #ifdef CFG_LONGHELP
@@ -310,11 +327,11 @@ cmd_tbl_t __u_boot_cmd_question_mark Struct_Section = {"?", CFG_MAXARGS, 1, do_h
  */
 cmd_tbl_t *find_cmd(const char *cmd)
 {
-	cmd_tbl_t *cmdtp;
-	cmd_tbl_t *cmdtp_temp = &__u_boot_cmd_start; /*Init value */
-	const char *p;
 	int len;
 	int n_found = 0;
+	const char *p;
+	cmd_tbl_t *cmdtp;
+	cmd_tbl_t *cmdtp_temp = &__u_boot_cmd_start; /*Init value */
 
 	/*
 	 * Some commands allow length modifiers (like "cp.b");

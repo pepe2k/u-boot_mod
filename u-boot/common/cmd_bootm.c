@@ -580,15 +580,7 @@ int do_iminfo(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 	if (argc == 2) {
 		addr = simple_strtoul(argv[1], NULL, 16);
 	} else {
-#ifdef CFG_LONGHELP
-		if (cmdtp->help != NULL) {
-			printf("Usage:\n%s %s\n", cmdtp->name, cmdtp->help);
-		} else {
-			printf("Usage:\n%s %s\n", cmdtp->name, cmdtp->usage);
-		}
-#else
-		printf("Usage:\n%s %s\n", cmdtp->name, cmdtp->usage);
-#endif
+		print_cmd_help(cmdtp);
 		return 1;
 	}
 

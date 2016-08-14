@@ -165,15 +165,7 @@ int do_itest ( cmd_tbl_t *cmdtp, int flag, int argc, char *argv[] )
 
 	/* Validate arguments */
 	if ((argc != 4)){
-#ifdef CFG_LONGHELP
-		if(cmdtp->help != NULL){
-			printf("Usage:\n%s %s\n", cmdtp->name, cmdtp->help);
-		} else {
-			printf("Usage:\n%s %s\n", cmdtp->name, cmdtp->usage);
-		}
-#else
-		printf("Usage:\n%s %s\n", cmdtp->name, cmdtp->usage);
-#endif
+		print_cmd_help(cmdtp);
 		return 1;
 	}
 

@@ -100,15 +100,7 @@ int do_mem_md(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[]){
 	length = dp_last_length;
 
 	if(argc < 2){
-#ifdef CFG_LONGHELP
-		if(cmdtp->help != NULL){
-			printf("Usage:\n%s %s\n", cmdtp->name, cmdtp->help);
-		} else {
-			printf("Usage:\n%s %s\n", cmdtp->name, cmdtp->usage);
-		}
-#else
-		printf("Usage:\n%s %s\n", cmdtp->name, cmdtp->usage);
-#endif
+		print_cmd_help(cmdtp);
 		return(1);
 	}
 
@@ -205,15 +197,7 @@ int do_mem_mw(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[]){
 	int size;
 
 	if((argc < 3) || (argc > 4)){
-#ifdef CFG_LONGHELP
-		if(cmdtp->help != NULL){
-			printf("Usage:\n%s %s\n", cmdtp->name, cmdtp->help);
-		} else {
-			printf("Usage:\n%s %s\n", cmdtp->name, cmdtp->usage);
-		}
-#else
-		printf("Usage:\n%s %s\n", cmdtp->name, cmdtp->usage);
-#endif
+		print_cmd_help(cmdtp);
 		return(1);
 	}
 
@@ -260,15 +244,7 @@ int do_mem_cp(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[]){
 	int size;
 
 	if(argc != 4){
-#ifdef CFG_LONGHELP
-		if(cmdtp->help != NULL){
-			printf("Usage:\n%s %s\n", cmdtp->name, cmdtp->help);
-		} else {
-			printf("Usage:\n%s %s\n", cmdtp->name, cmdtp->usage);
-		}
-#else
-		printf("Usage:\n%s %s\n", cmdtp->name, cmdtp->usage);
-#endif
+		print_cmd_help(cmdtp);
 		return(1);
 	}
 
@@ -641,15 +617,7 @@ static int mod_mem(cmd_tbl_t *cmdtp, int incrflag, int flag, int argc, char *arg
 	extern char console_buffer[];
 
 	if(argc != 2){
-#ifdef CFG_LONGHELP
-		if(cmdtp->help != NULL){
-			printf("Usage:\n%s %s\n", cmdtp->name, cmdtp->help);
-		} else {
-			printf("Usage:\n%s %s\n", cmdtp->name, cmdtp->usage);
-		}
-#else
-		printf("Usage:\n%s %s\n", cmdtp->name, cmdtp->usage);
-#endif
+		print_cmd_help(cmdtp);
 		return(1);
 	}
 

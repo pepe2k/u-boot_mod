@@ -596,15 +596,7 @@ static int run_pipe_real(struct pipe *pi) {
 #endif	/* CFG_CMD_BOOTD */
 			/* found - check max args */
 			if ((child->argc - i) > cmdtp->maxargs) {
-#ifdef CFG_LONGHELP
-		if(cmdtp->help != NULL){
-			printf("Usage:\n%s %s\n", cmdtp->name, cmdtp->help);
-		} else {
-			printf("Usage:\n%s %s\n", cmdtp->name, cmdtp->usage);
-		}
-#else
-		printf("Usage:\n%s %s\n", cmdtp->name, cmdtp->usage);
-#endif
+				print_cmd_help(cmdtp);
 				return -1;
 			}
 			child->argv += i; /* XXX horrible hack */

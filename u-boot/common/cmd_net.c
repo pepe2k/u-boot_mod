@@ -154,15 +154,7 @@ static int netboot_common(proto_t proto, cmd_tbl_t *cmdtp, int argc, char *argv[
 
 		default:
 
-#ifdef CFG_LONGHELP
-			if(cmdtp->help != NULL){
-				printf("Usage:\n%s %s\n", cmdtp->name, cmdtp->help);
-			} else {
-				printf("Usage:\n%s %s\n", cmdtp->name, cmdtp->usage);
-			}
-#else
-			printf("Usage:\n%s %s\n", cmdtp->name, cmdtp->usage);
-#endif
+			print_cmd_help(cmdtp);
 			return 1;
 	}
 
@@ -204,30 +196,14 @@ static int netboot_common(proto_t proto, cmd_tbl_t *cmdtp, int argc, char *argv[
 int do_ping(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[]){
 
 	if(argc < 2){
-#ifdef CFG_LONGHELP
-		if(cmdtp->help != NULL){
-			printf("Usage:\n%s %s\n", cmdtp->name, cmdtp->help);
-		} else {
-			printf("Usage:\n%s %s\n", cmdtp->name, cmdtp->usage);
-		}
-#else
-		printf("Usage:\n%s %s\n", cmdtp->name, cmdtp->usage);
-#endif
+		print_cmd_help(cmdtp);
 		return(-1);
 	}
 
 	NetPingIP = string_to_ip(argv[1]);
 
 	if (NetPingIP == 0){
-#ifdef CFG_LONGHELP
-		if(cmdtp->help != NULL){
-			printf("Usage:\n%s %s\n", cmdtp->name, cmdtp->help);
-		} else {
-			printf("Usage:\n%s %s\n", cmdtp->name, cmdtp->usage);
-		}
-#else
-		printf("Usage:\n%s %s\n", cmdtp->name, cmdtp->usage);
-#endif
+		print_cmd_help(cmdtp);
 		return(-1);
 	}
 
@@ -250,15 +226,7 @@ int do_sntp(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[]){
 	char *toff;
 
 	if(argc < 2){
-#ifdef CFG_LONGHELP
-		if(cmdtp->help != NULL){
-			printf("Usage:\n%s %s\n", cmdtp->name, cmdtp->help);
-		} else {
-			printf("Usage:\n%s %s\n", cmdtp->name, cmdtp->usage);
-		}
-#else
-		printf("Usage:\n%s %s\n", cmdtp->name, cmdtp->usage);
-#endif
+		print_cmd_help(cmdtp);
 		return(-1);
 	} else {
 		NetNtpServerIP = string_to_ip(argv[1]);
