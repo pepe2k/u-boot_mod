@@ -615,6 +615,19 @@ wr841n_v9_config : unconfig ap143_common_config
 
 	@./mkconfig -a ap143 mips mips ap143 ar7240 ar7240
 
+zbt-we1526_config : unconfig ap143_common_config
+	@echo -e '\e[32m> Configuring for Zbtlink ZBT-WE1526 at:' `date` '\e[0m'
+	@echo "#define SOC_TYPE               QCA_QCA953X_SOC" >> include/config.h
+	@echo "#define CONFIG_FOR_ZBTLINK_ZBT_WE1526        1" >> include/config.h
+	@echo "#define CFG_ATHRS27_PHY                      1" >> include/config.h
+	@echo "#define CFG_ATH_GMAC_NMACS                   2" >> include/config.h
+	@echo "#define CONFIG_DEFAULT_FLASH_SIZE_IN_MB     16" >> include/config.h
+	@echo "#define CONFIG_GPIO_RESET_BTN               17" >> include/config.h
+	@echo "#define CONFIG_GPIO_RESET_BTN_ACTIVE_LOW     1" >> include/config.h
+	@echo "#define CONFIG_BOARD_CUSTOM_STRING           \"Zbtlink ZBT-WE1526\"" >> include/config.h
+
+	@./mkconfig -a ap143 mips mips ap143 ar7240 ar7240
+
 #########################################################################
 #########################################################################
 #########################################################################

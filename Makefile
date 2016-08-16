@@ -293,6 +293,14 @@ wallys_dr531:
 	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) ENDIANNESS=-EB V=1 all
 	@make --no-print-directory show_size
 
+zbtlink_zbt_we1526:	export UBOOT_FILE_NAME=uboot_for_zbtlink_zbt-we1526
+zbtlink_zbt_we1526:	export CONFIG_MAX_UBOOT_SIZE_KB=256
+zbtlink_zbt_we1526:	export ETH_CONFIG=_s27
+zbtlink_zbt_we1526:
+	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) zbt-we1526_config
+	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) ENDIANNESS=-EB V=1 all
+	@make --no-print-directory show_size
+
 ifdef CONFIG_SKIP_LOWLEVEL_INIT
 show_size:	export UBOOT_FILE_NAME_SUFFIX=__RAM
 endif
