@@ -43,6 +43,7 @@
 int ath_gmac_miiphy_read(char *devname, uint32_t phaddr, uint8_t reg, uint16_t *data);
 int ath_gmac_miiphy_write(char *devname, uint32_t phaddr, uint8_t reg, uint16_t data);
 extern void ath_sys_frequency(uint32_t *, uint32_t *, uint32_t *);
+extern int athrs27_reg_init_lan(void);
 
 #ifndef CFG_ATH_GMAC_NMACS
 #define CFG_ATH_GMAC_NMACS	1
@@ -248,7 +249,7 @@ static void ath_gmac_hw_start(ath_gmac_mac_t *mac)
 	 * and Multi/Broad cast frames.
 	 */
 
-	ath_gmac_reg_wr(mac, ATH_MAC_FIFO_CFG_5, 0x7eccf);
+	ath_gmac_reg_wr(mac, ATH_MAC_FIFO_CFG_5, 0x7ffff);
 
 	ath_gmac_reg_wr(mac, ATH_MAC_FIFO_CFG_3, 0x1f00140);
 
@@ -361,6 +362,8 @@ static int ath_gmac_alloc_fifo(int ndesc, ath_gmac_desc_t ** fifo)
 	p = (uchar *) (((u32) p + CFG_CACHELINE_SIZE - 1) &
 			~(CFG_CACHELINE_SIZE - 1));
 	p = UNCACHED_SDRAM(p);
+
+	memset((void*)p, 0, size);
 
 	for (i = 0; i < ndesc; i++)
 		fifo[i] = (ath_gmac_desc_t *) p + i;
@@ -595,17 +598,8 @@ int ath_gmac_enet_initialize(bd_t * bis)
 		ath_gmac_hw_start(ath_gmac_macs[i]);
 		ath_gmac_setup_fifos(ath_gmac_macs[i]);
 
-
-
 		udelay(100 * 1000);
 
-		{
-			unsigned char *mac = dev[i]->enetaddr;
-
-			//printf("%s: %02x:%02x:%02x:%02x:%02x:%02x\n", dev[i]->name,
-			//		mac[0] & 0xff, mac[1] & 0xff, mac[2] & 0xff,
-			//		mac[3] & 0xff, mac[4] & 0xff, mac[5] & 0xff);
-		}
 		mac_l = (dev[i]->enetaddr[4] << 8) | (dev[i]->enetaddr[5]);
 		mac_h = (dev[i]->enetaddr[0] << 24) | (dev[i]->enetaddr[1] << 16) |
 			(dev[i]->enetaddr[2] << 8) | (dev[i]->enetaddr[3] << 0);

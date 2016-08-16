@@ -42,6 +42,8 @@
 extern int ath_gmac_miiphy_read(char *devname, uint32_t phaddr, uint8_t reg, uint16_t *data);
 extern int ath_gmac_miiphy_write(char *devname, uint32_t phaddr, uint8_t reg, uint16_t data);
 
+void athrs27_reg_rmw(unsigned int s27_addr, unsigned int s27_write_data);
+
 #define phy_reg_read(base, addr, reg)	\
 	ath_gmac_miiphy_read(ath_gmac_unit2name(base), addr, reg, NULL)
 
@@ -269,8 +271,6 @@ int athrs27_reg_init_lan(void)
     uint32_t rd_val;
 #endif
     int       phyUnit;
-    uint32_t  phyBase = 0;
-    BOOL      foundPhy = FALSE;
     uint32_t  phyAddr = 0;
 
 
@@ -279,7 +279,7 @@ int athrs27_reg_init_lan(void)
     athrs27_reg_write(0x0, athrs27_reg_read(0x0)|0x80000000);
 
     while(i--) {
-        sysMsDelay(100);
+        //sysMsDelay(100);
         if(!(athrs27_reg_read(0x0)&0x80000000))
             break;
     }
@@ -294,8 +294,6 @@ int athrs27_reg_init_lan(void)
 
     for (phyUnit=0; phyUnit < ATHR_PHY_MAX; phyUnit++) {
 
-        foundPhy = TRUE;
-        phyBase = ATHR_PHYBASE(phyUnit);
         phyAddr = ATHR_PHYADDR(phyUnit);
 
 #if defined(S27_FORCE_100M)
@@ -378,10 +376,8 @@ BOOL
 athrs27_phy_is_link_alive(int phyUnit)
 {
     uint16_t phyHwStatus;
-    uint32_t phyBase;
     uint32_t phyAddr;
 
-    phyBase = ATHR_PHYBASE(phyUnit);
     phyAddr = ATHR_PHYADDR(phyUnit);
     phyHwStatus = s27_rd_phy(phyAddr, ATHR_PHY_SPEC_STATUS);
 
@@ -409,21 +405,14 @@ athrs27_phy_setup(int ethUnit)
     uint16_t  phyHwStatus;
     uint16_t  timeout;
     int       liveLinks = 0;
-    uint32_t  phyBase = 0;
     BOOL      foundPhy = FALSE;
     uint32_t  phyAddr = 0;
-//#if S27_PHY_DEBUG
-    uint32_t  rd_val = 0;
-//#endif
-    uint32_t  ar7240_revid;
-
 
     /* See if there's any configuration data for this enet */
     /* start auto negogiation on each phy */
     for (phyUnit=0; phyUnit < ATHR_PHY_MAX; phyUnit++) {
 
         foundPhy = TRUE;
-        phyBase = ATHR_PHYBASE(phyUnit);
         phyAddr = ATHR_PHYADDR(phyUnit);
 
         if (!ATHR_IS_ETHUNIT(phyUnit, ethUnit)) {
@@ -455,10 +444,6 @@ athrs27_phy_setup(int ethUnit)
                          | ATHR_CTRL_SOFTWARE_RESET);
            }
        }
-       rd_val = s27_rd_phy(phyAddr,ATHR_PHY_CONTROL);
-       //printf("%s ATHR_PHY_CONTROL %d :%x\n",__func__,phyAddr,rd_val);
-       rd_val = s27_rd_phy(phyAddr,ATHR_PHY_SPEC_STATUS);
-       //printf("%s ATHR_PHY_SPEC_STAUS %d :%x\n",__func__,phyAddr,rd_val);
     }
     if (!foundPhy) {
         return FALSE; /* No PHY's configured for this ethUnit */
@@ -468,10 +453,12 @@ athrs27_phy_setup(int ethUnit)
      * After the phy is reset, it takes a little while before
      * it can respond properly.
      */
+	/*
     if (ethUnit == ENET_UNIT_LAN)
         sysMsDelay(100);
     else
         sysMsDelay(300);
+	*/
 
     /*
      * Wait up to 3 seconds for ALL associated PHYs to finish
@@ -502,7 +489,7 @@ athrs27_phy_setup(int ethUnit)
                 break;
             }
 
-            sysMsDelay(150);
+            //sysMsDelay(150);
         }
         /* extend the cable length */
         s27_wr_phy(phyUnit, ATHR_DEBUG_PORT_ADDRESS, 0x14);
@@ -570,7 +557,6 @@ athrs27_phy_setup(int ethUnit)
 int
 athrs27_phy_is_fdx(int ethUnit,int phyUnit)
 {
-    uint32_t  phyBase;
     uint32_t  phyAddr;
     uint16_t  phyHwStatus;
     int       ii = 200;
@@ -585,7 +571,6 @@ athrs27_phy_is_fdx(int ethUnit,int phyUnit)
 
         if (athrs27_phy_is_link_alive(phyUnit)) {
 
-            phyBase = ATHR_PHYBASE(phyUnit);
             phyAddr = ATHR_PHYADDR(phyUnit);
 
             do {
@@ -616,17 +601,14 @@ int
 athrs27_phy_speed(int ethUnit,int phyUnit)
 {
     uint16_t  phyHwStatus;
-    uint32_t  phyBase;
     uint32_t  phyAddr;
     int       ii = 200;
-    int       phySpeed;
+    int       phySpeed = _100BASET;
     for (phyUnit=0; phyUnit < ATHR_PHY_MAX; phyUnit++) {
         if (!ATHR_IS_ETHUNIT(phyUnit, ethUnit)) {
             continue;
         }
 
-
-        phyBase = ATHR_PHYBASE(phyUnit);
         phyAddr = ATHR_PHYADDR(phyUnit);
         phySpeed = _10BASET;
 
@@ -694,7 +676,6 @@ athrs27_phy_is_up(int ethUnit)
     int           linkCount   = 0;
     int           lostLinks   = 0;
     int           gainedLinks = 0;
-    uint32_t      phyBase;
     uint32_t      phyAddr;
     int           phyUnit;
 
@@ -703,7 +684,6 @@ athrs27_phy_is_up(int ethUnit)
             continue;
         }
 
-        phyBase = ATHR_PHYBASE(phyUnit);
         phyAddr = ATHR_PHYADDR(phyUnit);
 
         lastStatus = &athrPhyInfo[phyUnit];
@@ -864,7 +844,7 @@ void s27_wr_phy(unsigned int phy_addr, unsigned int reg_addr, unsigned int write
   
   phy_reg_write(unit, phy_addr, reg_addr, write_data);   
 }
-int athrs27_mdc_check()
+int athrs27_mdc_check(void)
 {
     int i;
 
