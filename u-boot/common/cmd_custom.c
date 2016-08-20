@@ -1,22 +1,11 @@
 /*
- * (C) Copyright 2013
- * Piotr Dymacz (pepe2k), Real Time Systems, piotr@realtimesystems.pl, pepe2k@gmail.com
- * Custom commands for U-Boot 1.1.4 modification.
+ * Copyright (C) 2016 Piotr Dymacz <piotr@dymacz.pl>
  *
- * See file CREDITS for list of people who contributed to U-Boot project.
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * SPDX-License-Identifier: GPL-2.0
+ */
+
+/*
+ * Custom/miscellaneous commands
  */
 
 #include <common.h>
@@ -241,3 +230,61 @@ int do_default_env(cmd_tbl_t * cmdtp, int flag, int argc, char *argv[]){
 
 U_BOOT_CMD(defenv, 1, 0, do_default_env, "reset environment variables to their default values\n", NULL);
 #endif /* if !defined(CONFIG_FOR_DLINK_DIR505_A1) */
+
+/*
+ * Allows to get reset button status:
+ * - returns 0 if button is pressed
+ * - returns 1 if button is not pressed
+ *
+ * Logic here must be inverted as in shell
+ * 0 means success/true
+ *
+ * This allows to use it in scripts, ex.:
+ * if button; then ...; else ...; fi ...
+ *
+ * or, simply:
+ * button && echo pressed!
+ * button || echo not pressed!
+ */
+#if defined(CONFIG_CMD_BUTTON)
+int do_button(cmd_tbl_t * cmdtp, int flag, int argc, char *argv[])
+{
+#if defined(CFG_HUSH_PARSER)
+	return !reset_button_status();
+#else
+	int btn = reset_button_status();
+
+	if (btn)
+		puts("Reset button is pressed\n");
+	else
+		puts("Reset button is not pressed\n");
+
+	return !btn;
+#endif
+}
+
+U_BOOT_CMD(button, 1, 1, do_button,
+	"get reset button status\n", NULL);
+#endif /* CONFIG_CMD_BUTTON */
+
+/*
+ * Allows to delay execution
+ * for a given/specified time (in ms)
+ */
+#if defined(CONFIG_CMD_SLEEP)
+int do_sleep(cmd_tbl_t * cmdtp, int flag, int argc, char *argv[])
+{
+	if (argc != 2) {
+		print_cmd_help(cmdtp);
+		return 1;
+	}
+
+	milisecdelay(simple_strtoul(argv[1], NULL, 10));
+
+	return 0;
+}
+
+U_BOOT_CMD(sleep, 2, 1, do_sleep,
+	"sleep for specified time\n", "ms\n"
+	"\t- sleep for 'ms' number of milliseconds\n");
+#endif /* CONFIG_CMD_SLEEP */

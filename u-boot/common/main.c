@@ -34,7 +34,6 @@
 DECLARE_GLOBAL_DATA_PTR;
 #endif
 
-extern int reset_button_status(void);
 extern void all_led_on(void);
 extern void all_led_off(void);
 extern int NetLoopHttpd(void);

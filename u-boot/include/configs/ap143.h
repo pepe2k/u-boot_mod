@@ -225,6 +225,8 @@
 #define CONFIG_CMD_IMI
 #define CONFIG_CMD_ENV
 #define CONFIG_CMD_LOADB
+#define CONFIG_CMD_BUTTON
+#define CONFIG_CMD_SLEEP
 
 // Enable NetConsole and custom NetConsole port
 #define CONFIG_NETCONSOLE

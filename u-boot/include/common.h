@@ -184,14 +184,15 @@ void	init_cmd_timeout(void);
 void	reset_cmd_timeout(void);
 
 /* lib_$(ARCH)/board.c */
-void	board_init_f  (ulong);
-void	board_init_r  (gd_t *, ulong);
-int		checkboard    (void);
-int		checkflash    (void);
-int		checkdram     (void);
-char *	strmhz(char *buf, long hz);
-int		last_stage_init(void);
-extern	ulong monitor_flash_len;
+void board_init_f(ulong);
+void board_init_r(gd_t *, ulong);
+char *strmhz(char *buf, long hz);
+int  checkboard(void);
+int  checkflash(void);
+int  checkdram(void);
+int  last_stage_init(void);
+int  reset_button_status(void);
+extern ulong monitor_flash_len;
 
 /* common/flash.c */
 void flash_perror (int);
