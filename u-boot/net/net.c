@@ -82,7 +82,7 @@
 #include "nfs.h"
 #include "httpd.h"
 
-#if (CONFIG_COMMANDS & CFG_CMD_SNTP)
+#if defined(CONFIG_CMD_SNTP)
 #include "sntp.h"
 #endif
 
@@ -90,7 +90,7 @@
 #include "../httpd/uip.h"
 #include "../httpd/uip_arp.h"
 
-#if (CONFIG_COMMANDS & CFG_CMD_NET)
+#if defined(CONFIG_CMD_NET)
 
 DECLARE_GLOBAL_DATA_PTR;
 
@@ -152,15 +152,15 @@ ushort NetOurNativeVLAN = 0xFFFF;	/* ditto */
 
 char BootFile[128]; /* Boot File name */
 
-#if (CONFIG_COMMANDS & CFG_CMD_PING)
+#if defined(CONFIG_CMD_PING)
 IPaddr_t NetPingIP;	/* the ip address to ping */
 static void PingStart(void);
-#endif /* CFG_CMD_PING */
+#endif /* CONFIG_CMD_PING */
 
-#if (CONFIG_COMMANDS & CFG_CMD_SNTP)
+#if defined(CONFIG_CMD_SNTP)
 IPaddr_t NetNtpServerIP;	/* NTP server IP address */
 int NetTimeOffset = 0;		/* offset time from UTC */
-#endif /* CFG_CMD_SNTP */
+#endif /* CONFIG_CMD_SNTP */
 
 #ifdef CONFIG_NETCONSOLE
 void NcStart(void);
@@ -328,13 +328,13 @@ int NetLoop(proto_t protocol){
 	 */
 
 	switch(protocol){
-#if (CONFIG_COMMANDS & CFG_CMD_NFS)
+#if defined(CONFIG_CMD_NFS)
 		case NFS:
 #endif
-#if (CONFIG_COMMANDS & CFG_CMD_PING)
+#if defined(CONFIG_CMD_PING)
 		case PING:
 #endif
-#if (CONFIG_COMMANDS & CFG_CMD_SNTP)
+#if defined(CONFIG_CMD_SNTP)
 		case SNTP:
 #endif
 		case NETCONS:
@@ -347,19 +347,19 @@ int NetLoop(proto_t protocol){
 			NetOurNativeVLAN	= getenv_VLAN("nvlan");
 
 			switch(protocol){
-#if (CONFIG_COMMANDS & CFG_CMD_NFS)
+#if defined(CONFIG_CMD_NFS)
 				case NFS:
 #endif
 				case NETCONS:
 				case TFTP:
 					NetServerIP = getenv_IPaddr("serverip");
 					break;
-#if (CONFIG_COMMANDS & CFG_CMD_PING)
+#if defined(CONFIG_CMD_PING)
 				case PING:
 					/* nothing */
 					break;
 #endif
-#if (CONFIG_COMMANDS & CFG_CMD_SNTP)
+#if defined(CONFIG_CMD_SNTP)
 				case SNTP:
 					/* nothing */
 					break;
@@ -412,7 +412,7 @@ int NetLoop(proto_t protocol){
 					TftpStart();
 					break;
 
-#if (CONFIG_COMMANDS & CFG_CMD_DHCP)
+#if defined(CONFIG_CMD_DHCP)
 				case DHCP:
 					/* Start with a clean slate... */
 					BootpTry = 0;
@@ -421,15 +421,15 @@ int NetLoop(proto_t protocol){
 					DhcpRequest(); /* Basically same as BOOTP */
 					break;
 
-#endif /* CFG_CMD_DHCP */
+#endif /* CONFIG_CMD_DHCP */
 
-#if (CONFIG_COMMANDS & CFG_CMD_PING)
+#if defined(CONFIG_CMD_PING)
 				case PING:
 					PingStart();
 					break;
 #endif
 
-#if (CONFIG_COMMANDS & CFG_CMD_NFS)
+#if defined(CONFIG_CMD_NFS)
 				case NFS:
 					NfsStart();
 					break;
@@ -441,7 +441,7 @@ int NetLoop(proto_t protocol){
 					break;
 #endif
 
-#if (CONFIG_COMMANDS & CFG_CMD_SNTP)
+#if defined(CONFIG_CMD_SNTP)
 				case SNTP:
 					SntpStart();
 					break;
@@ -575,7 +575,7 @@ void NetStartAgain(void){
 	} else {
 		NetState = NETLOOP_RESTART;
 	}
-#endif	/* CONFIG_NET_MULTI */
+#endif /* CONFIG_NET_MULTI */
 }
 
 /**********************************************************************/
@@ -652,7 +652,7 @@ int NetSendUDPPacket(uchar *ether, IPaddr_t dest, int dport, int sport, int len)
 	return(0); /* transmitted */
 }
 
-#if (CONFIG_COMMANDS & CFG_CMD_PING)
+#if defined(CONFIG_CMD_PING)
 static ushort PingSeqNo;
 
 int PingSend(void){
@@ -735,14 +735,14 @@ static void PingStart(void){
 	bd_t *bd = gd->bd;
 #if defined(CONFIG_NET_MULTI)
 	printf("Using %s device\n", eth_get_name());
-#endif	/* CONFIG_NET_MULTI */
+#endif /* CONFIG_NET_MULTI */
 
 	NetSetTimeout(10 * CFG_HZ, PingTimeout);
 	NetSetHandler(PingHandler);
 
 	PingSend();
 }
-#endif	/* CFG_CMD_PING */
+#endif /* CONFIG_CMD_PING */
 
 void NetReceive(volatile uchar * inpkt, int len){
 	Ethernet_t *et;
@@ -1036,7 +1036,7 @@ void NetReceive(volatile uchar * inpkt, int len){
 						putc(' ');
 
 						return;
-#if (CONFIG_COMMANDS & CFG_CMD_PING)
+#if defined(CONFIG_CMD_PING)
 					case ICMP_ECHO_REPLY:
 						/*
 						 *	IP header OK.  Pass the packet to the current handler.
@@ -1111,7 +1111,7 @@ void NetReceive(volatile uchar * inpkt, int len){
 static int net_check_prereq(proto_t protocol){
 	switch(protocol){
 		/* Fall through */
-#if (CONFIG_COMMANDS & CFG_CMD_PING)
+#if defined(CONFIG_CMD_PING)
 		case PING:
 			if(NetPingIP == 0){
 				puts("## Error: ping address not given\n");
@@ -1119,7 +1119,7 @@ static int net_check_prereq(proto_t protocol){
 			}
 			goto common;
 #endif
-#if (CONFIG_COMMANDS & CFG_CMD_SNTP)
+#if defined(CONFIG_CMD_SNTP)
 		case SNTP:
 			if(NetNtpServerIP == 0){
 				puts("## Error: NTP server address not given\n");
@@ -1127,7 +1127,7 @@ static int net_check_prereq(proto_t protocol){
 			}
 			goto common;
 #endif
-#if (CONFIG_COMMANDS & CFG_CMD_NFS)
+#if defined(CONFIG_CMD_NFS)
 		case NFS:
 #endif
 		case NETCONS:
@@ -1136,7 +1136,7 @@ static int net_check_prereq(proto_t protocol){
 				puts("## Error: serverip not set\n");
 				return(1);
 			}
-#if (CONFIG_COMMANDS & (CFG_CMD_PING | CFG_CMD_SNTP))
+#if defined(CONFIG_CMD_PING) || defined(CONFIG_CMD_SNTP)
 			common:
 #endif
 			if(NetOurIP == 0){
@@ -1288,7 +1288,7 @@ void copy_filename(char *dst, char *src, int size){
 	*dst = '\0';
 }
 
-#endif /* CFG_CMD_NET */
+#endif /* CONFIG_CMD_NET */
 
 void ip_to_string(IPaddr_t x, char *s){
 	x = ntohl(x);

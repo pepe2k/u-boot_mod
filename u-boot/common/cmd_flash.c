@@ -27,7 +27,7 @@
 #include <common.h>
 #include <command.h>
 
-#if (CONFIG_COMMANDS & CFG_CMD_FLASH)
+#if defined(CONFIG_CMD_FLASH)
 
 extern flash_info_t flash_info[]; /* info for FLASH chips */
 
@@ -373,4 +373,4 @@ U_BOOT_CMD(erase, 3, 1, do_flerase, "erase FLASH memory\n",
 		"erase all\n"
 		"\t- erase all FLASH banks\n");
 
-#endif	/* CFG_CMD_FLASH */
+#endif /* CONFIG_CMD_FLASH */

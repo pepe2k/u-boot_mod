@@ -29,7 +29,7 @@
 #include "rarp.h"
 #include "tftp.h"
 
-#if (CONFIG_COMMANDS & CFG_CMD_NET)
+#if defined(CONFIG_CMD_NET)
 
 DECLARE_GLOBAL_DATA_PTR;
 
@@ -61,7 +61,7 @@ RarpHandler(uchar * dummi0, unsigned dummi1, unsigned dummi2, unsigned dummi3)
 			 */
 			NetState = NETLOOP_SUCCESS;
 			return;
-#if (CONFIG_COMMANDS & CFG_CMD_NFS)
+#if defined(CONFIG_CMD_NFS)
 		} else if ((s != NULL) && !strcmp(s, "NFS")) {
 			NfsStart();
 			return;
@@ -120,4 +120,4 @@ void RarpRequest (void){
 	NetSetHandler(RarpHandler);
 }
 
-#endif /* CFG_CMD_NET */
+#endif /* CONFIG_CMD_NET */

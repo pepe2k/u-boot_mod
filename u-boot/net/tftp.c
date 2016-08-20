@@ -12,7 +12,7 @@
 
 #undef	ET_DEBUG
 
-#if (CONFIG_COMMANDS & CFG_CMD_NET)
+#if defined(CONFIG_CMD_NET)
 
 DECLARE_GLOBAL_DATA_PTR;
 
@@ -392,4 +392,4 @@ void TftpStart(void){
 	TftpSend();
 }
 
-#endif /* CFG_CMD_NET */
+#endif /* CONFIG_CMD_NET */

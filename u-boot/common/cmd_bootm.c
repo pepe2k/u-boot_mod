@@ -22,7 +22,7 @@
 #include <hush.h>
 #endif
 
-#if (CONFIG_COMMANDS & CFG_CMD_DATE) || defined(CONFIG_TIMESTAMP)
+#if defined(CONFIG_CMD_DATE) || defined(CONFIG_TIMESTAMP)
 #include <rtc.h>
 #endif
 
@@ -259,7 +259,7 @@ static void print_uboot_ih(image_header_t *hdr)
 	int i;
 	u32 len;
 	u32 *len_ptr;
-#if (CONFIG_COMMANDS & CFG_CMD_DATE) || defined(CONFIG_TIMESTAMP)
+#if defined(CONFIG_CMD_DATE) || defined(CONFIG_TIMESTAMP)
 	struct rtc_time tm;
 	time_t timestamp = (time_t)ntohl(hdr->ih_time);
 #endif
@@ -269,7 +269,7 @@ static void print_uboot_ih(image_header_t *hdr)
 	printf("   %-*s ", UBOOT_ALIGN_SIZE, "Image name:");
 	printf("%.*s\n", sizeof(hdr->ih_name), hdr->ih_name);
 
-#if (CONFIG_COMMANDS & CFG_CMD_DATE) || defined(CONFIG_TIMESTAMP)
+#if defined(CONFIG_CMD_DATE) || defined(CONFIG_TIMESTAMP)
 	printf("   %-*s ", UBOOT_ALIGN_SIZE, "Build date:");
 	to_tm(timestamp, &tm);
 	printf("%4d-%02d-%02d %02d:%02d:%02d UTC\n",
@@ -549,7 +549,7 @@ U_BOOT_CMD(bootm, 2, 1, do_bootm,
 	"boot application image from memory\n", "[addr]\n"
 	"\t- boot application image stored in memory at address 'addr'\n");
 
-#if (CONFIG_COMMANDS & CFG_CMD_BOOTD)
+#if defined(CONFIG_CMD_BOOTD)
 int do_bootd(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 {
 #ifndef CFG_HUSH_PARSER
@@ -565,9 +565,9 @@ int do_bootd(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 }
 
 U_BOOT_CMD(boot, 1, 1, do_bootd, "boot default, run 'bootcmd'\n", NULL);
-#endif /* CONFIG_COMMANDS & CFG_CMD_BOOTD */
+#endif /* CONFIG_CMD_BOOTD */
 
-#if (CONFIG_COMMANDS & CFG_CMD_IMI)
+#if defined(CONFIG_CMD_IMI)
 int do_iminfo(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 {
 	int tpl_type;
@@ -633,4 +633,4 @@ int do_iminfo(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 U_BOOT_CMD(iminfo, 2, 1, do_iminfo,
 	"print firmware header\n", "address\n"
 	"\t- print header information for image at 'address'\n");
-#endif /* CFG_CMD_IMI */
+#endif /* CONFIG_CMD_IMI */

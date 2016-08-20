@@ -400,7 +400,7 @@ void board_init_r(gd_t *id, ulong dest_addr)
 	if ((s = getenv("loadaddr")) != NULL)
 		load_addr = simple_strtoul(s, NULL, 16);
 
-#if (CONFIG_COMMANDS & CFG_CMD_NET)
+#if defined(CONFIG_CMD_NET)
 	if ((s = getenv("bootfile")) != NULL)
 		copy_filename(BootFile, s, sizeof(BootFile));
 #endif
@@ -411,7 +411,7 @@ void board_init_r(gd_t *id, ulong dest_addr)
 	/* Print some information about board */
 	print_board_info();
 
-#if (CONFIG_COMMANDS & CFG_CMD_NET)
+#if defined(CONFIG_CMD_NET)
 	all_led_on();
 	eth_initialize(gd->bd);
 	all_led_off();

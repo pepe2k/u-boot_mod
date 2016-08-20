@@ -12,7 +12,7 @@
 
 DECLARE_GLOBAL_DATA_PTR;
 
-#if (CONFIG_COMMANDS & CFG_CMD_MII)
+#if defined(CONFIG_CMD_MII)
 #include <miiphy.h>
 #else
 #define _1000BASET	1000
@@ -526,7 +526,7 @@ int ag7240_enet_initialize(bd_t * bis)
 
 		eth_register(dev[i]);
 
-#if(CONFIG_COMMANDS & CFG_CMD_MII)
+#if defined(CONFIG_CMD_MII)
 		miiphy_register(dev[i]->name, ag7240_miiphy_read, ag7240_miiphy_write);
 #endif
 

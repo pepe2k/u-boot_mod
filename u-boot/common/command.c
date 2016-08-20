@@ -38,7 +38,7 @@ int do_version(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 
 U_BOOT_CMD(version, 1, 1, do_version, "print U-Boot version\n", NULL);
 
-#if (CONFIG_COMMANDS & CFG_CMD_ECHO)
+#if defined(CONFIG_CMD_ECHO)
 int do_echo(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 {
 	int i, putnl = 1;
@@ -68,7 +68,7 @@ int do_echo(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 U_BOOT_CMD(echo, CFG_MAXARGS, 1, do_echo,
 	"echo args to console\n", "[args..]\n"
 	"\t- echo args to console; \\c suppresses newline\n");
-#endif /* CFG_CMD_ECHO */
+#endif /* CONFIG_CMD_ECHO */
 
 #ifdef CFG_HUSH_PARSER
 int do_test(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])

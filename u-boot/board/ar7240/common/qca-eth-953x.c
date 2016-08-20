@@ -34,9 +34,10 @@
 #include "qca-eth-953x_phy.h"
 #define SGMII_LINK_WAR_MAX_TRY 10
 
-#if (CONFIG_COMMANDS & CFG_CMD_MII)
+#if defined(CONFIG_CMD_MII)
 #include <miiphy.h>
 #endif
+
 #define ath_gmac_unit2mac(_unit)     ath_gmac_macs[(_unit)]
 #define ath_gmac_name2mac(name)	   is_drqfn() ? ath_gmac_unit2mac(1):strcmp(name,"eth0") ? ath_gmac_unit2mac(1) : ath_gmac_unit2mac(0)
 
@@ -561,7 +562,7 @@ int ath_gmac_enet_initialize(bd_t * bis)
                         continue;
 #endif
 		eth_register(dev[i]);
-#if(CONFIG_COMMANDS & CFG_CMD_MII)
+#if defined(CONFIG_CMD_MII)
 		miiphy_register(dev[i]->name, ath_gmac_miiphy_read, ath_gmac_miiphy_write);
 #endif
 		ath_gmac_mii_setup(ath_gmac_macs[i]);
@@ -616,7 +617,7 @@ int ath_gmac_enet_initialize(bd_t * bis)
 	return 1;
 }
 
-//#if (CONFIG_COMMANDS & CFG_CMD_MII)
+//#if defined(CONFIG_CMD_MII)
 int
 ath_gmac_miiphy_read(char *devname, uint32_t phy_addr, uint8_t reg, uint16_t *data)
 {
@@ -695,4 +696,4 @@ ath_gmac_miiphy_write(char *devname, uint32_t phy_addr, uint8_t reg, uint16_t da
 	
 	return 0; 
 }
-//#endif		/* CONFIG_COMMANDS & CFG_CMD_MII */
+//#endif /* CONFIG_CMD_MII */

@@ -648,7 +648,7 @@ int run_command(const char *cmd, int flag){
 
 /****************************************************************************/
 
-#if (CONFIG_COMMANDS & CFG_CMD_RUN)
+#if defined(CONFIG_CMD_RUN)
 int do_run(cmd_tbl_t * cmdtp, int flag, int argc, char *argv[]){
 	int i;
 
@@ -677,4 +677,4 @@ int do_run(cmd_tbl_t * cmdtp, int flag, int argc, char *argv[]){
 
 	return(0);
 }
-#endif	/* CFG_CMD_RUN */
+#endif /* CONFIG_CMD_RUN */

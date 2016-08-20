@@ -377,11 +377,11 @@ static inline __attribute__((always_inline)) int eth_is_on_demand_init(void){
 /* from net/net.c */
 extern char	BootFile[128];			/* Boot File name		*/
 
-#if (CONFIG_COMMANDS & CFG_CMD_PING)
+#if defined(CONFIG_CMD_PING)
 extern IPaddr_t	NetPingIP;			/* the ip address to ping 		*/
 #endif
 
-#if (CONFIG_COMMANDS & CFG_CMD_SNTP)
+#if defined(CONFIG_CMD_SNTP)
 extern IPaddr_t	NetNtpServerIP;			/* the ip address to NTP 	*/
 extern int NetTimeOffset;			/* offset time from UTC		*/
 #endif

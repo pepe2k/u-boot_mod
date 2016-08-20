@@ -175,20 +175,20 @@
 /*
  * Available commands
  */
-#define CONFIG_COMMANDS (CFG_CMD_MEMORY | \
-						 CFG_CMD_DHCP   | \
-						 CFG_CMD_PING   | \
-						 CFG_CMD_FLASH  | \
-						 CFG_CMD_NET    | \
-						 CFG_CMD_RUN    | \
-						 CFG_CMD_DATE   | \
-						 CFG_CMD_SNTP   | \
-						 CFG_CMD_ECHO   | \
-						 CFG_CMD_BOOTD  | \
-						 CFG_CMD_ITEST  | \
-						 CFG_CMD_IMI    | \
-						 CFG_CMD_ENV    | \
-						 CFG_CMD_LOADB)
+#define CONFIG_CMD_MEMORY
+#define CONFIG_CMD_DHCP
+#define CONFIG_CMD_PING
+#define CONFIG_CMD_FLASH
+#define CONFIG_CMD_NET
+#define CONFIG_CMD_RUN
+#define CONFIG_CMD_DATE
+#define CONFIG_CMD_SNTP
+#define CONFIG_CMD_ECHO
+#define CONFIG_CMD_BOOTD
+#define CONFIG_CMD_ITEST
+#define CONFIG_CMD_IMI
+#define CONFIG_CMD_ENV
+#define CONFIG_CMD_LOADB
 
 // Enable NetConsole and custom NetConsole port
 #define CONFIG_NETCONSOLE
@@ -309,7 +309,5 @@
 													 CONFIG_QCA_PLL_IN_FLASH_BLOCK_OFFSET + \
 													 0x0000FFE0)
 #endif
-
-#include <cmd_confdefs.h>
 
 #endif	/* __CONFIG_H */

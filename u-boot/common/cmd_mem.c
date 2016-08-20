@@ -29,14 +29,14 @@
 
 #include <common.h>
 #include <command.h>
-#if (CONFIG_COMMANDS & CFG_CMD_MMC)
+#if defined(CONFIG_CMD_MMC)
 #include <mmc.h>
 #endif
 
-#if (CONFIG_COMMANDS & (CFG_CMD_MEMORY	| \
-						CFG_CMD_ITEST	| \
-						CFG_CMD_PCI		| \
-						CMD_CMD_PORTIO) )
+#if defined(CONFIG_CMD_MEMORY) ||\
+    defined(CONFIG_CMD_PORTIO) ||\
+    defined(CONFIG_CMD_ITEST)  ||\
+    defined(CONFIG_CMD_PCI)
 
 DECLARE_GLOBAL_DATA_PTR;
 
@@ -65,7 +65,7 @@ int cmd_get_data_size(char* arg, int default_size){
 }
 #endif
 
-#if (CONFIG_COMMANDS & CFG_CMD_MEMORY)
+#if defined(CONFIG_CMD_MEMORY)
 
 static int mod_mem(cmd_tbl_t *, int, int, int, char *[]);
 
@@ -700,4 +700,4 @@ U_BOOT_CMD(mtest, 4, 1, do_mem_mtest, "simple RAM test\n", "[start [end [pattern
 #endif
 U_BOOT_CMD(cp, 4, 1, do_mem_cp, "memory copy\n", "[.b, .w, .l] source target count\n\t- copy memory\n");
 
-#endif	/* CFG_CMD_MEMORY */
+#endif /* CONFIG_CMD_MEMORY */

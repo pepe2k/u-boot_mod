@@ -20,7 +20,7 @@
 #define CONFIG_BOOTP_RANDOM_DELAY
 #define BOOTP_VENDOR_MAGIC	0x63825363	/* RFC1048 Magic Cookie */
 
-#if (CONFIG_COMMANDS & CFG_CMD_NET)
+#if defined(CONFIG_CMD_NET)
 
 DECLARE_GLOBAL_DATA_PTR;
 
@@ -46,7 +46,7 @@ int BootpTry;
 ulong seed1, seed2;
 #endif
 
-#if (CONFIG_COMMANDS & CFG_CMD_DHCP)
+#if defined(CONFIG_CMD_DHCP)
 dhcp_state_t dhcp_state = INIT;
 unsigned long dhcp_leasetime = 0;
 IPaddr_t NetDHCPServerIP = 0;
@@ -89,7 +89,7 @@ extern u8 *dhcp_vendorex_prep (u8 *e); /*rtn new e after add own opts. */
 extern u8 *dhcp_vendorex_proc (u8 *e); /*rtn next e if mine,else NULL  */
 #endif
 
-#endif	/* CFG_CMD_DHCP */
+#endif /* CONFIG_CMD_DHCP */
 
 static int BootpCheckPkt(uchar *pkt, unsigned dest, unsigned src, unsigned len){
 	Bootp_t *bp = (Bootp_t *) pkt;
@@ -162,7 +162,7 @@ static int truncate_sz(const char *name, int maxlen, int curlen){
 	return(curlen);
 }
 
-#if !(CONFIG_COMMANDS & CFG_CMD_DHCP)
+#if !defined(CONFIG_CMD_DHCP)
 
 static void BootpVendorFieldProcess(u8 * ext){
 	int size = *(ext + 1);
@@ -375,7 +375,7 @@ static void BootpHandler(uchar * pkt, unsigned dest, unsigned src, unsigned len)
 			 */
 			NetState = NETLOOP_SUCCESS;
 			return;
-#if (CONFIG_COMMANDS & CFG_CMD_NFS)
+#if defined(CONFIG_CMD_NFS)
 		} else if(strcmp(s, "NFS") == 0){
 			/*
 			 * Use NFS to load the bootfile.
@@ -388,7 +388,7 @@ static void BootpHandler(uchar * pkt, unsigned dest, unsigned src, unsigned len)
 
 	TftpStart();
 }
-#endif	/* !CFG_CMD_DHCP */
+#endif /* !CONFIG_CMD_DHCP */
 
 /*
  *	Timeout on BOOTP/DHCP request.
@@ -408,7 +408,7 @@ static void BootpTimeout(void){
 /*
  *	Initialize BOOTP extension fields in the request.
  */
-#if (CONFIG_COMMANDS & CFG_CMD_DHCP)
+#if defined(CONFIG_CMD_DHCP)
 static int DhcpExtended(u8 * e, int message_type, IPaddr_t ServerID, IPaddr_t RequestedIP){
 	u8 *start = e;
 	u8 *cnt;
@@ -535,7 +535,7 @@ static int DhcpExtended(u8 * e, int message_type, IPaddr_t ServerID, IPaddr_t Re
 	return(e - start);
 }
 
-#else	/* CFG_CMD_DHCP */
+#else /* CONFIG_CMD_DHCP */
 
 /*
  *	Warning: no field size check - change CONFIG_BOOTP_MASK at your own risk!
@@ -548,7 +548,7 @@ static int BootpExtended(u8 * e){
 	*e++ = 83;
 	*e++ = 99;
 
-#if (CONFIG_COMMANDS & CFG_CMD_DHCP)
+#if defined(CONFIG_CMD_DHCP)
 	*e++ = 53;		/* DHCP Message Type */
 	*e++ = 1;
 	*e++ = DHCP_DISCOVER;
@@ -557,7 +557,7 @@ static int BootpExtended(u8 * e){
 	*e++ = 2;
 	*e++ = (576 - 312 + OPT_SIZE) >> 16;
 	*e++ = (576 - 312 + OPT_SIZE) & 0xff;
-#endif /* CFG_CMD_DHCP */
+#endif /* CONFIG_CMD_DHCP */
 
 #if (CONFIG_BOOTP_MASK & CONFIG_BOOTP_SUBNETMASK)
 	*e++ = 1;		/* Subnet mask request */
@@ -605,7 +605,7 @@ static int BootpExtended(u8 * e){
 
 	return(e - start);
 }
-#endif	/* CFG_CMD_DHCP */
+#endif /* CONFIG_CMD_DHCP */
 
 void BootpRequest(void){
 	bd_t *bd = gd->bd;
@@ -613,7 +613,7 @@ void BootpRequest(void){
 	Bootp_t *bp;
 	int ext_len, pktlen, iplen;
 
-#if (CONFIG_COMMANDS & CFG_CMD_DHCP)
+#if defined(CONFIG_CMD_DHCP)
 	dhcp_state = INIT;
 #endif
 
@@ -723,11 +723,11 @@ void BootpRequest(void){
 	copy_filename(bp->bp_file, BootFile, sizeof(bp->bp_file));
 
 	/* Request additional information from the BOOTP/DHCP server */
-#if (CONFIG_COMMANDS & CFG_CMD_DHCP)
+#if defined(CONFIG_CMD_DHCP)
 	ext_len = DhcpExtended((u8 *)bp->bp_vend, DHCP_DISCOVER, 0, 0);
 #else
 	ext_len = BootpExtended((u8 *)bp->bp_vend);
-#endif	/* CFG_CMD_DHCP */
+#endif /* CONFIG_CMD_DHCP */
 
 	/*
 	 *	Bootp ID is the lower 4 bytes of our ethernet address
@@ -753,17 +753,17 @@ void BootpRequest(void){
 	NetSetIP(iphdr, 0xFFFFFFFFL, PORT_BOOTPS, PORT_BOOTPC, iplen);
 	NetSetTimeout(SELECT_TIMEOUT * CFG_HZ, BootpTimeout);
 
-#if (CONFIG_COMMANDS & CFG_CMD_DHCP)
+#if defined(CONFIG_CMD_DHCP)
 	dhcp_state = SELECTING;
 	NetSetHandler(DhcpHandler);
 #else
 	NetSetHandler(BootpHandler);
-#endif	/* CFG_CMD_DHCP */
+#endif /* CONFIG_CMD_DHCP */
 
 	NetSendPacket(NetTxPacket, pktlen);
 }
 
-#if (CONFIG_COMMANDS & CFG_CMD_DHCP)
+#if defined(CONFIG_CMD_DHCP)
 static void DhcpOptionsProcess(uchar * popt, Bootp_t *bp){
 	uchar *end = popt + BOOTP_HDR_SIZE;
 	int oplen, size;
@@ -776,7 +776,7 @@ static void DhcpOptionsProcess(uchar * popt, Bootp_t *bp){
 				NetCopyIP(&NetOurSubnetMask, (popt + 2));
 				break;
 
-#if (CONFIG_COMMANDS & CFG_CMD_SNTP) && (CONFIG_BOOTP_MASK & CONFIG_BOOTP_TIMEOFFSET)
+#if defined(CONFIG_CMD_SNTP) && (CONFIG_BOOTP_MASK & CONFIG_BOOTP_TIMEOFFSET)
 			case 2: /* Time offset */
 				NetCopyLong(&NetTimeOffset, (ulong *)(popt + 2));
 				NetTimeOffset = ntohl(NetTimeOffset);
@@ -814,7 +814,7 @@ static void DhcpOptionsProcess(uchar * popt, Bootp_t *bp){
 			case 28: /* Ignore Broadcast Address Option */
 				break;
 
-#if (CONFIG_COMMANDS & CFG_CMD_SNTP) && (CONFIG_BOOTP_MASK & CONFIG_BOOTP_NTPSERVER)
+#if defined(CONFIG_CMD_SNTP) && (CONFIG_BOOTP_MASK & CONFIG_BOOTP_NTPSERVER)
 			case 42: /* NTP server IP */
 				NetCopyIP(&NetNtpServerIP, (popt + 2));
 				break;
@@ -1057,7 +1057,7 @@ static void DhcpHandler(uchar * pkt, unsigned dest, unsigned src, unsigned len){
 						 */
 						NetState = NETLOOP_SUCCESS;
 						return;
-#if (CONFIG_COMMANDS & CFG_CMD_NFS)
+#if defined(CONFIG_CMD_NFS)
 					} else if(strcmp(s, "NFS") == 0){
 						/*
 						 * Use NFS to load the bootfile.
@@ -1083,6 +1083,6 @@ static void DhcpHandler(uchar * pkt, unsigned dest, unsigned src, unsigned len){
 void DhcpRequest(void){
 	BootpRequest();
 }
-#endif	/* CFG_CMD_DHCP */
+#endif /* CONFIG_CMD_DHCP */
 
-#endif /* CFG_CMD_NET */
+#endif /* CONFIG_CMD_NET */

@@ -33,25 +33,25 @@
 
 DECLARE_GLOBAL_DATA_PTR;
 
-#if (CONFIG_COMMANDS & CFG_CMD_LOADB)
+#if defined(CONFIG_CMD_LOADB)
 static ulong load_serial_ymodem(ulong offset);
 #endif
 
-#if (CONFIG_COMMANDS & CFG_CMD_LOADS)
+#if defined(CONFIG_CMD_LOADS)
 static ulong load_serial(ulong offset);
 static int read_record(char *buf, ulong len);
 
-#if (CONFIG_COMMANDS & CFG_CMD_SAVES)
+#if defined(CONFIG_CMD_SAVES)
 static int save_serial(ulong offset, ulong size);
 static int write_record(char *buf);
-# endif /* CFG_CMD_SAVES */
+#endif /* CONFIG_CMD_SAVES */
 
 static int do_echo = 1;
-#endif /* CFG_CMD_LOADS */
+#endif /* CONFIG_CMD_LOADS */
 
-#if (CONFIG_COMMANDS & CFG_CMD_LOADB) || \
-	(CONFIG_COMMANDS & CFG_CMD_LOADS) || \
-	(CONFIG_COMMANDS & CFG_CMD_SAVES)
+#if defined(CONFIG_CMD_LOADB) ||\
+    defined(CONFIG_CMD_LOADS) ||\
+    defined(CONFIG_CMD_SAVES)
 static const unsigned long baudrate_table[] = CFG_BAUDRATE_TABLE;
 #define	N_BAUDRATES (sizeof(baudrate_table) / sizeof(baudrate_table[0]))
 
@@ -76,7 +76,7 @@ static void switch_baudrate(int baudrate, int back)
 
 /* -------------------------------------------------------------------- */
 
-#if (CONFIG_COMMANDS & CFG_CMD_LOADS)
+#if defined(CONFIG_CMD_LOADS)
 int do_load_serial(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 {
 	ulong offset = 0;
@@ -275,7 +275,7 @@ static int read_record(char *buf, ulong len)
 	return(p - buf);
 }
 
-#if (CONFIG_COMMANDS & CFG_CMD_SAVES)
+#if defined(CONFIG_CMD_SAVES)
 int do_save_serial(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 {
 	ulong offset = 0;
@@ -423,11 +423,11 @@ static int write_record(char *buf)
 
 	return(0);
 }
-#endif /* CFG_CMD_SAVES */
-#endif /* CFG_CMD_LOADS */
+#endif /* CONFIG_CMD_SAVES */
+#endif /* CONFIG_CMD_LOADS */
 
 /* loadb command (load binary) included */
-#if (CONFIG_COMMANDS & CFG_CMD_LOADB)
+#if defined(CONFIG_CMD_LOADB)
 
 #define XON_CHAR		17
 #define XOFF_CHAR		19
@@ -1073,11 +1073,11 @@ static ulong load_serial_ymodem(ulong address)
 	return size;
 }
 
-#endif /* CFG_CMD_LOADB */
+#endif /* CONFIG_CMD_LOADB */
 
 /* -------------------------------------------------------------------- */
 
-#if (CONFIG_COMMANDS & CFG_CMD_LOADS)
+#if defined(CONFIG_CMD_LOADS)
 U_BOOT_CMD(loads, 3, 0, do_load_serial, "load S-Record file over serial\n",
 	"[off] [baud]\n"
 	"\t- load S-Record file over serial with offset 'off' and baudrate 'baud'\n"
@@ -1086,15 +1086,15 @@ U_BOOT_CMD(loads, 3, 0, do_load_serial, "load S-Record file over serial\n",
 /*
  * SAVES always requires LOADS support, but not vice versa
  */
-#if (CONFIG_COMMANDS & CFG_CMD_SAVES)
+#if defined(CONFIG_CMD_SAVES)
 U_BOOT_CMD(saves, 4, 0, do_save_serial, "save S-Record file over serial\n",
 	"[addr] [size] [baud]\n"
 	"\t- upload S-Record file over serial from address 'addr', size 'size' with baudrate 'baud'\n"
 );
-#endif /* #if (CONFIG_COMMANDS & CFG_CMD_SAVES) */
-#endif /* #if (CONFIG_COMMANDS & CFG_CMD_LOADS) */
+#endif /* CONFIG_CMD_SAVES */
+#endif /* CONFIG_CMD_LOADS */
 
-#if (CONFIG_COMMANDS & CFG_CMD_LOADB)
+#if defined(CONFIG_CMD_LOADB)
 U_BOOT_CMD(loadb, 3, 0, do_load_serial_bin, "load binary file over serial (Kermit mode)\n",
 	"[addr] [baud]\n"
 	"\t- load binary file over serial at address 'addr', with baudrate 'baud'\n"
@@ -1104,4 +1104,4 @@ U_BOOT_CMD(loady, 3, 0, do_load_serial_bin, "load binary file over serial (Ymode
 	"[addr] [baud]\n"
 	"\t- load binary file over serial at address 'addr', with baudrate 'baud'\n"
 );
-#endif /* #if (CONFIG_COMMANDS & CFG_CMD_LOADB)*/
+#endif /* CONFIG_CMD_LOADB */
