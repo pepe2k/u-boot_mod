@@ -295,4 +295,4 @@ int drv_nc_init(void){
 	return((rc == 0) ? 1 : rc);
 }
 
-#endif	/* CONFIG_NETCONSOLE */
+#endif /* CONFIG_NETCONSOLE */

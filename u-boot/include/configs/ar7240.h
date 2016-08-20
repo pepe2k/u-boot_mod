@@ -2,8 +2,8 @@
  * This file contains the configuration parameters for the dbau1x00 board.
  */
 
-#ifndef __AR7240_H
-#define __AR7240_H
+#ifndef __AR7240_CONFIG_H
+#define __AR7240_CONFIG_H
 
 #ifndef CONFIG_BOOTDELAY
 #define CONFIG_BOOTDELAY	1									/* autoboot after x seconds */
@@ -45,4 +45,4 @@
 #define CFG_ICACHE_SIZE				65536
 #define CFG_CACHELINE_SIZE			32
 
-#endif	/* __CONFIG_H */
+#endif /* __AR7240_CONFIG_H */

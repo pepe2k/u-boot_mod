@@ -2,8 +2,8 @@
  * This file contains the configuration parameters for the DB12x (AR9344) board.
  */
 
-#ifndef __CONFIG_H
-#define __CONFIG_H
+#ifndef __DB12X_CONFIG_H
+#define __DB12X_CONFIG_H
 
 #include <configs/ar7240.h>
 #include <config.h>
@@ -310,4 +310,4 @@
 													 0x0000FFE0)
 #endif
 
-#endif	/* __CONFIG_H */
+#endif /* __DB12X_CONFIG_H */

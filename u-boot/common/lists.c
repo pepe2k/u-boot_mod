@@ -138,7 +138,7 @@ int BinSearch ( void *array, int numElements, int elementSize,
 	return -mid - 1;
 }
 
-#endif	/* CFG_ALL_LIST_FUNCTIONS */
+#endif /* CFG_ALL_LIST_FUNCTIONS */
 
 /*******************************************************************************/
 
@@ -191,7 +191,7 @@ void ListCompact (list_t list)
 	(*list)->listSize = (*list)->numItems;
 }
 
-#endif	/* CFG_ALL_LIST_FUNCTIONS */
+#endif /* CFG_ALL_LIST_FUNCTIONS */
 
 /*******************************/
 
@@ -336,7 +336,7 @@ int ListAppend (list_t list1, list_t list2)
 	return 1;
 }
 
-#endif	/* CFG_ALL_LIST_FUNCTIONS */
+#endif /* CFG_ALL_LIST_FUNCTIONS */
 
 /*******************************/
 
@@ -461,7 +461,7 @@ void ListGetItem (list_t list, void *itemDestination, int itemPosition)
 	ListGetItems (list, itemDestination, itemPosition, 1);
 }
 
-#endif	/* CFG_ALL_LIST_FUNCTIONS */
+#endif /* CFG_ALL_LIST_FUNCTIONS */
 
 /*******************************/
 
@@ -502,7 +502,7 @@ void ListRemoveItems (list_t list, void *itemsDestination,
 
 	(*list)->numItems -= numItemsToRemove;
 }
-#endif	/* CFG_ALL_LIST_FUNCTIONS || CFG_DEVICE_DEREGISTER */
+#endif /* CFG_ALL_LIST_FUNCTIONS || CFG_DEVICE_DEREGISTER */
 
 /*******************************/
 #if 0

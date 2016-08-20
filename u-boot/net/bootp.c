@@ -686,7 +686,7 @@ void BootpRequest(void){
 	for(reg = 0; reg < sum; reg++){
 		udelay(1000); /* Wait 1ms */
 	}
-#endif	/* CONFIG_BOOTP_RANDOM_DELAY */
+#endif /* CONFIG_BOOTP_RANDOM_DELAY */
 
 	printf("Sending DHCP discover... %d\n", ++BootpTry);
 
@@ -988,7 +988,7 @@ static void DhcpHandler(uchar * pkt, unsigned dest, unsigned src, unsigned len){
 
 #ifdef CFG_BOOTFILE_PREFIX
 			if(strncmp(bp->bp_file, CFG_BOOTFILE_PREFIX, strlen(CFG_BOOTFILE_PREFIX)) == 0 ){
-#endif	/* CFG_BOOTFILE_PREFIX */
+#endif /* CFG_BOOTFILE_PREFIX */
 
 #ifdef DEBUG
 				puts("TRANSITIONING TO REQUESTING STATE\n");
@@ -1007,7 +1007,7 @@ static void DhcpHandler(uchar * pkt, unsigned dest, unsigned src, unsigned len){
 
 #ifdef CFG_BOOTFILE_PREFIX
 			}
-#endif	/* CFG_BOOTFILE_PREFIX */
+#endif /* CFG_BOOTFILE_PREFIX */
 
 			return;
 			break;

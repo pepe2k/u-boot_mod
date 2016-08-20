@@ -112,4 +112,4 @@ int	drv_usbtty_init (void);
 int	drv_nc_init (void);
 #endif
 
-#endif	/* _DEVICES_H_ */
+#endif /* _DEVICES_H_ */

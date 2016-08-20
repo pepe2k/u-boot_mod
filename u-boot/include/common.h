@@ -106,7 +106,7 @@ typedef volatile unsigned char	vu_char;
 #else
 #define debug(fmt,args...)
 #define debugX(level,fmt,args...)
-#endif	/* DEBUG */
+#endif /* DEBUG */
 
 typedef void (interrupt_handler_t)(void *);
 
@@ -598,4 +598,4 @@ int	pcmcia_init (void);
 #define CONFIG_BOOTP_MASK	CONFIG_BOOTP_DEFAULT
 #endif
 
-#endif	/* __COMMON_H_ */
+#endif /* __COMMON_H_ */

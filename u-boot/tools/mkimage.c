@@ -53,7 +53,7 @@ typedef		unsigned int	uint32_t;
 
 #define     ntohl(a)	SWAP_LONG(a)
 #define     htonl(a)	SWAP_LONG(a)
-#endif	/* __WIN32__ */
+#endif /* __WIN32__ */
 
 #ifndef	O_BINARY		/* should be define'd on __WIN32__ */
 #define O_BINARY	0

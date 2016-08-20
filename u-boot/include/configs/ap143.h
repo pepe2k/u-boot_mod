@@ -386,4 +386,4 @@
 													 0x0000FFE0)
 #endif
 
-#endif	/* __AP143_CONFIG_H */
+#endif /* __AP143_CONFIG_H */

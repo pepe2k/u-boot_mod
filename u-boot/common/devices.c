@@ -111,7 +111,7 @@ int device_deregister(char *devname){
 
 	return(0);
 }
-#endif	/* CFG_DEVICE_DEREGISTER */
+#endif /* CFG_DEVICE_DEREGISTER */
 
 int devices_init(void){
 	ulong relocation_offset = gd->reloc_off;

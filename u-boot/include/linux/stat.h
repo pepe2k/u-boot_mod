@@ -65,7 +65,7 @@ struct stat {
 	unsigned long  	__unused5;
 };
 
-#endif	/* __PPC__ */
+#endif /* __PPC__ */
 
 #if defined (__ARM__) || defined (__I386__) || defined (__M68K__) || defined (__blackfin__)
 
@@ -92,7 +92,7 @@ struct stat {
 	unsigned long  __unused5;
 };
 
-#endif	/* __ARM__ */
+#endif /* __ARM__ */
 
 #if defined (__MIPS__)
 
@@ -123,7 +123,7 @@ struct stat {
 	long            st_pad4[14];
 };
 
-#endif	/* __MIPS__ */
+#endif /* __MIPS__ */
 
 #ifdef __cplusplus
 }

@@ -42,4 +42,4 @@ typedef struct tplink_image_header {		/* ofs (size): what                     */
 	uint8_t  ih_pad[354];			/* 0x9E (354): padding, not used...     */
 } tplink_image_header_t;
 
-#endif	/* __TPLINK_IMAGE_H__ */
+#endif /* __TPLINK_IMAGE_H__ */

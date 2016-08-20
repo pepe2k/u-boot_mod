@@ -19,7 +19,7 @@
 #   define CONFIG_NET_MULTI
 #  endif
 # endif
-#endif	/* CONFIG_8xx */
+#endif /* CONFIG_8xx */
 
 #if defined(CONFIG_MPC5xxx)
 # if !defined(CONFIG_NET_MULTI)
@@ -27,7 +27,7 @@
 #   define CONFIG_NET_MULTI
 #  endif
 # endif
-#endif	/* CONFIG_MPC5xxx */
+#endif /* CONFIG_MPC5xxx */
 
 #if !defined(CONFIG_NET_MULTI) && defined(CONFIG_CPM2)
 #include <config.h>

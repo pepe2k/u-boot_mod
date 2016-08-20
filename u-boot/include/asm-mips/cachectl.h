@@ -21,4 +21,4 @@
 #define CACHEABLE	0	/* make pages cacheable */
 #define UNCACHEABLE	1	/* make pages uncacheable */
 
-#endif	/* __ASM_MIPS_CACHECTL */
+#endif /* __ASM_MIPS_CACHECTL */

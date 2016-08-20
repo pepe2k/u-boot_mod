@@ -236,7 +236,7 @@ int saveenv(void){
 #else
 	flash_sect_addr = (ulong)flash_addr;
 	len = CFG_ENV_SIZE;
-#endif	/* CFG_ENV_SECT_SIZE */
+#endif /* CFG_ENV_SECT_SIZE */
 
 	end_addr = flash_sect_addr + len - 1;
 

@@ -119,7 +119,7 @@ static __inline__ int abortboot(int bootdelay){
 
 	return(abort);
 }
-#endif	/* CONFIG_BOOTDELAY >= 0  */
+#endif /* CONFIG_BOOTDELAY >= 0  */
 
 /****************************************************************************/
 
@@ -246,7 +246,7 @@ void main_loop(void){
 		printf("\n## Error: failed to execute 'bootcmd'!\nHTTP server is starting for firmware update...\n\n");
 		NetLoopHttpd();
 	}
-#endif	/* CONFIG_BOOTDELAY */
+#endif /* CONFIG_BOOTDELAY */
 
 	/*
 	 * Main Loop for Monitor Command Processing

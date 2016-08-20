@@ -56,7 +56,7 @@
 # if defined(CFG_ENV_ADDR_REDUND) || defined(CFG_ENV_OFFSET_REDUND)
 #  define CFG_REDUNDAND_ENVIRONMENT	1
 # endif
-#endif	/* CFG_ENV_IS_IN_FLASH */
+#endif /* CFG_ENV_IS_IN_FLASH */
 
 #ifdef CFG_REDUNDAND_ENVIRONMENT
 # define ENV_HEADER_SIZE	(sizeof(unsigned long) + 1)
@@ -70,7 +70,7 @@
 #ifdef	ENV_IS_EMBEDDED
 extern unsigned int env_size;
 extern unsigned char environment;
-#endif	/* ENV_IS_EMBEDDED */
+#endif /* ENV_IS_EMBEDDED */
 
 int main (int argc, char **argv)
 {

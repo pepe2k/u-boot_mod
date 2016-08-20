@@ -195,7 +195,7 @@ env_t redundand_environment __PPCENV__ = {
 	"\0"
 	}
 };
-#endif	/* CFG_ENV_ADDR_REDUND */
+#endif /* CFG_ENV_ADDR_REDUND */
 
 /*
  * These will end up in the .text section
