@@ -364,8 +364,6 @@ static int ath_gmac_alloc_fifo(int ndesc, ath_gmac_desc_t ** fifo)
 			~(CFG_CACHELINE_SIZE - 1));
 	p = UNCACHED_SDRAM(p);
 
-	memset((void*)p, 0, size);
-
 	for (i = 0; i < ndesc; i++)
 		fifo[i] = (ath_gmac_desc_t *) p + i;
 
