@@ -1,12 +1,18 @@
+#
+# Copyright (C) 2016 Piotr Dymacz <piotr@dymacz.pl>
+#
+# SPDX-License-Identifier: GPL-2.0
+#
+
 SHELL = bash
 
-HOSTARCH := $(shell uname -m | \
-	sed -e s/i.86/x86_32/      \
-	    -e s/sun4u/sparc64/    \
-	    -e s/arm.*/arm/        \
-	    -e s/sa110/arm/        \
-	    -e s/powerpc/ppc/      \
-	    -e s/macppc/ppc/)
+HOSTARCH := $(shell uname -m |        \
+	      sed -e s/i.86/x86_32/   \
+		  -e s/sun4u/sparc64/ \
+		  -e s/arm.*/arm/     \
+		  -e s/sa110/arm/     \
+		  -e s/powerpc/ppc/   \
+		  -e s/macppc/ppc/)
 
 HOSTOS := $(shell uname -s | tr '[:upper:]' '[:lower:]' | \
 	    sed -e 's/\(cygwin\).*/cygwin/')
@@ -19,326 +25,225 @@ endif
 
 export HOSTOS
 export HOSTARCH
-export BUILD_TOPDIR=$(PWD)
-export STAGING_DIR=$(BUILD_TOPDIR)/tmp
+export BUILD_TOPDIR = $(PWD)
+export STAGING_DIR  = $(BUILD_TOPDIR)/tmp
+export SOURCE_DIR   = $(BUILD_TOPDIR)/u-boot
+export BIN_DIR      = $(BUILD_TOPDIR)/bin
+export SUB_MAKE_CMD = $(MAKE) --silent --no-print-directory \
+                      ARCH=mips V=1 SHELL=$(SHELL)
 
-# --------------------------------------------------------------------------
-# Define absolute path to your toolchain directory here, for example:
-#
-# export TOOLCHAIN_DIR:=/home/user/toolchain-mips_34kc_gcc-5.4.0_musl-1.1.15
+# ==========================================================================
+# You can override some default configuration options below or pass them on
+# command line, for example:
+# make ... IMG_SIZE=256 IMG_LZMA=0 CROSS_COMPILE=...
+
+# Set to 1 if you want to build RAM-loadable image, without low level
+# initialization of the hardware (PLL/clocks, DRAM):
+# IMG_RAM =
+
+# You can change limit of the image size in KB with below option (image will
+# be filled up to the selected size with 0xFF):
+# IMG_SIZE =
+
+# If you don't want LZMA compressed image, set below option to 1 (by default
+# images for all targets are LZMA compressed):
+# IMG_LZMA =
+
+# Define _absolute_ path to your toolchain directory, for example:
+# export TOOLCHAIN_DIR:=/home/user/toolchain-mips_24kc_gcc-5.4.0_musl-1.1.15
 # export PATH:=$(TOOLCHAIN_DIR)/bin:$(PATH)
-# --------------------------------------------------------------------------
 
 ifndef CROSS_COMPILE
-CROSS_COMPILE = mips-openwrt-linux-musl-
+  CROSS_COMPILE = mips-openwrt-linux-musl-
 endif
 export CROSS_COMPILE
 
-export MAKECMD=make --silent --no-print-directory ARCH=mips
+# ==========================================================================
 
-# boot delay (time to autostart boot command)
-export CONFIG_BOOTDELAY=1
+# =======================
+# CUSTOM HELPER FUNCTIONS
+# =======================
 
-# uncomment following line, to build RAM version images (without low level initialization)
-#export CONFIG_SKIP_LOWLEVEL_INIT=1
+define echo_green
+  echo -e "\e[92m$(1)\e[0m"
+endef
 
-tplink_mr3020:	export UBOOT_FILE_NAME=uboot_for_tp-link_tl-mr3020
-tplink_mr3020:	export CONFIG_MAX_UBOOT_SIZE_KB=123
-ifndef CONFIG_SKIP_LOWLEVEL_INIT
-tplink_mr3020:	export COMPRESSED_UBOOT=1
-endif
-tplink_mr3020:
-	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) mr3020_config
-	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) ENDIANNESS=-EB V=1 all
-	@make --no-print-directory show_size
+define echo_red
+  echo -e "\e[91m$(1)\e[0m"
+endef
 
-tplink_wr703n:	export UBOOT_FILE_NAME=uboot_for_tp-link_tl-wr703n
-tplink_wr703n:	export CONFIG_MAX_UBOOT_SIZE_KB=123
-ifndef CONFIG_SKIP_LOWLEVEL_INIT
-tplink_wr703n:	export COMPRESSED_UBOOT=1
-endif
-tplink_wr703n:
-	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) wr703n_config
-	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) ENDIANNESS=-EB V=1 all
-	@make --no-print-directory show_size
+define echo_blue
+  echo -e "\e[96m$(1)\e[0m"
+endef
 
-tplink_wr720n_v3_CN:	export UBOOT_FILE_NAME=uboot_for_tp-link_tl-wr720n_v3_CN
-tplink_wr720n_v3_CN:	export CONFIG_MAX_UBOOT_SIZE_KB=123
-ifndef CONFIG_SKIP_LOWLEVEL_INIT
-tplink_wr720n_v3_CN:	export COMPRESSED_UBOOT=1
-endif
-tplink_wr720n_v3_CN:
-	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) wr720n_v3_CN_config
-	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) ENDIANNESS=-EB V=1 all
-	@make --no-print-directory show_size
+# $(1): size
+define img_size
+$(if $(IMG_SIZE),$(strip $(IMG_SIZE)),$(strip $(1)))
+endef
 
-tplink_wr710n:	export UBOOT_FILE_NAME=uboot_for_tp-link_tl-wr710n
-tplink_wr710n:	export CONFIG_MAX_UBOOT_SIZE_KB=123
-ifndef CONFIG_SKIP_LOWLEVEL_INIT
-tplink_wr710n:	export COMPRESSED_UBOOT=1
-endif
-tplink_wr710n:
-	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) wr710n_config
-	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) ENDIANNESS=-EB V=1 all
-	@make --no-print-directory show_size
+# $(1): value
+define is_one
+$(if $(filter $(strip $(1)),1),1,0)
+endef
 
-tplink_mr3040:	export UBOOT_FILE_NAME=uboot_for_tp-link_tl-mr3040
-tplink_mr3040:	export CONFIG_MAX_UBOOT_SIZE_KB=123
-ifndef CONFIG_SKIP_LOWLEVEL_INIT
-tplink_mr3040:	export COMPRESSED_UBOOT=1
-endif
-tplink_mr3040:
-	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) mr3040_config
-	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) ENDIANNESS=-EB V=1 all
-	@make --no-print-directory show_size
+# $(1): file extension
+define img_name
+u-boot_mod__$(shell date +"%Y%m%d")__$@$(if \
+$(filter $(IMG_RAM),1),__RAM-LOAD-ONLY)$(if $(1),.$(1))
+endef
 
-tplink_mr10u:	export UBOOT_FILE_NAME=uboot_for_tp-link_tl-mr10u
-tplink_mr10u:	export CONFIG_MAX_UBOOT_SIZE_KB=123
-ifndef CONFIG_SKIP_LOWLEVEL_INIT
-tplink_mr10u:	export COMPRESSED_UBOOT=1
-endif
-tplink_mr10u:
-	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) mr10u_config
-	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) ENDIANNESS=-EB V=1 all
-	@make --no-print-directory show_size
+define md5_sum
+  $(call echo_green,Calculating MD5 sum for the final image...)
 
-tplink_mr13u:	export UBOOT_FILE_NAME=uboot_for_tp-link_tl-mr13u
-tplink_mr13u:	export CONFIG_MAX_UBOOT_SIZE_KB=123
-ifndef CONFIG_SKIP_LOWLEVEL_INIT
-tplink_mr13u:	export COMPRESSED_UBOOT=1
-endif
-tplink_mr13u:
-	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) mr13u_config
-	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) ENDIANNESS=-EB V=1 all
-	@make --no-print-directory show_size
+  md5sum $(BIN_DIR)/$(call img_name,bin) | \
+         awk '{print $$1}' | \
+         tr -d '\n' > $(BIN_DIR)/$(call img_name).md5
 
-tplink_wr740n_v4:	export UBOOT_FILE_NAME=uboot_for_tp-link_tl-wr740n_v4
-tplink_wr740n_v4:	export CONFIG_MAX_UBOOT_SIZE_KB=123
-ifndef CONFIG_SKIP_LOWLEVEL_INIT
-tplink_wr740n_v4:	export COMPRESSED_UBOOT=1
-endif
-tplink_wr740n_v4:
-	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) wr740n_v4_config
-	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) ENDIANNESS=-EB V=1 all
-	@make --no-print-directory show_size
+  echo ' *'$(call img_name,bin) >> $(BIN_DIR)/$(call img_name,md5)
+endef
 
-tplink_mr3220_v2:	export UBOOT_FILE_NAME=uboot_for_tp-link_tl-mr3220_v2
-tplink_mr3220_v2:	export CONFIG_MAX_UBOOT_SIZE_KB=123
-ifndef CONFIG_SKIP_LOWLEVEL_INIT
-tplink_mr3220_v2:	export COMPRESSED_UBOOT=1
-endif
-tplink_mr3220_v2:
-	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) mr3220_v2_config
-	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) ENDIANNESS=-EB V=1 all
-	@make --no-print-directory show_size
+# $(1): size
+define padded_img
+  $(call echo_green,Preparing $(1) KB image padded with 0xFF...)
+  tr "\000" "\377" < /dev/zero | dd ibs=1k count=$(1) \
+     of=$(BIN_DIR)/$(call img_name,bin) 2> /dev/null
+endef
 
-tplink_wdr3600_43x0:	export UBOOT_FILE_NAME=uboot_for_tp-link_tl-wdr3600-43x0
-tplink_wdr3600_43x0:	export CONFIG_MAX_UBOOT_SIZE_KB=123
-ifndef CONFIG_SKIP_LOWLEVEL_INIT
-tplink_wdr3600_43x0:	export COMPRESSED_UBOOT=1
-endif
-tplink_wdr3600_43x0:	export ETH_CONFIG=_s17
-tplink_wdr3600_43x0:
-	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) wdr3600_43x0_config
-	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) ENDIANNESS=-EB V=1 all
-	@make --no-print-directory show_size
+define final_img
+  $(call echo_green,Preparing final image...)
+  dd if=$(BIN_DIR)/temp.bin of=$(BIN_DIR)/$(call img_name,bin) \
+     conv=notrunc 2> /dev/null
 
-tplink_wdr3500:	export UBOOT_FILE_NAME=uboot_for_tp-link_tl-wdr3500
-tplink_wdr3500:	export CONFIG_MAX_UBOOT_SIZE_KB=123
-ifndef CONFIG_SKIP_LOWLEVEL_INIT
-tplink_wdr3500:	export COMPRESSED_UBOOT=1
-endif
-tplink_wdr3500:	export ETH_CONFIG=_s27
-tplink_wdr3500:
-	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) wdr3500_config
-	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) ENDIANNESS=-EB V=1 all
-	@make --no-print-directory show_size
+  rm -f $(BIN_DIR)/temp.bin
+endef
 
-tplink_mr3420_v2:	export UBOOT_FILE_NAME=uboot_for_tp-link_tl-mr3420_v2
-tplink_mr3420_v2:	export CONFIG_MAX_UBOOT_SIZE_KB=123
-ifndef CONFIG_SKIP_LOWLEVEL_INIT
-tplink_mr3420_v2:	export COMPRESSED_UBOOT=1
-endif
-tplink_mr3420_v2:	export ETH_CONFIG=_s27
-tplink_mr3420_v2:
-	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) mr3420_v2_config
-	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) ENDIANNESS=-EB V=1 all
-	@make --no-print-directory show_size
+# $(1): path to image
+# $(2): size limit in KB
+define size_chk
+  $(call echo_green,Checking size of the image...)
 
-tplink_wr841n_v8:	export UBOOT_FILE_NAME=uboot_for_tp-link_tl-wr841n_v8
-tplink_wr841n_v8:	export CONFIG_MAX_UBOOT_SIZE_KB=123
-ifndef CONFIG_SKIP_LOWLEVEL_INIT
-tplink_wr841n_v8:	export COMPRESSED_UBOOT=1
-endif
-tplink_wr841n_v8:	export ETH_CONFIG=_s27
-tplink_wr841n_v8:
-	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) wr841n_v8_config
-	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) ENDIANNESS=-EB V=1 all
-	@make --no-print-directory show_size
+  if [ `wc -c < $(1)` -gt `echo $(2)*1024 | bc` ]; then \
+    echo; \
+    $(call echo_red,  ======================); \
+    $(call echo_red,  IMAGE SIZE IS TOO BIG!); \
+    $(call echo_red,  ======================); \
+    echo; \
+    rm -f $(1); \
+    exit 1; \
+  fi;
+endef
 
-tplink_wr841n_v9:	export UBOOT_FILE_NAME=uboot_for_tp-link_tl-wr841n_v9
-tplink_wr841n_v9:	export CONFIG_MAX_UBOOT_SIZE_KB=123
-ifndef CONFIG_SKIP_LOWLEVEL_INIT
-tplink_wr841n_v9:	export COMPRESSED_UBOOT=1
-endif
-tplink_wr841n_v9:	export ETH_CONFIG=_s27
-tplink_wr841n_v9:
-	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) wr841n_v9_config
-	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) ENDIANNESS=-EB V=1 all
-	@make --no-print-directory show_size
+# $(1): filename of image to copy
+# $(2): image size limit (check if set)
+define copy_img
+  echo;
+  $(call echo_green,Copying compiled image...)
 
-tplink_wa830re_v2_wa801nd_v2:	export UBOOT_FILE_NAME=uboot_for_tp-link_tl-wa830re_v2_tl-wa801nd_v2
-tplink_wa830re_v2_wa801nd_v2:	export CONFIG_MAX_UBOOT_SIZE_KB=123
-ifndef CONFIG_SKIP_LOWLEVEL_INIT
-tplink_wa830re_v2_wa801nd_v2:	export COMPRESSED_UBOOT=1
-endif
-tplink_wa830re_v2_wa801nd_v2:	export ETH_CONFIG=_s27
-tplink_wa830re_v2_wa801nd_v2:
-	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) wa830re_v2_wa801nd_v2_config
-	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) ENDIANNESS=-EB V=1 all
-	@make --no-print-directory show_size
+  cp $(SOURCE_DIR)/$(strip $(1)).bin $(BIN_DIR)/temp.bin
+  $(if $(2),$(call size_chk,$(BIN_DIR)/temp.bin,$(2)))
+endef
 
-tplink_wr820n_CN:	export UBOOT_FILE_NAME=uboot_for_tp-link_tl-wr820n_CN
-tplink_wr820n_CN:	export CONFIG_MAX_UBOOT_SIZE_KB=123
-ifndef CONFIG_SKIP_LOWLEVEL_INIT
-tplink_wr820n_CN:	export COMPRESSED_UBOOT=1
-endif
-tplink_wr820n_CN:	export ETH_CONFIG=_s27
-tplink_wr820n_CN:
-	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) wr820n_CN_config
-	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) ENDIANNESS=-EB V=1 all
-	@make --no-print-directory show_size
+# $(1): size limit in KB
+# $(2): if set to 1, use LZMA
+# $(3): other parameters passed to subdir make
+define build
+  args="IMG_SIZE=$(call img_size,$(1)) \
+        IMG_LZMA=$(call is_one,$(2)) \
+        $(strip $(3))"; \
+  cd $(SOURCE_DIR) && \
+     $(SUB_MAKE_CMD) $@ $$args && \
+     $(SUB_MAKE_CMD) all $$args
 
-tplink_wr802n:	export UBOOT_FILE_NAME=uboot_for_tp-link_tl-wr802n
-tplink_wr802n:	export CONFIG_MAX_UBOOT_SIZE_KB=123
-ifndef CONFIG_SKIP_LOWLEVEL_INIT
-tplink_wr802n:	export COMPRESSED_UBOOT=1
-endif
-tplink_wr802n:	export ETH_CONFIG=_s27
-tplink_wr802n:
-	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) wr802n_config
-	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) ENDIANNESS=-EB V=1 all
-	@make --no-print-directory show_size
+  $(if $(filter $(IMG_RAM),1),\
+    $(call copy_img,u-boot), \
+    $(if $(filter $(call is_one,$(2)),1), \
+      $(call copy_img,tuboot,$(call img_size,$(1))), \
+      $(call copy_img,u-boot,$(call img_size,$(1))) \
+    ) \
+  )
 
-dlink_dir505:	export UBOOT_FILE_NAME=uboot_for_d-link_dir-505
-dlink_dir505:	export CONFIG_MAX_UBOOT_SIZE_KB=64
-ifndef CONFIG_SKIP_LOWLEVEL_INIT
-dlink_dir505:	export COMPRESSED_UBOOT=1
-endif
-dlink_dir505:
-	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) dir505_config
-	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) ENDIANNESS=-EB V=1 all
-	@make --no-print-directory show_size
+  $(if $(filter $(IMG_RAM),1),,$(call padded_img,$(1)))
+  $(call final_img)
+  $(call md5_sum)
+  echo;
+  $(call echo_green,DONE!)
+  $(call echo_green,Image 'bin/$(call img_name,bin)' is ready!)
 
-gs-oolite_v1_dev:	export UBOOT_FILE_NAME=uboot_for_gs-oolite_v1_dev
-gs-oolite_v1_dev:	export CONFIG_MAX_UBOOT_SIZE_KB=123
-ifndef CONFIG_SKIP_LOWLEVEL_INIT
-gs-oolite_v1_dev:	export COMPRESSED_UBOOT=1
-endif
-gs-oolite_v1_dev:
-	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) gs_oolite_v1_dev_config
-	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) ENDIANNESS=-EB V=1 all
-	@make --no-print-directory show_size
+  if [ "x$$IMG_RAM" = "x1" ]; then \
+    echo; \
+    $(call echo_blue,  ================================); \
+    $(call echo_blue,  THIS IMAGE IS ONLY FOR RAM LOAD!); \
+    $(call echo_blue,  DO NOT WRITE IT INTO FLASH CHIP!); \
+    $(call echo_blue,  ================================); \
+    echo; \
+  fi;
+endef
 
-8devices_carambola2:	export UBOOT_FILE_NAME=uboot_for_8devices_carambola2
-8devices_carambola2:	export CONFIG_MAX_UBOOT_SIZE_KB=256
+# ===========================================
+# TARGETS IN ALPHABETICAL ORDER, SHARED FIRST
+# ===========================================
+
+COMMON_AR933X_TARGETS = \
+	gainstrong_oolite_v1_dev \
+	gl-innovations_gl-inet-6416 \
+	tp-link_tl-mr10u \
+	tp-link_tl-mr13u \
+	tp-link_tl-mr3020 \
+	tp-link_tl-mr3040 \
+	tp-link_tl-mr3220_v2 \
+	tp-link_tl-wr703n \
+	tp-link_tl-wr710n \
+	tp-link_tl-wr720n_v3_CN \
+	tp-link_tl-wr740n_v4
+
+$(COMMON_AR933X_TARGETS):
+	@$(call build,123,1)
+
+COMMON_ETHS27_TARGETS = \
+	tp-link_tl-mr3420_v2 \
+	tp-link_tl-wa830re_v2_tl-wa801nd_v2 \
+	tp-link_tl-wdr3500 \
+	tp-link_tl-wr802n \
+	tp-link_tl-wr820n_CN \
+	tp-link_tl-wr841n_v8 \
+	tp-link_tl-wr841n_v9
+
+$(COMMON_ETHS27_TARGETS):
+	@$(call build,123,1,ETH_CONFIG=_s27)
+
 8devices_carambola2:
-	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) carambola2_config
-	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) ENDIANNESS=-EB V=1 all
-	@make --no-print-directory show_size
+	@$(call build,256)
 
-dragino_v2_ms14:	export UBOOT_FILE_NAME=uboot_for_dragino_v2_ms14
-dragino_v2_ms14:	export CONFIG_MAX_UBOOT_SIZE_KB=192
-dragino_v2_ms14:	export DEVICE_VENDOR=dragino
+d-link_dir-505:
+	@$(call build,64,1)
+
 dragino_v2_ms14:
-	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) dragino_v2_ms14_config
-	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) ENDIANNESS=-EB V=1 all
-	@make --no-print-directory show_size
+	@$(call build,192,1,DEVICE_VENDOR=dragino)
 
-black_swift_board:	export UBOOT_FILE_NAME=uboot_for_black_swift_board
-black_swift_board:	export CONFIG_MAX_UBOOT_SIZE_KB=128
-black_swift_board:	export COMPRESSED_UBOOT=1
-black_swift_board:	export DEVICE_VENDOR=SE
-black_swift_board:
-	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) black_swift_board_config
-	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) ENDIANNESS=-EB V=1 all
-	@make --no-print-directory show_size
+tp-link_tl-wdr3600_tl-43x0:
+	@$(call build,123,1,ETH_CONFIG=_s17)
 
-villagetelco_mp2:	export UBOOT_FILE_NAME=uboot_for_villagetelco_mp2
-villagetelco_mp2:	export CONFIG_MAX_UBOOT_SIZE_KB=192
-villagetelco_mp2:	export DEVICE_VENDOR=villagetelco
-villagetelco_mp2:
-	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) villagetelco_mp2_config
-	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) ENDIANNESS=-EB V=1 all
-	@make --no-print-directory show_size
+unwireddevices_unwired-one:
+	@$(call build,128,1,DEVICE_VENDOR=SE)
 
-gl-inet:	export UBOOT_FILE_NAME=uboot_for_gl-inet
-gl-inet:	export CONFIG_MAX_UBOOT_SIZE_KB=123
-ifndef CONFIG_SKIP_LOWLEVEL_INIT
-gl-inet:	export COMPRESSED_UBOOT=1
-endif
-gl-inet:
-	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) gl-inet_config
-	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) ENDIANNESS=-EB V=1 all
-	@make --no-print-directory show_size
+village-telco_mesh-potato_v2:
+	@$(call build,192,1,DEVICE_VENDOR=villagetelco)
 
-wallys_dr531:	export UBOOT_FILE_NAME=uboot_for_wallys_dr531
-wallys_dr531:	export CONFIG_MAX_UBOOT_SIZE_KB=192
-ifndef CONFIG_SKIP_LOWLEVEL_INIT
-wallys_dr531:	export COMPRESSED_UBOOT=1
-endif
-wallys_dr531:	export ETH_CONFIG=_s27
 wallys_dr531:
-	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) dr531_config
-	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) ENDIANNESS=-EB V=1 all
-	@make --no-print-directory show_size
+	@$(call build,192,1,ETH_CONFIG=_s27)
 
-zbtlink_zbt_we1526:	export UBOOT_FILE_NAME=uboot_for_zbtlink_zbt-we1526
-zbtlink_zbt_we1526:	export CONFIG_MAX_UBOOT_SIZE_KB=256
-zbtlink_zbt_we1526:	export ETH_CONFIG=_s27
-zbtlink_zbt_we1526:
-	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) zbt-we1526_config
-	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) ENDIANNESS=-EB V=1 all
-	@make --no-print-directory show_size
+zbtlink_zbt-we1526:
+	@$(call build,256,1,ETH_CONFIG=_s27)
 
-ifdef CONFIG_SKIP_LOWLEVEL_INIT
-show_size:	export UBOOT_FILE_NAME_SUFFIX=__RAM
-endif
-show_size:
-ifdef COMPRESSED_UBOOT
-	@cp $(BUILD_TOPDIR)/u-boot/tuboot.bin $(BUILD_TOPDIR)/bin/temp.bin
-else
-	@cp $(BUILD_TOPDIR)/u-boot/u-boot.bin $(BUILD_TOPDIR)/bin/temp.bin
-endif
-	@echo -ne "\e[32m"
-ifndef CONFIG_SKIP_LOWLEVEL_INIT
-	@echo "> Preparing $(CONFIG_MAX_UBOOT_SIZE_KB)KB file filled with 0xFF..."
-	@`tr "\000" "\377" < /dev/zero | dd ibs=1k count=$(CONFIG_MAX_UBOOT_SIZE_KB) of=$(BUILD_TOPDIR)/bin/$(UBOOT_FILE_NAME)$(UBOOT_FILE_NAME_SUFFIX).bin 2> /dev/null`
-	@echo "> Copying U-Boot image..."
-	@`dd if=$(BUILD_TOPDIR)/bin/temp.bin of=$(BUILD_TOPDIR)/bin/$(UBOOT_FILE_NAME)$(UBOOT_FILE_NAME_SUFFIX).bin conv=notrunc 2> /dev/null`
-	@`rm $(BUILD_TOPDIR)/bin/temp.bin`
-else
-	@echo "> Copying U-Boot image..."
-	@`mv $(BUILD_TOPDIR)/bin/temp.bin $(BUILD_TOPDIR)/bin/$(UBOOT_FILE_NAME)$(UBOOT_FILE_NAME_SUFFIX).bin`
-endif
-	@echo "> U-Boot image ready, size:" `wc -c < $(BUILD_TOPDIR)/bin/$(UBOOT_FILE_NAME)$(UBOOT_FILE_NAME_SUFFIX).bin`" bytes"
-	@`md5sum $(BUILD_TOPDIR)/bin/$(UBOOT_FILE_NAME)$(UBOOT_FILE_NAME_SUFFIX).bin | awk '{print $$1}' | tr -d '\n' > $(BUILD_TOPDIR)/bin/$(UBOOT_FILE_NAME)$(UBOOT_FILE_NAME_SUFFIX).md5`
-	@`echo ' *'$(UBOOT_FILE_NAME)$(UBOOT_FILE_NAME_SUFFIX).bin >> $(BUILD_TOPDIR)/bin/$(UBOOT_FILE_NAME)$(UBOOT_FILE_NAME_SUFFIX).md5`
-# Do not check image size for RAM version
-ifndef CONFIG_SKIP_LOWLEVEL_INIT
-	@if [ "`wc -c < $(BUILD_TOPDIR)/bin/$(UBOOT_FILE_NAME)$(UBOOT_FILE_NAME_SUFFIX).bin`" -gt "`echo '$(CONFIG_MAX_UBOOT_SIZE_KB)*1024' | bc`" ]; then \
-			echo -e "\e[31m\n**************************************************"; \
-			echo "*     WARNING: U-BOOT IMAGE SIZE IS TOO BIG!     *"; \
-			echo -e "**************************************************"; \
-	fi;
-endif
-	@echo -ne "\e[0m"
+# =============
+# CLEAN TARGETS
+# =============
 
 clean:
-	@cd $(BUILD_TOPDIR)/u-boot/ && $(MAKECMD) --no-print-directory distclean
-	@rm -f $(BUILD_TOPDIR)/u-boot/httpd/fsdata.c
+	@cd $(SOURCE_DIR) && $(SUB_MAKE_CMD) distclean
+	@rm -f $(SOURCE_DIR)/httpd/fsdata.c
 
-clean_all:	clean
-	@echo -e "\e[32m> Removing all binary images...\e[0m"
-	@rm -f $(BUILD_TOPDIR)/bin/*.bin
-	@rm -f $(BUILD_TOPDIR)/bin/*.md5
+clean_all: clean
+	@$(call echo_green,Removing all binary images...)
+	@rm -f $(BIN_DIR)/*.bin
+	@rm -f $(BIN_DIR)/*.md5
