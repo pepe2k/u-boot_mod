@@ -32,8 +32,8 @@ export TOPDIR
 
 # Some variables passed as arguments in cmd
 ifneq ($(IMG_SIZE),)
-  CONFIG_MAX_UBOOT_SIZE_KB = $(IMG_SIZE)
-  export CONFIG_MAX_UBOOT_SIZE_KB
+  CONFIG_MAX_UBOOT_SIZE = $(IMG_SIZE)
+  export CONFIG_MAX_UBOOT_SIZE
 endif
 
 ifeq ($(IMG_LZMA),1)
@@ -138,8 +138,8 @@ define config_init
     $(call echo_yellow,  Custom recovery web:\tno) \
   )
 
-  $(if $(CONFIG_MAX_UBOOT_SIZE_KB), \
-    $(call echo_yellow,  Image size limit:\t$(CONFIG_MAX_UBOOT_SIZE_KB) KB),
+  $(if $(CONFIG_MAX_UBOOT_SIZE), \
+    $(call echo_yellow,  Image size limit:\t$$(($(CONFIG_MAX_UBOOT_SIZE) / 1024)) KB),
     $(call echo_yellow,  Image size limit:\tnot specified)
   )
 
@@ -167,8 +167,8 @@ define config_init
 
   $(if $(3),$(call define_add,CONFIG_GPIO_RESET_BTN,$(strip $(3))))
   $(if $(filter $(4),1),$(call define_add,CONFIG_GPIO_RESET_BTN_ACTIVE_LOW,1))
-  $(if $(CONFIG_MAX_UBOOT_SIZE_KB), \
-    $(call define_add,CONFIG_MAX_UBOOT_SIZE_KB,$(CONFIG_MAX_UBOOT_SIZE_KB))
+  $(if $(CONFIG_MAX_UBOOT_SIZE), \
+    $(call define_add,CONFIG_MAX_UBOOT_SIZE,$(CONFIG_MAX_UBOOT_SIZE))
   )
 
   $(if $(filter $(CONFIG_SKIP_LOWLEVEL_INIT),1), \

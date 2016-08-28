@@ -193,7 +193,7 @@ static int httpd_findandstore_firstchunk(void){
 				// has correct size (for every type of upgrade)
 
 				// U-Boot
-				if((webfailsafe_upgrade_type == WEBFAILSAFE_UPGRADE_TYPE_UBOOT) && (hs->upload_total > (CONFIG_MAX_UBOOT_SIZE_KB * 1024))){
+				if((webfailsafe_upgrade_type == WEBFAILSAFE_UPGRADE_TYPE_UBOOT) && (hs->upload_total > CONFIG_MAX_UBOOT_SIZE)){
 
 					printf("## Error: file too big!\n");
 					webfailsafe_upload_failed = 1;
@@ -466,7 +466,7 @@ void httpd_appcall(void){
 						printf("Data will be downloaded at 0x%X in RAM\n", CONFIG_LOADADDR);
 					}
 
-					memset((void *)webfailsafe_data_pointer, 0xFF, (CONFIG_MAX_UBOOT_SIZE_KB * 1024));
+					memset((void *)webfailsafe_data_pointer, 0xFF, CONFIG_MAX_UBOOT_SIZE);
 
 					if(httpd_findandstore_firstchunk()){
 						data_start_found = 1;

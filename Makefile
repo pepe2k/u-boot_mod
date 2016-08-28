@@ -147,7 +147,7 @@ endef
 # $(2): if set to 1, use LZMA
 # $(3): other parameters passed to subdir make
 define build
-  args="IMG_SIZE=$(call img_size,$(1)) \
+  args="IMG_SIZE=$$((1024*$(call img_size,$(1)))) \
         IMG_LZMA=$(call is_one,$(2)) \
         $(strip $(3))"; \
   cd $(SOURCE_DIR) && \
