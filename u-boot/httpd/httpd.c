@@ -193,7 +193,7 @@ static int httpd_findandstore_firstchunk(void){
 				// has correct size (for every type of upgrade)
 
 				// U-Boot
-				if((webfailsafe_upgrade_type == WEBFAILSAFE_UPGRADE_TYPE_UBOOT) && (hs->upload_total > WEBFAILSAFE_UPLOAD_UBOOT_SIZE_IN_BYTES)){
+				if((webfailsafe_upgrade_type == WEBFAILSAFE_UPGRADE_TYPE_UBOOT) && (hs->upload_total > (CONFIG_MAX_UBOOT_SIZE_KB * 1024))){
 
 					printf("## Error: file too big!\n");
 					webfailsafe_upload_failed = 1;
@@ -455,7 +455,7 @@ void httpd_appcall(void){
 					 * find beginning of the data in first packet
 					 */
 
-					webfailsafe_data_pointer = (u8_t *)WEBFAILSAFE_UPLOAD_RAM_ADDRESS;
+					webfailsafe_data_pointer = (u8_t *)CONFIG_LOADADDR;
 
 					if(!webfailsafe_data_pointer){
 						printf("## Error: couldn't allocate RAM for data!\n");
@@ -463,10 +463,10 @@ void httpd_appcall(void){
 						uip_abort();
 						return;
 					} else {
-						printf("Data will be downloaded at 0x%X in RAM\n", WEBFAILSAFE_UPLOAD_RAM_ADDRESS);
+						printf("Data will be downloaded at 0x%X in RAM\n", CONFIG_LOADADDR);
 					}
 
-					memset((void *)webfailsafe_data_pointer, 0xFF, WEBFAILSAFE_UPLOAD_UBOOT_SIZE_IN_BYTES);
+					memset((void *)webfailsafe_data_pointer, 0xFF, (CONFIG_MAX_UBOOT_SIZE_KB * 1024));
 
 					if(httpd_findandstore_firstchunk()){
 						data_start_found = 1;

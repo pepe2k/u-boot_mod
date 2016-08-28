@@ -344,15 +344,14 @@ unconfig:
 config_common:
 	@ >include/config.h
 	@$(call include_add,soc/soc_list.h)
-	@$(call define_add,CONFIG_BOOTDELAY,1)
-	@$(call define_add,CONFIG_SILENT_CONSOLE,1)
-	@$(call define_add,CFG_CONSOLE_INFO_QUIET,1)
 	@$(call define_add,CONFIG_MAX_BUTTON_PRESSING,10)
 	@$(call define_add,CONFIG_DELAY_TO_AUTORUN_HTTPD,3)
 	@$(call define_add,CONFIG_DELAY_TO_AUTORUN_CONSOLE,5)
 	@$(call define_add,CONFIG_DELAY_TO_AUTORUN_NETCONSOLE,7)
 
 ar933x_common: unconfig config_common
+	@$(call define_add,CFG_AG7240_NMACS,2)
+	@$(call define_add,CFG_ATHRS26_PHY,1)
 	@$(call define_add,CONFIG_MACH_HORNET,1)
 
 ar934x_common: unconfig config_common

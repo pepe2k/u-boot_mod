@@ -403,6 +403,9 @@ static void ath_gmac_halt(struct eth_device *dev)
 	while (ath_gmac_reg_rd(mac, ATH_DMA_RX_CTRL));
 }
 
+/* FIXME! */
+#define BOARDCAL	0x9FFF0000
+
 unsigned char *
 ath_gmac_mac_addr_loc(void)
 {

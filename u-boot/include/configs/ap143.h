@@ -9,14 +9,17 @@
  * SPDX-License-Identifier: GPL-2.0
  */
 
-#ifndef _AP143_CONFIG_H
-#define _AP143_CONFIG_H
+#ifndef _AP143_H
+#define _AP143_H
 
 #include <config.h>
+#include <configs/qca9k_common.h>
 #include <soc/soc_common.h>
 
 /*
+ * ==================
  * GPIO configuration
+ * ==================
  */
 #if defined(CONFIG_FOR_TPLINK_WR820N_CN) ||\
     defined(CONFIG_FOR_TPLINK_WR802N)
@@ -55,139 +58,62 @@
 #endif
 
 /*
- * Miscellaneous configurable options
- */
-#ifndef CONFIG_BOOTDELAY
-	#define CONFIG_BOOTDELAY	1
-#endif
-
-#define	CFG_LONGHELP
-
-#define CONFIG_BAUDRATE				115200
-#define CFG_BAUDRATE_TABLE			{ 600,    1200,   2400,    4800,    9600,    14400, \
-									  19200,  28800,  38400,   56000,   57600,   115200 }
-
-#define CFG_ALT_MEMTEST
-#define CFG_HUSH_PARSER
-#define	CFG_LONGHELP														/* undef to save memory      */
-#define	CFG_PROMPT			"uboot> "										/* Monitor Command Prompt    */
-#define CFG_PROMPT_HUSH_PS2	"> "
-#define	CFG_CBSIZE			1024											/* Console I/O Buffer Size   */
-#define	CFG_PBSIZE			(CFG_CBSIZE+sizeof(CFG_PROMPT)+16)				/* Print Buffer Size, was: def + 16 */
-#define	CFG_MAXARGS			16												/* max number of command */
-#define CFG_MALLOC_LEN		512*1024										/* def: 128*1024 */
-#define CFG_BOOTPARAMS_LEN	512*1024										/* def: 128 */
-#define CFG_SDRAM_BASE		0x80000000										/* Cached addr */
-#define CFG_MEMTEST_START	(CFG_SDRAM_BASE + 0x200000)						/* RAM test start = CFG_SDRAM_BASE + 2 MB */
-#define CFG_MEMTEST_END		(CFG_SDRAM_BASE + bd->bi_memsize - 0x200001)	/* RAM test end   = CFG_SDRAM_BASE + RAM size - 2 MB - 1 Byte */
-#define CFG_RX_ETH_BUFFER   16
-
-#define CFG_DCACHE_SIZE		32768
-#define CFG_ICACHE_SIZE		65536
-#define CFG_CACHELINE_SIZE	32
-
-/*
- * FLASH and environment organization
- */
-#define CFG_MAX_FLASH_BANKS			1
-#define CFG_MAX_FLASH_SECT			4096	// 4 KB sectors in 16 MB flash
-#define CFG_FLASH_SECTOR_SIZE		64 * 1024
-
-/*
- * We boot from this flash
- */
-#define CFG_FLASH_BASE					0x9F000000
-#ifdef COMPRESSED_UBOOT
-	#define BOOTSTRAP_TEXT_BASE			CFG_FLASH_BASE
-	#define BOOTSTRAP_CFG_MONITOR_BASE 	BOOTSTRAP_TEXT_BASE
-#endif
-
-/*
- * The following #defines are needed to get flash environment right
- */
-#define	CFG_MONITOR_BASE	TEXT_BASE
-#define	CFG_MONITOR_LEN		(192 << 10)
-
-/*
+ * ================
  * Default bootargs
+ * ================
  */
-#undef CONFIG_BOOTARGS
 #if defined(CONFIG_FOR_TPLINK_WR820N_CN)
-	#define	CONFIG_BOOTARGS	"console=ttyS0,115200 root=31:02 rootfstype=squashfs init=/sbin/init mtdparts=ath-nor0:32k(u-boot1),32k(u-boot2),3008k(rootfs),896k(uImage),64k(mib0),64k(ART)"
+
+	#define CONFIG_BOOTARGS	"console=ttyS0,115200 root=31:02 "\
+				"rootfstype=squashfs init=/sbin/init "\
+				"mtdparts=ath-nor0:32k(u-boot1),32k(u-boot2),3008k(rootfs),896k(uImage),64k(mib0),64k(art)"
+
 #elif defined(CONFIG_FOR_TPLINK_WR841N_V9) ||\
-	  defined(CONFIG_FOR_TPLINK_WR802N)
-	#define	CONFIG_BOOTARGS	"console=ttyS0,115200 root=31:02 rootfstype=squashfs init=/sbin/init mtdparts=ath-nor0:128k(u-boot),1024k(kernel),2816k(rootfs),64k(config),64k(art)"
+      defined(CONFIG_FOR_TPLINK_WR802N)
+
+	#define CONFIG_BOOTARGS	"console=ttyS0,115200 root=31:02 "\
+				"rootfstype=squashfs init=/sbin/init "\
+				"mtdparts=ath-nor0:128k(u-boot),1024k(kernel),2816k(rootfs),64k(config),64k(art)"
+
 #elif defined(CONFIG_FOR_WALLYS_DR531)
-	#define	CONFIG_BOOTARGS	"console=ttyS0,115200 root=31:02 rootfstype=jffs2 init=/sbin/init mtdparts=ath-nor0:256k(u-boot),64k(u-boot-env),6336k(rootfs),1408k"
+
+	#define CONFIG_BOOTARGS	"console=ttyS0,115200 root=31:02 "\
+				"rootfstype=jffs2 init=/sbin/init "\
+				"mtdparts=ath-nor0:256k(u-boot),64k(u-boot-env),6336k(rootfs),1408k"
+
 #elif defined(CONFIG_FOR_ZBTLINK_ZBT_WE1526)
-	#define	CONFIG_BOOTARGS	"console=ttyS0,115200 root=31:02 rootfstype=squashfs init=/sbin/init mtdparts=spi0.0:256k(u-boot),64k(u-boot-env),14528k(rootfs),1472k(kernel),64k(ART),16000k(firmware)"
+
+	#define CONFIG_BOOTARGS	"console=ttyS0,115200 root=31:02 "\
+				"rootfstype=squashfs init=/sbin/init "\
+				"mtdparts=spi0.0:256k(u-boot),64k(u-boot-env),14528k(rootfs),1472k(kernel),64k(art),16000k(firmware)"
+
 #endif
 
 /*
- * Other env default values
+ * =============================
+ * Load address and boot command
+ * =============================
  */
-#undef CONFIG_BOOTFILE
-#define CONFIG_BOOTFILE			"firmware.bin"
-
-#undef CONFIG_LOADADDR
-#define CONFIG_LOADADDR			0x80800000
-
 #if defined(CONFIG_FOR_TPLINK_WR820N_CN) ||\
-	defined(CONFIG_FOR_TPLINK_WR802N)    ||\
-	defined(CONFIG_FOR_TPLINK_WR841N_V9)
-	#define	CFG_LOAD_ADDR			 0x9F020000
-	#define UPDATE_SCRIPT_FW_ADDR	"0x9F020000"
-	#define CONFIG_BOOTCOMMAND 		"bootm 0x9F020000"
+    defined(CONFIG_FOR_TPLINK_WR802N)    ||\
+    defined(CONFIG_FOR_TPLINK_WR841N_V9)
+	#define CFG_LOAD_ADDR	0x9F020000
 #elif defined(CONFIG_FOR_WALLYS_DR531)
-	#define	CFG_LOAD_ADDR			 0x9F050000
-	#define UPDATE_SCRIPT_FW_ADDR	"0x9F050000"
-	#define CONFIG_BOOTCOMMAND 		"bootm 0x9F050000"
+	#define CFG_LOAD_ADDR	0x9F050000
 #elif defined(CONFIG_FOR_ZBTLINK_ZBT_WE1526)
-	#define	CFG_LOAD_ADDR			 0x9FE80000
-	#define UPDATE_SCRIPT_FW_ADDR	"0x9F050000"
-	#define CONFIG_BOOTCOMMAND 		"bootm 0x9FE80000"
+	#define CFG_LOAD_ADDR	0x9FE80000
 #endif
 
-#define CONFIG_IPADDR			192.168.1.1
-#define CONFIG_SERVERIP			192.168.1.2
+#define CONFIG_BOOTCOMMAND	"bootm " MK_STR(CFG_LOAD_ADDR)
 
 /*
- * PLL/Clocks configuration
+ * =========================
+ * Environment configuration
+ * =========================
  */
-#ifdef CFG_HZ
-	#undef	CFG_HZ
-#endif
-#define	CFG_HZ	bd->bi_cfg_hz
-
 #if defined(CONFIG_FOR_TPLINK_WR820N_CN) ||\
-	defined(CONFIG_FOR_TPLINK_WR802N)    ||\
-	defined(CONFIG_FOR_TPLINK_WR841N_V9)
-	#define CONFIG_QCA_PLL		QCA_PLL_PRESET_550_400_200
-#elif defined(CONFIG_FOR_WALLYS_DR531) ||\
-	  defined(CONFIG_FOR_ZBTLINK_ZBT_WE1526)
-	#define CONFIG_QCA_PLL		QCA_PLL_PRESET_650_400_200
-#endif
-
-/*
- * For PLL/clocks recovery use reset button by default
- */
-#ifdef CONFIG_GPIO_RESET_BTN
-	#define CONFIG_QCA_GPIO_OC_RECOVERY_BTN		CONFIG_GPIO_RESET_BTN
-#endif
-
-#ifdef CONFIG_GPIO_RESET_BTN_ACTIVE_LOW
-	#define CONFIG_QCA_GPIO_OC_RECOVERY_BTN_ACTIVE_LOW	1
-#endif
-
-/*
- * Address and size of Primary Environment Sector
- */
-#define CFG_ENV_IS_IN_FLASH	1
-#undef  CFG_ENV_IS_NOWHERE
-
-#if defined(CONFIG_FOR_TPLINK_WR820N_CN) ||\
-	defined(CONFIG_FOR_TPLINK_WR802N)    ||\
-	defined(CONFIG_FOR_TPLINK_WR841N_V9)
+    defined(CONFIG_FOR_TPLINK_WR802N)    ||\
+    defined(CONFIG_FOR_TPLINK_WR841N_V9)
 	#define CFG_ENV_ADDR		0x9F01EC00
 	#define CFG_ENV_SIZE		0x1000
 	#define CFG_ENV_SECT_SIZE	0x10000
@@ -202,183 +128,98 @@
 #endif
 
 /*
- * Available commands
+ * ===========================
+ * List of available baudrates
+ * ===========================
  */
-#define CONFIG_CMD_MEMORY
-#define CONFIG_CMD_DHCP
-#define CONFIG_CMD_PING
-#define CONFIG_CMD_FLASH
-#define CONFIG_CMD_NET
-#define CONFIG_CMD_RUN
-#define CONFIG_CMD_DATE
-#define CONFIG_CMD_SNTP
-#define CONFIG_CMD_ECHO
-#define CONFIG_CMD_BOOTD
-#define CONFIG_CMD_ITEST
-#define CONFIG_CMD_IMI
-#define CONFIG_CMD_ENV
-#define CONFIG_CMD_LOADB
-#define CONFIG_CMD_BUTTON
-#define CONFIG_CMD_SLEEP
-
-// Enable NetConsole and custom NetConsole port
-#define CONFIG_NETCONSOLE
-#define CONFIG_NETCONSOLE_PORT	6666
+#define CFG_BAUDRATE_TABLE	\
+		{ 600,    1200,   2400,    4800,    9600,    14400, \
+		  19200,  28800,  38400,   56000,   57600,   115200 }
 
 /*
- * Web Failsafe configuration
+ * ==================================================
+ * MAC address/es, model and WPS pin offsets in FLASH
+ * ==================================================
  */
-#define WEBFAILSAFE_UPLOAD_RAM_ADDRESS				CONFIG_LOADADDR
-#define WEBFAILSAFE_UPLOAD_UBOOT_ADDRESS			CFG_FLASH_BASE
-
-// Firmware partition offset
 #if defined(CONFIG_FOR_TPLINK_WR820N_CN) ||\
-	defined(CONFIG_FOR_TPLINK_WR802N)    ||\
-	defined(CONFIG_FOR_TPLINK_WR841N_V9)
-	#define WEBFAILSAFE_UPLOAD_KERNEL_ADDRESS		WEBFAILSAFE_UPLOAD_UBOOT_ADDRESS + 0x20000
-#elif defined(CONFIG_FOR_WALLYS_DR531) ||\
-	  defined(CONFIG_FOR_ZBTLINK_ZBT_WE1526)
-	#define WEBFAILSAFE_UPLOAD_KERNEL_ADDRESS		WEBFAILSAFE_UPLOAD_UBOOT_ADDRESS + 0x50000
-#endif
-
-// U-Boot partition size
-#define WEBFAILSAFE_UPLOAD_UBOOT_SIZE_IN_BYTES		(CONFIG_MAX_UBOOT_SIZE_KB * 1024)
-
-// TODO: should be == CONFIG_MAX_UBOOT_SIZE_KB
-#if defined(CONFIG_FOR_TPLINK_WR820N_CN) ||\
-	defined(CONFIG_FOR_TPLINK_WR802N)    ||\
-	defined(CONFIG_FOR_TPLINK_WR841N_V9)
-	#define UPDATE_SCRIPT_UBOOT_SIZE_IN_BYTES			"0x1EC00"
-	#define UPDATE_SCRIPT_UBOOT_BACKUP_SIZE_IN_BYTES	"0x20000"
+    defined(CONFIG_FOR_TPLINK_WR802N)    ||\
+    defined(CONFIG_FOR_TPLINK_WR841N_V9)
+	#define OFFSET_MAC_DATA_BLOCK		0x010000
+	#define OFFSET_MAC_DATA_BLOCK_LENGTH	0x010000
+	#define OFFSET_MAC_ADDRESS		0x00FC00
+	#define OFFSET_ROUTER_MODEL		0x00FD00
+	#define OFFSET_PIN_NUMBER		0x00FE00
 #elif defined(CONFIG_FOR_WALLYS_DR531)
-	#define UPDATE_SCRIPT_UBOOT_SIZE_IN_BYTES			"0x30000"
-	#define UPDATE_SCRIPT_UBOOT_BACKUP_SIZE_IN_BYTES	UPDATE_SCRIPT_UBOOT_SIZE_IN_BYTES
+	#define OFFSET_MAC_DATA_BLOCK		0x030000
+	#define OFFSET_MAC_DATA_BLOCK_LENGTH	0x010000
+	#define OFFSET_MAC_ADDRESS		0x00F810
 #elif defined(CONFIG_FOR_ZBTLINK_ZBT_WE1526)
-	#define UPDATE_SCRIPT_UBOOT_SIZE_IN_BYTES			"0x40000"
-	#define UPDATE_SCRIPT_UBOOT_BACKUP_SIZE_IN_BYTES	UPDATE_SCRIPT_UBOOT_SIZE_IN_BYTES
+	#define OFFSET_MAC_DATA_BLOCK		0xFF0000
+	#define OFFSET_MAC_DATA_BLOCK_LENGTH	0x010000
+	#define OFFSET_MAC_ADDRESS		0x000000
 #endif
 
-// ART partition size
-#define WEBFAILSAFE_UPLOAD_ART_SIZE_IN_BYTES		(64 * 1024)
+/*
+ * ===========================
+ * HTTP recovery configuration
+ * ===========================
+ */
+#if defined(CONFIG_FOR_ZBTLINK_ZBT_WE1526)
+	#define WEBFAILSAFE_UPLOAD_KERNEL_ADDRESS	CFG_FLASH_BASE + 0x50000
+#else
+	#define WEBFAILSAFE_UPLOAD_KERNEL_ADDRESS	CFG_LOAD_ADDR
+#endif
 
-// max. firmware size <= (FLASH_SIZE -  WEBFAILSAFE_UPLOAD_LIMITED_AREA_IN_BYTES)
-// TP-Link: 64k(U-Boot),64k(MAC/model/WPS pin block),64k(ART)
+/* Firmware size limit */
 #if defined(CONFIG_FOR_TPLINK_WR820N_CN) ||\
-	defined(CONFIG_FOR_TPLINK_WR802N)    ||\
-	defined(CONFIG_FOR_TPLINK_WR841N_V9)
+    defined(CONFIG_FOR_TPLINK_WR802N)    ||\
+    defined(CONFIG_FOR_TPLINK_WR841N_V9)
 	#define WEBFAILSAFE_UPLOAD_LIMITED_AREA_IN_BYTES	(192 * 1024)
 #elif defined(CONFIG_FOR_WALLYS_DR531) ||\
-	  defined(CONFIG_FOR_ZBTLINK_ZBT_WE1526)
-	// Wallys DR531: 192k(U-Boot),64k(U-Boot env),64k(partition-table),64k(ART)
-	// Zbtlink ZBT-WE1526: 256k(U-Boot),64k(U-Boot env),64k(ART)
+      defined(CONFIG_FOR_ZBTLINK_ZBT_WE1526)
 	#define WEBFAILSAFE_UPLOAD_LIMITED_AREA_IN_BYTES	(384 * 1024)
 #endif
 
-// progress state info
-#define WEBFAILSAFE_PROGRESS_START				0
-#define WEBFAILSAFE_PROGRESS_TIMEOUT			1
-#define WEBFAILSAFE_PROGRESS_UPLOAD_READY		2
-#define WEBFAILSAFE_PROGRESS_UPGRADE_READY		3
-#define WEBFAILSAFE_PROGRESS_UPGRADE_FAILED		4
+/*
+ * ========================
+ * PLL/Clocks configuration
+ * ========================
+ */
+#if defined(CONFIG_FOR_TPLINK_WR820N_CN) ||\
+    defined(CONFIG_FOR_TPLINK_WR802N)    ||\
+    defined(CONFIG_FOR_TPLINK_WR841N_V9)
+	#define CONFIG_QCA_PLL	QCA_PLL_PRESET_550_400_200
+#elif defined(CONFIG_FOR_WALLYS_DR531) ||\
+      defined(CONFIG_FOR_ZBTLINK_ZBT_WE1526)
+	#define CONFIG_QCA_PLL	QCA_PLL_PRESET_650_400_200
+#endif
 
-// update type
-#define WEBFAILSAFE_UPGRADE_TYPE_FIRMWARE		0
-#define WEBFAILSAFE_UPGRADE_TYPE_UBOOT			1
-#define WEBFAILSAFE_UPGRADE_TYPE_ART			2
+#if defined(CONFIG_FOR_TPLINK_WR820N_CN) ||\
+    defined(CONFIG_FOR_TPLINK_WR802N)    ||\
+    defined(CONFIG_FOR_TPLINK_WR841N_V9)
 
-/*-----------------------------------------------------------------------*/
+	#define CONFIG_QCA_PLL_IN_FLASH_BLOCK_OFFSET	0x10000
+	#define CONFIG_QCA_PLL_IN_FLASH_BLOCK_SIZE	0x10000
+
+#elif defined(CONFIG_FOR_WALLYS_DR531)
+
+	#define CONFIG_QCA_PLL_IN_FLASH_BLOCK_OFFSET	0x30000
+	#define CONFIG_QCA_PLL_IN_FLASH_BLOCK_SIZE	0x10000
+
+#elif defined(CONFIG_FOR_ZBTLINK_ZBT_WE1526)
+
+	#define CONFIG_QCA_PLL_IN_FLASH_BLOCK_OFFSET	0x40000
+	#define CONFIG_QCA_PLL_IN_FLASH_BLOCK_SIZE	0x10000
+
+#endif
 
 /*
- * Additional environment variables for simple upgrades
+ * ===================
+ * Other configuration
+ * ===================
  */
-#define CONFIG_EXTRA_ENV_SETTINGS	"uboot_addr=0x9F000000\0" \
-									"uboot_name=uboot.bin\0" \
-									"uboot_size=" UPDATE_SCRIPT_UBOOT_SIZE_IN_BYTES "\0" \
-									"uboot_backup_size=" UPDATE_SCRIPT_UBOOT_BACKUP_SIZE_IN_BYTES "\0" \
-									"uboot_upg=" \
-										"if ping $serverip; then " \
-											"mw.b $loadaddr 0xFF $uboot_backup_size && " \
-											"cp.b $uboot_addr $loadaddr $uboot_backup_size && " \
-											"tftp $loadaddr $uboot_name && " \
-											"if itest.l $filesize <= $uboot_size; then " \
-												"erase $uboot_addr +$uboot_backup_size && " \
-												"cp.b $loadaddr $uboot_addr $uboot_backup_size && " \
-												"echo OK!; " \
-											"else " \
-												"echo ERROR! Wrong file size!; " \
-											"fi; " \
-										"else " \
-											"echo ERROR! Server not reachable!; " \
-										"fi\0"
-/*
- * Cache lock for stack
- */
-#define CFG_INIT_SP_OFFSET			0x1000
+
+/* Cache lock for stack */
 #define CONFIG_INIT_SRAM_SP_OFFSET	0xbd001800
 
-/* use eth1(LAN) as the net interface */
-#define CONFIG_AG7240_SPEPHY
-#define CONFIG_NET_MULTI
-
-#if defined(CONFIG_FOR_TPLINK_WR820N_CN) ||\
-	defined(CONFIG_FOR_TPLINK_WR802N)    ||\
-	defined(CONFIG_FOR_TPLINK_WR841N_V9) ||\
-	defined(CONFIG_FOR_WALLYS_DR531)     ||\
-	defined(CONFIG_FOR_ZBTLINK_ZBT_WE1526)
-	#define BOARDCAL				0x9fff0000
-#endif
-#define CFG_MII0_RMII				1
-#define CFG_BOOTM_LEN				(16 << 20) /* 16 MB */
-
-#undef DEBUG
-
-/* MAC address, model and PIN number offsets in FLASH */
-#if defined(CONFIG_FOR_TPLINK_WR820N_CN) ||\
-	defined(CONFIG_FOR_TPLINK_WR802N)    ||\
-	defined(CONFIG_FOR_TPLINK_WR841N_V9)
-	#define OFFSET_MAC_DATA_BLOCK			0x010000
-	#define OFFSET_MAC_DATA_BLOCK_LENGTH	0x010000
-	#define OFFSET_MAC_ADDRESS				0x00FC00
-	#define OFFSET_ROUTER_MODEL				0x00FD00
-	#define OFFSET_PIN_NUMBER				0x00FE00
-#elif defined(CONFIG_FOR_WALLYS_DR531)
-	#define OFFSET_MAC_DATA_BLOCK			0x030000
-	#define OFFSET_MAC_DATA_BLOCK_LENGTH	0x010000
-	#define OFFSET_MAC_ADDRESS				0x00F810
-#elif defined(CONFIG_FOR_ZBTLINK_ZBT_WE1526)
-	#define OFFSET_MAC_DATA_BLOCK			0xFF0000
-	#define OFFSET_MAC_DATA_BLOCK_LENGTH	0x010000
-	#define OFFSET_MAC_ADDRESS				0x000000
-#endif
-
-/*
- * PLL and clocks configurations from FLASH
- */
-#if defined(CONFIG_FOR_TPLINK_WR820N_CN) ||\
-	defined(CONFIG_FOR_TPLINK_WR802N)    ||\
-	defined(CONFIG_FOR_TPLINK_WR841N_V9)
-	/*
-	 * All TP-Link routers have a lot of unused space
-	 * in FLASH, in second 64 KiB block.
-	 * We will store there PLL and CLOCK
-	 * registers configuration.
-	 */
-	#define CONFIG_QCA_PLL_IN_FLASH_BLOCK_OFFSET	0x00010000
-	#define CONFIG_QCA_PLL_IN_FLASH_BLOCK_SIZE		0x00010000
-
-#elif defined(CONFIG_FOR_WALLYS_DR531)
-	#define CONFIG_QCA_PLL_IN_FLASH_BLOCK_OFFSET	0x00030000
-	#define CONFIG_QCA_PLL_IN_FLASH_BLOCK_SIZE		0x00010000
-#elif defined(CONFIG_FOR_ZBTLINK_ZBT_WE1526)
-	#define CONFIG_QCA_PLL_IN_FLASH_BLOCK_OFFSET	0x00040000
-	#define CONFIG_QCA_PLL_IN_FLASH_BLOCK_SIZE		0x00010000
-#endif
-
-#if defined(CONFIG_QCA_PLL_IN_FLASH_BLOCK_OFFSET)
-	/* Use last 32 bytes */
-	#define CONFIG_QCA_PLL_IN_FLASH_MAGIC_OFFSET	(CFG_FLASH_BASE + \
-													 CONFIG_QCA_PLL_IN_FLASH_BLOCK_OFFSET + \
-													 0x0000FFE0)
-#endif
-
-#endif /* __AP143_CONFIG_H */
+#endif /* _AP143_H */

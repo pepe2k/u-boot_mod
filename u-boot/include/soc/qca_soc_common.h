@@ -1947,6 +1947,17 @@
 #endif
 
 /*
+ * For PLL/clocks recovery use reset button by default
+ */
+#if defined(CONFIG_GPIO_RESET_BTN)
+	#define CONFIG_QCA_GPIO_OC_RECOVERY_BTN	CONFIG_GPIO_RESET_BTN
+#endif
+
+#if defined(CONFIG_GPIO_RESET_BTN_ACTIVE_LOW)
+	#define CONFIG_QCA_GPIO_OC_RECOVERY_BTN_ACTIVE_LOW	1
+#endif
+
+/*
  * Functions
  */
 #ifndef __ASSEMBLY__

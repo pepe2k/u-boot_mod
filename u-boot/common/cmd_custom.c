@@ -83,7 +83,7 @@ int do_set_mac(cmd_tbl_t * cmdtp, int flag, int argc, char *argv[]){
 	}
 
 	// backup block with MAC address from flash in RAM
-	data_pointer = (unsigned char *)WEBFAILSAFE_UPLOAD_RAM_ADDRESS;
+	data_pointer = (unsigned char *)CONFIG_LOADADDR;
 
 	if(!data_pointer){
 		puts("## Error: couldn't allocate RAM for data block backup!\n");
@@ -104,7 +104,7 @@ int do_set_mac(cmd_tbl_t * cmdtp, int flag, int argc, char *argv[]){
 			"erase 0x%lX +0x%lX; cp.b 0x%lX 0x%lX 0x%lX",
 			CFG_FLASH_BASE + OFFSET_MAC_DATA_BLOCK,
 			OFFSET_MAC_DATA_BLOCK_LENGTH,
-			WEBFAILSAFE_UPLOAD_RAM_ADDRESS,
+			CONFIG_LOADADDR,
 			CFG_FLASH_BASE + OFFSET_MAC_DATA_BLOCK,
 			OFFSET_MAC_DATA_BLOCK_LENGTH);
 
