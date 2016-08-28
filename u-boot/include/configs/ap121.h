@@ -348,6 +348,19 @@
 	#define CFG_PROMPT	"BSB> "
 #endif
 
+/* D-Link DIR-505 is limited to 64 KB only and doesn't use env */
+#if defined(CONFIG_FOR_DLINK_DIR505_A1)
+	#define CFG_ENV_IS_NOWHERE	1
+	#undef CFG_ENV_IS_IN_FLASH
+	#undef CONFIG_CMD_DHCP
+	#undef CONFIG_CMD_SNTP
+	#undef CONFIG_CMD_IMI
+	#undef CONFIG_CMD_ENV
+	#undef CONFIG_CMD_LOADB
+	#undef CONFIG_CMD_BUTTON
+	#undef CONFIG_CMD_SLEEP
+#endif
+
 /*
  * ===========================
  * HTTP recovery configuration
