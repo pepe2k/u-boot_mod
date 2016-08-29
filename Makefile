@@ -82,8 +82,11 @@ $(if $(IMG_SIZE),$(strip $(IMG_SIZE)),$(strip $(1)))
 endef
 
 # $(1): value
-define is_one
-$(if $(filter $(strip $(1)),1),1,0)
+define is_lzma
+$(if $(IMG_LZMA),\
+  $(if $(filter $(strip $(IMG_LZMA)),1),1,0),\
+  $(if $(filter $(strip $(1)),1),1,0)\
+)
 endef
 
 # $(1): file extension
@@ -148,7 +151,7 @@ endef
 # $(3): other parameters passed to subdir make
 define build
   args="IMG_SIZE=$$((1024*$(call img_size,$(1)))) \
-        IMG_LZMA=$(call is_one,$(2)) \
+        IMG_LZMA=$(strip $(call is_lzma,$(2))) \
         $(strip $(3))"; \
   cd $(SOURCE_DIR) && \
      $(SUB_MAKE_CMD) $@ $$args && \
@@ -156,7 +159,7 @@ define build
 
   $(if $(filter $(IMG_RAM),1),\
     $(call copy_img,u-boot), \
-    $(if $(filter $(call is_one,$(2)),1), \
+    $(if $(filter $(strip $(call is_lzma,$(2))),1), \
       $(call copy_img,tuboot,$(call img_size,$(1))), \
       $(call copy_img,u-boot,$(call img_size,$(1))) \
     ) \
