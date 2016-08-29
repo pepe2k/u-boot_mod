@@ -70,7 +70,8 @@ extern int cmd_get_data_size(char* arg, int default_size);
 
 static long evalexp(char *s, int w)
 {
-	long l, *p;
+	long *p;
+	long l = 0;
 
 	/* if the parameter starts with a * then assume is a pointer to the value we want */
 	if (s[0] == '*') {
@@ -80,7 +81,10 @@ static long evalexp(char *s, int w)
 		l = simple_strtoul(s, NULL, 16);
 	}
 
-	return (l & ((1 << (w * 8)) - 1));
+	if (w < 4)
+		return l & ((1 << (w * 8)) - 1);
+	else
+		return l;
 }
 
 static char * evalstr(char *s)
