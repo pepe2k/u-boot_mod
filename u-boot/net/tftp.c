@@ -350,7 +350,7 @@ void TftpStart(void){
 	    }
 	}
 
-	printf("\n    Filename: '%s'", tftp_filename);
+	printf("\n    Filename: %s", tftp_filename);
 
 	if(NetBootFileSize){
 		printf("\n        Size: 0x%x Bytes = ", NetBootFileSize<<9);

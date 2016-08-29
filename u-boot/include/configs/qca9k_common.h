@@ -83,7 +83,7 @@
 #define CONFIG_NETCONSOLE_PORT	6666
 
 /* Other environment variables */
-#define CONFIG_BOOTFILE	"firmware.bin"
+#define CONFIG_BOOTFILE	firmware.bin
 #define CONFIG_LOADADDR	0x80800000
 
 /* This is needed for time calculation */

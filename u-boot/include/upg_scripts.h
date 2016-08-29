@@ -96,11 +96,10 @@
 	#endif
 
 	#define CONFIG_ENV_UPG_SCRIPTS_FW	\
-		"fw_name=firmware.bin\0" \
 		"fw_addr=" MK_STR(CONFIG_UPG_SCRIPTS_FW_ADDR_HEX) "\0" \
 		"fw_upg=" \
 			"if ping $serverip; then " \
-				"tftp $loadaddr $fw_name && " \
+				"tftp $loadaddr $bootfile && " \
 				"erase $fw_addr +$filesize && " \
 				"cp.b $loadaddr $fw_addr $filesize && " \
 				"echo DONE! Firmware upgraded!; " \
