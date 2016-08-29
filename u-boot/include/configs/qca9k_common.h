@@ -117,6 +117,10 @@
 #define CONFIG_CMD_BUTTON
 #define CONFIG_CMD_SLEEP
 
+/* Simple upgrade scripts in environment */
+#define CONFIG_UPG_SCRIPTS_UBOOT
+#define CONFIG_UPG_SCRIPTS_FW
+
 /* For HTTP based recovery */
 /* TODO: move it to httpd related header */
 #define WEBFAILSAFE_PROGRESS_START		0

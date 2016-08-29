@@ -158,6 +158,13 @@
 #endif
 
 /*
+ * ==================================
+ * For upgrade scripts in environment
+ * ==================================
+ */
+#define CONFIG_UPG_UBOOT_SIZE_BACKUP_HEX	0x20000
+
+/*
  * ===================
  * Other configuration
  * ===================

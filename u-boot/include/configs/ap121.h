@@ -352,6 +352,7 @@
 #if defined(CONFIG_FOR_DLINK_DIR505_A1)
 	#define CFG_ENV_IS_NOWHERE	1
 	#undef CFG_ENV_IS_IN_FLASH
+
 	#undef CONFIG_CMD_DHCP
 	#undef CONFIG_CMD_SNTP
 	#undef CONFIG_CMD_IMI
@@ -359,6 +360,9 @@
 	#undef CONFIG_CMD_LOADB
 	#undef CONFIG_CMD_BUTTON
 	#undef CONFIG_CMD_SLEEP
+
+	#undef CONFIG_UPG_SCRIPTS_UBOOT
+	#undef CONFIG_UPG_SCRIPTS_FW
 #endif
 
 /*
@@ -418,6 +422,19 @@
 	#define CONFIG_QCA_PLL_IN_FLASH_BLOCK_OFFSET	0x10000
 	#define CONFIG_QCA_PLL_IN_FLASH_BLOCK_SIZE	0x10000
 
+#endif
+
+/*
+ * ==================================
+ * For upgrade scripts in environment
+ * ==================================
+ */
+#if !defined(CONFIG_FOR_BLACK_SWIFT_BOARD) &&\
+    !defined(CONFIG_FOR_DLINK_DIR505_A1)   &&\
+    !defined(CONFIG_FOR_DRAGINO_V2)        &&\
+    !defined(CONFIG_FOR_MESH_POTATO_V2)    &&\
+    !defined(CONFIG_FOR_8DEVICES_CARAMBOLA2)
+	#define CONFIG_UPG_SCRIPTS_UBOOT_SIZE_BCKP_HEX	0x20000
 #endif
 
 #endif /* _AP121_H */

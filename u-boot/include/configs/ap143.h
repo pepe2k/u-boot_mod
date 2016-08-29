@@ -214,6 +214,20 @@
 #endif
 
 /*
+ * ==================================
+ * For upgrade scripts in environment
+ * ==================================
+ */
+#if !defined(CONFIG_FOR_WALLYS_DR531) &&\
+    !defined(CONFIG_FOR_ZBTLINK_ZBT_WE1526)
+	#define CONFIG_UPG_UBOOT_SIZE_BACKUP_HEX	0x20000
+#endif
+
+#if defined(CONFIG_FOR_ZBTLINK_ZBT_WE1526)
+	#define CONFIG_UPG_SCRIPTS_FW_ADDR_HEX	0x9F050000
+#endif
+
+/*
  * ===================
  * Other configuration
  * ===================

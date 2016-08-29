@@ -169,6 +169,7 @@ define config_init
   $(if $(filter $(4),1),$(call define_add,CONFIG_GPIO_RESET_BTN_ACTIVE_LOW,1))
   $(if $(CONFIG_MAX_UBOOT_SIZE), \
     $(call define_add,CONFIG_MAX_UBOOT_SIZE,$(CONFIG_MAX_UBOOT_SIZE))
+    $(call define_add,CONFIG_MAX_UBOOT_SIZE_HEX,$(shell printf '0x%X' $(CONFIG_MAX_UBOOT_SIZE)))
   )
 
   $(if $(filter $(CONFIG_SKIP_LOWLEVEL_INIT),1), \
