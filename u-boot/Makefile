@@ -94,6 +94,12 @@ define ih_name
 u-boot_mod $(if $(filter $(IMG_RAM),1),RAM,$(if $(filter $(IMG_LZMA),1),LZMA FLASH,FLASH)) image
 endef
 
+# $(1): name
+# $(2): path
+define echo_size
+@echo "$(1): `wc -c < $(strip $(2))` Bytes"
+endef
+
 # $(1): define name
 # $(2): define value
 define define_add
@@ -290,8 +296,13 @@ $(SUBDIRS):
 # For LZMA compressed image
 ifdef COMPRESSED_UBOOT
 tuboot.bin: System.map bootstrap.bin u-boot.lzimg
+	@echo
+	$(call echo_green,Merging bootstrap.bin with u-boot.lzimg...)
+	$(call echo_size,    Bootstrap size,bootstrap.bin)
+	$(call echo_size,   LZMA image size,u-boot.lzimg)
 	@cat bootstrap.bin > $@
 	@cat u-boot.lzimg >> $@
+	$(call echo_size,  Total image size,$@)
 
 u-boot.lzimg: $(obj)u-boot.bin System.map
 	@echo
