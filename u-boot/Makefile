@@ -567,7 +567,7 @@ lzma_host_clean:
 	@$(call echo_green,Removing lzma host utility...)
 	@$(MAKE) -C $(BUILD_TOPDIR)/host_util/lzma -f makefile.gcc clean
 
-clobber: lzma_host_clean clean
+clobber: clean
 	@$(call echo_green,Making $@...)
 	@find . -type f \( -name .depend \
 		-o -name '*.srec' -o -name '*.bin' -o -name u-boot.img \) \
