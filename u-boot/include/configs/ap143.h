@@ -21,8 +21,15 @@
  * GPIO configuration
  * ==================
  */
-#if defined(CONFIG_FOR_TPLINK_WR820N_CN) ||\
-    defined(CONFIG_FOR_TPLINK_WR802N)
+#if defined(CONFIG_FOR_COMFAST_CF_E520N)
+
+	#define CONFIG_QCA_GPIO_MASK_LED_ACT_L	GPIO11
+	#define CONFIG_QCA_GPIO_MASK_OUT	CONFIG_QCA_GPIO_MASK_LED_ACT_L
+	#define CONFIG_QCA_GPIO_MASK_IN		GPIO17
+	#define CONFIG_QCA_GPIO_MASK_OUT_INIT_H	CONFIG_QCA_GPIO_MASK_LED_ACT_L
+
+#elif defined(CONFIG_FOR_TPLINK_WR820N_CN) ||\
+      defined(CONFIG_FOR_TPLINK_WR802N)
 
 	#define CONFIG_QCA_GPIO_MASK_LED_ACT_L	GPIO13
 	#define CONFIG_QCA_GPIO_MASK_OUT	CONFIG_QCA_GPIO_MASK_LED_ACT_L
@@ -62,7 +69,13 @@
  * Default bootargs
  * ================
  */
-#if defined(CONFIG_FOR_TPLINK_WR820N_CN)
+#if defined(CONFIG_FOR_COMFAST_CF_E520N)
+
+	#define CONFIG_BOOTARGS	"console=ttyS0,115200 root=31:03 "\
+				"rootfstype=jffs2 init=/sbin/init "\
+				"mtdparts=ath-nor0:64k(u-boot),64k(art),1536k(uImage),6464k(rootfs),64k(mib0)"
+
+#elif defined(CONFIG_FOR_TPLINK_WR820N_CN)
 
 	#define CONFIG_BOOTARGS	"console=ttyS0,115200 root=31:02 "\
 				"rootfstype=squashfs init=/sbin/init "\
@@ -94,7 +107,8 @@
  * Load address and boot command
  * =============================
  */
-#if defined(CONFIG_FOR_TPLINK_WR820N_CN) ||\
+#if defined(CONFIG_FOR_COMFAST_CF_E520N) ||\
+    defined(CONFIG_FOR_TPLINK_WR820N_CN) ||\
     defined(CONFIG_FOR_TPLINK_WR802N)    ||\
     defined(CONFIG_FOR_TPLINK_WR841N_V9)
 	#define CFG_LOAD_ADDR	0x9F020000
@@ -111,9 +125,13 @@
  * Environment configuration
  * =========================
  */
-#if defined(CONFIG_FOR_TPLINK_WR820N_CN) ||\
-    defined(CONFIG_FOR_TPLINK_WR802N)    ||\
-    defined(CONFIG_FOR_TPLINK_WR841N_V9)
+#if defined(CONFIG_FOR_COMFAST_CF_E520N)
+	#define CFG_ENV_ADDR		0x9F018000
+	#define CFG_ENV_SIZE		0x7C00
+	#define CFG_ENV_SECT_SIZE	0x10000
+#elif defined(CONFIG_FOR_TPLINK_WR820N_CN) ||\
+      defined(CONFIG_FOR_TPLINK_WR802N)    ||\
+      defined(CONFIG_FOR_TPLINK_WR841N_V9)
 	#define CFG_ENV_ADDR		0x9F01EC00
 	#define CFG_ENV_SIZE		0x1000
 	#define CFG_ENV_SECT_SIZE	0x10000
@@ -141,9 +159,13 @@
  * MAC address/es, model and WPS pin offsets in FLASH
  * ==================================================
  */
-#if defined(CONFIG_FOR_TPLINK_WR820N_CN) ||\
-    defined(CONFIG_FOR_TPLINK_WR802N)    ||\
-    defined(CONFIG_FOR_TPLINK_WR841N_V9)
+#if defined(CONFIG_FOR_COMFAST_CF_E520N)
+	#define OFFSET_MAC_DATA_BLOCK		0x10000
+	#define OFFSET_MAC_DATA_BLOCK_LENGTH	0x10000
+	#define OFFSET_MAC_ADDRESS		0x00000
+#elif defined(CONFIG_FOR_TPLINK_WR820N_CN) ||\
+      defined(CONFIG_FOR_TPLINK_WR802N)    ||\
+      defined(CONFIG_FOR_TPLINK_WR841N_V9)
 	#define OFFSET_MAC_DATA_BLOCK		0x010000
 	#define OFFSET_MAC_DATA_BLOCK_LENGTH	0x010000
 	#define OFFSET_MAC_ADDRESS		0x00FC00
@@ -160,6 +182,18 @@
 #endif
 
 /*
+ * =========================
+ * Custom changes per device
+ * =========================
+ */
+
+/* Comfast CF-E520N is limited to 64 KB only, disable some commands */
+#if defined(CONFIG_FOR_COMFAST_CF_E520N)
+	#undef CONFIG_CMD_DHCP
+	#undef CONFIG_CMD_LOADB
+#endif
+
+/*
  * ===========================
  * HTTP recovery configuration
  * ===========================
@@ -171,7 +205,8 @@
 #endif
 
 /* Firmware size limit */
-#if defined(CONFIG_FOR_TPLINK_WR820N_CN) ||\
+#if defined(CONFIG_FOR_COMFAST_CF_E520N) ||\
+    defined(CONFIG_FOR_TPLINK_WR820N_CN) ||\
     defined(CONFIG_FOR_TPLINK_WR802N)    ||\
     defined(CONFIG_FOR_TPLINK_WR841N_V9)
 	#define WEBFAILSAFE_UPLOAD_LIMITED_AREA_IN_BYTES	(192 * 1024)
@@ -189,12 +224,14 @@
     defined(CONFIG_FOR_TPLINK_WR802N)    ||\
     defined(CONFIG_FOR_TPLINK_WR841N_V9)
 	#define CONFIG_QCA_PLL	QCA_PLL_PRESET_550_400_200
-#elif defined(CONFIG_FOR_WALLYS_DR531) ||\
+#elif defined(CONFIG_FOR_COMFAST_CF_E520N) ||\
+      defined(CONFIG_FOR_WALLYS_DR531)     ||\
       defined(CONFIG_FOR_ZBTLINK_ZBT_WE1526)
 	#define CONFIG_QCA_PLL	QCA_PLL_PRESET_650_400_200
 #endif
 
-#if defined(CONFIG_FOR_TPLINK_WR820N_CN) ||\
+#if defined(CONFIG_FOR_COMFAST_CF_E520N) ||\
+    defined(CONFIG_FOR_TPLINK_WR820N_CN) ||\
     defined(CONFIG_FOR_TPLINK_WR802N)    ||\
     defined(CONFIG_FOR_TPLINK_WR841N_V9)
 
@@ -218,7 +255,8 @@
  * For upgrade scripts in environment
  * ==================================
  */
-#if !defined(CONFIG_FOR_WALLYS_DR531) &&\
+#if !defined(CONFIG_FOR_COMFAST_CF_E520N) &&\
+    !defined(CONFIG_FOR_WALLYS_DR531)     &&\
     !defined(CONFIG_FOR_ZBTLINK_ZBT_WE1526)
 	#define CONFIG_UPG_UBOOT_SIZE_BACKUP_HEX	0x20000
 #endif

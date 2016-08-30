@@ -217,6 +217,9 @@ $(COMMON_ETHS27_TARGETS):
 8devices_carambola2:
 	@$(call build,256,1)
 
+comfast_cf-e520n:
+	@$(call build,64,1,ETH_CONFIG=_s27)
+
 d-link_dir-505:
 	@$(call build,64,1)
 
