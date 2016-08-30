@@ -215,7 +215,7 @@ $(COMMON_ETHS27_TARGETS):
 	@$(call build,123,1,ETH_CONFIG=_s27)
 
 8devices_carambola2:
-	@$(call build,256)
+	@$(call build,256,1)
 
 d-link_dir-505:
 	@$(call build,64,1)
