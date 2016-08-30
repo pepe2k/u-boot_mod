@@ -24,6 +24,9 @@
 # host programs on Cygwin
 *.exe
 
+# lzma host util
+host_util/lzma/lzma
+
 #
 # Top-level generic files
 #

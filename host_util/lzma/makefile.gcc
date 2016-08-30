@@ -1,0 +1,80 @@
+PROG   = lzma
+CXX    = g++ -O2 -Wall -Wno-write-strings -Wno-unused-variable -Wno-unused-but-set-variable
+CXX_C  = gcc -O2 -Wall -Wno-write-strings -Wno-unused-variable -Wno-unused-but-set-variable
+LIB    = -lm
+RM     = rm -f
+CFLAGS = -c -I ../../ -D_FILE_OFFSET_BITS=64 -DPACKAGE_VERSION="\"4.32.0beta3\""
+
+OBJS = \
+	C_FileIO.o \
+	CRC.o \
+	Alloc.o \
+	FileStreams.o \
+	StreamUtils.o \
+	InBuffer.o \
+	OutBuffer.o \
+	LzmaDecoder.o \
+	StringConvert.o \
+	StringToInt.o \
+	LzmaEncoder.o \
+	LzmaDec.o \
+	LzmaEnc.o \
+	LzFind.o \
+	7zCrc.o \
+	lzmp.o
+
+all: $(PROG)
+
+$(PROG): $(OBJS)
+	$(CXX) -o $(PROG) $(LDFLAGS) $(OBJS) $(LIB)
+
+lzmp.o: lzmp.cpp
+	$(CXX) $(CFLAGS) lzmp.cpp
+
+LzmaDecoder.o: LzmaDecoder.cpp
+	$(CXX) $(CFLAGS) LzmaDecoder.cpp
+
+LzmaEncoder.o: LzmaEncoder.cpp
+	$(CXX) $(CFLAGS) LzmaEncoder.cpp
+
+InBuffer.o: InBuffer.cpp
+	$(CXX) $(CFLAGS) InBuffer.cpp
+
+OutBuffer.o: OutBuffer.cpp
+	$(CXX) $(CFLAGS) OutBuffer.cpp
+
+FileStreams.o: FileStreams.cpp
+	$(CXX) $(CFLAGS) FileStreams.cpp
+
+StreamUtils.o: StreamUtils.cpp
+	$(CXX) $(CFLAGS) StreamUtils.cpp
+
+C_FileIO.o: Common/C_FileIO.cpp
+	$(CXX) $(CFLAGS) Common/C_FileIO.cpp
+
+CRC.o: Common/CRC.cpp
+	$(CXX) $(CFLAGS) Common/CRC.cpp
+
+StringConvert.o: Common/StringConvert.cpp
+	$(CXX) $(CFLAGS) Common/StringConvert.cpp
+
+StringToInt.o: Common/StringToInt.cpp
+	$(CXX) $(CFLAGS) Common/StringToInt.cpp
+
+7zCrc.o: C/7zCrc.c
+	$(CXX_C) $(CFLAGS) C/7zCrc.c
+
+Alloc.o: C/Alloc.c
+	$(CXX_C) $(CFLAGS) C/Alloc.c
+
+LzFind.o: C/LzFind.c
+	$(CXX_C) $(CFLAGS) C/LzFind.c
+
+LzmaDec.o: C/LzmaDec.c
+	$(CXX_C) $(CFLAGS) C/LzmaDec.c
+
+LzmaEnc.o: C/LzmaEnc.c
+	$(CXX_C) $(CFLAGS) C/LzmaEnc.c
+
+clean:
+	-$(RM) $(PROG) $(OBJS)
