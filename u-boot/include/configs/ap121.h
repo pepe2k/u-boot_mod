@@ -186,7 +186,7 @@
 
 	#define CONFIG_BOOTARGS	"console=ttyS0,115200 root=31:06 "\
 				"rootfstype=squashfs init=/sbin/init "\
-				"mtdparts=ar7240-nor0:64k(u-boot),64k(ART),64k(mac),64k(nvram),256k(language),1024k(uImage),6656k(rootfs)"
+				"mtdparts=ar7240-nor0:64k(u-boot),64k(art),64k(mac),64k(nvram),256k(language),1024k(uImage),6656k(rootfs)"
 
 #elif defined(CONFIG_FOR_GS_OOLITE_V1_DEV)
 
@@ -240,8 +240,12 @@
  * Environment configuration
  * =========================
  */
-#if defined(CONFIG_FOR_DRAGINO_V2) ||\
-    defined(CONFIG_FOR_MESH_POTATO_V2)
+#if defined(CONFIG_FOR_DLINK_DIR505_A1)
+	#define CFG_ENV_ADDR		0x9F028000
+	#define CFG_ENV_SIZE		0x7C00
+	#define CFG_ENV_SECT_SIZE	0x10000
+#elif defined(CONFIG_FOR_DRAGINO_V2) ||\
+      defined(CONFIG_FOR_MESH_POTATO_V2)
 	#define CFG_ENV_ADDR		0x9F030000
 	#define CFG_ENV_SIZE		0x8000
 	#define CFG_ENV_SECT_SIZE	0x10000
@@ -350,19 +354,8 @@
 
 /* D-Link DIR-505 is limited to 64 KB only and doesn't use env */
 #if defined(CONFIG_FOR_DLINK_DIR505_A1)
-	#define CFG_ENV_IS_NOWHERE	1
-	#undef CFG_ENV_IS_IN_FLASH
-
 	#undef CONFIG_CMD_DHCP
-	#undef CONFIG_CMD_SNTP
-	#undef CONFIG_CMD_IMI
-	#undef CONFIG_CMD_ENV
 	#undef CONFIG_CMD_LOADB
-	#undef CONFIG_CMD_BUTTON
-	#undef CONFIG_CMD_SLEEP
-
-	#undef CONFIG_UPG_SCRIPTS_UBOOT
-	#undef CONFIG_UPG_SCRIPTS_FW
 #endif
 
 /*
