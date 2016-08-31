@@ -37,27 +37,15 @@
 
 #ifdef _LZMA_IN_CB
 
-
-#if 0
-#define RC_TEST { if (Buffer == BufferLim) \
-  { SizeT size; int result = InCallback->Read(InCallback, &Buffer, &size); if (result != LZMA_RESULT_OK) { printf("ERROR, %s, %d\n", __FILE__, __LINE__); return result; } \
-  BufferLim = Buffer + size; if (size == 0) { printf("ERROR, %s, %d\n", __FILE__, __LINE__); return LZMA_RESULT_DATA_ERROR; } }}
-#else
-
 #define RC_TEST { if (Buffer == BufferLim) \
   { SizeT size; int result = InCallback->Read(InCallback, &Buffer, &size); if (result != LZMA_RESULT_OK) { return result; } \
   BufferLim = Buffer + size; if (size == 0) { return LZMA_RESULT_DATA_ERROR; } }}
-#endif
 
 #define RC_INIT Buffer = BufferLim = 0; RC_INIT2
 
 #else
 
-#if 0
-#define RC_TEST { if (Buffer == BufferLim) { printf("ERROR, %s, %d\n", __FILE__, __LINE__); return LZMA_RESULT_DATA_ERROR; } }
-#else
 #define RC_TEST { if (Buffer == BufferLim) { return LZMA_RESULT_DATA_ERROR; } }
-#endif
 
 #define RC_INIT(buffer, bufferSize) Buffer = buffer; BufferLim = buffer + bufferSize; RC_INIT2
  
@@ -136,17 +124,13 @@ int LzmaDecodeProperties(CLzmaProperties *propsRes, const unsigned char *propsDa
   unsigned char prop0;
   if (size < LZMA_PROPERTIES_SIZE)
   {
-#ifdef DEBUG_ENABLE_BOOTSTRAP_PRINTF
-    printf("ERROR: %s, %d\n", __FILE__, __LINE__);
-#endif
+    //printf("ERROR: %s, %d\n", __FILE__, __LINE__);
     return LZMA_RESULT_DATA_ERROR;
   }
   prop0 = propsData[0];
   if (prop0 >= (9 * 5 * 5))
   {
-#ifdef DEBUG_ENABLE_BOOTSTRAP_PRINTF
-    printf("ERROR: %s, %d\n", __FILE__, __LINE__);
-#endif
+    //printf("ERROR: %s, %d\n", __FILE__, __LINE__);
     return LZMA_RESULT_DATA_ERROR;
   }
   {
@@ -396,10 +380,7 @@ int LzmaDecode(CLzmaDecoderState *vs,
             if (nowPos == 0)
             #endif
             {
-			  
-#ifdef DEBUG_ENABLE_BOOTSTRAP_PRINTF
-              printf("ERROR: %s, %d\n", __FILE__, __LINE__);
-#endif
+              //printf("ERROR: %s, %d\n", __FILE__, __LINE__);
               return LZMA_RESULT_DATA_ERROR;
             }
             
@@ -559,10 +540,7 @@ int LzmaDecode(CLzmaDecoderState *vs,
       if (rep0 > nowPos)
       #endif
       {
-		
-#ifdef DEBUG_ENABLE_BOOTSTRAP_PRINTF
-        printf("ERROR: %s, %d\n", __FILE__, __LINE__);
-#endif
+        //printf("ERROR: %s, %d\n", __FILE__, __LINE__);
         return LZMA_RESULT_DATA_ERROR;
       }
 
