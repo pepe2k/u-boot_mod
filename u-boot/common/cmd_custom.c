@@ -288,3 +288,25 @@ U_BOOT_CMD(sleep, 2, 1, do_sleep,
 	"sleep for specified time\n", "ms\n"
 	"\t- sleep for 'ms' number of milliseconds\n");
 #endif /* CONFIG_CMD_SLEEP */
+
+/*
+ * Turns on/off LED/s
+ */
+#if defined(CONFIG_CMD_LED)
+int do_ledon(cmd_tbl_t * cmdtp, int flag, int argc, char *argv[])
+{
+	all_led_on();
+
+	return 0;
+}
+
+int do_ledoff(cmd_tbl_t * cmdtp, int flag, int argc, char *argv[])
+{
+	all_led_off();
+
+	return 0;
+}
+
+U_BOOT_CMD(ledon,  1, 1, do_ledon,  "turn LED/s on\n", NULL);
+U_BOOT_CMD(ledoff, 1, 1, do_ledoff, "turn LED/s off\n", NULL);
+#endif /* CONFIG_CMD_LED */

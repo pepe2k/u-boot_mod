@@ -100,23 +100,24 @@
 #undef  CFG_ENV_IS_NOWHERE
 
 /* Available commands */
-#define CONFIG_CMD_MEMORY
-#define CONFIG_CMD_DHCP
-#define CONFIG_CMD_PING
-#define CONFIG_CMD_FLASH
-#define CONFIG_CMD_NET
-#define CONFIG_CMD_RUN
-#define CONFIG_CMD_DATE
-#define CONFIG_CMD_SNTP
-#define CONFIG_CMD_ECHO
 #define CONFIG_CMD_BOOTD
-#define CONFIG_CMD_ITEST
-#define CONFIG_CMD_IMI
-#define CONFIG_CMD_ENV
-#define CONFIG_CMD_LOADB
 #define CONFIG_CMD_BUTTON
-#define CONFIG_CMD_SLEEP
+#define CONFIG_CMD_DATE
+#define CONFIG_CMD_DHCP
+#define CONFIG_CMD_ECHO
+#define CONFIG_CMD_ENV
+#define CONFIG_CMD_FLASH
+#define CONFIG_CMD_IMI
+#define CONFIG_CMD_ITEST
+#define CONFIG_CMD_LED
+#define CONFIG_CMD_LOADB
+#define CONFIG_CMD_MEMORY
+#define CONFIG_CMD_NET
+#define CONFIG_CMD_PING
+#define CONFIG_CMD_RUN
 #define CONFIG_CMD_SETEXPR
+#define CONFIG_CMD_SLEEP
+#define CONFIG_CMD_SNTP
 
 /* Simple upgrade scripts in environment */
 #define CONFIG_UPG_SCRIPTS_UBOOT
