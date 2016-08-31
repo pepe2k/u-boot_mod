@@ -245,6 +245,9 @@ zbtlink_zbt-we1526:
 # CLEAN TARGETS
 # =============
 
+lzma_host_clean:
+	@cd $(SOURCE_DIR) && $(SUB_MAKE_CMD) $@
+
 clean:
 	@cd $(SOURCE_DIR) && $(SUB_MAKE_CMD) distclean
 	@rm -f $(SOURCE_DIR)/httpd/fsdata.c
