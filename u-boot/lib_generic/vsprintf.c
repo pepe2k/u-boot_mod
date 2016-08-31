@@ -16,9 +16,6 @@
 #include <common.h>
 #include <command.h>
 
-/*cmd_boot.c*/
-extern int do_reset(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[]);
-
 unsigned long simple_strtoul(const char *cp,char **endp,unsigned int base){
 	unsigned long result = 0,value;
 
