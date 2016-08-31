@@ -21,16 +21,14 @@
  * MA 02111-1307 USA
  */
 
-/* #define	DEBUG	*/
-
 #include <common.h>
 #include <command.h>
 
-#ifdef CFG_HUSH_PARSER
+#if defined(CFG_HUSH_PARSER)
 #include <hush.h>
 #endif
 
-#ifdef CONFIG_SILENT_CONSOLE
+#if defined(CONFIG_SILENT_CONSOLE)
 DECLARE_GLOBAL_DATA_PTR;
 #endif
 
@@ -38,248 +36,261 @@ extern void all_led_on(void);
 extern void all_led_off(void);
 extern int NetLoopHttpd(void);
 
-#define MAX_DELAY_STOP_STR 32
+#define MAX_DELAY_STOP_STR	32
 
 static char *delete_char(char *buffer, char *p, int *colp, int *np, int plen);
 static int parse_line(char *, char *[]);
-#if defined(CONFIG_BOOTDELAY) && (CONFIG_BOOTDELAY >= 0)
+
+#if defined(CONFIG_BOOTDELAY) &&\
+	   (CONFIG_BOOTDELAY >= 0)
 static int abortboot(int);
 #endif
 
-char console_buffer[CFG_CBSIZE]; /* console I/O buffer	*/
-static char erase_seq[] = "\b \b"; /* erase sequence	*/
-static char tab_seq[] = "        "; /* used to expand TABs	*/
+char console_buffer[CFG_CBSIZE];	/* console I/O buffer  */
+static char erase_seq[] = "\b \b";	/* erase sequence      */
+static char tab_seq[] = "        ";	/* used to expand TABs */
 
-/***************************************************************************
+/*
  * Watch for 'delay' seconds for autoboot stop or autoboot delay string.
  * returns: 0 -  no key string, allow autoboot
  *          1 - got key string, abort
  */
-#if defined(CONFIG_BOOTDELAY) && (CONFIG_BOOTDELAY >= 0)
-static __inline__ int abortboot(int bootdelay){
-	char stopc;
+#if defined(CONFIG_BOOTDELAY) &&\
+	   (CONFIG_BOOTDELAY >= 0)
+static __inline__ int abortboot(int bootdelay)
+{
 	int abort = 0;
+	char stopc;
 
-#ifdef CONFIG_SILENT_CONSOLE
-	if(gd->flags & GD_FLG_SILENT){
+#if defined(CONFIG_SILENT_CONSOLE)
+	if (gd->flags & GD_FLG_SILENT) {
 		/* Restore serial console */
 		console_assign(stdout, "serial");
 		console_assign(stderr, "serial");
 	}
 #endif
 
-	if(bootdelay > 0){
-#ifdef CONFIG_MENUPROMPT
+	if (bootdelay > 0) {
+#if defined(CONFIG_MENUPROMPT)
 		printf(CONFIG_MENUPROMPT, bootdelay);
 #else
-		printf("Hit any key to stop autoboot: %d ", bootdelay);
+		printf("Hit any key to stop booting: %2d ", bootdelay);
 #endif
 
-		while((bootdelay > 0) && (!abort)){
+		while ((bootdelay > 0) && (!abort)) {
 			int i;
 
 			--bootdelay;
 
 			/* delay 100 * 10ms */
-			for(i = 0; !abort && i < 100; ++i){
-				/* we got a key press	*/
-				if(tstc()){
+			for (i = 0; !abort && i < 100; ++i) {
+				/* we got a key press */
+				if (tstc()) {
 					stopc = getc();
-#ifdef CONFIG_AUTOBOOT_STOP_CHAR
+#if defined(CONFIG_AUTOBOOT_STOP_CHAR)
 					if (stopc == CONFIG_AUTOBOOT_STOP_CHAR) {
 #else
 					if (stopc != 0) {
 #endif
 						abort = 1;
 						bootdelay = 0;
-
 						break;
 					}
 				}
 				udelay(10000);
 			}
-
 			printf("\b\b%d ", bootdelay);
 		}
-
 		printf("\n\n");
 	}
 
-#ifdef CONFIG_SILENT_CONSOLE
-	if(abort){
-		/* permanently enable normal console output */
+#if defined(CONFIG_SILENT_CONSOLE)
+	if (abort) {
+		/* Permanently enable normal console output */
 		gd->flags &= ~(GD_FLG_SILENT);
-	} else if(gd->flags & GD_FLG_SILENT){
+	} else if (gd->flags & GD_FLG_SILENT) {
 		/* Restore silent console */
 		console_assign(stdout, "nulldev");
 		console_assign(stderr, "nulldev");
 	}
 #endif
 
-	return(abort);
+	return abort;
 }
-#endif /* CONFIG_BOOTDELAY >= 0  */
+#endif /* CONFIG_BOOTDELAY && CONFIG_BOOTDELAY >= 0 */
 
-/****************************************************************************/
-
-void main_loop(void){
-#ifndef CFG_HUSH_PARSER
-	static char lastcommand[CFG_CBSIZE] = { 0, };
-	int len;
-	int rc = 1;
-	int flag;
-#endif
+void main_loop(void)
+{
 	int counter = 0;
 
-#if defined(CONFIG_BOOTDELAY) && (CONFIG_BOOTDELAY >= 0)
-	char *s;
-	int bootdelay;
-#endif /* defined(CONFIG_BOOTDELAY) && (CONFIG_BOOTDELAY >= 0) */
+#ifndef CFG_HUSH_PARSER
+	static char lastcommand[CFG_CBSIZE] = { 0, };
+	int flag, len;
+	int rc = 1;
+#endif
 
-#ifdef CFG_HUSH_PARSER
+#if defined(CONFIG_BOOTDELAY) &&\
+	   (CONFIG_BOOTDELAY >= 0)
+	int bootdelay;
+	char *s;
+#endif
+
+#if defined(CFG_HUSH_PARSER)
 	u_boot_hush_start();
 #endif
 
-#if defined(CONFIG_BOOTDELAY) && (CONFIG_BOOTDELAY >= 0)
-	// get boot delay (seconds)
+#if defined(CONFIG_BOOTDELAY) &&\
+	   (CONFIG_BOOTDELAY >= 0)
+	/* Get boot delay (seconds) */
 	s = getenv("bootdelay");
 	bootdelay = s ? (int)simple_strtol(s, NULL, 10) : CONFIG_BOOTDELAY;
 
-	// get boot command
+	/* Get boot command */
 	s = getenv("bootcmd");
 
-#if !defined(CONFIG_BOOTCOMMAND)
-#error "CONFIG_BOOTCOMMAND not defined!"
-#endif
+	#if !defined(CONFIG_BOOTCOMMAND)
+		#error "CONFIG_BOOTCOMMAND not defined!"
+	#endif
 
-	if(!s){
+	if (!s)
 		setenv("bootcmd", CONFIG_BOOTCOMMAND);
-	}
 
 	s = getenv("bootcmd");
 
-	// are we going to run web failsafe mode, U-Boot console, U-Boot netconsole or just boot command?
-	if(reset_button_status()){
-
-#ifdef CONFIG_SILENT_CONSOLE
-		if(gd->flags & GD_FLG_SILENT){
+	/*
+	 * Are we going to run web failsafe mode,
+	 * U-Boot console, U-Boot netconsole
+	 * or just boot command?
+	 */
+	if (reset_button_status()) {
+	#if defined(CONFIG_SILENT_CONSOLE)
+		if (gd->flags & GD_FLG_SILENT) {
 			/* Restore serial console */
 			console_assign(stdout, "serial");
 			console_assign(stderr, "serial");
 		}
 
-		/* enable normal console output */
+		/* Enable normal console output */
 		gd->flags &= ~(GD_FLG_SILENT);
-#endif
-
-		// wait 0,5s
+	#endif
+		/* Wait 0,5s */
 		milisecdelay(500);
 
-		printf("Press reset button for at least:\n- %d sec. to run web failsafe mode\n- %d sec. to run U-Boot console\n- %d sec. to run U-Boot netconsole\n\n",
-				CONFIG_DELAY_TO_AUTORUN_HTTPD,
-				CONFIG_DELAY_TO_AUTORUN_CONSOLE,
-				CONFIG_DELAY_TO_AUTORUN_NETCONSOLE);
+		printf("Press reset button for at least:\n"
+		       "- %d sec. to run web failsafe mode\n"
+		       "- %d sec. to run U-Boot console\n"
+		       "- %d sec. to run U-Boot netconsole\n\n",
+		       CONFIG_DELAY_TO_AUTORUN_HTTPD,
+		       CONFIG_DELAY_TO_AUTORUN_CONSOLE,
+		       CONFIG_DELAY_TO_AUTORUN_NETCONSOLE);
 
 		printf("Reset button is pressed for: %2d ", counter);
 
-		while(reset_button_status()){
-
-			// LED ON and wait 0,15s
+		while (reset_button_status()) {
+			/* LED ON and wait 0,15s */
 			all_led_on();
 			milisecdelay(150);
 
-			// LED OFF and wait 0,85s
+			/* LED OFF and wait 0,85s */
 			all_led_off();
 			milisecdelay(850);
 
 			counter++;
 
-			// how long the button is pressed?
+			/* How long the button is pressed? */
 			printf("\b\b\b%2d ", counter);
 
-			if(!reset_button_status()){
+			if (!reset_button_status())
 				break;
-			}
 
-			if(counter >= CONFIG_MAX_BUTTON_PRESSING){
+			if (counter >= CONFIG_MAX_BUTTON_PRESSING)
 				break;
-			}
 		}
 
 		all_led_off();
 
-		if(counter > 0){
+		if (counter > 0) {
+			/* Run web failsafe mode */
+			if (counter >= CONFIG_DELAY_TO_AUTORUN_HTTPD &&
+			    counter <  CONFIG_DELAY_TO_AUTORUN_CONSOLE) {
+				printf("\n\nButton was pressed for %d sec...\n"
+				       "HTTP server is starting for firmware update...\n\n",
+				       counter);
 
-			// run web failsafe mode
-			if(counter >= CONFIG_DELAY_TO_AUTORUN_HTTPD && counter < CONFIG_DELAY_TO_AUTORUN_CONSOLE){
-				printf("\n\nButton was pressed for %d sec...\nHTTP server is starting for firmware update...\n\n", counter);
 				NetLoopHttpd();
 				bootdelay = -1;
-			} else if(counter >= CONFIG_DELAY_TO_AUTORUN_CONSOLE && counter < CONFIG_DELAY_TO_AUTORUN_NETCONSOLE){
-				printf("\n\nButton was pressed for %d sec...\nStarting U-Boot console...\n\n", counter);
+			} else if (counter >= CONFIG_DELAY_TO_AUTORUN_CONSOLE &&
+				   counter <  CONFIG_DELAY_TO_AUTORUN_NETCONSOLE) {
+				printf("\n\nButton was pressed for %d sec...\n"
+				       "Starting U-Boot console...\n\n",
+				       counter);
+
 				bootdelay = -1;
-			} else if(counter >= CONFIG_DELAY_TO_AUTORUN_NETCONSOLE){
-				printf("\n\nButton was pressed for %d sec...\nStarting U-Boot netconsole...\n\n", counter);
+			} else if (counter >= CONFIG_DELAY_TO_AUTORUN_NETCONSOLE) {
+				printf("\n\nButton was pressed for %d sec...\n"
+				       "Starting U-Boot netconsole...\n\n",
+				       counter);
+
 				bootdelay = -1;
 				run_command("startnc", 0);
 			} else {
-				printf("\n\n## Error: button wasn't pressed long enough!\nContinuing normal boot...\n\n");
+				printf("\n\n## Error: button wasn't pressed long enough!\n"
+				       "Continuing normal boot...\n\n");
 			}
 
 		} else {
-			printf("\n\n## Error: button wasn't pressed long enough!\nContinuing normal boot...\n\n");
+			printf("\n\n## Error: button wasn't pressed long enough!\n"
+			       "Continuing normal boot...\n\n");
 		}
 
 	}
 
-	if(bootdelay >= 0 && s && !abortboot(bootdelay)){
+	if (bootdelay >= 0 && s && !abortboot(bootdelay)) {
+		/* Try to boot */
+	#ifndef CFG_HUSH_PARSER
+		run_command(s, 0);
+	#else
+		parse_string_outer(s, FLAG_PARSE_SEMICOLON |
+				      FLAG_EXIT_FROM_LOOP);
+	#endif
+		/* Something went wrong! */
+		printf("\n## Error: failed to execute 'bootcmd'!\n"
+		       "HTTP server is starting for firmware update...\n\n");
 
-		// try to boot
-#ifndef CFG_HUSH_PARSER
-			run_command(s, 0);
-#else
-			parse_string_outer(s, FLAG_PARSE_SEMICOLON | FLAG_EXIT_FROM_LOOP);
-#endif
-
-		// something goes wrong!
-		printf("\n## Error: failed to execute 'bootcmd'!\nHTTP server is starting for firmware update...\n\n");
 		NetLoopHttpd();
 	}
-#endif /* CONFIG_BOOTDELAY */
+#endif /* CONFIG_BOOTDELAY && CONFIG_BOOTDELAY >= 0 */
 
-	/*
-	 * Main Loop for Monitor Command Processing
-	 */
-#ifdef CFG_HUSH_PARSER
+	/* Main loop for monitor command processing */
+#if defined(CFG_HUSH_PARSER)
 	parse_file_outer();
+
 	/* This point is never reached */
-	for (;;);
+	for (;;)
+		;
 #else
-	for(;;){
+	for (;;) {
 		len = readline(CFG_PROMPT);
 
-		flag = 0; /* assume no special flags for now */
-		if(len > 0){
+		/* Assume no special flags for now */
+		flag = 0;
+
+		if (len > 0)
 			strcpy(lastcommand, console_buffer);
-		} else if(len == 0){
+		else if (len == 0)
 			flag |= CMD_FLAG_REPEAT;
-		}
 
-		if(len == -1){
+		if (len == -1)
 			puts("<INTERRUPT>\n");
-		} else {
+		else
 			rc = run_command(lastcommand, flag);
-		}
 
-		if(rc <= 0){
-			/* invalid command or not repeatable, forget it */
+		/* Invalid command or not repeatable, forget it */
+		if (rc <= 0)
 			lastcommand[0] = 0;
-		}
 	}
 #endif /* CFG_HUSH_PARSER */
 }
-
-/****************************************************************************/
 
 /*
  * Prompt for input and read a line.
@@ -289,98 +300,107 @@ void main_loop(void){
  *		-1 if break
  *		-2 if timed out
  */
-int readline(const char * const prompt){
+int readline(const char * const prompt)
+{
 	char *p = console_buffer;
-	int n = 0; /* buffer index		*/
-	int plen = 0; /* prompt length	*/
-	int col; /* output column cnt	*/
+	int plen = 0;	/* prompt length     */
+	int n = 0;	/* buffer index      */
+	int col;	/* output column cnt */
 	char c;
 
-	/* print prompt */
-	if(prompt){
+	/* Print prompt */
+	if (prompt) {
 		plen = strlen(prompt);
 		puts(prompt);
 	}
 	col = plen;
 
-	for(;;){
+	for (;;) {
 		c = getc();
 
-		/*
-		 * Special character handling
-		 */
-		switch(c){
-			case '\r': /* Enter		*/
-			case '\n':
-				*p = '\0';
-				puts("\r\n");
-				return(p - console_buffer);
+		/* Special character handling */
+		switch (c) {
+		/* Enter */
+		case '\r':
+		case '\n':
+			*p = '\0';
+			puts("\r\n");
+			return p - console_buffer;
+		/* NULL */
+		case '\0':
+			continue;
+		/* ^C - break */
+		case 0x03:
+			/* discard input */
+			console_buffer[0] = '\0';
+			return -1;
+		/* ^U - erase line */
+		case 0x15:
+			while (col > plen) {
+				puts(erase_seq);
+				--col;
+			}
 
-			case '\0': /* nul			*/
-				continue;
+			p = console_buffer;
+			n = 0;
 
-			case 0x03: /* ^C - break		*/
-				console_buffer[0] = '\0'; /* discard input */
-				return(-1);
-
-			case 0x15: /* ^U - erase line	*/
-				while(col > plen){
-					puts(erase_seq);
-					--col;
-				}
-				p = console_buffer;
-				n = 0;
-				continue;
-
-			case 0x17: /* ^W - erase word 	*/
+			continue;
+		/* ^W - erase word */
+		case 0x17:
+			p = delete_char(console_buffer, p, &col, &n, plen);
+			while ((n > 0) && (*p != ' '))
 				p = delete_char(console_buffer, p, &col, &n, plen);
-				while((n > 0) && (*p != ' ')){
-					p = delete_char(console_buffer, p, &col, &n, plen);
-				}
-				continue;
 
-			case 0x08: /* ^H  - backspace	*/
-			case 0x7F: /* DEL - backspace	*/
-				p = delete_char(console_buffer, p, &col, &n, plen);
-				continue;
-
-			default:
-				/*
-				 * Must be a normal character then
-				 */
-				if(n < CFG_CBSIZE - 2){
-					if(c == '\t'){ /* expand TABs		*/
-						puts(tab_seq + (col & 07));
-						col += 8 - (col & 07);
-					} else {
-						++col; /* echo input		*/
-						putc(c);
-					}
-					*p++ = c;
-					++n;
-				} else { /* Buffer full		*/
-					putc('\a');
+			continue;
+		/* ^H  - backspace */
+		/* DEL - backspace */
+		case 0x08:
+		case 0x7F:
+			p = delete_char(console_buffer, p, &col, &n, plen);
+			continue;
+		/* Must be a normal character then */
+		default:
+			if (n < CFG_CBSIZE - 2) {
+				if (c == '\t') {
+					/* Expand TABs */
+					puts(tab_seq + (col & 07));
+					col += 8 - (col & 07);
+				} else {
+					/* Echo input */
+					++col;
+					putc(c);
 				}
+
+				*p++ = c;
+				++n;
+			} else {
+				/* Buffer full */
+				putc('\a');
+			}
 		}
 	}
 }
 
-/****************************************************************************/
-
-static char * delete_char(char *buffer, char *p, int *colp, int *np, int plen){
+static char *delete_char(char *buffer,
+			 char *p,
+			 int *colp,
+			 int *np,
+			 int plen)
+{
 	char *s;
 
-	if(*np == 0){
-		return(p);
-	}
+	if (*np == 0)
+		return p;
 
-	if(*(--p) == '\t'){ /* will retype the whole line	*/
-		while(*colp > plen){
+	if (*(--p) == '\t') {
+		/* Will retype the whole line */
+		while (*colp > plen) {
 			puts(erase_seq);
 			(*colp)--;
 		}
-		for(s = buffer; s < p; ++s){
-			if(*s == '\t'){
+
+		for (s = buffer; s < p; ++s) {
+			if (*s == '\t') {
 				puts(tab_seq + ((*colp) & 07));
 				*colp += 8 - ((*colp) & 07);
 			} else {
@@ -392,71 +412,71 @@ static char * delete_char(char *buffer, char *p, int *colp, int *np, int plen){
 		puts(erase_seq);
 		(*colp)--;
 	}
+
 	(*np)--;
-	return(p);
+	return p;
 }
 
-/****************************************************************************/
-
-int parse_line(char *line, char *argv[]){
+int parse_line(char *line, char *argv[])
+{
 	int nargs = 0;
 
-	while(nargs < CFG_MAXARGS){
-
-		/* skip any white space */
-		while((*line == ' ') || (*line == '\t')){
+	while (nargs < CFG_MAXARGS) {
+		/* Skip any white space */
+		while ((*line == ' ') || (*line == '\t'))
 			++line;
-		}
 
-		if(*line == '\0'){ /* end of line, no more args	*/
+		/* End of line, no more args */
+		if (*line == '\0') {
 			argv[nargs] = NULL;
-			return(nargs);
+			return nargs;
 		}
 
-		argv[nargs++] = line; /* begin of argument string	*/
+		/* Begin of argument string */
+		argv[nargs++] = line;
 
-		/* find end of string */
-		while(*line && (*line != ' ') && (*line != '\t')){
+		/* Find end of string */
+		while (*line && (*line != ' ') && (*line != '\t'))
 			++line;
-		}
 
-		if(*line == '\0'){ /* end of line, no more args	*/
+		/* End of line, no more args */
+		if (*line == '\0') {
 			argv[nargs] = NULL;
-			return(nargs);
+			return nargs;
 		}
 
-		*line++ = '\0'; /* terminate current arg	 */
+		/* Terminate current arg */
+		*line++ = '\0';
 	}
 
 	printf("## Error: too many args (max. %d)\n", CFG_MAXARGS);
 
-	return(nargs);
+	return nargs;
 }
 
-/****************************************************************************/
-
-static void process_macros(const char *input, char *output){
-	char c, prev;
+static void process_macros(const char *input, char *output)
+{
 	const char *varname_start = NULL;
 	int inputcnt = strlen(input);
 	int outputcnt = CFG_CBSIZE;
-	int state = 0; /* 0 = waiting for '$'	*/
-	/* 1 = waiting for '(' or '{' */
-	/* 2 = waiting for ')' or '}' */
-	/* 3 = waiting for '''  */
+	char c, prev;
+	int state = 0;	/* 0 = waiting for '$'
+			   1 = waiting for '(' or '{'
+			   2 = waiting for ')' or '}'
+			   3 = waiting for ''' */
 
-	prev = '\0'; /* previous character	*/
+	/* Previous character */
+	prev = '\0';
 
-	while(inputcnt && outputcnt){
+	while (inputcnt && outputcnt) {
 		c = *input++;
 		inputcnt--;
 
-		if(state != 3){
-			/* remove one level of escape characters */
-			if((c == '\\') && (prev != '\\')){
-				if(inputcnt-- == 0){
+		if (state != 3) {
+			/* Remove one level of escape characters */
+			if ((c == '\\') && (prev != '\\')) {
+				if (inputcnt-- == 0)
 					break;
-				}
 
 				prev = c;
 				c = *input++;
@@ -464,77 +484,87 @@ static void process_macros(const char *input, char *output){
 		}
 
 		switch(state){
-			case 0: /* Waiting for (unescaped) $	*/
-				if((c == '\'') && (prev != '\\')){
-					state = 3;
-					break;
-				}
-				if((c == '$') && (prev != '\\')){
-					state++;
-				} else {
+		/* Waiting for (unescaped) $ */
+		case 0:
+			if ((c == '\'') && (prev != '\\')) {
+				state = 3;
+				break;
+			}
+
+			if ((c == '$') && (prev != '\\')) {
+				state++;
+			} else {
+				*(output++) = c;
+				outputcnt--;
+			}
+
+			break;
+		/* Waiting for ( */
+		case 1:
+			if (c == '(' || c == '{') {
+				state++;
+				varname_start = input;
+			} else {
+				state = 0;
+				*(output++) = '$';
+				outputcnt--;
+
+				if (outputcnt) {
 					*(output++) = c;
 					outputcnt--;
 				}
-				break;
-			case 1: /* Waiting for (	*/
-				if(c == '(' || c == '{'){
-					state++;
-					varname_start = input;
-				} else {
-					state = 0;
-					*(output++) = '$';
-					outputcnt--;
+			}
 
-					if(outputcnt){
-						*(output++) = c;
+			break;
+		/* Waiting for ) */
+		case 2:
+			if (c == ')' || c == '}') {
+				int envcnt = input - varname_start - 1;	/* Varname # of chars */
+				char envname[CFG_CBSIZE], *envval;
+				int i;
+
+				/* Get the varname */
+				for (i = 0; i < envcnt; i++)
+					envname[i] = varname_start[i];
+
+				envname[i] = 0;
+
+				/* Get its value */
+				envval = getenv(envname);
+
+				/* Copy into the line if it exists */
+				if (envval != NULL) {
+					while ((*envval) && outputcnt) {
+						*(output++) = *(envval++);
 						outputcnt--;
 					}
 				}
-				break;
-			case 2: /* Waiting for )	*/
-				if(c == ')' || c == '}'){
-					int i;
-					char envname[CFG_CBSIZE], *envval;
-					int envcnt = input - varname_start - 1; /* Varname # of chars */
 
-					/* Get the varname */
-					for(i = 0; i < envcnt; i++){
-						envname[i] = varname_start[i];
-					}
-					envname[i] = 0;
+				/* Look for another '$' */
+				state = 0;
+			}
 
-					/* Get its value */
-					envval = getenv(envname);
+			break;
+		/* Waiting for ' */
+		case 3:
+			if ((c == '\'') && (prev != '\\')) {
+				state = 0;
+			} else {
+				*(output++) = c;
+				outputcnt--;
+			}
 
-					/* Copy into the line if it exists */
-					if(envval != NULL){
-						while((*envval) && outputcnt){
-							*(output++) = *(envval++);
-							outputcnt--;
-						}
-					}
-					/* Look for another '$' */
-					state = 0;
-				}
-				break;
-			case 3: /* Waiting for '	*/
-				if((c == '\'') && (prev != '\\')){
-					state = 0;
-				} else {
-					*(output++) = c;
-					outputcnt--;
-				}
-				break;
+			break;
 		}
+
 		prev = c;
 	}
 
-	if(outputcnt){
+	if (outputcnt)
 		*output = 0;
-	}
 }
 
-/****************************************************************************
+/*
  * returns:
  *	1  - command executed, repeatable
  *	0  - command executed but not repeatable, interrupted commands are
@@ -553,127 +583,127 @@ static void process_macros(const char *input, char *output){
 
 int run_command(const char *cmd, int flag){
 	cmd_tbl_t *cmdtp;
-	char cmdbuf[CFG_CBSIZE]; /* working copy of cmd		*/
-	char *token; /* start of token in cmdbuf	*/
-	char *sep; /* end of token (separator) in cmdbuf */
+	char *argv[CFG_MAXARGS + 1];	/* NULL terminated                    */
+	char cmdbuf[CFG_CBSIZE];	/* Working copy of cmd                */
+	char *token;			/* Start of token in cmdbuf           */
+	char *sep; 			/* End of token (separator) in cmdbuf */
 	char finaltoken[CFG_CBSIZE];
 	char *str = cmdbuf;
-	char *argv[CFG_MAXARGS + 1]; /* NULL terminated	*/
 	int argc, inquotes;
 	int repeatable = 1;
 	int rc = 0;
 
-	clear_ctrlc(); /* forget any previous Control C */
+	/* Forget any previous Control-C */
+	clear_ctrlc();
 
-	if(!cmd || !*cmd){
-		return(-1); /* empty command */
-	}
+	/* Empty command */
+	if (!cmd || !*cmd)
+		return -1;
 
-	if(strlen(cmd) >= CFG_CBSIZE){
+	if (strlen(cmd) >= CFG_CBSIZE) {
 		puts("## Error: command too long!\n");
-		return(-1);
+		return -1;
 	}
 
 	strcpy(cmdbuf, cmd);
 
-	/* Process separators and check for invalid
-	 * repeatable commands
-	 */
-	while(*str){
-
+	/* Process separators and check for invalid repeatable commands */
+	while (*str) {
 		/*
 		 * Find separator, or string end
 		 * Allow simple escape of ';' by writing "\;"
 		 */
-		for(inquotes = 0, sep = str; *sep; sep++){
-			if((*sep == '\'') && (*(sep - 1) != '\\')){
+		for (inquotes = 0, sep = str; *sep; sep++) {
+			if ((*sep == '\'') && (*(sep - 1) != '\\'))
 				inquotes = !inquotes;
-			}
 
-			if(!inquotes && (*sep == ';') && (sep != str) && (*(sep - 1) != '\\')){
+			if(!inquotes && (*sep == ';')
+				     && (sep != str) && (*(sep - 1) != '\\'))
 				break;
-			}
 		}
 
-		/*
-		 * Limit the token to data between separators
-		 */
+		/* Limit the token to data between separators */
 		token = str;
-		if(*sep){
-			str = sep + 1; /* start of command for next pass */
+
+		if (*sep) {
+			/* Start of command for next pass */
+			str = sep + 1;
 			*sep = '\0';
 		} else {
-			str = sep; /* no more commands for next pass */
+			/* No more commands for next pass */
+			str = sep;
 		}
 
-		/* find macros in this token and replace them */
+		/* Find macros in this token and replace them */
 		process_macros(token, finaltoken);
 
 		/* Extract arguments */
-		if((argc = parse_line(finaltoken, argv)) == 0){
-			rc = -1; /* no command at all */
+		if ((argc = parse_line(finaltoken, argv)) == 0) {
+			/* No command at all */
+			rc = -1;
 			continue;
 		}
 
 		/* Look up command in command table */
-		if((cmdtp = find_cmd(argv[0])) == NULL){
+		if ((cmdtp = find_cmd(argv[0])) == NULL) {
 			printf("## Error: unknown command '%s' - try 'help'\n\n", argv[0]);
-			rc = -1; /* give up after bad command */
+
+			/* Give up after bad command */
+			rc = -1;
 			continue;
 		}
 
-		/* found - check max args */
-		if(argc > cmdtp->maxargs){
+		/* Found - check max args */
+		if (argc > cmdtp->maxargs) {
 			print_cmd_help(cmdtp);
+
+			/* Give up if too many args */
 			rc = -1;
 			continue;
 		}
 
 		/* OK - call function to do the command */
-		if((cmdtp->cmd)(cmdtp, flag, argc, argv) != 0){
+		if ((cmdtp->cmd)(cmdtp, flag, argc, argv) != 0)
 			rc = -1;
-		}
 
 		repeatable &= cmdtp->repeatable;
 
-		/* Did the user stop this? */
-		if(had_ctrlc()){ /* if stopped then not repeatable */
+		/* Did the user stop this? If stopped then not repeatable */
+		if (had_ctrlc())
 			return(0);
-		}
 	}
 
-	return(rc ? rc : repeatable);
+	return rc ? rc : repeatable;
 }
 
-/****************************************************************************/
-
 #if defined(CONFIG_CMD_RUN)
-int do_run(cmd_tbl_t * cmdtp, int flag, int argc, char *argv[]){
+int do_run(cmd_tbl_t * cmdtp, int flag, int argc, char *argv[])
+{
 	int i;
 
-	if(argc < 2){
+	if (argc < 2) {
 		print_cmd_help(cmdtp);
 		return(1);
 	}
 
-	for(i=1; i<argc; ++i){
+	for (i=1; i<argc; ++i) {
 		char *arg;
 
-		if((arg = getenv(argv[i])) == NULL){
-			printf("## Error: \"%s\" not defined\n", argv[i]);
-			return(1);
+		if ((arg = getenv(argv[i])) == NULL) {
+			printf("## Error: '%s' not defined\n", argv[i]);
+			return 1;
 		}
-#ifndef CFG_HUSH_PARSER
-		if(run_command(arg, flag) == -1){
-			return(1);
-		}
-#else
-		if (parse_string_outer(arg, FLAG_PARSE_SEMICOLON | FLAG_EXIT_FROM_LOOP) != 0){
-			return(1);
-		}
-#endif /* CFG_HUSH_PARSER */
+
+	#ifndef CFG_HUSH_PARSER
+		if (run_command(arg, flag) == -1)
+			return 1;
+	#else
+		if (parse_string_outer(arg, FLAG_PARSE_SEMICOLON |
+					    FLAG_EXIT_FROM_LOOP) != 0)
+			return 1;
+	#endif
 	}
 
-	return(0);
+	return 0;
 }
 #endif /* CONFIG_CMD_RUN */
