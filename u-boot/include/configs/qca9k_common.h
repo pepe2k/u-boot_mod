@@ -123,6 +123,9 @@
 #define CONFIG_UPG_SCRIPTS_UBOOT
 #define CONFIG_UPG_SCRIPTS_FW
 
+/* Recovery script with button */
+#define CONFIG_BTN_RECOVERY_SCRIPT
+
 /* For HTTP based recovery */
 /* TODO: move it to httpd related header */
 #define WEBFAILSAFE_PROGRESS_START		0

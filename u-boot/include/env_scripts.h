@@ -1,13 +1,13 @@
 /*
- * Upgrade helper environment scripts
+ * Upgrade and recovery helper environment scripts
  *
  * Copyright (C) 2016 Piotr Dymacz <piotr@dymacz.pl>
  *
  * SPDX-License-Identifier: GPL-2.0
  */
 
-#ifndef _UPG_SCRIPTS_H_
-#define _UPG_SCRIPTS_H_
+#ifndef _ENV_SCRIPTS_H_
+#define _ENV_SCRIPTS_H_
 
 /*
  * U-Boot upgrade
@@ -109,4 +109,64 @@
 
 #endif /* CONFIG_UPG_SCRIPTS_FW */
 
-#endif /* _UPG_SCRIPTS_H_ */
+/*
+ * Recovery
+ */
+#if defined(CONFIG_BTN_RECOVERY_SCRIPT)
+
+	#if !defined(CONFIG_CMD_BUTTON) ||\
+	    !defined(CONFIG_CMD_SLEEP)  ||\
+	    !defined(CONFIG_CMD_LED)    ||\
+	    !defined(CONFIG_CMD_SETEXPR)
+		#error "Commands setexpr, sleep, button and led{on, off} are required for recovery"
+	#endif
+
+	#if !defined(CONFIG_GPIO_RESET_BTN)
+		#error "Reset button definition is required for recovery"
+	#endif
+
+	#define CONFIG_ENV_BTN_RECOVERY_SCRIPT	\
+		"recovery=" \
+		"if button; then " \
+			"sleep 600;" \
+			"setenv cnt 0;" \
+			"echo Keep button pressed for at least:;" \
+			"echo - 3s for web based recovery;" \
+			"echo - 5s for U-Boot console;" \
+			"echo - 7s for network console;" \
+			"echo;" \
+			"while button; do " \
+				"ledon;" \
+				"sleep 300;" \
+				"echo . \'\\\\c\';" \
+				"sleep 300;" \
+				"ledoff;" \
+				"sleep 600;" \
+				"setexpr cnt $cnt + 1;" \
+			"done;" \
+			"echo $cnt seconds;" \
+			"echo;" \
+			"if test $cnt -ge 7; then " \
+				"echo Starting network console...;" \
+				"setenv stop_boot 1;" \
+				"echo;" \
+				"startnc;" \
+			"elif test $cnt -ge 5; then " \
+				"echo Starting U-Boot console...;" \
+				"setenv stop_boot 1;" \
+				"echo;" \
+			"elif test $cnt -ge 3; then " \
+				"echo HTTP server is starting for firmware update...;" \
+				"setenv stop_boot 1;" \
+				"echo;" \
+				"httpd;" \
+			"elif test $cnt -lt 3; then " \
+				"echo \\#\\# Error: button was not pressed long enough!;" \
+				"echo Continuing normal boot...;" \
+				"echo;" \
+			"fi;"\
+		"fi\0"
+
+#endif /* CONFIG_BTN_RECOVERY_SCRIPT */
+
+#endif /* _ENV_SCRIPTS_H_ */

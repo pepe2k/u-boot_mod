@@ -33,7 +33,7 @@
 
 #undef __ASSEMBLY__
 #include <environment.h>
-#include <upg_scripts.h>
+#include <env_scripts.h>
 
 /*
  * Handle HOSTS that have prepended
@@ -196,6 +196,9 @@ env_t environment __PPCENV__ = {
 #endif
 #if defined(CONFIG_ENV_UPG_SCRIPTS_FW)
 		CONFIG_ENV_UPG_SCRIPTS_FW
+#endif
+#if defined(CONFIG_ENV_BTN_RECOVERY_SCRIPT)
+		CONFIG_ENV_BTN_RECOVERY_SCRIPT
 #endif
 	"\0"
 	}

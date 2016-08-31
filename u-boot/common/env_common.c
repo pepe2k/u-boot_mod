@@ -27,7 +27,7 @@
 #include <common.h>
 #include <command.h>
 #include <environment.h>
-#include <upg_scripts.h>
+#include <env_scripts.h>
 #include <linux/stddef.h>
 #include <malloc.h>
 #include <tinf.h>
@@ -134,6 +134,9 @@ uchar default_environment[] = {
 #endif
 #if defined(CONFIG_ENV_UPG_SCRIPTS_FW)
 		CONFIG_ENV_UPG_SCRIPTS_FW
+#endif
+#if defined(CONFIG_ENV_BTN_RECOVERY_SCRIPT)
+		CONFIG_ENV_BTN_RECOVERY_SCRIPT
 #endif
 	"\0"
 };

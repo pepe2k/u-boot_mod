@@ -32,19 +32,8 @@
 DECLARE_GLOBAL_DATA_PTR;
 #endif
 
-extern void all_led_on(void);
-extern void all_led_off(void);
-extern int NetLoopHttpd(void);
-
-#define MAX_DELAY_STOP_STR	32
-
 static char *delete_char(char *buffer, char *p, int *colp, int *np, int plen);
 static int parse_line(char *, char *[]);
-
-#if defined(CONFIG_BOOTDELAY) &&\
-	   (CONFIG_BOOTDELAY >= 0)
-static int abortboot(int);
-#endif
 
 char console_buffer[CFG_CBSIZE];	/* console I/O buffer  */
 static char erase_seq[] = "\b \b";	/* erase sequence      */
@@ -119,9 +108,19 @@ static __inline__ int abortboot(int bootdelay)
 }
 #endif /* CONFIG_BOOTDELAY && CONFIG_BOOTDELAY >= 0 */
 
+/*
+ * =========
+ * Main loop
+ * =========
+ */
 void main_loop(void)
 {
-	int counter = 0;
+	char *bootcmd;
+
+#if defined(CONFIG_BTN_RECOVERY_SCRIPT)
+	int stop_boot;
+	char *c;
+#endif
 
 #ifndef CFG_HUSH_PARSER
 	static char lastcommand[CFG_CBSIZE] = { 0, };
@@ -139,31 +138,20 @@ void main_loop(void)
 	u_boot_hush_start();
 #endif
 
-#if defined(CONFIG_BOOTDELAY) &&\
-	   (CONFIG_BOOTDELAY >= 0)
-	/* Get boot delay (seconds) */
-	s = getenv("bootdelay");
-	bootdelay = s ? (int)simple_strtol(s, NULL, 10) : CONFIG_BOOTDELAY;
-
 	/* Get boot command */
-	s = getenv("bootcmd");
+	bootcmd = getenv("bootcmd");
 
-	#if !defined(CONFIG_BOOTCOMMAND)
-		#error "CONFIG_BOOTCOMMAND not defined!"
-	#endif
-
-	if (!s)
+#if defined(CONFIG_BOOTCOMMAND)
+	if (!bootcmd)
 		setenv("bootcmd", CONFIG_BOOTCOMMAND);
 
-	s = getenv("bootcmd");
+	bootcmd = getenv("bootcmd");
+#endif
 
-	/*
-	 * Are we going to run web failsafe mode,
-	 * U-Boot console, U-Boot netconsole
-	 * or just boot command?
-	 */
+/* Recovery mode before normal boot */
+#if defined(CONFIG_BTN_RECOVERY_SCRIPT)
 	if (reset_button_status()) {
-	#if defined(CONFIG_SILENT_CONSOLE)
+		#if defined(CONFIG_SILENT_CONSOLE)
 		if (gd->flags & GD_FLG_SILENT) {
 			/* Restore serial console */
 			console_assign(stdout, "serial");
@@ -172,92 +160,43 @@ void main_loop(void)
 
 		/* Enable normal console output */
 		gd->flags &= ~(GD_FLG_SILENT);
-	#endif
-		/* Wait 0,5s */
-		milisecdelay(500);
+		#endif
 
-		printf("Press reset button for at least:\n"
-		       "- %d sec. to run web failsafe mode\n"
-		       "- %d sec. to run U-Boot console\n"
-		       "- %d sec. to run U-Boot netconsole\n\n",
-		       CONFIG_DELAY_TO_AUTORUN_HTTPD,
-		       CONFIG_DELAY_TO_AUTORUN_CONSOLE,
-		       CONFIG_DELAY_TO_AUTORUN_NETCONSOLE);
+		run_command("run recovery", 0);
 
-		printf("Reset button is pressed for: %2d ", counter);
+		/* Should we stop booting after recovery mode? */
+		c = getenv("stop_boot");
+		stop_boot = c ? (int)simple_strtol(c, NULL, 10) : 0;
 
-		while (reset_button_status()) {
-			/* LED ON and wait 0,15s */
-			all_led_on();
-			milisecdelay(150);
-
-			/* LED OFF and wait 0,85s */
-			all_led_off();
-			milisecdelay(850);
-
-			counter++;
-
-			/* How long the button is pressed? */
-			printf("\b\b\b%2d ", counter);
-
-			if (!reset_button_status())
-				break;
-
-			if (counter >= CONFIG_MAX_BUTTON_PRESSING)
-				break;
-		}
-
-		all_led_off();
-
-		if (counter > 0) {
-			/* Run web failsafe mode */
-			if (counter >= CONFIG_DELAY_TO_AUTORUN_HTTPD &&
-			    counter <  CONFIG_DELAY_TO_AUTORUN_CONSOLE) {
-				printf("\n\nButton was pressed for %d sec...\n"
-				       "HTTP server is starting for firmware update...\n\n",
-				       counter);
-
-				NetLoopHttpd();
-				bootdelay = -1;
-			} else if (counter >= CONFIG_DELAY_TO_AUTORUN_CONSOLE &&
-				   counter <  CONFIG_DELAY_TO_AUTORUN_NETCONSOLE) {
-				printf("\n\nButton was pressed for %d sec...\n"
-				       "Starting U-Boot console...\n\n",
-				       counter);
-
-				bootdelay = -1;
-			} else if (counter >= CONFIG_DELAY_TO_AUTORUN_NETCONSOLE) {
-				printf("\n\nButton was pressed for %d sec...\n"
-				       "Starting U-Boot netconsole...\n\n",
-				       counter);
-
-				bootdelay = -1;
-				run_command("startnc", 0);
-			} else {
-				printf("\n\n## Error: button wasn't pressed long enough!\n"
-				       "Continuing normal boot...\n\n");
-			}
-
-		} else {
-			printf("\n\n## Error: button wasn't pressed long enough!\n"
-			       "Continuing normal boot...\n\n");
-		}
-
+		if (stop_boot)
+			bootcmd = NULL;
 	}
+#endif /* CONFIG_RECOVERY_MODE */
 
-	if (bootdelay >= 0 && s && !abortboot(bootdelay)) {
+#if defined(CONFIG_BOOTDELAY) &&\
+	   (CONFIG_BOOTDELAY >= 0)
+	/* Get boot delay (seconds) */
+	s = getenv("bootdelay");
+	bootdelay = s ? (int)simple_strtol(s, NULL, 10) : CONFIG_BOOTDELAY;
+
+	if (bootdelay >= 0 && bootcmd && !abortboot(bootdelay)) {
 		/* Try to boot */
 	#ifndef CFG_HUSH_PARSER
-		run_command(s, 0);
+		run_command(bootcmd, 0);
 	#else
-		parse_string_outer(s, FLAG_PARSE_SEMICOLON |
-				      FLAG_EXIT_FROM_LOOP);
+		parse_string_outer(bootcmd, FLAG_PARSE_SEMICOLON |
+					    FLAG_EXIT_FROM_LOOP);
 	#endif
-		/* Something went wrong! */
-		printf("\n## Error: failed to execute 'bootcmd'!\n"
-		       "HTTP server is starting for firmware update...\n\n");
-
-		NetLoopHttpd();
+	}
+#else
+	if (bootcmd) {
+		/* Try to boot */
+	#ifndef CFG_HUSH_PARSER
+		run_command(bootcmd, 0);
+	#else
+		parse_string_outer(bootcmd, FLAG_PARSE_SEMICOLON |
+					    FLAG_EXIT_FROM_LOOP);
+	#endif
 	}
 #endif /* CONFIG_BOOTDELAY && CONFIG_BOOTDELAY >= 0 */
 
@@ -683,7 +622,7 @@ int do_run(cmd_tbl_t * cmdtp, int flag, int argc, char *argv[])
 
 	if (argc < 2) {
 		print_cmd_help(cmdtp);
-		return(1);
+		return 1;
 	}
 
 	for (i=1; i<argc; ++i) {
