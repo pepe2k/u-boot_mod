@@ -116,6 +116,7 @@
 #define CONFIG_CMD_LOADB
 #define CONFIG_CMD_BUTTON
 #define CONFIG_CMD_SLEEP
+#define CONFIG_CMD_SETEXPR
 
 /* Simple upgrade scripts in environment */
 #define CONFIG_UPG_SCRIPTS_UBOOT
