@@ -41,21 +41,35 @@ U_BOOT_CMD(version, 1, 1, do_version, "print U-Boot version\n", NULL);
 #if defined(CONFIG_CMD_ECHO)
 int do_echo(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 {
-	int i, putnl = 1;
+	int i;
+	int putnl = 1;
 
 	for (i = 1; i < argc; i++) {
-		char *p = argv[i], c;
+		char *p = argv[i];
+		char *nls; /* new-line suppression */
 
 		if (i > 1)
 			putc(' ');
 
-		while ((c = *p++) != '\0') {
-			if (c == '\\' && *p == 'c') {
-				putnl = 0;
-				p++;
-			} else {
-				putc(c);
+		nls = strstr(p, "\\c");
+		if (nls) {
+			char *prenls = p;
+
+			putnl = 0;
+			/*
+			 * be paranoid and guess that someone might
+			 * say \c more than once
+			 */
+			while (nls) {
+				*nls = '\0';
+				puts(prenls);
+				*nls = '\\';
+				prenls = nls + 2;
+				nls = strstr(prenls, "\\c");
 			}
+			puts(prenls);
+		} else {
+			puts(p);
 		}
 	}
 
