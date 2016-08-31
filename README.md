@@ -95,6 +95,7 @@ Currently supported devices:
   - Wallys DR531
   - Zbtlink ZBT-WE1526
   - Comfast CF-E520N
+  - Comfast CF-E320N v2
 
 I tested this modification on most of these devices, with OpenWrt and OFW firmware. If you are not sure about the version of your device, please contact with me **before** you try to make an upgrade. Changing bootloader to a wrong version will probably damage your router and you will need special hardware to fix it, so please, **be very careful**.
 
@@ -131,6 +132,7 @@ More information about supported devices:
 | Wallys DR531 | QCA9531 | 8 MiB | 64 MiB DDR2 | 192 KiB | R/W |
 | Zbtlink ZBT-WE1526 | QCA9531 | 16 MiB | 128 MiB DDR2 | 256 KiB | R/W |
 | Comfast CF-E520N | QCA9531 | 8 MiB | 32 MiB DDR2 | 64 KiB, LZMA | RO |
+| Comfast CF-E320N v2 | QCA9531 | 16 MiB | 64 MiB DDR2 | 64 KiB, LZMA | RO |
 
 *(LZMA) - U-Boot binary image is compressed with LZMA.*  
 *(R/W) - environment exists in separate FLASH block which allows you to save it and keep after power down.*

@@ -388,6 +388,13 @@ qca953x_common: unconfig config_common
 	@$(call define_add,CONFIG_FOR_8DEVICES_CARAMBOLA2,1)
 	@$(MKCONFIG) -a ap121 mips mips ap121 ar7240 ar7240
 
+comfast_cf-e320n_v2: qca953x_common
+	@$(call config_init,Comfast CF-E320N v2,16,17,1,QCA_QCA953X_SOC)
+	@$(call define_add,CONFIG_FOR_COMFAST_CF_E320N_V2,1)
+	@$(call define_add,CFG_ATHRS27_PHY,1)
+	@$(call define_add,CFG_ATH_GMAC_NMACS,2)
+	@$(MKCONFIG) -a ap143 mips mips ap143 ar7240 ar7240
+
 comfast_cf-e520n: qca953x_common
 	@$(call config_init,Comfast CF-E520N,8,17,1,QCA_QCA953X_SOC)
 	@$(call define_add,CONFIG_FOR_COMFAST_CF_E520N,1)
