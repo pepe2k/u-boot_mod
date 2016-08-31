@@ -80,15 +80,19 @@
 #include "tftp.h"
 #include "rarp.h"
 #include "nfs.h"
+#if defined(CONFIG_CMD_HTTPD)
 #include "httpd.h"
+#endif
 
 #if defined(CONFIG_CMD_SNTP)
 #include "sntp.h"
 #endif
 
+#if defined(CONFIG_CMD_HTTPD)
 #include "../httpd/uipopt.h"
 #include "../httpd/uip.h"
 #include "../httpd/uip_arp.h"
+#endif
 
 #if defined(CONFIG_CMD_NET)
 
@@ -102,6 +106,7 @@ DECLARE_GLOBAL_DATA_PTR;
 	#define ARP_TIMEOUT_COUNT  (CONFIG_NET_RETRY_COUNT)
 #endif
 
+#if defined(CONFIG_CMD_HTTPD)
 unsigned char *webfailsafe_data_pointer = NULL;
 int	webfailsafe_is_running = 0;
 int	webfailsafe_ready_for_upgrade = 0;
@@ -110,6 +115,7 @@ int	webfailsafe_upgrade_type = WEBFAILSAFE_UPGRADE_TYPE_FIRMWARE;
 void NetReceiveHttpd(volatile uchar * inpkt, int len);
 
 extern int do_reset(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[]);
+#endif
 
 /** BOOTP EXTENTIONS **/
 IPaddr_t NetOurSubnetMask = 0;		/* Our subnet mask (0=unknown) */
@@ -757,10 +763,12 @@ void NetReceive(volatile uchar * inpkt, int len){
 	printf("Packet received\n");
 #endif
 
+	#if defined(CONFIG_CMD_HTTPD)
 	if(webfailsafe_is_running){
 		NetReceiveHttpd(inpkt, len);
 		return;
 	}
+	#endif
 
 	NetRxPkt = inpkt;
 	NetRxPktLen = len;
@@ -1367,6 +1375,8 @@ ushort getenv_VLAN(char *var){
  * HTTPD section
  */
 
+#if defined(CONFIG_CMD_HTTPD)
+
 #define BUF	((struct uip_eth_hdr *)&uip_buf[0])
 
 void NetSendHttpd(void){
@@ -1589,3 +1599,4 @@ int NetLoopHttpd(void){
 
 	return(-1);
 }
+#endif /* CONFIG_CMD_HTTPD */

@@ -33,10 +33,12 @@
 extern int do_bootm(cmd_tbl_t *, int, int, char *[]);
 static int netboot_common(proto_t, cmd_tbl_t *, int, char *[]);
 
+#if defined(CONFIG_CMD_HTTPD)
 int do_httpd(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[]){
 	return NetLoopHttpd();
 }
 U_BOOT_CMD(httpd, 1, 1, do_httpd, "start www server for firmware recovery\n", NULL);
+#endif /* CONFIG_CMD_HTTPD */
 
 int do_tftpb(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[]){
 	return netboot_common(TFTP, cmdtp, argc, argv);

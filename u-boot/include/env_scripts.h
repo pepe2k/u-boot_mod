@@ -125,13 +125,30 @@
 		#error "Reset button definition is required for recovery"
 	#endif
 
+	#if defined(CONFIG_CMD_HTTPD)
+		#define SCRIPT_HTTP_PART_1	\
+		"echo - 3s for web based recovery;"
+
+		#define SCRIPT_HTTP_PART_2	\
+		"elif test $cnt -ge 3; then " \
+			"echo HTTP server is starting for firmware update...;" \
+			"setenv stop_boot 1;" \
+			"echo;" \
+			"httpd;" \
+		"elif test $cnt -lt 3; then "
+	#else
+		#define SCRIPT_HTTP_PART_1	""
+		#define SCRIPT_HTTP_PART_2	\
+		"elif test $cnt -lt 5; then "
+	#endif
+
 	#define CONFIG_ENV_BTN_RECOVERY_SCRIPT	\
 		"recovery=" \
 		"if button; then " \
 			"sleep 600;" \
 			"setenv cnt 0;" \
 			"echo Keep button pressed for at least:;" \
-			"echo - 3s for web based recovery;" \
+			SCRIPT_HTTP_PART_1 \
 			"echo - 5s for U-Boot console;" \
 			"echo - 7s for network console;" \
 			"echo;" \
@@ -155,12 +172,7 @@
 				"echo Starting U-Boot console...;" \
 				"setenv stop_boot 1;" \
 				"echo;" \
-			"elif test $cnt -ge 3; then " \
-				"echo HTTP server is starting for firmware update...;" \
-				"setenv stop_boot 1;" \
-				"echo;" \
-				"httpd;" \
-			"elif test $cnt -lt 3; then " \
+			SCRIPT_HTTP_PART_2 \
 				"echo \\#\\# Error: button was not pressed long enough!;" \
 				"echo Continuing normal boot...;" \
 				"echo;" \

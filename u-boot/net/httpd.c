@@ -8,6 +8,8 @@
 #include <command.h>
 #include <net.h>
 #include <asm/byteorder.h>
+
+#if defined(CONFIG_CMD_HTTPD)
 #include "httpd.h"
 
 #include "../httpd/uipopt.h"
@@ -176,3 +178,4 @@ int do_http_progress(const int state){
 
 	return(0);
 }
+#endif /* CONFIG_CMD_HTTPD */
