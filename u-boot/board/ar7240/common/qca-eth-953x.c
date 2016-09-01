@@ -38,6 +38,8 @@
 #include <miiphy.h>
 #endif
 
+DECLARE_GLOBAL_DATA_PTR;
+
 #define ath_gmac_unit2mac(_unit)     ath_gmac_macs[(_unit)]
 #define ath_gmac_name2mac(name)	   is_drqfn() ? ath_gmac_unit2mac(1):strcmp(name,"eth0") ? ath_gmac_unit2mac(1) : ath_gmac_unit2mac(0)
 
@@ -403,58 +405,12 @@ static void ath_gmac_halt(struct eth_device *dev)
 	while (ath_gmac_reg_rd(mac, ATH_DMA_RX_CTRL));
 }
 
-/* FIXME! */
-#define BOARDCAL	0x9FFF0000
-
-unsigned char *
-ath_gmac_mac_addr_loc(void)
-{
-#ifdef BOARDCAL
-	/*
-	 ** BOARDCAL environmental variable has the address of the cal sector
-	 */
-
-	return ((unsigned char *)BOARDCAL);
-
-#else
-	/* MAC address is store in the 2nd 4k of last sector */
-	return ((unsigned char *)
-			(KSEG1ADDR(ATH_SPI_BASE) + (4 * 1024) +
-			 flash_info[0].size - (64 * 1024) /* sector_size */ ));
-#endif
-}
-
 static void ath_gmac_get_ethaddr(struct eth_device *dev)
 {
-	unsigned char *eeprom;
 	unsigned char *mac = dev->enetaddr;
-#ifndef CONFIG_ATH_EMULATION
+	bd_t *bd = gd->bd;
 
-	eeprom = ath_gmac_mac_addr_loc();
-
-	if (strcmp(dev->name, "eth0") == 0) {
-		memcpy(mac, eeprom, 6);
-	} else if (strcmp(dev->name, "eth1") == 0) {
-		eeprom += 6;
-		memcpy(mac, eeprom, 6);
-	} else {
-		//printf("%s: unknown ethernet device %s\n", __func__, dev->name);
-		return;
-	}
-	/* Use fixed address if the above address is invalid */
-	if (mac[0] != 0x00 || (mac[0] == 0xff && mac[5] == 0xff))
-#else
-	if (1)
-#endif
-	{
-		mac[0] = 0xba;
-		mac[1] = 0xbe;
-		mac[2] = 0xfa;
-		mac[3] = 0xce;
-		mac[4] = 0x08;
-		mac[5] = 0x41;
-		/*printf("No valid address in Flash. Using fixed address\n");*/
-	}
+	memcpy(mac, (void *)bd->bi_enetaddr, 6);
 }
 
 void
