@@ -310,8 +310,10 @@ void board_init_r(gd_t *id, ulong dest_addr)
 #ifndef CFG_ENV_IS_NOWHERE
 	extern char *env_name_spec;
 #endif
+	char buf[20];
 	bd_t *bd;
 	char *s;
+	int i;
 
 	gd = id;
 
@@ -406,7 +408,22 @@ void board_init_r(gd_t *id, ulong dest_addr)
 #endif
 
 	/* Init MAC address in board data info */
-	macaddr_init(bd->bi_enetaddr);
+	if ((s = getenv("ethaddr")) != NULL && strlen(s) == 17) {
+		/* Use the one from env */
+		for (i = 0; i < 6; i++)
+			bd->bi_enetaddr[i] =
+				simple_strtoul((char *)(s + (i * 3)), NULL, 16);
+	} else {
+		/* Use the one provided by board func */
+		macaddr_init(bd->bi_enetaddr);
+
+		/* And revrite it to env variable */
+		for (i = 0; i < 6; i++)
+			sprintf((char *)(buf + (i * 3)), "%02X%c",
+				bd->bi_enetaddr[i], i < 5 ? ':' : '\0');
+
+		setenv("ethaddr", buf);
+	}
 
 	/* Print some information about board */
 	print_board_info();
