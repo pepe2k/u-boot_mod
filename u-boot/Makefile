@@ -130,10 +130,11 @@ $(if $(1),$(strip $(1)),4)
 endef
 
 # $(1): vendor, board name/model
-# $(2): default FLASH size in MB
-# $(3): reset button GPIO number
-# $(4): 1 if reset button is active low
-# $(5): SOC_TYPE
+# $(2): hostname
+# $(3): default FLASH size in MB
+# $(4): reset button GPIO number
+# $(5): 1 if reset button is active low
+# $(6): SOC_TYPE
 define config_init
   $(call echo_green,Preparing configuration for target: $@)
   echo
@@ -149,14 +150,14 @@ define config_init
     $(call echo_yellow,  Image size limit:\tnot specified)
   )
 
-  $(call echo_yellow,  Default FLASH size:\t$(call flash_size,$(2)) MB)
+  $(call echo_yellow,  Default FLASH size:\t$(call flash_size,$(3)) MB)
 
-  $(if $(3),
-    $(call echo_yellow,  GPIO reset button:\t$(strip $(3))), \
+  $(if $(4),
+    $(call echo_yellow,  GPIO reset button:\t$(strip $(4))), \
     $(call echo_yellow,  GPIO reset button:\tnot specified) \
   )
 
-  $(if $(filter $(4),1),
+  $(if $(filter $(5),1),
     $(call echo_yellow,  Button active low:\tyes), \
     $(call echo_yellow,  Button active low:\tno) \
   )
@@ -171,8 +172,10 @@ define config_init
     $(call echo_yellow,  RAM-loadable only:\tno) \
   )
 
-  $(if $(3),$(call define_add,CONFIG_GPIO_RESET_BTN,$(strip $(3))))
-  $(if $(filter $(4),1),$(call define_add,CONFIG_GPIO_RESET_BTN_ACTIVE_LOW,1))
+  $(if $(2),$(call define_add,CONFIG_HOSTNAME,u-boot_$(strip $(2))))
+
+  $(if $(4),$(call define_add,CONFIG_GPIO_RESET_BTN,$(strip $(4))))
+  $(if $(filter $(5),1),$(call define_add,CONFIG_GPIO_RESET_BTN_ACTIVE_LOW,1))
   $(if $(CONFIG_MAX_UBOOT_SIZE), \
     $(call define_add,CONFIG_MAX_UBOOT_SIZE,$(CONFIG_MAX_UBOOT_SIZE))
     $(call define_add,CONFIG_MAX_UBOOT_SIZE_HEX,$(shell printf '0x%X' $(CONFIG_MAX_UBOOT_SIZE)))
@@ -185,12 +188,12 @@ define config_init
     $(call undef_add,COMPRESSED_UBOOT) \
   )
 
-  $(if $(5), \
-    $(call define_add,SOC_TYPE,$(5)) \
+  $(if $(6), \
+    $(call define_add,SOC_TYPE,$(6)) \
   )
 
   $(call define_add,CONFIG_BOARD_CUSTOM_STRING,"$(call board_name,$(1))")
-  $(call define_add,CONFIG_DEFAULT_FLASH_SIZE_IN_MB,$(call flash_size,$(2)))
+  $(call define_add,CONFIG_DEFAULT_FLASH_SIZE_IN_MB,$(call flash_size,$(3)))
 
   echo
 endef
@@ -380,87 +383,87 @@ qca953x_common: unconfig config_common
 # =============================
 
 8devices_carambola2: ar933x_common
-	@$(call config_init,8devices Carambola 2,16,11,1,QCA_AR933X_SOC)
+	@$(call config_init,8devices Carambola 2,carambola-v2,16,11,1,QCA_AR933X_SOC)
 	@$(call define_add,CONFIG_FOR_8DEVICES_CARAMBOLA2,1)
 	@$(MKCONFIG) -a ap121 mips mips ap121 ar7240 ar7240
 
 comfast_cf-e320n_v2: qca953x_common
-	@$(call config_init,Comfast CF-E320N v2,16,17,1,QCA_QCA953X_SOC)
+	@$(call config_init,Comfast CF-E320N v2,cf-e320n-v2,16,17,1,QCA_QCA953X_SOC)
 	@$(call define_add,CONFIG_FOR_COMFAST_CF_E320N_V2,1)
 	@$(call define_add,CFG_ATHRS27_PHY,1)
 	@$(call define_add,CFG_ATH_GMAC_NMACS,2)
 	@$(MKCONFIG) -a ap143 mips mips ap143 ar7240 ar7240
 
 comfast_cf-e520n: qca953x_common
-	@$(call config_init,Comfast CF-E520N,8,17,1,QCA_QCA953X_SOC)
+	@$(call config_init,Comfast CF-E520N,cf-e520n,8,17,1,QCA_QCA953X_SOC)
 	@$(call define_add,CONFIG_FOR_COMFAST_CF_E520N,1)
 	@$(call define_add,CFG_ATHRS27_PHY,1)
 	@$(call define_add,CFG_ATH_GMAC_NMACS,2)
 	@$(MKCONFIG) -a ap143 mips mips ap143 ar7240 ar7240
 
 d-link_dir-505: ar933x_common
-	@$(call config_init,D-Link DIR-505,8,11,1,QCA_AR933X_SOC)
+	@$(call config_init,D-Link DIR-505,dir-505,8,11,1,QCA_AR933X_SOC)
 	@$(call define_add,CONFIG_FOR_DLINK_DIR505_A1,1)
 	@$(MKCONFIG) -a ap121 mips mips ap121 ar7240 ar7240
 
 dragino_v2_ms14: ar933x_common
-	@$(call config_init,Dragino v2 (MS14),16,11,1,QCA_AR933X_SOC)
+	@$(call config_init,Dragino v2 (MS14),dragino-v2,16,11,1,QCA_AR933X_SOC)
 	@$(call define_add,CONFIG_FOR_DRAGINO_V2,1)
 	@$(call define_add,WEBFAILSAFE_DISABLE_ART_UPGRADE,1)
 	@$(call define_add,WEBFAILSAFE_DISABLE_UBOOT_UPGRADE,1)
 	@$(MKCONFIG) -a ap121 mips mips ap121 ar7240 ar7240
 
 gainstrong_oolite_v1_dev: ar933x_common
-	@$(call config_init,Gainstrong Oolite v1 (dev board),16,11,,QCA_AR933X_SOC)
+	@$(call config_init,Gainstrong Oolite v1 (dev board),oolite-v1,16,11,,QCA_AR933X_SOC)
 	@$(call define_add,CONFIG_FOR_GS_OOLITE_V1_DEV,1)
 	@$(MKCONFIG) -a ap121 mips mips ap121 ar7240 ar7240
 
 gl-innovations_gl-inet-6416: ar933x_common
-	@$(call config_init,GL-Innovations GL.iNet 6416,8,11,,QCA_AR933X_SOC)
+	@$(call config_init,GL-Innovations GL.iNet 6416,glinet-6416,8,11,,QCA_AR933X_SOC)
 	@$(call define_add,CONFIG_FOR_GL_INET,1)
 	@$(MKCONFIG) -a ap121 mips mips ap121 ar7240 ar7240
 
 tp-link_tl-mr10u: ar933x_common
-	@$(call config_init,TP-Link TL-MR10U,4,11,,QCA_AR933X_SOC)
+	@$(call config_init,TP-Link TL-MR10U,tl-mr10u,4,11,,QCA_AR933X_SOC)
 	@$(call define_add,CONFIG_FOR_TPLINK_MR10U_V1,1)
 	@$(MKCONFIG) -a ap121 mips mips ap121 ar7240 ar7240
 
 tp-link_tl-mr13u: ar933x_common
-	@$(call config_init,TP-Link TL-MR13U,4,11,,QCA_AR933X_SOC)
+	@$(call config_init,TP-Link TL-MR13U,tl-mr13u,4,11,,QCA_AR933X_SOC)
 	@$(call define_add,CONFIG_FOR_TPLINK_MR13U_V1,1)
 	@$(MKCONFIG) -a ap121 mips mips ap121 ar7240 ar7240
 
 tp-link_tl-mr3020: ar933x_common
-	@$(call config_init,TP-Link TL-MR3020,4,11,,QCA_AR933X_SOC)
+	@$(call config_init,TP-Link TL-MR3020,tl-mr3020,4,11,,QCA_AR933X_SOC)
 	@$(call define_add,CONFIG_FOR_TPLINK_MR3020_V1,1)
 	@$(MKCONFIG) -a ap121 mips mips ap121 ar7240 ar7240
 
 tp-link_tl-mr3040: ar933x_common
-	@$(call config_init,TP-Link TL-MR3040,4,11,,QCA_AR933X_SOC)
+	@$(call config_init,TP-Link TL-MR3040,tl-mr3040,4,11,,QCA_AR933X_SOC)
 	@$(call define_add,CONFIG_FOR_TPLINK_MR3040_V1V2,1)
 	@$(MKCONFIG) -a ap121 mips mips ap121 ar7240 ar7240
 
 tp-link_tl-mr3220_v2: ar933x_common
-	@$(call config_init,TP-Link TL-MR3220 v2,4,11,,QCA_AR933X_SOC)
+	@$(call config_init,TP-Link TL-MR3220 v2,tl-mr3220-v2,4,11,,QCA_AR933X_SOC)
 	@$(call define_add,CONFIG_FOR_TPLINK_MR3220_V2,1)
 	@$(MKCONFIG) -a ap121 mips mips ap121 ar7240 ar7240
 
 tp-link_tl-mr3420_v2: ar934x_common
-	@$(call config_init,TP-Link TL-MR3420 v2,4,17,1,QCA_AR9341_SOC)
+	@$(call config_init,TP-Link TL-MR3420 v2,tl-mr3420-v2,4,17,1,QCA_AR9341_SOC)
 	@$(call define_add,CONFIG_FOR_TPLINK_MR3420_V2,1)
 	@$(call define_add,CFG_ATHRS27_PHY,1)
 	@$(call define_add,CFG_AG7240_NMACS,2)
 	@$(MKCONFIG) -a db12x mips mips db12x ar7240 ar7240
 
 tp-link_tl-wa830re_v2_tl-wa801nd_v2: ar934x_common
-	@$(call config_init,TP-Link TL-WA830RE/TL-WA801ND v2,4,17,1,QCA_AR9341_SOC)
+	@$(call config_init,TP-Link TL-WA830RE/TL-WA801ND v2,tl-wa830re-801nd-v2,4,17,1,QCA_AR9341_SOC)
 	@$(call define_add,CONFIG_FOR_TPLINK_WA830RE_V2_WA801ND_V2,1)
 	@$(call define_add,CFG_ATHRS27_PHY,1)
 	@$(call define_add,CFG_AG7240_NMACS,2)
 	@$(MKCONFIG) -a db12x mips mips db12x ar7240 ar7240
 
 tp-link_tl-wdr3500: ar934x_common
-	@$(call config_init,TP-Link TL-WDR3500,8,16,1,QCA_AR9344_SOC)
+	@$(call config_init,TP-Link TL-WDR3500,tl-wdr3500,8,16,1,QCA_AR9344_SOC)
 	@$(call define_add,CONFIG_FOR_TPLINK_WDR3500_V1,1)
 	@$(call define_add,CFG_ATHRS27_PHY,1)
 	@$(call define_add,CFG_AG7240_NMACS,2)
@@ -468,7 +471,7 @@ tp-link_tl-wdr3500: ar934x_common
 	@$(MKCONFIG) -a db12x mips mips db12x ar7240 ar7240
 
 tp-link_tl-wdr3600_tl-43x0: ar934x_common
-	@$(call config_init,TP-Link TL-WDR3600/43x0,8,16,1,QCA_AR9344_SOC)
+	@$(call config_init,TP-Link TL-WDR3600/43x0,tl-wdr3600-43x0,8,16,1,QCA_AR9344_SOC)
 	@$(call define_add,CONFIG_FOR_TPLINK_WDR3600_WDR43X0_V1,1)
 	@$(call define_add,CFG_ATHRS17_PHY,1)
 	@$(call define_add,CFG_AG7240_NMACS,1)
@@ -477,67 +480,67 @@ tp-link_tl-wdr3600_tl-43x0: ar934x_common
 	@$(MKCONFIG) -a db12x mips mips db12x ar7240 ar7240
 
 tp-link_tl-wr703n: ar933x_common
-	@$(call config_init,TP-Link TL-WR703N,4,11,,QCA_AR933X_SOC)
+	@$(call config_init,TP-Link TL-WR703N,tl-wr703n,4,11,,QCA_AR933X_SOC)
 	@$(call define_add,CONFIG_FOR_TPLINK_WR703N_V1,1)
 	@$(MKCONFIG) -a ap121 mips mips ap121 ar7240 ar7240
 
 tp-link_tl-wr710n: ar933x_common
-	@$(call config_init,TP-Link TL-WR710N,8,11,,QCA_AR933X_SOC)
+	@$(call config_init,TP-Link TL-WR710N,tl-wr710n,8,11,,QCA_AR933X_SOC)
 	@$(call define_add,CONFIG_FOR_TPLINK_WR710N_V1,1)
 	@$(MKCONFIG) -a ap121 mips mips ap121 ar7240 ar7240
 
 tp-link_tl-wr720n_v3_CN: ar933x_common
-	@$(call config_init,TP-Link TL-WR720N v3 CN,4,11,,QCA_AR933X_SOC)
+	@$(call config_init,TP-Link TL-WR720N v3 CN,tl-wr720n-v3,4,11,,QCA_AR933X_SOC)
 	@$(call define_add,CONFIG_FOR_TPLINK_WR720N_V3,1)
 	@$(MKCONFIG) -a ap121 mips mips ap121 ar7240 ar7240
 
 tp-link_tl-wr740n_v4: ar933x_common
-	@$(call config_init,TP-Link TL-WR74xN/D v4,4,11,,QCA_AR933X_SOC)
+	@$(call config_init,TP-Link TL-WR74xN/D v4,tl-wr74xnd-v4,4,11,,QCA_AR933X_SOC)
 	@$(call define_add,CONFIG_FOR_TPLINK_WR740N_V4,1)
 	@$(MKCONFIG) -a ap121 mips mips ap121 ar7240 ar7240
 
 tp-link_tl-wr802n: qca953x_common
-	@$(call config_init,TP-Link TL-WR802N,4,12,1,QCA_QCA953X_SOC)
+	@$(call config_init,TP-Link TL-WR802N,tl-wr802n,4,12,1,QCA_QCA953X_SOC)
 	@$(call define_add,CONFIG_FOR_TPLINK_WR802N,1)
 	@$(call define_add,CFG_ATHRS27_PHY,1)
 	@$(call define_add,CFG_ATH_GMAC_NMACS,2)
 	@$(MKCONFIG) -a ap143 mips mips ap143 ar7240 ar7240
 
 tp-link_tl-wr820n_CN: qca953x_common
-	@$(call config_init,TP-Link TL-WR820N CN,4,12,1,QCA_QCA953X_SOC)
+	@$(call config_init,TP-Link TL-WR820N CN,tl-wr820n,4,12,1,QCA_QCA953X_SOC)
 	@$(call define_add,CONFIG_FOR_TPLINK_WR820N_CN,1)
 	@$(call define_add,CFG_ATHRS27_PHY,1)
 	@$(call define_add,CFG_ATH_GMAC_NMACS,2)
 	@$(MKCONFIG) -a ap143 mips mips ap143 ar7240 ar7240
 
 tp-link_tl-wr841n_v8: ar934x_common
-	@$(call config_init,TP-Link TL-WR841N/D v8,4,17,1,QCA_AR9341_SOC)
+	@$(call config_init,TP-Link TL-WR841N/D v8,tl-wr841nd-v8,4,17,1,QCA_AR9341_SOC)
 	@$(call define_add,CONFIG_FOR_TPLINK_WR841N_V8,1)
 	@$(call define_add,CFG_ATHRS27_PHY,1)
 	@$(call define_add,CFG_AG7240_NMACS,2)
 	@$(MKCONFIG) -a db12x mips mips db12x ar7240 ar7240
 
 tp-link_tl-wr841n_v9: qca953x_common
-	@$(call config_init,TP-Link TL-WR841N/D v9,4,12,1,QCA_QCA953X_SOC)
+	@$(call config_init,TP-Link TL-WR841N/D v9,tl-wr841nd-v9,4,12,1,QCA_QCA953X_SOC)
 	@$(call define_add,CONFIG_FOR_TPLINK_WR841N_V9,1)
 	@$(call define_add,CFG_ATHRS27_PHY,1)
 	@$(call define_add,CFG_ATH_GMAC_NMACS,2)
 	@$(MKCONFIG) -a ap143 mips mips ap143 ar7240 ar7240
 
 unwireddevices_unwired-one: ar933x_common
-	@$(call config_init,Black Swift aka Unwired One,16,11,1,QCA_AR933X_SOC)
+	@$(call config_init,Black Swift aka Unwired One,black-swift,16,11,1,QCA_AR933X_SOC)
 	@$(call define_add,CONFIG_FOR_BLACK_SWIFT_BOARD,1)
 	@$(MKCONFIG) -a ap121 mips mips ap121 ar7240 ar7240
 
 village-telco_mesh-potato_v2: ar933x_common
-	@$(call config_init,Village Telco Mesh Potato 2,16,11,1,QCA_AR933X_SOC)
+	@$(call config_init,Village Telco Mesh Potato 2,mesh-potato-v2,16,11,1,QCA_AR933X_SOC)
 	@$(call define_add,CONFIG_FOR_MESH_POTATO_V2,1)
 	@$(call define_add,WEBFAILSAFE_DISABLE_ART_UPGRADE,1)
 	@$(call define_add,WEBFAILSAFE_DISABLE_UBOOT_UPGRADE,1)
 	@$(MKCONFIG) -a ap121 mips mips ap121 ar7240 ar7240
 
 wallys_dr531: qca953x_common
-	@$(call config_init,Wallys DR531,8,17,1,QCA_QCA953X_SOC)
+	@$(call config_init,Wallys DR531,dr531,8,17,1,QCA_QCA953X_SOC)
 	@$(call define_add,CONFIG_FOR_WALLYS_DR531,1)
 	@$(call define_add,CFG_ATHRS27_PHY,1)
 	@$(call define_add,CFG_ATH_GMAC_NMACS,2)
@@ -545,7 +548,7 @@ wallys_dr531: qca953x_common
 	@$(MKCONFIG) -a ap143 mips mips ap143 ar7240 ar7240
 
 zbtlink_zbt-we1526: qca953x_common
-	@$(call config_init,Zbtlink ZBT-WE1526,16,17,1,QCA_QCA953X_SOC)
+	@$(call config_init,Zbtlink ZBT-WE1526,zbt-we1526,16,17,1,QCA_QCA953X_SOC)
 	@$(call define_add,CONFIG_FOR_ZBTLINK_ZBT_WE1526,1)
 	@$(call define_add,CFG_ATHRS27_PHY,1)
 	@$(call define_add,CFG_ATH_GMAC_NMACS,2)
