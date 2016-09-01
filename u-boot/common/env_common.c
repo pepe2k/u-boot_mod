@@ -96,8 +96,8 @@ uchar default_environment[] = {
 #if defined(CONFIG_SERVERIP)
 	"serverip=" MK_STR(CONFIG_SERVERIP) "\0"
 #endif
-#if defined(CFG_AUTOLOAD)
-	"autoload=" CFG_AUTOLOAD "\0"
+#if defined(CONFIG_AUTOLOAD)
+	"autoload=" MK_STR(CONFIG_AUTOLOAD) "\0"
 #endif
 #if defined(CONFIG_ROOTPATH)
 	"rootpath=" MK_STR(CONFIG_ROOTPATH) "\0"
