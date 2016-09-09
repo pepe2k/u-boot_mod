@@ -192,7 +192,7 @@ define config_init
     $(call define_add,SOC_TYPE,$(6)) \
   )
 
-  $(call define_add,CONFIG_BOARD_CUSTOM_STRING,"$(call board_name,$(1))")
+  $(call define_add,CONFIG_BOARD_CUSTOM_STRING,$(call board_name,$(1)))
   $(call define_add,CONFIG_DEFAULT_FLASH_SIZE_IN_MB,$(call flash_size,$(3)))
 
   echo
