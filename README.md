@@ -656,7 +656,7 @@ How to compile the code?
 
 You can use one of the free toolchains:
 
-- [OpenWrt Toolchain for AR71xx MIPS](https://downloads.openwrt.org/snapshots/trunk/ar71xx/generic/OpenWrt-Toolchain-ar71xx-generic_gcc-5.3.0_musl-1.1.14.Linux-x86_64.tar.bz2),
+- [OpenWrt Toolchain for AR71xx MIPS](https://downloads.openwrt.org/snapshots/trunk/ar71xx/generic/OpenWrt-Toolchain-ar71xx-generic_gcc-5.3.0_musl-1.1.15.Linux-x86_64.tar.bz2),
 - ~~[Sourcery CodeBench Lite Edition for MIPS GNU/Linux](https://sourcery.mentor.com/GNUToolchain/subscription3130?lite=MIPS)~~,
 - [ELDK (Embedded Linux Development Kit)](ftp://ftp.denx.de/pub/eldk/),
 - or any others...
