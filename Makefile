@@ -125,7 +125,7 @@ endef
 define size_chk
   $(call echo_green,Checking size of the image...)
 
-  if [ `wc -c < $(1)` -gt `echo $(2)*1024 | bc` ]; then \
+  if [ `wc -c < $(1)` -gt $$(($(2) * 1024)) ]; then \
     echo; \
     $(call echo_red,  ======================); \
     $(call echo_red,  IMAGE SIZE IS TOO BIG!); \
