@@ -217,6 +217,7 @@ $(COMMON_ETHS27_TARGETS):
 8devices_carambola2:
 	@$(call build,256,1)
 
+comfast_cf-e314n \
 comfast_cf-e320n_v2 \
 comfast_cf-e520n_cf-e530n:
 	@$(call build,64,1,ETH_CONFIG=_s27)
