@@ -621,6 +621,27 @@ gpio_setup:
  * after initial/basic GPIO configuration
  */
 
+/*
+ * YunCore AP90Q has on PCB, on button reset
+ * line (GPIO17) a huge capacitor (~10u)...
+ * which means that before the voltage level
+ * rises to VCC, our O/C recovery mode reads
+ * reset button input as low.
+ *
+ * So, delay start for some time here.
+ *
+ * FIXME!
+ */
+#if defined(CONFIG_FOR_YUNCORE_AP90Q)
+	li t8, 0
+	li t9, 0x7530
+
+loop_start:
+	addi t8, t8, 1
+	bne  t8, t9, loop_start
+	nop
+#endif /* CONFIG_FOR_YUNCORE_AP90Q */
+
 	jr ra
 	nop
 

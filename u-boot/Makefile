@@ -554,6 +554,13 @@ wallys_dr531: qca953x_common
 	@$(call define_add,CONFIG_PCI,1)
 	@$(MKCONFIG) -a ap143 mips mips ap143 ar7240 ar7240
 
+yuncore_ap90q: qca953x_common
+	@$(call config_init,YunCore AP90Q,ap90q,16,17,1,QCA_QCA953X_SOC)
+	@$(call define_add,CONFIG_FOR_YUNCORE_AP90Q,1)
+	@$(call define_add,CFG_ATHRS27_PHY,1)
+	@$(call define_add,CFG_ATH_GMAC_NMACS,2)
+	@$(MKCONFIG) -a ap143 mips mips ap143 ar7240 ar7240
+
 zbtlink_zbt-we1526: qca953x_common
 	@$(call config_init,Zbtlink ZBT-WE1526,zbt-we1526,16,17,1,QCA_QCA953X_SOC)
 	@$(call define_add,CONFIG_FOR_ZBTLINK_ZBT_WE1526,1)
