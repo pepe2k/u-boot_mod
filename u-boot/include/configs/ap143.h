@@ -276,12 +276,7 @@
     defined(CONFIG_FOR_TPLINK_WR802N)    ||\
     defined(CONFIG_FOR_TPLINK_WR841N_V9)
 	#define CONFIG_QCA_PLL	QCA_PLL_PRESET_550_400_200
-#elif defined(CONFIG_FOR_COMFAST_CF_E314N)          ||\
-      defined(CONFIG_FOR_COMFAST_CF_E320N_V2)       ||\
-      defined(CONFIG_FOR_COMFAST_CF_E520N_CF_E530N) ||\
-      defined(CONFIG_FOR_WALLYS_DR531)              ||\
-      defined(CONFIG_FOR_YUNCORE_AP90Q)             ||\
-      defined(CONFIG_FOR_ZBTLINK_ZBT_WE1526)
+#else
 	#define CONFIG_QCA_PLL	QCA_PLL_PRESET_650_400_200
 #endif
 
