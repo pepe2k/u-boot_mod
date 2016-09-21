@@ -648,10 +648,11 @@ Jak samodzielnie skompilować kod?
 
 Możesz wykorzystać jeden z dostępnych, bezpłatnych i gotowych narzędzi (tzw. toolchain):
 
-- [OpenWrt Toolchain for AR71xx MIPS](https://downloads.openwrt.org/snapshots/trunk/ar71xx/generic/OpenWrt-Toolchain-ar71xx-generic_gcc-5.3.0_musl-1.1.14.Linux-x86_64.tar.bz2),
-- ~~[Sourcery CodeBench Lite Edition for MIPS GNU/Linux](https://sourcery.mentor.com/GNUToolchain/subscription3130?lite=MIPS)~~,
-- [ELDK (Embedded Linux Development Kit)](ftp://ftp.denx.de/pub/eldk/),
-- lub innych...
+- Zalecany i wykorzystywany do budowania tzw. migawek: [LEDE SDK for AR71xx MIPS (wersja rozwojowa)](https://downloads.lede-project.org/snapshots/targets/ar71xx/generic/lede-sdk-ar71xx-generic_gcc-5.4.0_musl-1.1.15.Linux-x86_64.tar.bz2),
+- [OpenWrt SDK for AR71xx MIPS (wydanie Chaos Calmer)](https://downloads.openwrt.org/chaos_calmer/15.05.1/ar71xx/generic/OpenWrt-SDK-15.05.1-ar71xx-generic_gcc-4.8-linaro_uClibc-0.9.33.2.Linux-x86_64.tar.bz2),
+- [OpenWrt Toolchain for AR71xx MIPS (wersja rozwojowa)](https://downloads.openwrt.org/snapshots/trunk/ar71xx/generic/OpenWrt-Toolchain-ar71xx-generic_gcc-5.3.0_musl-1.1.15.Linux-x86_64.tar.bz2),
+- [ELDK (Embedded Linux Development Kit)](http://bit.ly/2djaTMn),
+- lub inne...
 
 Do kompilacji korzystam z **OpenWrt Toolchain for AR71xx MIPS**, na maszynie wirtualnej z zainstalowanym **Ubuntu 12.04 LTS** (32-bit). Wszystkie publikowane przeze mnie obrazy budowane są na tej konfiguracji.
 
