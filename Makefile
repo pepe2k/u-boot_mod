@@ -228,7 +228,8 @@ d-link_dir-505:
 dragino_v2_ms14:
 	@$(call build,192,1,DEVICE_VENDOR=dragino)
 
-tp-link_tl-wdr3600_tl-43x0:
+tp-link_tl-wdr3600 \
+tp-link_tl-wdr43x0:
 	@$(call build,123,1,ETH_CONFIG=_s17)
 
 unwireddevices_unwired-one:

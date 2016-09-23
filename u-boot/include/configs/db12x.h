@@ -21,7 +21,8 @@
  * GPIO configuration
  * ==================
  */
-#if defined(CONFIG_FOR_TPLINK_WDR3600_WDR43X0_V1)
+#if defined(CONFIG_FOR_TPLINK_WDR3600_V1) ||\
+    defined(CONFIG_FOR_TPLINK_WDR43X0_V1)
 
 	#define CONFIG_QCA_GPIO_MASK_LED_ACT_L	GPIO11 | GPIO12 | GPIO13 |\
 						GPIO14 | GPIO15
@@ -77,8 +78,9 @@
  * Default bootargs
  * ================
  */
-#if defined(CONFIG_FOR_TPLINK_WDR3600_WDR43X0_V1) ||\
-    defined(CONFIG_FOR_TPLINK_WDR3500_V1)
+#if defined(CONFIG_FOR_TPLINK_WDR3500_V1) ||\
+    defined(CONFIG_FOR_TPLINK_WDR3600_V1) ||\
+    defined(CONFIG_FOR_TPLINK_WDR43X0_V1)
 
 	#define CONFIG_BOOTARGS	"console=ttyS0,115200 root=31:02 "\
 				"rootfstype=squashfs init=/sbin/init "\
@@ -146,11 +148,12 @@
  */
 #define CONFIG_QCA_PLL	QCA_PLL_PRESET_550_400_200
 
-#if defined(CONFIG_FOR_TPLINK_WDR3600_WDR43X0_V1) ||\
-    defined(CONFIG_FOR_TPLINK_WDR3500_V1)         ||\
-    defined(CONFIG_FOR_TPLINK_MR3420_V2)          ||\
-    defined(CONFIG_FOR_TPLINK_WR841N_V8)          ||\
-    defined(CONFIG_FOR_TPLINK_WA830RE_V2_WA801ND_V2)
+#if defined(CONFIG_FOR_TPLINK_MR3420_V2)             ||\
+    defined(CONFIG_FOR_TPLINK_WA830RE_V2_WA801ND_V2) ||\
+    defined(CONFIG_FOR_TPLINK_WDR3600_V1)            ||\
+    defined(CONFIG_FOR_TPLINK_WDR43X0_V1)            ||\
+    defined(CONFIG_FOR_TPLINK_WDR3500_V1)            ||\
+    defined(CONFIG_FOR_TPLINK_WR841N_V8)
 
 	#define CONFIG_QCA_PLL_IN_FLASH_BLOCK_OFFSET	0x10000
 	#define CONFIG_QCA_PLL_IN_FLASH_BLOCK_SIZE	0x10000
