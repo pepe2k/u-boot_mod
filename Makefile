@@ -204,7 +204,8 @@ $(COMMON_AR933X_TARGETS):
 
 COMMON_ETHS27_TARGETS = \
 	tp-link_tl-mr3420_v2 \
-	tp-link_tl-wa830re_v2_tl-wa801nd_v2 \
+	tp-link_tl-wa801nd_v2 \
+	tp-link_tl-wa830re_v2 \
 	tp-link_tl-wdr3500 \
 	tp-link_tl-wr802n \
 	tp-link_tl-wr820n_CN \

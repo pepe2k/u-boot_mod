@@ -463,9 +463,16 @@ tp-link_tl-mr3420_v2: ar934x_common
 	@$(call define_add,CFG_AG7240_NMACS,2)
 	@$(MKCONFIG) -a db12x mips mips db12x ar7240 ar7240
 
-tp-link_tl-wa830re_v2_tl-wa801nd_v2: ar934x_common
-	@$(call config_init,TP-Link TL-WA830RE/TL-WA801ND v2,tl-wa830re-801nd-v2,4,17,1,QCA_AR9341_SOC)
-	@$(call define_add,CONFIG_FOR_TPLINK_WA830RE_V2_WA801ND_V2,1)
+tp-link_tl-wa801nd_v2: ar934x_common
+	@$(call config_init,TP-Link TL-WA801ND v2,tl-wa801nd-v2,4,17,1,QCA_AR9341_SOC)
+	@$(call define_add,CONFIG_FOR_TPLINK_WA801ND_V2,1)
+	@$(call define_add,CFG_ATHRS27_PHY,1)
+	@$(call define_add,CFG_AG7240_NMACS,2)
+	@$(MKCONFIG) -a db12x mips mips db12x ar7240 ar7240
+
+tp-link_tl-wa830re_v2: ar934x_common
+	@$(call config_init,TP-Link TL-WA830RE v2,tl-wa830re-v2,4,17,1,QCA_AR9341_SOC)
+	@$(call define_add,CONFIG_FOR_TPLINK_WA830RE_V2,1)
 	@$(call define_add,CFG_ATHRS27_PHY,1)
 	@$(call define_add,CFG_AG7240_NMACS,2)
 	@$(MKCONFIG) -a db12x mips mips db12x ar7240 ar7240
