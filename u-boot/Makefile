@@ -223,10 +223,10 @@ LIBS += lib_$(ARCH)/lib$(ARCH).a
 LIBS += drivers/libdrivers.a
 LIBS += net/libnet.a
 LIBS += rtc/librtc.a
-LIBS += httpd/libhttpd.a
 LIBS += $(BOARDLIBS)
 
-LIBS_SHARED = board/$(BOARDDIR)/lib$(BOARD).a
+LIBS_SHARED  = board/$(BOARDDIR)/lib$(BOARD).a
+LIBS_SHARED += httpd/libhttpd.a
 ifdef SOC
   LIBS_SHARED += cpu/$(CPU)/$(SOC)/lib$(SOC).a
 endif
@@ -278,7 +278,7 @@ u-boot.img: u-boot.bin
 u-boot.dis: u-boot
 	$(OBJDUMP) -d $< > $@
 
-u-boot: depend version $(SUBDIRS) $(OBJS) $(LIBS) $(LIBS_SHARED) $(LDSCRIPT)
+u-boot: fsdata depend version $(SUBDIRS) $(OBJS) $(LIBS) $(LIBS_SHARED) $(LDSCRIPT)
 	UNDEF_SYM=`$(OBJDUMP) -x $(LIBS) $(LIBS_SHARED) | \
 	           sed -n -e 's/.*\(__u_boot_cmd_.*\)/-u\1/p' | \
 	           sort | uniq`; \
@@ -343,6 +343,11 @@ endif # ifdef COMPRESSED_UBOOT
 
 version:
 	@echo -n "#define U_BOOT_VERSION \"U-Boot $(U_BOOT_VERSION)\"" > $(VERSION_FILE)
+
+fsdata:
+	$(call echo_green,Preparing web server files...)
+	@echo
+	cd httpd && ./vendors/makefsdatac $(DEVICE_VENDOR)
 
 depend dep:
 	@for dir in $(SUBDIRS); do $(MAKE) -C $$dir .depend; done
