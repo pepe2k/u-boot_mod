@@ -402,9 +402,16 @@ comfast_cf-e320n_v2: qca953x_common
 	@$(call define_add,CFG_ATH_GMAC_NMACS,2)
 	@$(MKCONFIG) -a ap143 mips mips ap143 ar7240 ar7240
 
-comfast_cf-e520n_cf-e530n: qca953x_common
-	@$(call config_init,Comfast CF-E520N/CF-E530N,cf-e520n_cf-e530n,8,17,1,QCA_QCA953X_SOC)
-	@$(call define_add,CONFIG_FOR_COMFAST_CF_E520N_CF_E530N,1)
+comfast_cf-e520n: qca953x_common
+	@$(call config_init,Comfast CF-E520N,cf-e520n,8,17,1,QCA_QCA953X_SOC)
+	@$(call define_add,CONFIG_FOR_COMFAST_CF_E520N,1)
+	@$(call define_add,CFG_ATHRS27_PHY,1)
+	@$(call define_add,CFG_ATH_GMAC_NMACS,2)
+	@$(MKCONFIG) -a ap143 mips mips ap143 ar7240 ar7240
+
+comfast_cf-e530n: qca953x_common
+	@$(call config_init,Comfast CF-E530N,cf-e530n,8,17,1,QCA_QCA953X_SOC)
+	@$(call define_add,CONFIG_FOR_COMFAST_CF_E530N,1)
 	@$(call define_add,CFG_ATHRS27_PHY,1)
 	@$(call define_add,CFG_ATH_GMAC_NMACS,2)
 	@$(MKCONFIG) -a ap143 mips mips ap143 ar7240 ar7240

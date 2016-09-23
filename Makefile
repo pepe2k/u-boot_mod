@@ -220,7 +220,8 @@ $(COMMON_ETHS27_TARGETS):
 
 comfast_cf-e314n \
 comfast_cf-e320n_v2 \
-comfast_cf-e520n_cf-e530n:
+comfast_cf-e520n \
+comfast_cf-e530n:
 	@$(call build,64,1,ETH_CONFIG=_s27)
 
 d-link_dir-505:
