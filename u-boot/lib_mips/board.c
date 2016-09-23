@@ -99,7 +99,8 @@ static int display_banner(void)
 
 	printf("\n***************************************"
 	       "\n*     %s     *"
-	       "\n*        " __DATE__ ", " __TIME__ "        *"
+	       "\n*          Build: "
+	       MK_STR(CONFIG_BUILD_DATE_UTC) "          *"
 	       "\n***************************************\n\n",
 	       version_string);
 

@@ -364,6 +364,7 @@ unconfig:
 config_common:
 	@ >include/config.h
 	@$(call include_add,soc/soc_list.h)
+	@$(call define_add,CONFIG_BUILD_DATE_UTC,$(shell date -u +"%Y-%m-%d"))
 
 ar933x_common: unconfig config_common
 	@$(call define_add,CFG_AG7240_NMACS,2)

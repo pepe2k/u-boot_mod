@@ -27,7 +27,7 @@ int do_version(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 	extern char version_string[];
 
 	puts("Version and build date:\n");
-	printf("  %s\n  " __DATE__ ", " __TIME__ "\n\n", version_string);
+	printf("  %s, " MK_STR(CONFIG_BUILD_DATE_UTC) "\n\n", version_string);
 
 	puts("Modification by:\n");
 	puts("  Piotr Dymacz <piotr@dymacz.pl>\n");
