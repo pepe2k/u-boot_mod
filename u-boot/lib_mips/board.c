@@ -33,14 +33,14 @@
 
 DECLARE_GLOBAL_DATA_PTR;
 
-/*#define	BOARD_DEBUG*/
+/*#define BOARD_DEBUG*/
 
-#if (((CFG_ENV_ADDR+CFG_ENV_SIZE) < CFG_MONITOR_BASE) || \
-	 (CFG_ENV_ADDR >= (CFG_MONITOR_BASE + CFG_MONITOR_LEN))) \
-	 || defined(CFG_ENV_IS_IN_NVRAM)
-	#define	TOTAL_MALLOC_LEN	(CFG_MALLOC_LEN + CFG_ENV_SIZE)
+#if (((CFG_ENV_ADDR + CFG_ENV_SIZE) < CFG_MONITOR_BASE)      ||\
+     (CFG_ENV_ADDR >= (CFG_MONITOR_BASE + CFG_MONITOR_LEN))) ||\
+     defined(CFG_ENV_IS_IN_NVRAM)
+	#define TOTAL_MALLOC_LEN	(CFG_MALLOC_LEN + CFG_ENV_SIZE)
 #else
-	#define	TOTAL_MALLOC_LEN	CFG_MALLOC_LEN
+	#define TOTAL_MALLOC_LEN	CFG_MALLOC_LEN
 #endif
 
 extern ulong uboot_end_data;
@@ -64,7 +64,8 @@ static void mem_malloc_init(void)
 	mem_malloc_start = dest_addr - TOTAL_MALLOC_LEN;
 	mem_malloc_brk = mem_malloc_start;
 
-	memset((void *)mem_malloc_start, 0, mem_malloc_end - mem_malloc_start);
+	memset((void *)mem_malloc_start,
+		0, mem_malloc_end - mem_malloc_start);
 }
 
 void *sbrk(ptrdiff_t increment)
@@ -73,7 +74,8 @@ void *sbrk(ptrdiff_t increment)
 	ulong new = old + increment;
 
 	if ((new < mem_malloc_start) || (new > mem_malloc_end)) {
-		printf("## Error: sbrk: out of memory (%d requested > %d available)\n",
+		printf("## Error: sbrk: out of memory "
+			"(%d requested > %d available)\n",
 			increment, mem_malloc_end - old);
 
 		return (void*)MORECORE_FAILURE;
@@ -88,18 +90,18 @@ static int display_banner(void)
 {
 	puts("\n");
 
-#ifdef CONFIG_SKIP_LOWLEVEL_INIT
+#if defined(CONFIG_SKIP_LOWLEVEL_INIT)
 	puts("\n***************************************"
-		 "\n*                                     *"
-		 "\n*             RAM VERSION             *"
-		 "\n*                                     *");
+	     "\n*                                     *"
+	     "\n*             RAM VERSION             *"
+	     "\n*                                     *");
 #endif
 
 	printf("\n***************************************"
-		   "\n*     %s     *"
-		   "\n*        " __DATE__ ", " __TIME__ "        *"
-		   "\n***************************************\n\n",
-			version_string);
+	       "\n*     %s     *"
+	       "\n*        " __DATE__ ", " __TIME__ "        *"
+	       "\n***************************************\n\n",
+	       version_string);
 
 	return 0;
 }
@@ -108,16 +110,15 @@ static int baudrate_init(void)
 {
 	char *s;
 
-	if ((s = getenv("baudrate")) != NULL) {
+	if ((s = getenv("baudrate")) != NULL)
 		gd->baudrate = simple_strtoul(s, NULL, 10);
-	} else {
+	else
 		gd->baudrate = CONFIG_BAUDRATE;
-	}
 
 	return 0;
 }
 
-#ifndef COMPRESSED_UBOOT
+#if !defined(COMPRESSED_UBOOT)
 static int init_func_ram(void)
 {
 	if ((gd->ram_size = dram_init()) > 0)
@@ -150,23 +151,23 @@ static int init_func_ram(void)
  */
 typedef int(init_fnc_t)(void);
 
-#ifndef COMPRESSED_UBOOT
+#if !defined(COMPRESSED_UBOOT)
 init_fnc_t *init_sequence[] = { timer_init,
-								env_init,
-								baudrate_init,
-								serial_init,
-								console_init_f,
-								display_banner,
-								init_func_ram,
-								NULL, };
+				env_init,
+				baudrate_init,
+				serial_init,
+				console_init_f,
+				display_banner,
+				init_func_ram,
+				NULL, };
 #else
 init_fnc_t *init_sequence[] = { timer_init,
-								env_init,
-								baudrate_init,
-								serial_init,
-								console_init_f,
-								display_banner,
-								NULL, };
+				env_init,
+				baudrate_init,
+				serial_init,
+				console_init_f,
+				display_banner,
+				NULL, };
 #endif
 
 /*
@@ -176,11 +177,11 @@ init_fnc_t *init_sequence[] = { timer_init,
  */
 void board_init_f(ulong bootflag)
 {
+	ulong len = (ulong)&uboot_end - CFG_MONITOR_BASE;
+	init_fnc_t **init_fnc_ptr;
+	ulong addr, addr_sp, *s;
 	gd_t gd_data, *id;
 	bd_t *bd;
-	init_fnc_t **init_fnc_ptr;
-	ulong addr, addr_sp, len = (ulong)&uboot_end - CFG_MONITOR_BASE;
-	ulong *s;
 
 	/* Pointer is writable since we allocated a register for it */
 	gd = &gd_data;
@@ -196,7 +197,7 @@ void board_init_f(ulong bootflag)
 			hang();
 	}
 
-#ifdef COMPRESSED_UBOOT
+#if defined(COMPRESSED_UBOOT)
 	gd->ram_size = bootflag;
 #endif
 
@@ -212,7 +213,7 @@ void board_init_f(ulong bootflag)
 	 */
 	addr &= ~(4096 - 1);
 
-#ifdef BOARD_DEBUG
+#if defined(BOARD_DEBUG)
 	printf("Top of RAM usable for U-Boot at: %08lX\n", addr);
 #endif
 
@@ -223,15 +224,16 @@ void board_init_f(ulong bootflag)
 	addr -= len;
 	addr &= ~(16 * 1024 - 1);
 
-#ifdef BOARD_DEBUG
+#if defined(BOARD_DEBUG)
 	printf("Reserving %ldk for U-Boot at: %08lX\n", len >> 10, addr);
 #endif
 
 	/* Reserve memory for malloc() arena */
 	addr_sp = addr - TOTAL_MALLOC_LEN;
 
-#ifdef BOARD_DEBUG
-	printf("Reserving %dk for malloc() at: %08lX\n", TOTAL_MALLOC_LEN >> 10, addr_sp);
+#if defined(BOARD_DEBUG)
+	printf("Reserving %dk for malloc() at: %08lX\n",
+		TOTAL_MALLOC_LEN >> 10, addr_sp);
 #endif
 
 	/*
@@ -242,23 +244,26 @@ void board_init_f(ulong bootflag)
 	bd = (bd_t *)addr_sp;
 	gd->bd = bd;
 
-#ifdef BOARD_DEBUG
-	printf("Reserving %d Bytes for Board Info at: %08lX\n", sizeof(bd_t), addr_sp);
+#if defined(BOARD_DEBUG)
+	printf("Reserving %d Bytes for Board Info at: %08lX\n",
+		sizeof(bd_t), addr_sp);
 #endif
 
 	addr_sp -= sizeof(gd_t);
 	id = (gd_t *)addr_sp;
 
-#ifdef BOARD_DEBUG
-	printf("Reserving %d Bytes for Global Data at: %08lX\n", sizeof(gd_t), addr_sp);
+#if defined(BOARD_DEBUG)
+	printf("Reserving %d Bytes for Global Data at: %08lX\n",
+		sizeof(gd_t), addr_sp);
 #endif
 
 	/* Reserve memory for boot params */
 	addr_sp -= CFG_BOOTPARAMS_LEN;
 	bd->bi_boot_params = addr_sp;
 
-#ifdef BOARD_DEBUG
-	printf("Reserving %dk for boot params() at: %08lX\n", CFG_BOOTPARAMS_LEN >> 10, addr_sp);
+#if defined(BOARD_DEBUG)
+	printf("Reserving %dk for boot params() at: %08lX\n",
+		CFG_BOOTPARAMS_LEN >> 10, addr_sp);
 #endif
 
 	/*
@@ -274,7 +279,7 @@ void board_init_f(ulong bootflag)
 	*s-- = 0;
 	addr_sp = (ulong)s;
 
-#ifdef BOARD_DEBUG
+#if defined(BOARD_DEBUG)
 	printf("Stack Pointer at: %08lX\n", addr_sp);
 #endif
 
@@ -305,11 +310,11 @@ void board_init_f(ulong bootflag)
  */
 void board_init_r(gd_t *id, ulong dest_addr)
 {
-	cmd_tbl_t *cmdtp;
 	extern void malloc_bin_reloc(void);
-#ifndef CFG_ENV_IS_NOWHERE
+#if !defined(CFG_ENV_IS_NOWHERE)
 	extern char *env_name_spec;
 #endif
+	cmd_tbl_t *cmdtp;
 	char buf[20];
 	bd_t *bd;
 	char *s;
@@ -323,7 +328,7 @@ void board_init_r(gd_t *id, ulong dest_addr)
 	/* bd -> board data */
 	bd = gd->bd;
 
-#ifdef BOARD_DEBUG
+#if defined(BOARD_DEBUG)
 	printf("Now running in RAM - U-Boot at: %08lX\n", dest_addr);
 #endif
 
@@ -335,12 +340,14 @@ void board_init_r(gd_t *id, ulong dest_addr)
 	monitor_flash_len = (ulong)&uboot_end_data - dest_addr;
 
 	/* We have to relocate the command table manually */
-	for (cmdtp = &__u_boot_cmd_start; cmdtp != &__u_boot_cmd_end; cmdtp++) {
+	for (cmdtp  = &__u_boot_cmd_start;
+	     cmdtp != &__u_boot_cmd_end; cmdtp++) {
 		ulong addr;
 
 		addr = (ulong)(cmdtp->cmd) + gd->reloc_off;
 
-		cmdtp->cmd = (int (*)(struct cmd_tbl_s *, int, int, char *[]))addr;
+		cmdtp->cmd =
+			(int (*)(struct cmd_tbl_s *, int, int, char *[]))addr;
 
 		addr = (ulong)(cmdtp->name) + gd->reloc_off;
 		cmdtp->name = (char *)addr;
@@ -350,7 +357,7 @@ void board_init_r(gd_t *id, ulong dest_addr)
 			cmdtp->usage = (char *)addr;
 		}
 
-#ifdef	CFG_LONGHELP
+#if defined(CFG_LONGHELP)
 		if (cmdtp->help) {
 			addr = (ulong)(cmdtp->help) + gd->reloc_off;
 			cmdtp->help = (char *)addr;
@@ -359,7 +366,7 @@ void board_init_r(gd_t *id, ulong dest_addr)
 	}
 
 	/* There are some other pointer constants we must deal with */
-#ifndef CFG_ENV_IS_NOWHERE
+#if !defined(CFG_ENV_IS_NOWHERE)
 	env_name_spec += gd->reloc_off;
 #endif
 
@@ -367,7 +374,7 @@ void board_init_r(gd_t *id, ulong dest_addr)
 	bd->bi_flashstart = CFG_FLASH_BASE;
 	bd->bi_flashsize  = flash_init();
 
-#if CFG_MONITOR_BASE == CFG_FLASH_BASE
+#if (CFG_MONITOR_BASE == CFG_FLASH_BASE)
 	/* Reserved area for U-Boot */
 	bd->bi_flashoffset = monitor_flash_len;
 #else
