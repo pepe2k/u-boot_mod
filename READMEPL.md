@@ -1,6 +1,12 @@
 Modyfikacja U-Boot 1.1.4 dla routerów
 ==========
 
+Gotowe obrazy testowe
+---------------------
+Począwszy od 24.09.2016, gotowe obrazy, kompilowane na **Raspberry Pi 3** przy pomocy toolchain z **LEDE**, są dostępne na **[moim serwerze](http://projects.dymacz.pl)**.
+
+Obrazy są budowane i przesyłane na FTP tylko jeżeli w głównej gałęzi repozytorium zaszły jakieś zmiany - dedykowany skrypt sprawdza to raz dziennie. Na FTP znajduje sie również toolchain wykorzystany do budowania obrazów.
+
 Spis treści
 -----------
 

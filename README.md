@@ -1,6 +1,12 @@
 U-Boot 1.1.4 modification for routers
 ==========
 
+Ready snapshot/test images
+--------------------------
+Starting from 24.09.2016, ready images, built on **Raspberry Pi 3** with **LEDE** toolchain, are available **[on my server](http://projects.dymacz.pl)**.
+
+Images are built and uploaded on FTP only when master branch in repository was updated - custom script checks this once per day. On the FTP you will find also toolchain which is used to build images.
+
 Table of contents
 -----------------
 
