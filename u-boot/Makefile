@@ -556,6 +556,13 @@ tp-link_tl-wr841n_v10: qca953x_common
 	@$(call define_add,CFG_ATH_GMAC_NMACS,2)
 	@$(MKCONFIG) -a ap143 mips mips ap143 ar7240 ar7240
 
+tp-link_tl-wr841n_v11: qca953x_common
+	@$(call config_init,TP-Link TL-WR841N/D v11,tl-wr841nd-v11,4,12,1,QCA_QCA953X_SOC)
+	@$(call define_add,CONFIG_FOR_TPLINK_WR841N_V11,1)
+	@$(call define_add,CFG_ATHRS27_PHY,1)
+	@$(call define_add,CFG_ATH_GMAC_NMACS,2)
+	@$(MKCONFIG) -a ap143 mips mips ap143 ar7240 ar7240
+
 tp-link_tl-wr841n_v8: ar934x_common
 	@$(call config_init,TP-Link TL-WR841N/D v8,tl-wr841nd-v8,4,17,1,QCA_AR9341_SOC)
 	@$(call define_add,CONFIG_FOR_TPLINK_WR841N_V8,1)

@@ -210,6 +210,7 @@ COMMON_ETHS27_TARGETS = \
 	tp-link_tl-wr802n \
 	tp-link_tl-wr820n_CN \
 	tp-link_tl-wr841n_v10 \
+	tp-link_tl-wr841n_v11 \
 	tp-link_tl-wr841n_v8 \
 	tp-link_tl-wr841n_v9
 
