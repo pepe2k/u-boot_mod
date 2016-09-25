@@ -891,17 +891,20 @@ void qca_dram_init(void)
 	}
 
 	/* Enable DDR2 */
-	if (mem_type == RAM_MEMORY_TYPE_DDR2) {
 #if (SOC_TYPE & QCA_AR933X_SOC)
+	if (mem_type == RAM_MEMORY_TYPE_DDR2)
 		qca_dram_set_ddr2_cfg(cas_lat, tmp_clk);
 #else
-		qca_soc_reg_write(QCA_DDR_CTRL_CFG_REG,
-				  QCA_DDR_CTRL_CFG_PAD_DDR2_SEL_MASK);
+	if (mem_type == RAM_MEMORY_TYPE_DDR2) {
+		qca_soc_reg_read_set(QCA_DDR_CTRL_CFG_REG,
+				     QCA_DDR_CTRL_CFG_PAD_DDR2_SEL_MASK);
 
 		qca_dram_set_ddr2_cfg(cas_lat, tmp_clk);
-#endif
-
+	} else {
+		qca_soc_reg_read_clear(QCA_DDR_CTRL_CFG_REG,
+				       QCA_DDR_CTRL_CFG_PAD_DDR2_SEL_MASK);
 	}
+#endif
 
 	/* Setup DDR timing related registers */
 	qca_dram_set_ddr_cfg(cas_lat, tmp_clk, mem_type);
