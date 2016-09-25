@@ -248,6 +248,9 @@ wallys_dr531:
 yuncore_ap90q:
 	@$(call build,256,1,ETH_CONFIG=_s27)
 
+yuncore_cpe870:
+	@$(call build,64,1,ETH_CONFIG=_s27)
+
 zbtlink_zbt-we1526:
 	@$(call build,256,1,ETH_CONFIG=_s27)
 

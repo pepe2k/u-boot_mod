@@ -72,6 +72,15 @@
 	#define CONFIG_QCA_GPIO_MASK_IN		GPIO16 | GPIO17
 	#define CONFIG_QCA_GPIO_MASK_OUT_INIT_H	CONFIG_QCA_GPIO_MASK_LED_ACT_L
 
+#elif defined(CONFIG_FOR_YUNCORE_CPE870)
+
+	#define CONFIG_QCA_GPIO_MASK_LED_ACT_L	GPIO0 | GPIO1  | GPIO2  |\
+						GPIO3 | GPIO13 | GPIO19 |\
+						GPIO20
+	#define CONFIG_QCA_GPIO_MASK_OUT	CONFIG_QCA_GPIO_MASK_LED_ACT_L
+	#define CONFIG_QCA_GPIO_MASK_IN		GPIO16
+	#define CONFIG_QCA_GPIO_MASK_OUT_INIT_H	CONFIG_QCA_GPIO_MASK_LED_ACT_L
+
 #endif
 
 /*
@@ -87,6 +96,13 @@
 				"rootfstype=squashfs init=/sbin/init "\
 				"mtdparts=ath-nor0:256k(u-boot),64k(u-boot-env),6336k(rootfs),1408k(uImage),64k(mib0),64k(art)"
 
+#elif defined(CONFIG_FOR_YUNCORE_CPE870)
+
+	#define CONFIG_BOOTARGS	"console=ttyS0,115200 root=31:02 "\
+				"rootfstype=squashfs,jffs2 init=/sbin/init "\
+				"mtdparts=ath-nor0:64k(u-boot),64k(u-boot-env),6528k(rootfs),1408K(uImage)"\
+				",7936k@0x20000(firmware),64k(NVRAM),64k(ART),8128k@0x00000(firmware2)"
+
 #else
 
 	#define CONFIG_BOOTARGS	"console=ttyS0,115200 root=31:02 "\
@@ -100,7 +116,12 @@
  * Load address and boot command
  * =============================
  */
-#define CFG_LOAD_ADDR		0x9F020000
+#if defined(CONFIG_FOR_YUNCORE_CPE870)
+	#define CFG_LOAD_ADDR		0x9F680000
+#else
+	#define CFG_LOAD_ADDR		0x9F020000
+#endif
+
 #define CONFIG_BOOTCOMMAND	"bootm " MK_STR(CFG_LOAD_ADDR)
 
 /*
@@ -108,9 +129,15 @@
  * Environment configuration
  * =========================
  */
-#define CFG_ENV_ADDR		0x9F01EC00
-#define CFG_ENV_SIZE		0x1000
-#define CFG_ENV_SECT_SIZE	0x10000
+#if defined(CONFIG_FOR_YUNCORE_CPE870)
+	#define CFG_ENV_ADDR		0x9F020000
+	#define CFG_ENV_SIZE		0xFC00
+	#define CFG_ENV_SECT_SIZE	0x10000
+#else
+	#define CFG_ENV_ADDR		0x9F01EC00
+	#define CFG_ENV_SIZE		0x1000
+	#define CFG_ENV_SECT_SIZE	0x10000
+#endif
 
 /*
  * ===========================
@@ -126,21 +153,52 @@
  * MAC address/es, model and WPS pin offsets in FLASH
  * ==================================================
  */
-#define OFFSET_MAC_DATA_BLOCK		0x010000
-#define OFFSET_MAC_DATA_BLOCK_LENGTH	0x010000
-#define OFFSET_MAC_ADDRESS		0x00FC00
-#define OFFSET_ROUTER_MODEL		0x00FD00
-#define OFFSET_PIN_NUMBER		0x00FE00
+#if defined(CONFIG_FOR_YUNCORE_CPE870)
+	#define OFFSET_MAC_DATA_BLOCK		0xFF0000
+	#define OFFSET_MAC_DATA_BLOCK_LENGTH	0x010000
+	#define OFFSET_MAC_ADDRESS		0x000000
+#else
+	#define OFFSET_MAC_DATA_BLOCK		0x010000
+	#define OFFSET_MAC_DATA_BLOCK_LENGTH	0x010000
+	#define OFFSET_MAC_ADDRESS		0x00FC00
+	#define OFFSET_ROUTER_MODEL		0x00FD00
+	#define OFFSET_PIN_NUMBER		0x00FE00
+#endif
+
+/*
+ * =========================
+ * Custom changes per device
+ * =========================
+ */
+
+/*
+ * YunCore CPE870 is limited to 64 KB only,
+ * disable some commands
+ */
+#if defined(CONFIG_FOR_YUNCORE_CPE870)
+	#undef CONFIG_CMD_DHCP
+	#undef CONFIG_CMD_LOADB
+	#undef CONFIG_CMD_SNTP
+	#undef CONFIG_CMD_IMI
+#endif
 
 /*
  * ===========================
  * HTTP recovery configuration
  * ===========================
  */
-#define WEBFAILSAFE_UPLOAD_KERNEL_ADDRESS	CFG_LOAD_ADDR
+#if defined(CONFIG_FOR_YUNCORE_CPE870)
+	#define WEBFAILSAFE_UPLOAD_KERNEL_ADDRESS	CFG_FLASH_BASE + 0x20000
+#else
+	#define WEBFAILSAFE_UPLOAD_KERNEL_ADDRESS	CFG_LOAD_ADDR
+#endif
 
 /* Firmware size limit */
-#define WEBFAILSAFE_UPLOAD_LIMITED_AREA_IN_BYTES	(192 * 1024)
+#if defined(CONFIG_FOR_YUNCORE_CPE870)
+	#define WEBFAILSAFE_UPLOAD_LIMITED_AREA_IN_BYTES	(256 * 1024)
+#else
+	#define WEBFAILSAFE_UPLOAD_LIMITED_AREA_IN_BYTES	(192 * 1024)
+#endif
 
 /*
  * ========================
@@ -155,7 +213,8 @@
     defined(CONFIG_FOR_TPLINK_WDR3600_V1) ||\
     defined(CONFIG_FOR_TPLINK_WDR43X0_V1) ||\
     defined(CONFIG_FOR_TPLINK_WDR3500_V1) ||\
-    defined(CONFIG_FOR_TPLINK_WR841N_V8)
+    defined(CONFIG_FOR_TPLINK_WR841N_V8)  ||\
+    defined(CONFIG_FOR_YUNCORE_CPE870)
 
 	#define CONFIG_QCA_PLL_IN_FLASH_BLOCK_OFFSET	0x10000
 	#define CONFIG_QCA_PLL_IN_FLASH_BLOCK_SIZE	0x10000
@@ -167,7 +226,13 @@
  * For upgrade scripts in environment
  * ==================================
  */
-#define CONFIG_UPG_UBOOT_SIZE_BACKUP_HEX	0x20000
+#if !defined(CONFIG_FOR_YUNCORE_CPE870)
+	#define CONFIG_UPG_UBOOT_SIZE_BACKUP_HEX	0x20000
+#endif
+
+#if defined(CONFIG_FOR_YUNCORE_CPE870)
+	#define CONFIG_UPG_SCRIPTS_FW_ADDR_HEX	0x9F020000
+#endif
 
 /*
  * ===================

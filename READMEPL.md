@@ -85,6 +85,7 @@ Lista obecnie wspieranych urządzeń:
   - TP-Link TL-WR841N/D v8
   - TP-Link TL-WA830RE v2
   - TP-Link TL-WA801ND v2
+  - YunCore CPE870
 
 - **Atheros AR9344**:
   - TP-Link TL-WDR3600 v1
@@ -140,6 +141,7 @@ Dodatkowe informacje o wspieranych urządzeniach:
 | Comfast CF-E320N v2 | QCA9531 | 16 MiB | 64 MiB DDR2 | 64 KiB, LZMA | RO |
 | Comfast CF-E520N/CF-E530N | QCA9531 | 8 MiB | 32 MiB DDR2 | 64 KiB, LZMA | RO |
 | YunCore AP90Q | QCA9531 | 16 MiB | 128 MiB DDR2 | 256 KiB | R/W |
+| YunCore CPE870 | AR9341 | 8 MiB | 64 MiB DDR2 | 64 KiB, LZMA | R/W |
 
 *(LZMA) - obraz binarny U-Boot został dodatkowo skompresowany przy pomocy LZMA.*  
 *(R/W) - zmienne środowiskowe przechowywane są w osobnym bloku FLASH, co pozwala na ich zachowanie po odłączeniu zasilaniu.*  
