@@ -833,6 +833,14 @@ void qca_dram_init(void)
 	/* If DDR_CLK < 2 * AHB_CLK, set DDR FSM wait control to 0xA24 */
 	if (ddr_clk < (2 * ahb_clk))
 		qca_soc_reg_write(QCA_DDR_FSM_WAIT_CTRL_REG, 0xA24);
+
+	/* If CPU clock < AHB clock, set SRAM REQ ACK */
+	if (cpu_clk < ahb_clk)
+		qca_soc_reg_read_set(QCA_DDR_CTRL_CFG_REG,
+				     QCA_DDR_CTRL_CFG_SRAM_REQ_ACK_MASK);
+	else
+		qca_soc_reg_read_clear(QCA_DDR_CTRL_CFG_REG,
+				       QCA_DDR_CTRL_CFG_SRAM_REQ_ACK_MASK);
 #endif
 
 	/*
