@@ -62,6 +62,7 @@ Lista obecnie wspieranych urządzeń:
 
 - **Atheros AR9331**:
   - 8devices Carambola 2 (w wersji z płytką developerską, [zdjęcia w mojej galerii](http://galeria.tech-blog.pl/8devices_Carambola_2/))
+  - ALFA NETWORK Hornet-UB/Hornet-UB-64 (aka Hornet-UB x2)
   - TP-Link TL-MR3020 v1 ([zdjęcia w mojej galerii](http://galeria.tech-blog.pl/TPLINK_TL-MR3020/))
   - TP-Link TL-MR3040 v1 i v2
   - TP-Link TL-WR703N v1, ([zdjęcia w mojej galerii](http://galeria.tech-blog.pl/TPLINK_TL-WR703N/))
@@ -111,6 +112,7 @@ Dodatkowe informacje o wspieranych urządzeniach:
 | Model | SoC | FLASH | RAM | Obraz U-Boot | U-Boot env |
 |:--- | :--- | ---: | ---: | ---: | ---: |
 | [8devices Carambola 2](http://8devices.com/carambola-2) | AR9331 | 16 MiB | 64 MiB DDR2 | 256 KiB | 64 KiB, R/W |
+| [ALFA NETWORK Hornet-UB](https://wiki.openwrt.org/toh/alfa.network/hornet-ub) | AR9331 | 8/16 MiB | 32/64 MiB DDR1 | 256 KiB | R/W |
 | [TP-Link TL-MR3020 v1](http://wiki.openwrt.org/toh/tp-link/tl-mr3020) | AR9331 | 4 MiB | 32 MiB DDR1 | 64 KiB, LZMA | RO |
 | [TP-Link TL-MR3040 v1/2](http://wiki.openwrt.org/toh/tp-link/tl-mr3040) | AR9331 | 4 MiB | 32 MiB DDR1 | 64 KiB, LZMA | RO |
 | [TP-Link TL-WR703N](http://wiki.openwrt.org/toh/tp-link/tl-wr703n) | AR9331 | 4 MiB | 32 MiB DDR1 | 64 KiB, LZMA | RO |

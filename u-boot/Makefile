@@ -393,6 +393,11 @@ qca953x_common: unconfig config_common
 	@$(call define_add,CONFIG_FOR_8DEVICES_CARAMBOLA2,1)
 	@$(MKCONFIG) -a ap121 mips mips ap121 ar7240 ar7240
 
+alfa-network_hornet-ub: ar933x_common
+	@$(call config_init,ALFA NETWORK Hornet-UB,hornet-ub,8,12,1,QCA_AR933X_SOC)
+	@$(call define_add,CONFIG_FOR_ALFA_NETWORK_HORNET_UB,1)
+	@$(MKCONFIG) -a ap121 mips mips ap121 ar7240 ar7240
+
 comfast_cf-e314n: qca953x_common
 	@$(call config_init,Comfast CF-E314N,cf-e314n,16,17,1,QCA_QCA953X_SOC)
 	@$(call define_add,CONFIG_FOR_COMFAST_CF_E314N,1)
