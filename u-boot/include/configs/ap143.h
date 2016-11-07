@@ -175,15 +175,20 @@
     defined(CONFIG_FOR_TPLINK_WR841N_V11)   ||\
     defined(CONFIG_FOR_TPLINK_WR841N_V9)
 	#define CFG_LOAD_ADDR	0x9F020000
-#elif defined(CONFIG_FOR_WALLYS_DR531)
-	#define CFG_LOAD_ADDR	0x9F050000
-#elif defined(CONFIG_FOR_YUNCORE_AP90Q)  ||\
+#elif defined(CONFIG_FOR_WALLYS_DR531)   ||\
+      defined(CONFIG_FOR_YUNCORE_AP90Q)  ||\
       defined(CONFIG_FOR_YUNCORE_CPE830) ||\
       defined(CONFIG_FOR_ZBTLINK_ZBT_WE1526)
-	#define CFG_LOAD_ADDR	0x9FE80000
+	#define CFG_LOAD_ADDR	0x9F050000
 #endif
 
-#define CONFIG_BOOTCOMMAND	"bootm " MK_STR(CFG_LOAD_ADDR)
+#if defined(CONFIG_FOR_YUNCORE_AP90Q)  ||\
+    defined(CONFIG_FOR_YUNCORE_CPE830) ||\
+    defined(CONFIG_FOR_ZBTLINK_ZBT_WE1526)
+	#define CONFIG_BOOTCOMMAND	"bootm 0x9FE80000 || bootm 0x9F050000"
+#else
+	#define CONFIG_BOOTCOMMAND	"bootm " MK_STR(CFG_LOAD_ADDR)
+#endif
 
 /*
  * =========================
@@ -284,13 +289,7 @@
  * HTTP recovery configuration
  * ===========================
  */
-#if defined(CONFIG_FOR_YUNCORE_AP90Q)  ||\
-    defined(CONFIG_FOR_YUNCORE_CPE830) ||\
-    defined(CONFIG_FOR_ZBTLINK_ZBT_WE1526)
-	#define WEBFAILSAFE_UPLOAD_KERNEL_ADDRESS	CFG_FLASH_BASE + 0x50000
-#else
-	#define WEBFAILSAFE_UPLOAD_KERNEL_ADDRESS	CFG_LOAD_ADDR
-#endif
+#define WEBFAILSAFE_UPLOAD_KERNEL_ADDRESS	CFG_LOAD_ADDR
 
 /* Firmware size limit */
 #if defined(CONFIG_FOR_COMFAST_CF_E314N)    ||\
