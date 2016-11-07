@@ -245,7 +245,8 @@ village-telco_mesh-potato_v2:
 wallys_dr531:
 	@$(call build,192,1,ETH_CONFIG=_s27)
 
-yuncore_ap90q:
+yuncore_ap90q \
+yuncore_cpe830:
 	@$(call build,256,1,ETH_CONFIG=_s27)
 
 yuncore_cpe870:

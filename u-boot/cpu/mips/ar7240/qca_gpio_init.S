@@ -622,7 +622,7 @@ gpio_setup:
  */
 
 /*
- * YunCore AP90Q has on PCB, on button reset
+ * Some YunCore have on PCB, on button reset
  * line (GPIO17) a huge capacitor (~10u)...
  * which means that before the voltage level
  * rises to VCC, our O/C recovery mode reads
@@ -632,7 +632,8 @@ gpio_setup:
  *
  * FIXME!
  */
-#if defined(CONFIG_FOR_YUNCORE_AP90Q)
+#if defined(CONFIG_FOR_YUNCORE_AP90Q) ||\
+    defined(CONFIG_FOR_YUNCORE_CPE830)
 	li t8, 0
 	li t9, 0x7530
 

@@ -102,6 +102,7 @@ Lista obecnie wspieranych urządzeń:
   - Comfast CF-E320N v2
   - Comfast CF-E520N/CF-E530N
   - YunCore AP90Q
+  - YunCore CPE830
 
 Przetestowałem swoją modyfikację na większości z wymienionych powyżej urządzeń, z obrazami OpenWrt i oficjalnym firmware producenta. Jeżeli nie jesteś pewien wersji sprzętowej swojego urządzenia, proszę skontaktuj się ze mną **zanim** dokonasz wymiany obrazu bootloadera. Zmiana na niewłaściwą wersję najprawdopodobniej doprowadzi do uszkodzenia Twojego urządzenia i jedyną możliwością jego ponownego uruchomienia będzie przeprogramowanie kości FLASH w zewnętrznym programatorze.
 
@@ -141,6 +142,7 @@ Dodatkowe informacje o wspieranych urządzeniach:
 | Comfast CF-E320N v2 | QCA9531 | 16 MiB | 64 MiB DDR2 | 64 KiB, LZMA | RO |
 | Comfast CF-E520N/CF-E530N | QCA9531 | 8 MiB | 32 MiB DDR2 | 64 KiB, LZMA | RO |
 | YunCore AP90Q | QCA9531 | 16 MiB | 128 MiB DDR2 | 256 KiB | R/W |
+| YunCore CPE830 | QCA9531 | 16 MiB | 64 MiB DDR2 | 256 KiB | R/W |
 | YunCore CPE870 | AR9341 | 8 MiB | 64 MiB DDR2 | 64 KiB, LZMA | R/W |
 
 *(LZMA) - obraz binarny U-Boot został dodatkowo skompresowany przy pomocy LZMA.*  

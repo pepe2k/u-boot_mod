@@ -604,6 +604,13 @@ yuncore_ap90q: qca953x_common
 	@$(call define_add,CFG_ATH_GMAC_NMACS,2)
 	@$(MKCONFIG) -a ap143 mips mips ap143 ar7240 ar7240
 
+yuncore_cpe830: qca953x_common
+	@$(call config_init,YunCore CPE830,cpe830,16,17,1,QCA_QCA953X_SOC)
+	@$(call define_add,CONFIG_FOR_YUNCORE_CPE830,1)
+	@$(call define_add,CFG_ATHRS27_PHY,1)
+	@$(call define_add,CFG_ATH_GMAC_NMACS,2)
+	@$(MKCONFIG) -a ap143 mips mips ap143 ar7240 ar7240
+
 yuncore_cpe870: ar934x_common
 	@$(call config_init,YunCore CPE870,cpe870,8,16,1,QCA_AR9341_SOC)
 	@$(call define_add,CONFIG_FOR_YUNCORE_CPE870,1)
