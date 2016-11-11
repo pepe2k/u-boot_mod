@@ -75,7 +75,8 @@ Lista obecnie wspieranych urządzeń:
   - Moduł GS-Oolite/Elink EL-M150 na płytce developerskiej ([zdjęcia w mojej galerii](http://galeria.tech-blog.pl/Elink_EL-M150_Development-Board/))
   - Dragino 2 (MS14)
   - Village Telco Mesh Potato 2 (bazuje na Dragino MS14)
-  - GL.iNet 64xxA ([zdjęcia w mojej galerii](http://galeria.tech-blog.pl/GLiNet/))
+  - GL Innovations GL-AR150
+  - GL Innovations GL.iNet 64xxA ([zdjęcia w mojej galerii](http://galeria.tech-blog.pl/GLiNet/))
   - Black Swift
 
 - **Atheros AR1311 (bliźniaczy układ AR9331)**
@@ -125,7 +126,8 @@ Dodatkowe informacje o wspieranych urządzeniach:
 | GS-Oolite/Elink EL-M150 module | AR9331 | 4/8/16 MiB | 64 MiB DDR2 | 64 KiB, LZMA | RO |
 | [Dragino 2 (MS14)](http://wiki.openwrt.org/toh/dragino/ms14) | AR9331 | 16 MiB | 64 MiB DDR1 | 192 KiB | R/W |
 | Village Telco Mesh Potato 2 | AR9331 | 16 MiB | 64 MiB DDR1 | 192 KiB | R/W |
-| [GL.iNet](http://wiki.openwrt.org/toh/gl-inet/gl-inet) | AR9331 | 8/16 MiB | 64 MiB DDR1 | 64 KiB | RO |
+| GL Innovations GL-AR150 | AR9331 | 16 MiB | 64 MiB DDR2 | 256 KiB | 64 KiB, R/W |
+| [GL Innovations GL.iNet 64xxA](http://wiki.openwrt.org/toh/gl-inet/gl-inet) | AR9331 | 8/16 MiB | 64 MiB DDR1 | 64 KiB | RO |
 | [Black Swift](http://www.black-swift.com) | AR9331 | 16 MiB | 64 MiB DDR2 | 128 KiB, LZMA | R/W |
 | [TP-Link TL-MR3420 v2](http://wikidevi.com/wiki/TP-LINK_TL-MR3420_v2) | AR9341 | 4 MiB | 32 MiB DDR1 | 64 KiB, LZMA | RO |
 | [TP-Link TL-WR841N/D v8](http://wiki.openwrt.org/toh/tp-link/tl-wr841nd) | AR9341 | 4 MiB | 32 MiB DDR1 | 64 KiB, LZMA | RO |

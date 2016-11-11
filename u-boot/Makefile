@@ -443,8 +443,13 @@ gainstrong_oolite_v1_dev: ar933x_common
 	@$(call define_add,CONFIG_FOR_GS_OOLITE_V1_DEV,1)
 	@$(MKCONFIG) -a ap121 mips mips ap121 ar7240 ar7240
 
+gl-innovations_gl-ar150: ar933x_common
+	@$(call config_init,GL Innovations GL-AR150,gl-ar150,16,11,,QCA_AR933X_SOC)
+	@$(call define_add,CONFIG_FOR_GL_AR150,1)
+	@$(MKCONFIG) -a ap121 mips mips ap121 ar7240 ar7240
+
 gl-innovations_gl-inet-6416: ar933x_common
-	@$(call config_init,GL-Innovations GL.iNet 6416,glinet-6416,8,11,,QCA_AR933X_SOC)
+	@$(call config_init,GL Innovations GL.iNet 6416,glinet-6416,8,11,,QCA_AR933X_SOC)
 	@$(call define_add,CONFIG_FOR_GL_INET,1)
 	@$(MKCONFIG) -a ap121 mips mips ap121 ar7240 ar7240
 

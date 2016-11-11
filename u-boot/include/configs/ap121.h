@@ -68,6 +68,16 @@
 	#define CONFIG_QCA_GPIO_MASK_OUT_INIT_H	CONFIG_QCA_GPIO_MASK_LED_ACT_L
 	#define CONFIG_QCA_GPIO_MASK_OUT_INIT_L	CONFIG_QCA_GPIO_MASK_LED_ACT_H
 
+#elif defined(CONFIG_FOR_GL_AR150)
+
+	#define CONFIG_QCA_GPIO_MASK_LED_ACT_H	GPIO0 | GPIO13 | GPIO15
+	#define CONFIG_QCA_GPIO_MASK_OUT	GPIO6 |\
+						CONFIG_QCA_GPIO_MASK_LED_ACT_H
+	#define CONFIG_QCA_GPIO_MASK_IN		GPIO1  | GPIO7  | GPIO8 | GPIO11 |\
+						GPIO14 | GPIO16 | GPIO17
+	#define CONFIG_QCA_GPIO_MASK_OUT_INIT_H	GPIO6
+	#define CONFIG_QCA_GPIO_MASK_OUT_INIT_L	CONFIG_QCA_GPIO_MASK_LED_ACT_H
+
 #elif defined(CONFIG_FOR_GL_INET)
 
 	#define CONFIG_QCA_GPIO_MASK_LED_ACT_H	GPIO0 | GPIO13
@@ -204,6 +214,12 @@
 				"rootfstype=squashfs init=/sbin/init "\
 				"mtdparts=ar7240-nor0:192k(u-boot),64k(u-boot-env),16064k(firmware),64k(art)"
 
+#elif defined(CONFIG_FOR_GL_AR150)
+
+	#define CONFIG_BOOTARGS	"console=ttyATH0,115200 board=domino root=31:03 "\
+				"rootfstype=squashfs,jffs2 noinitrd "\
+				"mtdparts=spi0.0:256k(u-boot)ro,64k(u-boot-env)ro,1280k(kernel),14656k(rootfs),64k(nvram),64k(art)ro,15936k@0x50000(firmware)"
+
 #elif defined(CONFIG_FOR_GL_INET)            ||\
       defined(CONFIG_FOR_TPLINK_MR10U_V1)    ||\
       defined(CONFIG_FOR_TPLINK_MR13U_V1)    ||\
@@ -237,8 +253,9 @@
  * Load address and boot command
  * =============================
  */
-#if defined(CONFIG_FOR_8DEVICES_CARAMBOLA2) ||\
-    defined(CONFIG_FOR_ALFA_NETWORK_HORNET_UB)
+#if defined(CONFIG_FOR_8DEVICES_CARAMBOLA2)    ||\
+    defined(CONFIG_FOR_ALFA_NETWORK_HORNET_UB) ||\
+    defined(CONFIG_FOR_GL_AR150)
 	#define CFG_LOAD_ADDR	0x9F050000
 #elif defined(CONFIG_FOR_BLACK_SWIFT_BOARD)
 	#define CFG_LOAD_ADDR	0x9F030000
@@ -262,8 +279,9 @@
  * Environment configuration
  * =========================
  */
-#if defined(CONFIG_FOR_8DEVICES_CARAMBOLA2) ||\
-    defined(CONFIG_FOR_ALFA_NETWORK_HORNET_UB)
+#if defined(CONFIG_FOR_8DEVICES_CARAMBOLA2)    ||\
+    defined(CONFIG_FOR_ALFA_NETWORK_HORNET_UB) ||\
+    defined(CONFIG_FOR_GL_AR150)
 	#define CFG_ENV_ADDR		0x9F040000
 	#define CFG_ENV_SIZE		0x8000
 	#define CFG_ENV_SECT_SIZE	0x10000
@@ -310,7 +328,8 @@
 	#define OFFSET_MAC_DATA_BLOCK_LENGTH	0x010000
 	#define OFFSET_MAC_ADDRESS		0x000000
 	#define OFFSET_MAC_ADDRESS2		0x000006
-#elif defined(CONFIG_FOR_BLACK_SWIFT_BOARD)
+#elif defined(CONFIG_FOR_BLACK_SWIFT_BOARD) ||\
+      defined(CONFIG_FOR_GL_AR150)
 	#define OFFSET_MAC_DATA_BLOCK		0xFF0000
 	#define OFFSET_MAC_DATA_BLOCK_LENGTH	0x010000
 	#define OFFSET_MAC_ADDRESS		0x000000
@@ -339,6 +358,7 @@
     !defined(CONFIG_FOR_BLACK_SWIFT_BOARD)      &&\
     !defined(CONFIG_FOR_DLINK_DIR505_A1)        &&\
     !defined(CONFIG_FOR_DRAGINO_V2)             &&\
+    !defined(CONFIG_FOR_GL_AR150)               &&\
     !defined(CONFIG_FOR_GL_INET)                &&\
     !defined(CONFIG_FOR_GS_OOLITE_V1_DEV)       &&\
     !defined(CONFIG_FOR_MESH_POTATO_V2)
@@ -395,7 +415,8 @@
 #endif
 
 /* Firmware size limit */
-#if defined(CONFIG_FOR_8DEVICES_CARAMBOLA2)
+#if defined(CONFIG_FOR_8DEVICES_CARAMBOLA2) ||\
+    defined(CONFIG_FOR_GL_AR150)
 	#define WEBFAILSAFE_UPLOAD_LIMITED_AREA_IN_BYTES	(384 * 1024)
 #elif defined(CONFIG_FOR_ALFA_NETWORK_HORNET_UB)
 	#define WEBFAILSAFE_UPLOAD_LIMITED_AREA_IN_BYTES	(448 * 1024)
@@ -419,8 +440,9 @@
  */
 #define CONFIG_QCA_PLL	QCA_PLL_PRESET_400_400_200
 
-#if defined(CONFIG_FOR_8DEVICES_CARAMBOLA2) ||\
-    defined(CONFIG_FOR_ALFA_NETWORK_HORNET_UB)
+#if defined(CONFIG_FOR_8DEVICES_CARAMBOLA2)    ||\
+    defined(CONFIG_FOR_ALFA_NETWORK_HORNET_UB) ||\
+    defined(CONFIG_FOR_GL_AR150)
 
 	#define CONFIG_QCA_PLL_IN_FLASH_BLOCK_OFFSET	0x40000
 	#define CONFIG_QCA_PLL_IN_FLASH_BLOCK_SIZE	0x10000
@@ -454,6 +476,7 @@
     !defined(CONFIG_FOR_BLACK_SWIFT_BOARD)      &&\
     !defined(CONFIG_FOR_DLINK_DIR505_A1)        &&\
     !defined(CONFIG_FOR_DRAGINO_V2)             &&\
+    !defined(CONFIG_FOR_GL_AR150)               &&\
     !defined(CONFIG_FOR_MESH_POTATO_V2)
 	#define CONFIG_UPG_SCRIPTS_UBOOT_SIZE_BCKP_HEX	0x20000
 #endif

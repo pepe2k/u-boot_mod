@@ -218,7 +218,8 @@ $(COMMON_ETHS27_TARGETS):
 	@$(call build,123,1,ETH_CONFIG=_s27)
 
 8devices_carambola2 \
-alfa-network_hornet-ub:
+alfa-network_hornet-ub \
+gl-innovations_gl-ar150:
 	@$(call build,256,1)
 
 comfast_cf-e314n \
