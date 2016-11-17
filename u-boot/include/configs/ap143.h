@@ -291,6 +291,13 @@
  */
 #define WEBFAILSAFE_UPLOAD_KERNEL_ADDRESS	CFG_LOAD_ADDR
 
+#if defined(CONFIG_FOR_COMFAST_CF_E314N)    ||\
+    defined(CONFIG_FOR_COMFAST_CF_E320N_V2) ||\
+    defined(CONFIG_FOR_COMFAST_CF_E520N)    ||\
+    defined(CONFIG_FOR_COMFAST_CF_E530N)
+	#define WEBFAILSAFE_UPLOAD_ART_ADDRESS	(CFG_FLASH_BASE + 0x10000)
+#endif
+
 /* Firmware size limit */
 #if defined(CONFIG_FOR_COMFAST_CF_E314N)    ||\
     defined(CONFIG_FOR_COMFAST_CF_E320N_V2) ||\
