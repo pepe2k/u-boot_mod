@@ -48,6 +48,15 @@
 	#define CONFIG_QCA_GPIO_MASK_IN		GPIO17
 	#define CONFIG_QCA_GPIO_MASK_OUT_INIT_H	CONFIG_QCA_GPIO_MASK_LED_ACT_L
 
+#elif defined(CONFIG_FOR_TPLINK_WR810N)
+
+	#define CONFIG_QCA_GPIO_MASK_LED_ACT_L	GPIO13
+	#define CONFIG_QCA_GPIO_MASK_OUT	GPIO11 |\
+						CONFIG_QCA_GPIO_MASK_LED_ACT_L
+	#define CONFIG_QCA_GPIO_MASK_IN		GPIO0 | GPIO1 | GPIO12
+	#define CONFIG_QCA_GPIO_MASK_OUT_INIT_H	GPIO11 |\
+						CONFIG_QCA_GPIO_MASK_LED_ACT_L
+
 #elif defined(CONFIG_FOR_TPLINK_WR820N_CN) ||\
       defined(CONFIG_FOR_TPLINK_WR802N)
 
@@ -129,6 +138,12 @@
 				"rootfstype=jffs2 init=/sbin/init "\
 				"mtdparts=ath-nor0:64k(u-boot),64k(art),1536k(uImage),6464k(rootfs),64k(mib0)"
 
+#elif defined(CONFIG_FOR_TPLINK_WR810N)
+
+	#define CONFIG_BOOTARGS	"console=ttyS0,115200 root=31:02 "\
+				"rootfstype=squashfs init=/sbin/init "\
+				"mtdparts=ath-nor0:128k(u-boot),1024k(kernel),6912k(rootfs),64k(config),64k(art)"
+
 #elif defined(CONFIG_FOR_TPLINK_WR820N_CN)
 
 	#define CONFIG_BOOTARGS	"console=ttyS0,115200 root=31:02 "\
@@ -170,6 +185,7 @@
     defined(CONFIG_FOR_COMFAST_CF_E520N)    ||\
     defined(CONFIG_FOR_COMFAST_CF_E530N)    ||\
     defined(CONFIG_FOR_TPLINK_WR802N)       ||\
+    defined(CONFIG_FOR_TPLINK_WR810N)       ||\
     defined(CONFIG_FOR_TPLINK_WR820N_CN)    ||\
     defined(CONFIG_FOR_TPLINK_WR841N_V10)   ||\
     defined(CONFIG_FOR_TPLINK_WR841N_V11)   ||\
@@ -203,6 +219,7 @@
 	#define CFG_ENV_SIZE		0x7C00
 	#define CFG_ENV_SECT_SIZE	0x10000
 #elif defined(CONFIG_FOR_TPLINK_WR802N)     ||\
+      defined(CONFIG_FOR_TPLINK_WR810N)     ||\
       defined(CONFIG_FOR_TPLINK_WR820N_CN)  ||\
       defined(CONFIG_FOR_TPLINK_WR841N_V10) ||\
       defined(CONFIG_FOR_TPLINK_WR841N_V11) ||\
@@ -244,6 +261,7 @@
 	#define OFFSET_MAC_DATA_BLOCK_LENGTH	0x10000
 	#define OFFSET_MAC_ADDRESS		0x00000
 #elif defined(CONFIG_FOR_TPLINK_WR802N)     ||\
+      defined(CONFIG_FOR_TPLINK_WR810N)     ||\
       defined(CONFIG_FOR_TPLINK_WR820N_CN)  ||\
       defined(CONFIG_FOR_TPLINK_WR841N_V10) ||\
       defined(CONFIG_FOR_TPLINK_WR841N_V11) ||\
@@ -304,6 +322,7 @@
     defined(CONFIG_FOR_COMFAST_CF_E520N)    ||\
     defined(CONFIG_FOR_COMFAST_CF_E530N)    ||\
     defined(CONFIG_FOR_TPLINK_WR802N)       ||\
+    defined(CONFIG_FOR_TPLINK_WR810N)       ||\
     defined(CONFIG_FOR_TPLINK_WR820N_CN)    ||\
     defined(CONFIG_FOR_TPLINK_WR841N_V10)   ||\
     defined(CONFIG_FOR_TPLINK_WR841N_V11)   ||\
@@ -334,6 +353,7 @@
     defined(CONFIG_FOR_COMFAST_CF_E520N)    ||\
     defined(CONFIG_FOR_COMFAST_CF_E530N)    ||\
     defined(CONFIG_FOR_TPLINK_WR802N)       ||\
+    defined(CONFIG_FOR_TPLINK_WR810N)       ||\
     defined(CONFIG_FOR_TPLINK_WR820N_CN)    ||\
     defined(CONFIG_FOR_TPLINK_WR841N_V10)   ||\
     defined(CONFIG_FOR_TPLINK_WR841N_V11)   ||\

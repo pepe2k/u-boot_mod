@@ -552,6 +552,13 @@ tp-link_tl-wr802n: qca953x_common
 	@$(call define_add,CFG_ATH_GMAC_NMACS,2)
 	@$(MKCONFIG) -a ap143 mips mips ap143 ar7240 ar7240
 
+tp-link_tl-wr810n: qca953x_common
+	@$(call config_init,TP-Link TL-WR810N,tl-wr810n,8,12,1,QCA_QCA953X_SOC)
+	@$(call define_add,CONFIG_FOR_TPLINK_WR810N,1)
+	@$(call define_add,CFG_ATHRS27_PHY,1)
+	@$(call define_add,CFG_ATH_GMAC_NMACS,2)
+	@$(MKCONFIG) -a ap143 mips mips ap143 ar7240 ar7240
+
 tp-link_tl-wr820n_CN: qca953x_common
 	@$(call config_init,TP-Link TL-WR820N CN,tl-wr820n,4,12,1,QCA_QCA953X_SOC)
 	@$(call define_add,CONFIG_FOR_TPLINK_WR820N_CN,1)
