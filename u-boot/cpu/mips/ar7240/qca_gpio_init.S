@@ -484,6 +484,7 @@ lowlevel_gpio_init:
 	 *
 	 * TODO: FIXME!
 	 */
+	#if !defined(CONFIG_SKIP_LOWLEVEL_INIT)
 first_boot:
 	li  t8, 0xBD000000
 	lw  t9, 0(t8)
@@ -505,6 +506,7 @@ full_reset:
 	nop
 	nop
 	nop
+	#endif
 
 	/*
 	 * GPIO configuration, using GPIO_FUNCTION_1 register:
