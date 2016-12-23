@@ -517,7 +517,7 @@ tp-link_tl-wdr3600: ar934x_common
 	@$(MKCONFIG) -a db12x mips mips db12x ar7240 ar7240
 
 tp-link_tl-wdr43x0: ar934x_common
-	@$(call config_init,TP-Link TL-WDR3600,tl-wdr43x0,8,16,1,QCA_AR9344_SOC)
+	@$(call config_init,TP-Link TL-WDR43x0,tl-wdr43x0,8,16,1,QCA_AR9344_SOC)
 	@$(call define_add,CONFIG_FOR_TPLINK_WDR43X0_V1,1)
 	@$(call define_add,CFG_ATHRS17_PHY,1)
 	@$(call define_add,CFG_AG7240_NMACS,1)
