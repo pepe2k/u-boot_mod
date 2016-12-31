@@ -210,7 +210,8 @@ int do_ping(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[]){
 	}
 
 	if(NetLoop(PING) < 0){
-		printf("\n## Error: ping failed, host %s is not alive!\n\n", argv[1]);
+		puts("\n");
+		printf_err("ping failed, host %s is not alive!\n\n", argv[1]);
 		return(1);
 	}
 
@@ -233,7 +234,7 @@ int do_sntp(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[]){
 	} else {
 		NetNtpServerIP = string_to_ip(argv[1]);
 		if(NetNtpServerIP == 0){
-			printf("## Error: bad SNTP server IP address\n");
+			printf_err("bad SNTP server IP address\n");
 			return(1);
 		}
 	}
@@ -247,7 +248,7 @@ int do_sntp(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[]){
 	}
 
 	if(NetLoop(SNTP) < 0){
-		printf("## Error: SNTP host %s not responding\n", argv[1]);
+		printf_err("SNTP host %s not responding\n", argv[1]);
 		return(1);
 	}
 

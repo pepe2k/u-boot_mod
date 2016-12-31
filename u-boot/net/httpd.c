@@ -70,7 +70,7 @@ int do_http_upgrade(const ulong size, const int upgrade_type){
 					backup_size - size);
 
 			if(!run_command(buf, 0)){
-				printf("## Error: couldn't backup FLASH data before U-Boot image upgrade!\n");
+				printf_err("couldn't backup FLASH data before U-Boot image upgrade!\n");
 				return(-1);
 			}
 		}
@@ -160,7 +160,7 @@ int do_http_progress(const int state){
 			break;
 
 		case WEBFAILSAFE_PROGRESS_UPGRADE_FAILED:
-			printf("## Error: HTTP ugrade failed!\n\n");
+			printf_err("HTTP ugrade failed!\n\n");
 
 			// blink LED fast for 4 sec
 			for(i = 0; i < 80; ++i){

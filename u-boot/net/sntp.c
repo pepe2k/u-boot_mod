@@ -46,7 +46,7 @@ static void SntpSend(void){
 }
 
 static void SntpTimeout(void){
-	puts("## Error: timeout\n");
+	printf_err("timeout\n");
 	NetState = NETLOOP_FAIL;
 
 	return;

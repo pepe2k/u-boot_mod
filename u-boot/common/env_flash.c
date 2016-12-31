@@ -144,7 +144,7 @@ int saveenv(void){
 
 	if(up_data){
 		if((saved_data = malloc(up_data)) == NULL){
-			printf("## Error: unable to save the rest of sector (%ld)\n", up_data);
+			printf_err("unable to save the rest of sector (%ld)\n", up_data);
 			goto Done;
 		}
 
@@ -291,7 +291,7 @@ void env_relocate_spec(void){
 	}
 
 	if(gd->env_valid == 2){
-		puts("** Warning: some problems detected reading environment, recovered successfully\n");
+		printf_wrn("some problems detected reading environment, recovered successfully\n");
 	}
 	#endif /* CFG_ENV_ADDR_REDUND */
 

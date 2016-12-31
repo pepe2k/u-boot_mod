@@ -240,7 +240,6 @@ int athrs17_phy_setup(int ethUnit){
 			timeout--;
 			
 			if(timeout <= 0){
-				printf("## Error: negotiation timed out on ethernet port: %d\n", phyUnit);
 				break;
 			}
 		}

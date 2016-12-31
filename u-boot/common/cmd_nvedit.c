@@ -146,7 +146,7 @@ int do_printenv(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[]){
 			break;
 		}
 		if(k < 0){
-			printf("## Error: \"%s\" not defined\n", name);
+			printf_err("'%s' not defined\n", name);
 			rcode++;
 		}
 	}
@@ -202,7 +202,7 @@ int _do_setenv(int flag, int argc, char *argv[]){
 
 		if(console != -1){
 			if(argc < 3){ /* Cannot delete it! */
-				printf("## Error: can't delete \"%s\"\n", name);
+				printf_err("can't delete '%s'\n", name);
 				return(1);
 			}
 
@@ -232,8 +232,8 @@ int _do_setenv(int flag, int argc, char *argv[]){
 			}
 
 			if(i == N_BAUDRATES){
-				printf("## Error: baudrate %d bps is not supported,\n", baudrate);
-				printf("          choose one from the list:\n\n");
+				printf_err("baudrate %d bps is not supported,\n"
+					   "          choose one from the list:\n\n", baudrate);
 				for(i = 0; i < N_BAUDRATES; ++i){
 					printf("- %7d bps%s\n", baudrate_table[i], baudrate_table[i] == gd->baudrate ? " [current]" : "");
 				}
@@ -314,7 +314,7 @@ int _do_setenv(int flag, int argc, char *argv[]){
 	}
 
 	if(len > (&env_data[ENV_SIZE] - env)){
-		printf("## Error: environment overflow, \"%s\" deleted\n", name);
+		printf_err("environment overflow, '%s' deleted\n", name);
 		return(1);
 	}
 

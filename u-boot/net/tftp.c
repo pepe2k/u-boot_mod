@@ -249,7 +249,7 @@ static void TftpHandler(uchar * pkt, unsigned dest, unsigned src, unsigned len){
 
 	#ifdef ET_DEBUG
 			if(TftpState == STATE_RRQ){
-				puts("## Error: server did not acknowledge timeout option!\n");
+				printf_err("server did not acknowledge timeout option!\n");
 			}
 	#endif
 
@@ -262,7 +262,8 @@ static void TftpHandler(uchar * pkt, unsigned dest, unsigned src, unsigned len){
 				TftpBlockWrapOffset = 0;
 
 				if(TftpBlock != 1){	/* Assertion */
-					printf("\n## Error: first block is not block 1 (%ld), starting again!\n\n", TftpBlock);
+					puts("\n");
+					printf_err("first block is not block 1 (%ld), starting again!\n\n", TftpBlock);
 					NetStartAgain();
 					break;
 				}
@@ -298,7 +299,8 @@ static void TftpHandler(uchar * pkt, unsigned dest, unsigned src, unsigned len){
 			break;
 
 		case TFTP_ERROR:
-			printf("\n## Error: '%s' (%d), starting again!\n\n", pkt + 2, ntohs(*(ushort *)pkt));
+			puts("\n");
+			printf_err("'%s' (%d), starting again!\n\n", pkt + 2, ntohs(*(ushort *)pkt));
 			NetStartAgain();
 			break;
 	}
@@ -308,7 +310,8 @@ static void TftpTimeout(void){
 	bd_t *bd = gd->bd;
 
 	if(++TftpTimeoutCount > TIMEOUT_COUNT){
-		puts("\n\n## Error: retry count exceeded, starting again!\n\n");
+		puts("\n\n");
+		printf_err("retry count exceeded, starting again!\n\n");
 		NetStartAgain();
 	} else {
 		puts("T ");
@@ -328,7 +331,7 @@ void TftpStart(void){
 		sprintf(default_filename, "%02lX%02lX%02lX%02lX.img", NetOurIP & 0xFF, (NetOurIP >> 8) & 0xFF,  (NetOurIP >> 16) & 0xFF, (NetOurIP >> 24) & 0xFF);
 		tftp_filename = default_filename;
 
-		printf("** Warning: no boot file name, using: '%s'\n", tftp_filename);
+		printf_wrn("no boot file name, using: '%s'\n", tftp_filename);
 	} else {
 		tftp_filename = BootFile;
 	}

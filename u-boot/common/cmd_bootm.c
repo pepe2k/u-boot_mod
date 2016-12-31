@@ -433,13 +433,13 @@ int do_bootm(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 	case TPL_IH_VERSION_V2:
 	case TPL_IH_VERSION_V3:
 	default:
-		puts("## Error: unsupported image header\n");
+		printf_err("unsupported image header\n");
 		return 1;
 	}
 
 	/* Always verify header CRC */
 	if (ih_header_crc(hdr, tpl_type) != 0) {
-		puts("## Error: header checksum mismatch!\n");
+		printf_err("header checksum mismatch!\n");
 		return 1;
 	}
 
@@ -451,7 +451,7 @@ int do_bootm(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 	}
 
 	if (ih_data_crc(data, hdr, tpl_type, verify) != 0) {
-		puts("## Error: data checksum mismatch!\n");
+		printf_err("data checksum mismatch!\n");
 		return 1;
 	}
 
@@ -462,7 +462,7 @@ int do_bootm(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 
 	/* We support only MIPS */
 	if (hdr->ih_arch != IH_CPU_MIPS) {
-		puts("## Error: unsupported architecture!\n");
+		printf_err("unsupported architecture!\n");
 		return 1;
 	}
 
@@ -481,7 +481,7 @@ int do_bootm(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 
 		break;
 	default:
-		puts("## Error: unsupported image type!\n");
+		printf_err("unsupported image type!\n");
 		return 1;
 	}
 
@@ -523,15 +523,15 @@ int do_bootm(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 		/* TODO: more verbose LZMA errors */
 		if (i != LZMA_RESULT_OK) {
 			puts("ERROR\n");
-			printf("## Error: LZMA error '%d'!\n", i);
+			printf_err("LZMA error '%d'!\n", i);
 			return 1;
 		}
 
 		puts("OK!\n");
 		break;
 	default:
-		printf("## Error: unsupported compression type '%s'!\n",
-			ih_comp_type(hdr->ih_comp));
+		printf_err("unsupported compression type '%s'!\n",
+			   ih_comp_type(hdr->ih_comp));
 
 		return 1;
 	}
@@ -603,13 +603,13 @@ int do_iminfo(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 	case TPL_IH_VERSION_V2:
 	case TPL_IH_VERSION_V3:
 	default:
-		puts("## Error: unsupported image header\n");
+		printf_err("unsupported image header\n");
 		return 1;
 	}
 
 	/* Always verify header CRC */
 	if (ih_header_crc(hdr, tpl_type) != 0) {
-		puts("## Error: header checksum mismatch!\n");
+		printf_err("header checksum mismatch!\n");
 		return 1;
 	}
 
@@ -621,7 +621,7 @@ int do_iminfo(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 	}
 
 	if (ih_data_crc(data, hdr, tpl_type, 1) != 0) {
-		puts("## Error: data checksum mismatch!\n");
+		printf_err("data checksum mismatch!\n");
 		return 1;
 	}
 

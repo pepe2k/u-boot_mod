@@ -584,7 +584,7 @@ int athrs26_phy_speed(int ethUnit){
 				case 2:
 					return(_1000BASET);
 				default:
-					printf("## Error: unknown eth speed!\n");
+					printf_err("unknown eth speed!\n");
 			}
 		}
 	}
@@ -794,7 +794,7 @@ unsigned int s26_rd_phy(unsigned int phy_addr, unsigned int reg_addr){
 		i++;
 
 		if(i > 824)	{
-			printf("## Error: MDIO_BUSY!\n");
+			printf_err("MDIO_BUSY!\n");
 			break;
 		}
 
@@ -826,7 +826,7 @@ void s26_wr_phy(unsigned int phy_addr, unsigned int reg_addr, unsigned int write
 		i++;
 
 		if(i > 824)	{
-			printf("## Error: MDIO_BUSY!\n");
+			printf_err("MDIO_BUSY!\n");
 			break;
 		}
 

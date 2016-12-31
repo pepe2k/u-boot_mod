@@ -548,6 +548,8 @@ int	tstc(void);
 void	putc(const char c);
 void	puts(const char *s);
 void	printf(const char *fmt, ...);
+void	printf_err(const char *fmt, ...);
+void	printf_wrn(const char *fmt, ...);
 //void	vprintf(const char *fmt, va_list args);
 
 /* stderr */

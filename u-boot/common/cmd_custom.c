@@ -78,7 +78,7 @@ int do_set_mac(cmd_tbl_t * cmdtp, int flag, int argc, char *argv[]){
 	}
 
 	if(j != 5){
-		puts("## Error: given MAC address has wrong format (should be: xx:xx:xx:xx:xx:xx)!\n");
+		printf_err("given MAC address has wrong format (should be: xx:xx:xx:xx:xx:xx)!\n");
 		return(1);
 	}
 
@@ -86,7 +86,7 @@ int do_set_mac(cmd_tbl_t * cmdtp, int flag, int argc, char *argv[]){
 	data_pointer = (unsigned char *)CONFIG_LOADADDR;
 
 	if(!data_pointer){
-		puts("## Error: couldn't allocate RAM for data block backup!\n");
+		printf_err("couldn't allocate RAM for data block backup!\n");
 		return(1);
 	}
 

@@ -132,7 +132,7 @@ int eth_initialize(bd_t *bis){
 #endif
 
 	if(!eth_devices){
-		puts("## Error: no ethernet found\n");
+		printf_err("no ethernet found\n");
 	} else {
 		struct eth_device *dev = eth_devices;
 		char *ethprime = getenv("ethprime");

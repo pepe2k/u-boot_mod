@@ -114,8 +114,8 @@ int do_load_serial(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 		}
 
 		if(i == N_BAUDRATES){
-			printf("## Error: baudrate %d bps is not supported, will use current: %d bps\n",
-					load_baudrate, current_baudrate);
+			printf_err("baudrate %d bps is not supported, will use current: %d bps\n",
+				   load_baudrate, current_baudrate);
 		} else {
 			switch_baudrate(load_baudrate, 0);
 		}
@@ -139,7 +139,7 @@ int do_load_serial(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 	}
 
 	if(addr == ~0){
-		printf("## Error: S-Record download aborted!\n");
+		printf_err("S-Record download aborted!\n");
 		rcode = 1;
 	}
 
@@ -308,8 +308,8 @@ int do_save_serial(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 		}
 
 		if(i == N_BAUDRATES){
-			printf("## Error: baudrate %d bps is not supported, will use current: %d bps\n",
-					save_baudrate, current_baudrate);
+			printf_err("baudrate %d bps is not supported, will use current: %d bps\n",
+				   save_baudrate, current_baudrate);
 		} else {
 			switch_baudrate(save_baudrate, 0);
 		}
@@ -323,7 +323,7 @@ int do_save_serial(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 	}
 
 	if(save_serial(offset, size)){
-		printf("## Error: S-Record upload aborted!\n");
+		printf_err("S-Record upload aborted!\n");
 	} else {
 		printf("\nS-Record upload complete!\n");
 	}
@@ -476,13 +476,13 @@ int do_load_serial_bin(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 	}
 
 	if(address == 0){
-		printf("## Error: destination address can't be 0x0!\n");
+		printf_err("destination address can't be 0x0!\n");
 		return 1;
 	}
 
 	/* don't allow to write directly to FLASH (that will need erase before!) */
 	if(addr2info(address) != NULL){
-		printf("## Error: destination address in FLASH is not allowed!\n");
+		printf_err("destination address in FLASH is not allowed!\n");
 		return 1;
 	}
 
@@ -502,8 +502,8 @@ int do_load_serial_bin(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 		}
 
 		if(i == N_BAUDRATES){
-			printf("## Error: baudrate %d bps is not supported, will use current: %d bps\n",
-					load_baudrate, current_baudrate);
+			printf_err("baudrate %d bps is not supported, will use current: %d bps\n",
+				   load_baudrate, current_baudrate);
 		} else {
 			switch_baudrate(load_baudrate, 0);
 		}
@@ -527,7 +527,8 @@ int do_load_serial_bin(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 		sprintf(buf, "%X", size_dl);
 		setenv("filesize", buf);
 	} else {
-		printf("\n## Error: downloaded data size is zero!\n");
+		puts("\n");
+		printf_err("downloaded data size is zero!\n");
 		rcode = 1;
 	}
 
@@ -1064,7 +1065,8 @@ static ulong load_serial_ymodem(ulong address)
 			memcpy((char *)(store_addr), ymodemBuf, res);
 		}
 	} else {
-		printf("\n## Error: %s\n", xyzModem_error(err));
+		puts("\n");
+		printf_err("%s\n", xyzModem_error(err));
 	}
 
 	xyzModem_stream_close(&err);

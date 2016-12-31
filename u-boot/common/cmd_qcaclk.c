@@ -160,8 +160,7 @@ int do_set_clk(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 
 #ifndef CONFIG_QCA_GPIO_OC_RECOVERY_BTN
 		puts("\n");
-		puts("** Warning:");
-		puts("   your device does not support O/C revovery mode!\n");
+		printf_wrn("\n   your device does not support O/C revovery mode!\n");
 #endif
 
 		puts("\n");
@@ -170,7 +169,7 @@ int do_set_clk(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 		i = simple_strtoul(argv[1], NULL, 10);
 
 		if (i > clk_profiles_cnt || i < 1) {
-			printf("## Error: selected profile should be in range 1..%d!\n\n",
+			printf_err("selected profile should be in range 1..%d!\n\n",
 				   clk_profiles_cnt);
 			return 1;
 		}
@@ -203,7 +202,7 @@ int do_set_clk(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 				CONFIG_QCA_PLL_IN_FLASH_BLOCK_SIZE);
 
 		if (run_command(buf, 0) < 0) {
-			puts("## Error: could not make data backup in RAM!\n\n");
+			printf_err("could not make data backup in RAM!\n\n");
 			return 1;
 		}
 
@@ -234,7 +233,7 @@ int do_set_clk(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 				CONFIG_QCA_PLL_IN_FLASH_BLOCK_SIZE);
 
 		if (run_command(buf, 0) < 0) {
-			puts("## Error: could not erase FLASH and copy data back from RAM!\n\n");
+			printf_err("could not erase FLASH and copy data back from RAM!\n\n");
 			return 1;
 		}
 
@@ -254,8 +253,7 @@ int do_set_clk(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 	#endif
 #else
 		puts("\n");
-		puts("** Warning:");
-		puts("   your device does not support O/C revovery mode!\n");
+		printf_wrn("\n   your device does not support O/C revovery mode!\n");
 #endif /* CONFIG_QCA_GPIO_OC_RECOVERY_BTN */
 
 		puts("\n");
@@ -282,7 +280,7 @@ int do_clear_clk(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 				CONFIG_QCA_PLL_IN_FLASH_BLOCK_SIZE);
 
 		if (run_command(buf, 0) < 0) {
-			puts("## Error: could not make data backup in RAM!\n\n");
+			printf_err("could not make data backup in RAM!\n\n");
 			return 1;
 		}
 
@@ -304,11 +302,11 @@ int do_clear_clk(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 				CONFIG_QCA_PLL_IN_FLASH_BLOCK_SIZE);
 
 		if (run_command(buf, 0) < 0) {
-			puts("## Error: could not erase FLASH and copy data back from RAM!\n\n");
+			printf_err("could not erase FLASH and copy data back from RAM!\n\n");
 			return 1;
 		}
 	} else {
-		puts("** Warning: clock configuration is not stored in FLASH!\n\n");
+		printf_wrn("clock configuration is not stored in FLASH!\n\n");
 		return 1;
 	}
 

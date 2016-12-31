@@ -202,12 +202,12 @@ void env_relocate(void)
 
 	if (gd->env_valid == 0) {
 #if !defined(CFG_ENV_IS_NOWHERE)
-		puts("** Warning: bad env CRC, using default,\n"
-			 "   use 'saveenv' to save it in FLASH\n\n");
+		printf_wrn("bad env CRC, using default,\n"
+			   "   use 'saveenv' to save it in FLASH\n\n");
 #endif
 
 		if (sizeof(default_environment) > ENV_SIZE) {
-			puts("## Error: default env is too big!\n");
+			printf_err("default env is too big!\n");
 			return;
 		}
 

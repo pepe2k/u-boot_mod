@@ -402,7 +402,7 @@ static int ag7240_check_link(ag7240_mac_t *mac)
 
 		default:
 			if ((s != NULL) && (strcmp(s, "nc") != 0)) {
-				printf("## Error: invalid speed detected\n");
+				printf_err("invalid speed detected\n");
 			}
 			return 0;
 	}
@@ -462,7 +462,7 @@ static int ag7240_alloc_fifo(int ndesc, ag7240_desc_t ** fifo)
 	size += CFG_CACHELINE_SIZE - 1;
 
 	if ((p = malloc(size)) == NULL) {
-		printf("## Error: cant allocate fifos\n");
+		printf_err("can't allocate fifos\n");
 		return -1;
 	}
 

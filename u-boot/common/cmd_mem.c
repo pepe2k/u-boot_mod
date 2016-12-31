@@ -113,8 +113,8 @@ int do_mem_crc32(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 	} else {
 		vcrc = simple_strtoul(*av++, NULL, 16);
 		if (vcrc != crc) {
-			printf("## Error: CRC32 checksum for data at 0x%08lX ~ 0x%08lX: 0x%08lX (not 0x%08lX!)\n",
-				addr, addr + length - 1, crc, vcrc);
+			printf_err("CRC32 checksum for data at 0x%08lX ~ 0x%08lX: 0x%08lX (not 0x%08lX!)\n",
+				   addr, addr + length - 1, crc, vcrc);
 
 			return 1;
 		}
@@ -319,7 +319,7 @@ int do_mem_cp(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 	count = simple_strtoul(argv[3], NULL, 16);
 
 	if (count == 0) {
-		puts("## Error: zero length?\n");
+		printf_err("zero length?\n");
 		return 1;
 	}
 
@@ -414,14 +414,14 @@ int do_mem_mtest(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 		end = (ulong *)CFG_MEMTEST_END;
 
 	if ((uint)start >= (uint)end) {
-		puts("## Error: end address must be bigger than start address!\n");
+		printf_err("end address must be bigger than start address!\n");
 		return 1;
 	}
 
 	if (((uint)start < (uint)CFG_MEMTEST_START) ||
 	    ((uint)end   > (uint)CFG_MEMTEST_END)) {
-		printf("## Error: start and end addresses should be in 0x%08X...0x%08X range!\n",
-			(uint)CFG_MEMTEST_START, (uint)CFG_MEMTEST_END);
+		printf_err("start and end addresses should be in 0x%08X...0x%08X range!\n",
+			   (uint)CFG_MEMTEST_START, (uint)CFG_MEMTEST_END);
 
 		return 1;
 	}
@@ -474,16 +474,16 @@ int do_mem_mtest(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 				readback = *addr;
 
 				if (readback != val)
-					printf("## Error (data line): expected 0x%08lX, found 0x%08lX\n",
-						val, readback);
+					printf_err("(data line): expected 0x%08lX, found 0x%08lX\n",
+						   val, readback);
 
 				*addr = ~val;
 				*dummy = val;
 				readback = *addr;
 
 				if (readback != ~val)
-					printf("## Error (data line): expected 0x%08lX, found 0x%08lX\n",
-						~val, readback);
+					printf_err("(data line): expected 0x%08lX, found 0x%08lX\n",
+						   ~val, readback);
 			}
 		}
 
@@ -548,8 +548,9 @@ int do_mem_mtest(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 			temp = start[offset];
 
 			if (temp != pattern) {
-				printf("\n## Error: address bit stuck high @ 0x%.8lX, expected 0x%.8lX, found 0x%.8lX\n",
-					(ulong)&start[offset], pattern, temp);
+				puts("\n");
+				printf_err("address bit stuck high @ 0x%.8lX, expected 0x%.8lX, found 0x%.8lX\n",
+					   (ulong)&start[offset], pattern, temp);
 
 				return 1;
 			}
@@ -564,8 +565,9 @@ int do_mem_mtest(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 				temp = start[offset];
 
 				if ((temp != pattern) && (offset != test_offset)) {
-					printf("\n## Error: address bit stuck low or shorted @ 0x%.8lX, expected 0x%.8lX, found 0x%.8lX\n",
-						(ulong)&start[offset], pattern, temp);
+					puts("\n");
+					printf_err("address bit stuck low or shorted @ 0x%.8lX, expected 0x%.8lX, found 0x%.8lX\n",
+						   (ulong)&start[offset], pattern, temp);
 
 					return 1;
 				}
@@ -597,8 +599,9 @@ int do_mem_mtest(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 			temp = start[offset];
 
 			if (temp != pattern) {
-				printf("\n## Error (read/write) @ 0x%.8lX: expected 0x%.8lX, found 0x%.8lX)\n",
-					(ulong)&start[offset], pattern, temp);
+				puts("\n");
+				printf_err("(read/write) @ 0x%.8lX: expected 0x%.8lX, found 0x%.8lX)\n",
+					   (ulong)&start[offset], pattern, temp);
 
 				return 1;
 			}
@@ -613,8 +616,9 @@ int do_mem_mtest(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 			temp = start[offset];
 
 			if (temp != anti_pattern) {
-				printf("\n## Error (read/write): @ 0x%.8lX: expected 0x%.8lX, found 0x%.8lX)\n",
-					(ulong)&start[offset], anti_pattern, temp);
+				puts("\n");
+				printf_err("(read/write): @ 0x%.8lX: expected 0x%.8lX, found 0x%.8lX)\n",
+					   (ulong)&start[offset], anti_pattern, temp);
 
 				return 1;
 			}
@@ -644,8 +648,9 @@ int do_mem_mtest(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 			readback = *addr;
 
 			if (readback != val) {
-				printf("\n## Error @ 0x%08X: found %08lX, expected %08lX\n",
-					(uint)addr, readback, val);
+				puts("\n");
+				printf_err("@ 0x%08X: found %08lX, expected %08lX\n",
+					   (uint)addr, readback, val);
 
 				rcode = 1;
 			}

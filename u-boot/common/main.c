@@ -388,7 +388,7 @@ int parse_line(char *line, char *argv[])
 		*line++ = '\0';
 	}
 
-	printf("## Error: too many args (max. %d)\n", CFG_MAXARGS);
+	printf_err("too many args (max. %d)\n", CFG_MAXARGS);
 
 	return nargs;
 }
@@ -540,7 +540,7 @@ int run_command(const char *cmd, int flag){
 		return -1;
 
 	if (strlen(cmd) >= CFG_CBSIZE) {
-		puts("## Error: command too long!\n");
+		printf_err("command too long!\n");
 		return -1;
 	}
 
@@ -585,7 +585,8 @@ int run_command(const char *cmd, int flag){
 
 		/* Look up command in command table */
 		if ((cmdtp = find_cmd(argv[0])) == NULL) {
-			printf("## Error: unknown command '%s' - try 'help'\n\n", argv[0]);
+			printf_err("unknown command '%s' - try 'help'\n", argv[0]);
+			puts("\n");
 
 			/* Give up after bad command */
 			rc = -1;
@@ -629,7 +630,7 @@ int do_run(cmd_tbl_t * cmdtp, int flag, int argc, char *argv[])
 		char *arg;
 
 		if ((arg = getenv(argv[i])) == NULL) {
-			printf("## Error: '%s' not defined\n", argv[i]);
+			printf_err("'%s' not defined\n", argv[i]);
 			return 1;
 		}
 

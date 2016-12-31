@@ -117,8 +117,8 @@ static void BootpCopyNetParams(Bootp_t *bp)
 static int truncate_sz(const char *name, int maxlen, int curlen)
 {
 	if (curlen >= maxlen) {
-		printf("** Warning: '%s' is too long (%d - max: %d) - truncated\n",
-		       name, curlen, maxlen);
+		printf_wrn("'%s' is too long (%d - max: %d) - truncated\n",
+			   name, curlen, maxlen);
 
 		curlen = maxlen - 1;
 	}
@@ -379,7 +379,8 @@ static void BootpTimeout(void)
 	bd_t *bd = gd->bd;
 
 	if (BootpTry >= TIMEOUT_COUNT) {
-		puts("\n## Error: retry count exceeded, starting again!\n\n");
+		puts("\n");
+		printf_err("retry count exceeded, starting again!\n\n");
 		NetStartAgain();
 	} else {
 		NetSetTimeout(TIMEOUT * CFG_HZ, BootpTimeout);
@@ -860,7 +861,7 @@ static void DhcpOptionsProcess(uchar *popt, Bootp_t *bp)
 				 * Tru64 Unix) it seems mind bogglingly crazy
 				 * to me
 				 */
-				printf("** Warning: using vendor optional boot file\n");
+				printf_wrn("using vendor optional boot file\n");
 				memcpy(bp->bp_file, popt + 2, size);
 				bp->bp_file[size] = '\0';
 			}
@@ -870,7 +871,7 @@ static void DhcpOptionsProcess(uchar *popt, Bootp_t *bp)
 			if (dhcp_vendorex_proc(popt))
 				break;
 #endif
-			printf("** Warning: unhandled DHCP option in OFFER/ACK: %d\n", *popt);
+			printf_wrn("unhandled DHCP option in OFFER/ACK: %d\n", *popt);
 			break;
 		}
 
@@ -1063,7 +1064,7 @@ static void DhcpHandler(uchar *pkt, unsigned dest, unsigned src, unsigned len)
 
 		break;
 	default:
-		puts("## Error: DHCP in INVALID STATE\n");
+		printf_err("DHCP in INVALID STATE\n");
 		break;
 	}
 }

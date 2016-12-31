@@ -131,7 +131,7 @@ int do_setexpr(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 		value = a % b;
 		break;
 	default:
-		printf("## Error: invalid op\n");
+		printf_err("invalid op\n");
 		return 1;
 	}
 
@@ -271,7 +271,7 @@ static int binary_test(char *op, char *arg1, char *arg2, int w)
 		}
 	}
 
-	printf("## Error: unknown operator '%s'\n", op);
+	printf_err("unknown operator '%s'\n", op);
 
 	/* Op code not found */
 	return 0;
@@ -304,7 +304,7 @@ int do_itest(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 		break;
 	case -1:
 	default:
-		puts("## Error: invalid data width specifier\n");
+		printf_err("invalid data width specifier\n");
 		value = 0;
 		break;
 	}

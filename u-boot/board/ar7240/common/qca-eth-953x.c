@@ -99,8 +99,6 @@ ath_gmac_send(struct eth_device *dev, volatile void *packet, int length)
 		if (!ath_gmac_tx_owned_by_dma(f))
 			break;
 	}
-	if (i == MAX_WAIT)
-		printf("Tx Timed out\n");
 
 	f->pkt_start_addr = 0;
 	f->pkt_size = 0;
@@ -177,7 +175,6 @@ void ath_gmac_mii_setup(ath_gmac_mac_t *mac)
 	ath_reg_wr(SWITCH_CLOCK_SPARE_ADDRESS, 0x231);
 	//ath_reg_wr(SWITCH_CLOCK_SPARE_ADDRESS, 0x520);
 	if ((mac->mac_unit == 1)) {
-		//printf("Honey Bee ---->  MAC 1 S27 PHY *\n");
 		ath_reg_wr(ATH_ETH_CFG, ETH_CFG_ETH_RXDV_DELAY_SET(3) |
 					ETH_CFG_ETH_RXD_DELAY_SET(3)|
 					ETH_CFG_RGMII_GE0_SET(1));
@@ -194,8 +191,6 @@ void ath_gmac_mii_setup(ath_gmac_mac_t *mac)
 	}
 
 	if (is_vir_phy()) {
-		//printf("Honey Bee ---->VIR PHY*\n");
-
 		ath_reg_wr(ATH_ETH_CFG, ETH_CFG_ETH_RXDV_DELAY_SET(3) |
 					ETH_CFG_ETH_RXD_DELAY_SET(3)|
 					ETH_CFG_RGMII_GE0_SET(1));
@@ -211,7 +206,6 @@ void ath_gmac_mii_setup(ath_gmac_mac_t *mac)
 	}
 	if (is_s27()) {
         	mgmt_cfg_val = 2;
-        	//printf("Scorpion ---->S27 PHY*\n");
 		ath_reg_wr(ETH_CFG_ADDRESS, ETH_CFG_MII_GE0_SET(1)|
                                         ETH_CFG_MII_GE0_SLAVE_SET(1));
 		udelay(1000);
@@ -255,11 +249,6 @@ static void ath_gmac_hw_start(ath_gmac_mac_t *mac)
 	ath_gmac_reg_wr(mac, ATH_MAC_FIFO_CFG_5, 0x7ffff);
 
 	ath_gmac_reg_wr(mac, ATH_MAC_FIFO_CFG_3, 0x1f00140);
-
-	//printf(": cfg1 %#x cfg2 %#x\n", ath_gmac_reg_rd(mac, ATH_MAC_CFG1),
-	//		ath_gmac_reg_rd(mac, ATH_MAC_CFG2));
-
-
 }
 
 static int ath_gmac_check_link(ath_gmac_mac_t *mac)
@@ -297,7 +286,6 @@ static int ath_gmac_check_link(ath_gmac_mac_t *mac)
 			break;
 
 		default:
-			printf("Invalid speed detected\n");
 			return 0;
 	}
 
@@ -306,8 +294,6 @@ static int ath_gmac_check_link(ath_gmac_mac_t *mac)
 
 	mac->duplex = duplex;
 	mac->speed = speed;
-
-	printf("dup %d speed %d\n", duplex, speed);
 
 	ath_gmac_set_mac_duplex(mac,duplex);
 
@@ -358,7 +344,6 @@ static int ath_gmac_alloc_fifo(int ndesc, ath_gmac_desc_t ** fifo)
 	size += CFG_CACHELINE_SIZE - 1;
 
 	if ((p = malloc(size)) == NULL) {
-		//printf("Cant allocate fifos\n");
 		return -1;
 	}
 
@@ -439,7 +424,6 @@ athr_mgmt_init(void)
 
 	ath_reg_wr(GPIO_OUT_FUNCTION4_ADDRESS, rddata);
 #endif
-	//printf ("%s ::done\n",__func__);
 }
 
 int ath_gmac_enet_initialize(bd_t * bis)
@@ -447,8 +431,6 @@ int ath_gmac_enet_initialize(bd_t * bis)
 	struct eth_device *dev[CFG_ATH_GMAC_NMACS];
 	u32 mask, mac_h, mac_l;
 	int i;
-
-	//printf("%s...\n", __func__);
 
 	/* Switch Analog and digital reset seq */
 	mask = ATH_RESET_GE1_PHY |  ATH_RESET_GE0_PHY;
@@ -499,9 +481,6 @@ int ath_gmac_enet_initialize(bd_t * bis)
 		if(!i) {
 			mask = (ATH_RESET_GE0_MAC | ATH_RESET_GE1_MAC | ATH_RESET_GE0_MDIO | ATH_RESET_GE1_MDIO);
 
-
-			//printf("%s: reset mask:%x \n", __func__, mask);
-
 			ath_reg_rmw_set(RST_RESET_ADDRESS, mask);
 			udelay(1000 * 100);
 
@@ -529,19 +508,16 @@ int ath_gmac_enet_initialize(bd_t * bis)
 
 		if (ath_gmac_macs[i]->mac_unit == 0) { /* WAN Phy */
 #ifdef  CFG_ATHRS27_PHY
-			//printf("S27 reg init\n");
 			athrs27_reg_init();
 			mask = ATH_RESET_GE0_MAC;
                         ath_reg_rmw_clear(RST_RESET_ADDRESS, mask);
 #endif
 
 #ifdef CONFIG_VIR_PHY
-			//printf("VIRPhy reg init \n");
 			athr_vir_reg_init();
 #endif
 		} else {
 #ifdef  CFG_ATHRS27_PHY
-			//printf("S27 reg init\n");
 			athrs27_reg_init_lan();
 			mask = ATH_RESET_GE1_MAC;
                         ath_reg_rmw_clear(RST_RESET_ADDRESS, mask);
@@ -567,7 +543,6 @@ int ath_gmac_enet_initialize(bd_t * bis)
 
 
 	ath_gmac_phy_setup(ath_gmac_macs[i]->mac_unit);
-		//printf("%s up\n",dev[i]->name);
 	}
 
 
@@ -594,9 +569,6 @@ ath_gmac_miiphy_read(char *devname, uint32_t phy_addr, uint8_t reg, uint16_t *da
 		rddata = ath_gmac_reg_rd(mac, ATH_MII_MGMT_IND) & 0x1;
 	}while(rddata && --ii);
 
-	if (ii == 0)
-		printf("ERROR:%s:%d transaction failed\n",__func__,__LINE__);
-
 
 	ath_gmac_reg_wr(mac, ATH_MII_MGMT_CMD, 0x0);
 	ath_gmac_reg_wr(mac, ATH_MII_MGMT_ADDRESS, addr);
@@ -607,9 +579,6 @@ ath_gmac_miiphy_read(char *devname, uint32_t phy_addr, uint8_t reg, uint16_t *da
 		udelay(5);
 		rddata = ath_gmac_reg_rd(mac, ATH_MII_MGMT_IND) & 0x1;
 	}while(rddata && --ii);
-
-	if(ii==0)
-		printf("Error!!! Leave ath_gmac_miiphy_read without polling correct status!\n");
 
 	val = ath_gmac_reg_rd(mac, ATH_MII_MGMT_STATUS);
 	ath_gmac_reg_wr(mac, ATH_MII_MGMT_CMD, 0x0);
@@ -638,9 +607,6 @@ ath_gmac_miiphy_write(char *devname, uint32_t phy_addr, uint8_t reg, uint16_t da
 		rddata = ath_gmac_reg_rd(mac, ATH_MII_MGMT_IND) & 0x1;
 	} while (rddata && --ii);
 
-	if (ii == 0)
-		printf("ERROR:%s:%d transaction failed\n",__func__,__LINE__);
-
 	ath_gmac_reg_wr(mac, ATH_MII_MGMT_ADDRESS, addr);
 	ath_gmac_reg_wr(mac, ATH_MII_MGMT_CTRL, data);
 
@@ -648,9 +614,6 @@ ath_gmac_miiphy_write(char *devname, uint32_t phy_addr, uint8_t reg, uint16_t da
 		rddata = ath_gmac_reg_rd(mac, ATH_MII_MGMT_IND) & 0x1;
 	} while (rddata && --ii);
 
-	if (ii == 0)
-		printf("Error!!! Leave ath_gmac_miiphy_write without polling correct status!\n");
-	
 	return 0; 
 }
 //#endif /* CONFIG_CMD_MII */

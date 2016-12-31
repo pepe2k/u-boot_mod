@@ -180,7 +180,7 @@ static int addr_spec(char *arg1, char *arg2, ulong *addr_first, ulong *addr_last
 
 		if(!found){
 			/* error, addres not in flash */
-			printf("## Error: end address (0x%08lx) not in FLASH!\n", *addr_last);
+			printf_err("end address (0x%08lx) not in FLASH!\n", *addr_last);
 			return(-1);
 		}
 
@@ -240,14 +240,14 @@ static int flash_fill_sect_ranges(ulong addr_first, ulong addr_last, int *s_firs
 				if(addr_last > b_end){
 					s_last[bank] = s_end;
 				} else {
-					puts("## Error: end address not on sector boundary\n");
+					printf_err("end address not on sector boundary\n");
 					rcode = 1;
 					break;
 				}
 			}
 
 			if(s_last[bank] < s_first[bank]){
-				puts("## Error: end sector precedes start sector\n");
+				printf_err("end sector precedes start sector\n");
 				rcode = 1;
 				break;
 			}
@@ -256,11 +256,11 @@ static int flash_fill_sect_ranges(ulong addr_first, ulong addr_last, int *s_firs
 			addr_first = (sect == s_end) ? b_end + 1 : info->start[sect + 1];
 			(*s_count) += s_last[bank] - s_first[bank] + 1;
 		} else if(addr_first >= info->start[0] && addr_first < b_end){
-			puts("## Error: start address not on sector boundary\n");
+			printf_err("start address not on sector boundary\n");
 			rcode = 1;
 			break;
 		} else if(s_last[bank] >= 0){
-			puts("## Error: cannot span across banks when they are mapped in reverse order\n");
+			printf_err("cannot span across banks when they are mapped in reverse order\n");
 			rcode = 1;
 			break;
 		}
@@ -292,7 +292,7 @@ int do_flerase(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[]){
 
 	if((n = abbrev_spec(argv[1], &info, &sect_first, &sect_last)) != 0){
 		if(n < 0){
-			puts("## Error: bad sector spec\n");
+			printf_err("bad sector spec\n");
 			return(1);
 		}
 		printf("Erase FLASH sectors %d-%d in bank #%d ", sect_first, sect_last, (info - flash_info) + 1);
@@ -309,7 +309,7 @@ int do_flerase(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[]){
 		bank = simple_strtoul(argv[2], NULL, 16);
 
 		if((bank < 1) || (bank > CFG_MAX_FLASH_BANKS)){
-			printf("## Error: only FLASH banks #1...#%d supported\n", CFG_MAX_FLASH_BANKS);
+			printf_err("only FLASH banks #1...#%d supported\n", CFG_MAX_FLASH_BANKS);
 			return(1);
 		}
 
@@ -320,7 +320,7 @@ int do_flerase(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[]){
 	}
 
 	if(addr_spec(argv[1], argv[2], &addr_first, &addr_last) < 0){
-		printf("## Error: bad address format\n");
+		printf_err("bad address format\n");
 		return(1);
 	}
 
@@ -353,7 +353,7 @@ int flash_sect_erase(ulong addr_first, ulong addr_last){
 		}
 		printf("Erased sectors: %d\n\n", erased);
 	} else if(rcode == 0){
-		puts("## Error: start and/or end address not on sector boundary\n");
+		printf_err("start and/or end address not on sector boundary\n");
 		rcode = 1;
 	}
 	return(rcode);
