@@ -8,14 +8,11 @@
 #ifndef __TFTP_H__
 #define __TFTP_H__
 
-/**********************************************************************/
 /*
- *	Global functions and variables.
+ * Global functions and variables
  */
 
-/* tftp.c */
-extern void	TftpStart(proto_t protocol);	/* Begin TFTP get */
-
-/**********************************************************************/
+/* Begin TFTP get */
+extern void TftpStart(proto_t protocol);
 
 #endif /* __TFTP_H__ */
