@@ -14,7 +14,7 @@
  */
 
 /* tftp.c */
-extern void	TftpStart(void);	/* Begin TFTP get */
+extern void	TftpStart(proto_t protocol);	/* Begin TFTP get */
 
 /**********************************************************************/
 

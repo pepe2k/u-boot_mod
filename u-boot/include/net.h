@@ -343,7 +343,7 @@ extern int		NetState;		/* Network loop state		*/
 extern int		NetRestartWrap;		/* Tried all network devices	*/
 #endif
 
-typedef enum { BOOTP, RARP, ARP, TFTP, DHCP, PING, DNS, NFS, CDP, NETCONS, SNTP } proto_t;
+typedef enum { BOOTP, RARP, ARP, TFTPGET, TFTPPUT, DHCP, PING, DNS, NFS, CDP, NETCONS, SNTP } proto_t;
 
 /* Set active state */
 static inline __attribute__((always_inline)) int eth_init_state_only(bd_t *bis){

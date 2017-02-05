@@ -30,6 +30,9 @@
 
 #if defined(CONFIG_CMD_NET)
 
+u32 save_addr;	/* Default Save Address */
+u32 save_size;	/* Default Save Size (in bytes) */
+
 extern int do_bootm(cmd_tbl_t *, int, int, char *[]);
 static int netboot_common(proto_t, cmd_tbl_t *, int, char *[]);
 
@@ -41,9 +44,22 @@ U_BOOT_CMD(httpd, 1, 1, do_httpd, "start www server for firmware recovery\n", NU
 #endif /* CONFIG_CMD_HTTPD */
 
 int do_tftpb(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[]){
-	return netboot_common(TFTP, cmdtp, argc, argv);
+	return netboot_common(TFTPGET, cmdtp, argc, argv);
 }
 U_BOOT_CMD(tftpboot, 3, 1, do_tftpb, "boot image via network using TFTP protocol\n", "[loadAddress] [bootfilename]\n");
+
+int do_tftpput(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
+{
+	if (argc < 4) {
+		print_cmd_help(cmdtp);
+		return -1;
+	}
+
+	return netboot_common(TFTPPUT, cmdtp, argc, argv);
+}
+
+U_BOOT_CMD(tftpput, 4, 1, do_tftpput, "send file to TFTP server\n", "address size filename\n"
+		"\t- sends 'size' of data from 'address' as 'filename' to TFTP server");
 
 #if defined(CONFIG_CMD_DHCP)
 int do_dhcp(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[]){
@@ -152,6 +168,12 @@ static int netboot_common(proto_t proto, cmd_tbl_t *cmdtp, int argc, char *argv[
 			load_addr = simple_strtoul(argv[1], NULL, 16);
 			copy_filename(BootFile, argv[2], sizeof(BootFile));
 
+			break;
+
+		case 4:
+			save_addr = simple_strtoul(argv[1], NULL, 16);
+			save_size = simple_strtoul(argv[2], NULL, 16);
+			copy_filename(BootFile, argv[3], sizeof(BootFile));
 			break;
 
 		default:

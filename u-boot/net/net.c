@@ -344,7 +344,8 @@ int NetLoop(proto_t protocol){
 		case SNTP:
 #endif
 		case NETCONS:
-		case TFTP:
+		case TFTPGET:
+		case TFTPPUT:
 			NetCopyIP(&NetOurIP, &bd->bi_ip_addr);
 
 			NetOurGatewayIP		= getenv_IPaddr("gatewayip");
@@ -357,7 +358,8 @@ int NetLoop(proto_t protocol){
 				case NFS:
 #endif
 				case NETCONS:
-				case TFTP:
+				case TFTPGET:
+				case TFTPPUT:
 					NetServerIP = getenv_IPaddr("serverip");
 					break;
 #if defined(CONFIG_CMD_PING)
@@ -412,10 +414,13 @@ int NetLoop(proto_t protocol){
 #ifdef CONFIG_NET_MULTI
 			NetDevExists = 1;
 #endif
+			NetBootFileXferSize = 0;
+
 			switch(protocol){
-				case TFTP:
+				case TFTPGET:
+				case TFTPPUT:
 					/* always use ARP to get server ethernet address */
-					TftpStart();
+					TftpStart(protocol);
 					break;
 
 #if defined(CONFIG_CMD_DHCP)
@@ -457,7 +462,6 @@ int NetLoop(proto_t protocol){
 					break;
 			}
 
-			NetBootFileXferSize = 0;
 			break;
 	}
 
@@ -1140,7 +1144,8 @@ static int net_check_prereq(proto_t protocol){
 		case NFS:
 #endif
 		case NETCONS:
-		case TFTP:
+		case TFTPGET:
+		case TFTPPUT:
 			if(NetServerIP == 0){
 				printf_err("serverip not set\n");
 				return(1);

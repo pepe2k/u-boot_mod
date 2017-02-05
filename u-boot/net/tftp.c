@@ -43,6 +43,8 @@ static int TftpServerPort;			/* The UDP port at their end */
 static int TftpOurPort;				/* The UDP port at our end */
 static int TftpTimeoutCount;
 static int TftpState;
+static int TftpWriting;				/* 1 if writing, else 0 */
+static int TftpFinalBlock;			/* 1 if we have sent the last block */
 
 static ulong TftpBlock;				/* packet sequence number */
 static ulong TftpLastBlock;			/* last packet sequence number received */
@@ -54,6 +56,7 @@ static ulong TftpBlockWrapOffset;	/* memory offset due to wrapping */
 #define STATE_TOO_LARGE		3
 #define STATE_BAD_MAGIC		4
 #define STATE_OACK			5
+#define STATE_WRQ	7
 
 #define TFTP_BLOCK_SIZE		512		    		/* default TFTP block size */
 #define TFTP_SEQUENCE_SIZE	((ulong)(1<<16))    /* sequence number is 16 bit */
@@ -101,13 +104,41 @@ static __inline__ void store_block(unsigned block, uchar * src, unsigned len){
 	}
 }
 
+/* Load the next block from memory to be sent over tftp */
+static int load_block(unsigned block, uchar *dst, unsigned len)
+{
+	ulong offset = (block - 1) * len + TftpBlockWrapOffset;
+	ulong tosend = len;
+
+	tosend = min(NetBootFileXferSize - offset, tosend);
+	(void)memcpy(dst, (void *)(save_addr + offset), tosend);
+
+	return tosend;
+}
+
+/* Show download/upload progress */
+static void show_progress(const ulong TftpBlock)
+{
+	if (((TftpBlock - 1) % 10) == 0)
+		putc('#');
+	else if ((TftpBlock % (10 * HASHES_PER_LINE)) == 0)
+		puts("\n              ");
+}
+
+static void show_success(void)
+{
+	puts("\n\nTFTP transfer complete!\n");
+
+	NetState = NETLOOP_SUCCESS;
+}
+
 static void TftpSend(void);
 static void TftpTimeout(void);
 
 /**********************************************************************/
 
 static void TftpSend(void){
-	volatile uchar *pkt;
+	uchar *pkt;
 	volatile uchar *xp;
 	int len = 0;
 	volatile ushort *s;
@@ -116,13 +147,14 @@ static void TftpSend(void){
 	 *	We will always be sending some sort of packet, so
 	 *	cobble together the packet headers now.
 	 */
-	pkt = NetTxPacket + NetEthHdrSize() + IP_HDR_SIZE;
+	pkt = (uchar *)(NetTxPacket + NetEthHdrSize() + IP_HDR_SIZE);
 
 	switch(TftpState){
 		case STATE_RRQ:
+		case STATE_WRQ:
 			xp = pkt;
 			s = (ushort *)pkt;
-			*s++ = htons(TFTP_RRQ);
+			*s++ = htons(TftpState == STATE_RRQ ? TFTP_RRQ : TFTP_WRQ);
 
 			pkt = (uchar *)s;
 			strcpy ((char *)pkt, tftp_filename);
@@ -146,9 +178,21 @@ static void TftpSend(void){
 		case STATE_OACK:
 			xp = pkt;
 			s = (ushort *)pkt;
-			*s++ = htons(TFTP_ACK);
-			*s++ = htons(TftpBlock);
-			pkt = (uchar *)s;
+
+			s[0] = htons(TFTP_ACK);
+			s[1] = htons(TftpBlock);
+			pkt = (uchar *)(s + 2);
+
+			if (TftpWriting) {
+				int toload = TFTP_BLOCK_SIZE;
+				int loaded = load_block(TftpBlock, pkt, toload);
+
+				s[0] = htons(TFTP_DATA);
+				pkt += loaded;
+
+				TftpFinalBlock = (loaded < toload);
+			}
+
 			len = pkt - xp;
 			break;
 
@@ -182,12 +226,14 @@ static void TftpHandler(uchar * pkt, unsigned dest, unsigned src, unsigned len){
 	bd_t *bd = gd->bd;
 	ushort proto;
 	ushort *s;
+	int block;
 
 	if(dest != TftpOurPort){
 		return;
 	}
 
-	if(TftpState != STATE_RRQ && src != TftpServerPort){
+	if (TftpState != STATE_RRQ && TftpState != STATE_WRQ &&
+	    src != TftpServerPort) {
 		return;
 	}
 
@@ -202,10 +248,23 @@ static void TftpHandler(uchar * pkt, unsigned dest, unsigned src, unsigned len){
 	proto = *s++;
 	pkt = (uchar *)s;
 
+	block = ntohs(*s);
+
 	switch(ntohs(proto)){
 		case TFTP_RRQ:
 		case TFTP_WRQ:
+			break;
+
 		case TFTP_ACK:
+			if (TftpWriting) {
+				if (TftpFinalBlock) {
+					show_success();
+				} else {
+					show_progress(TftpBlock);
+					TftpBlock = block + 1;
+					TftpSend(); /* Send next data block */
+				}
+			}
 			break;
 
 		default:
@@ -217,6 +276,13 @@ static void TftpHandler(uchar * pkt, unsigned dest, unsigned src, unsigned len){
 	#endif
 			TftpState = STATE_OACK;
 			TftpServerPort = src;
+
+			if (TftpWriting) {
+				/* Get ready to send the first block */
+				TftpState = STATE_DATA;
+				TftpBlock++;
+			}
+
 			TftpSend(); /* Send ACK */
 			break;
 
@@ -239,13 +305,8 @@ static void TftpHandler(uchar * pkt, unsigned dest, unsigned src, unsigned len){
 				TftpBlockWrap++;
 				TftpBlockWrapOffset += TFTP_BLOCK_SIZE * TFTP_SEQUENCE_SIZE;
 				printf("\n         %lu MB received\n         ", TftpBlockWrapOffset>>20);
-			} else {
-				if(((TftpBlock - 1) % 10) == 0){
-					putc('#');
-				} else if((TftpBlock % (10 * HASHES_PER_LINE)) == 0){
-					puts("\n              ");
-				}
-			}
+			} else
+				show_progress(TftpBlock);
 
 	#ifdef ET_DEBUG
 			if(TftpState == STATE_RRQ){
@@ -287,14 +348,8 @@ static void TftpHandler(uchar * pkt, unsigned dest, unsigned src, unsigned len){
 			 */
 			TftpSend();
 
-			if(len < TFTP_BLOCK_SIZE){
-				/*
-				 *	We received the whole thing.  Try to
-				 *	run it.
-				 */
-				puts("\n\nTFTP transfer complete!\n");
-				NetState = NETLOOP_SUCCESS;
-			}
+			if(len < TFTP_BLOCK_SIZE)
+				show_success();
 
 			break;
 
@@ -320,7 +375,7 @@ static void TftpTimeout(void){
 	}
 }
 
-void TftpStart(void){
+void TftpStart(proto_t protocol){
 	bd_t *bd = gd->bd;
 
 #ifdef CONFIG_TFTP_PORT
@@ -336,7 +391,7 @@ void TftpStart(void){
 		tftp_filename = BootFile;
 	}
 
-	puts("\nTFTP from IP: ");
+	printf("\n%s ", protocol == TFTPPUT ? "  TFTP to IP:" : "TFTP from IP:");
 	print_IPaddr(NetServerIP);
 
 	puts("\n      Our IP: ");
@@ -355,25 +410,38 @@ void TftpStart(void){
 
 	printf("\n    Filename: %s", tftp_filename);
 
-	if(NetBootFileSize){
-		printf("\n        Size: 0x%x Bytes = ", NetBootFileSize<<9);
-		print_size(NetBootFileSize<<9, "");
-	}
-
-	printf("\nLoad address: 0x%lx", load_addr);
 
 #if defined(CONFIG_NET_MULTI)
 	printf("\n       Using: %s", eth_get_name());
 #endif
 
-	puts("\n\n     Loading: *\b");
+	TftpWriting = (protocol == TFTPPUT);
+
+	if (TftpWriting) {
+		printf("\nSave address: 0x%lx", save_addr);
+		printf("\n   Save size: 0x%lx", save_size);
+		puts("\n\n     Sending: *\b");
+
+		NetBootFileXferSize = save_size;
+		TftpFinalBlock = 0;
+
+		TftpState = STATE_WRQ;
+	} else {
+		printf("\nLoad address: 0x%lx", load_addr);
+
+		if (NetBootFileSize)
+			printf("\n   Load size: 0x%lx", NetBootFileSize << 9);
+
+		puts("\n\n     Loading: *\b");
+
+		TftpState = STATE_RRQ;
+	}
 
 	NetSetTimeout(TIMEOUT * CFG_HZ, TftpTimeout);
 	NetSetHandler(TftpHandler);
 
 	TftpServerPort = WELL_KNOWN_PORT;
 	TftpTimeoutCount = 0;
-	TftpState = STATE_RRQ;
 
 	/* Use a pseudo-random port unless a specific port is set */
 	TftpOurPort = 1024 + (get_timer(0) % 3072);
