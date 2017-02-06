@@ -91,7 +91,7 @@ define echo_yellow
 endef
 
 define ih_name
-u-boot_mod $(if $(filter $(IMG_RAM),1),RAM,$(if $(filter $(IMG_LZMA),1),LZMA FLASH,FLASH)) image
+U-Boot $(strip $(subst ",,$(U_BOOT_VERSION)))
 endef
 
 # $(1): name
