@@ -200,8 +200,9 @@ void flash_perror (int);
 /* common/cmd_autoscript.c */
 int	autoscript (ulong addr);
 
-/* Default Load Address */
-extern u32 load_addr;
+extern u32 load_addr;	/* Default Load Address */
+extern u32 save_addr;	/* Default Save Address */
+extern u32 save_size;	/* Default Save Size */
 
 /* common/cmd_nvedit.c */
 int		env_init     (void);

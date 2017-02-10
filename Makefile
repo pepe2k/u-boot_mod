@@ -89,9 +89,21 @@ $(if $(IMG_LZMA),\
 )
 endef
 
+define git_branch
+$(shell git symbolic-ref --short -q HEAD 2>/dev/null || echo "unknown")
+endef
+
+define git_hash
+$(shell git rev-parse --short=8 -q HEAD 2>/dev/null || echo "unknown")
+endef
+
+define git_branch_hash
+git_$(call git_branch)-$(call git_hash)
+endef
+
 # $(1): file extension
 define img_name
-u-boot_mod__$(shell date +"%Y%m%d")__$@$(if \
+u-boot_mod__$(shell date +"%Y%m%d")__$(call git_branch_hash)__$@$(if \
 $(filter $(IMG_RAM),1),__RAM-LOAD-ONLY)$(if $(1),.$(1))
 endef
 

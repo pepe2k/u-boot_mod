@@ -367,7 +367,7 @@ static void BootpHandler(uchar *pkt, unsigned dest, unsigned src, unsigned len)
 		}
 	}
 
-	TftpStart();
+	TftpStart(TFTPGET);
 }
 #endif /* !CONFIG_CMD_DHCP */
 
@@ -1058,7 +1058,7 @@ static void DhcpHandler(uchar *pkt, unsigned dest, unsigned src, unsigned len)
 				}
 			}
 
-			TftpStart();
+			TftpStart(TFTPGET);
 			return;
 		}
 
