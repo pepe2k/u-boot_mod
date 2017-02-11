@@ -201,7 +201,7 @@
 #if defined(CONFIG_FOR_YUNCORE_AP90Q)  ||\
     defined(CONFIG_FOR_YUNCORE_CPE830) ||\
     defined(CONFIG_FOR_ZBTLINK_ZBT_WE1526)
-	#define CONFIG_BOOTCOMMAND	"bootm 0x9FE80000 || bootm 0x9F050000"
+	#define CONFIG_BOOTCOMMAND	"bootm 0x9F050000 || bootm 0x9FE80000"
 #else
 	#define CONFIG_BOOTCOMMAND	"bootm " MK_STR(CFG_LOAD_ADDR)
 #endif
