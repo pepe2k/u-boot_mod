@@ -101,6 +101,7 @@ Currently supported devices:
   - Comfast CF-E520N/CF-E530N
   - P&W CPE505N
   - P&W R602N
+  - TP-Link TL-WA850RE v2
   - TP-Link TL-WR802N
   - TP-Link TL-WR810N
   - TP-Link TL-WR820N (version for Chinese market)
@@ -137,6 +138,7 @@ More information about supported devices:
 | [TP-Link TL-MR3420 v2](http://wikidevi.com/wiki/TP-LINK_TL-MR3420_v2) | AR9341 | 4 MiB | 32 MiB DDR1 | 64 KiB, LZMA | RO |
 | [TP-Link TL-WA801ND v2](http://wikidevi.com/wiki/TP-LINK_TL-WA801ND_v2) | AR9341 | 4 MiB | 32 MiB DDR1 | 64 KiB, LZMA | RO |
 | [TP-Link TL-WA830RE v2](http://wikidevi.com/wiki/TP-LINK_TL-WA830RE_v2) | AR9341 | 4 MiB | 32 MiB DDR1 | 64 KiB, LZMA | RO |
+| TP-Link TL-WA850RE v2 | QCA9533 | 4 MiB | 32 MiB DDR1 | 64 KiB, LZMA | RO |
 | [TP-Link TL-WDR3500 v1](http://wiki.openwrt.org/toh/tp-link/tl-wdr3500) | AR9344 | 8 MiB | 128 MiB DDR2 | 64 KiB, LZMA | RO |
 | [TP-Link TL-WDR3600 v1](http://wiki.openwrt.org/toh/tp-link/tl-wdr3600) | AR9344 | 8 MiB | 128 MiB DDR2 | 64 KiB, LZMA | RO |
 | [TP-Link TL-WDR43x0 v1](http://wiki.openwrt.org/toh/tp-link/tl-wdr4300) | AR9344 | 8 MiB | 128 MiB DDR2 | 64 KiB, LZMA | RO |

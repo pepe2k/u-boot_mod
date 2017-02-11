@@ -513,6 +513,13 @@ tp-link_tl-wa830re_v2: ar934x_common
 	@$(call define_add,CFG_AG7240_NMACS,2)
 	@$(MKCONFIG) -a db12x mips mips db12x ar7240 ar7240
 
+tp-link_tl-wa850re_v2: qca953x_common
+	@$(call config_init,TP-Link TL-WA850RE v2,tl-wa850re-v2,4,17,1,QCA_QCA953X_SOC)
+	@$(call define_add,CONFIG_FOR_TPLINK_WA850RE_V2,1)
+	@$(call define_add,CFG_ATHRS27_PHY,1)
+	@$(call define_add,CFG_ATH_GMAC_NMACS,2)
+	@$(MKCONFIG) -a ap143 mips mips ap143 ar7240 ar7240
+
 tp-link_tl-wdr3500: ar934x_common
 	@$(call config_init,TP-Link TL-WDR3500,tl-wdr3500,8,16,1,QCA_AR9344_SOC)
 	@$(call define_add,CONFIG_FOR_TPLINK_WDR3500_V1,1)

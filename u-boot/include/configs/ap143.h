@@ -64,6 +64,17 @@
 	#define CONFIG_QCA_GPIO_MASK_IN		GPIO17
 	#define CONFIG_QCA_GPIO_MASK_OUT_INIT_H	CONFIG_QCA_GPIO_MASK_LED_ACT_L
 
+#elif defined(CONFIG_FOR_TPLINK_WA850RE_V2)
+
+	#define CONFIG_QCA_GPIO_MASK_LED_ACT_L	GPIO0  | GPIO1 | GPIO2  |\
+						GPIO3  | GPIO4 | GPIO12 |\
+						GPIO13 | GPIO14
+	#define CONFIG_QCA_GPIO_MASK_OUT	GPIO15 |\
+						CONFIG_QCA_GPIO_MASK_LED_ACT_L
+	#define CONFIG_QCA_GPIO_MASK_IN		GPIO16 | GPIO17
+	#define CONFIG_QCA_GPIO_MASK_OUT_INIT_H	GPIO15 |\
+						CONFIG_QCA_GPIO_MASK_LED_ACT_L
+
 #elif defined(CONFIG_FOR_TPLINK_WR810N)
 
 	#define CONFIG_QCA_GPIO_MASK_LED_ACT_L	GPIO13
@@ -176,7 +187,8 @@
 				"rootfstype=squashfs init=/sbin/init "\
 				"mtdparts=ath-nor0:32k(u-boot1),32k(u-boot2),3008k(rootfs),896k(uImage),64k(mib0),64k(art)"
 
-#elif defined(CONFIG_FOR_TPLINK_WR841N_V10) ||\
+#elif defined(CONFIG_FOR_TPLINK_WA850RE_V2) ||\
+      defined(CONFIG_FOR_TPLINK_WR841N_V10) ||\
       defined(CONFIG_FOR_TPLINK_WR841N_V11) ||\
       defined(CONFIG_FOR_TPLINK_WR841N_V9)  ||\
       defined(CONFIG_FOR_TPLINK_WR802N)
@@ -202,6 +214,7 @@
     defined(CONFIG_FOR_COMFAST_CF_E320N_V2) ||\
     defined(CONFIG_FOR_COMFAST_CF_E520N)    ||\
     defined(CONFIG_FOR_COMFAST_CF_E530N)    ||\
+    defined(CONFIG_FOR_TPLINK_WA850RE_V2)   ||\
     defined(CONFIG_FOR_TPLINK_WR802N)       ||\
     defined(CONFIG_FOR_TPLINK_WR810N)       ||\
     defined(CONFIG_FOR_TPLINK_WR820N_CN)    ||\
@@ -248,7 +261,8 @@
 	#define CFG_ENV_ADDR		0x9F040000
 	#define CFG_ENV_SIZE		0xFC00
 	#define CFG_ENV_SECT_SIZE	0x10000
-#elif defined(CONFIG_FOR_TPLINK_WR802N)     ||\
+#elif defined(CONFIG_FOR_TPLINK_WA850RE_V2) ||\
+      defined(CONFIG_FOR_TPLINK_WR802N)     ||\
       defined(CONFIG_FOR_TPLINK_WR810N)     ||\
       defined(CONFIG_FOR_TPLINK_WR820N_CN)  ||\
       defined(CONFIG_FOR_TPLINK_WR841N_V10) ||\
@@ -292,6 +306,10 @@
 	#define OFFSET_MAC_DATA_BLOCK		0xFF0000
 	#define OFFSET_MAC_DATA_BLOCK_LENGTH	0x010000
 	#define OFFSET_MAC_ADDRESS		0x000000
+#elif defined(CONFIG_FOR_TPLINK_WA850RE_V2)
+	#define OFFSET_MAC_DATA_BLOCK		0x3c0000
+	#define OFFSET_MAC_DATA_BLOCK_LENGTH	0x010000
+	#define OFFSET_MAC_ADDRESS		0x000008
 #elif defined(CONFIG_FOR_TPLINK_WR802N)     ||\
       defined(CONFIG_FOR_TPLINK_WR810N)     ||\
       defined(CONFIG_FOR_TPLINK_WR820N_CN)  ||\
@@ -354,6 +372,8 @@
     defined(CONFIG_FOR_TPLINK_WR841N_V11)   ||\
     defined(CONFIG_FOR_TPLINK_WR841N_V9)
 	#define WEBFAILSAFE_UPLOAD_LIMITED_AREA_IN_BYTES	(192 * 1024)
+#elif defined(CONFIG_FOR_TPLINK_WA850RE_V2)
+	#define WEBFAILSAFE_UPLOAD_LIMITED_AREA_IN_BYTES	(448 * 1024)
 #elif defined(CONFIG_FOR_P2W_CPE505N)    ||\
       defined(CONFIG_FOR_P2W_R602N)      ||\
       defined(CONFIG_FOR_WALLYS_DR531)   ||\
@@ -368,8 +388,9 @@
  * PLL/Clocks configuration
  * ========================
  */
-#if defined(CONFIG_FOR_TPLINK_WR802N)    ||\
-    defined(CONFIG_FOR_TPLINK_WR820N_CN) ||\
+#if defined(CONFIG_FOR_TPLINK_WA850RE_V2) ||\
+    defined(CONFIG_FOR_TPLINK_WR802N)     ||\
+    defined(CONFIG_FOR_TPLINK_WR820N_CN)  ||\
     defined(CONFIG_FOR_TPLINK_WR841N_V9)
 	#define CONFIG_QCA_PLL	QCA_PLL_PRESET_550_400_200
 #else
@@ -380,6 +401,7 @@
     defined(CONFIG_FOR_COMFAST_CF_E320N_V2) ||\
     defined(CONFIG_FOR_COMFAST_CF_E520N)    ||\
     defined(CONFIG_FOR_COMFAST_CF_E530N)    ||\
+    defined(CONFIG_FOR_TPLINK_WA850RE_V2)   ||\
     defined(CONFIG_FOR_TPLINK_WR802N)       ||\
     defined(CONFIG_FOR_TPLINK_WR810N)       ||\
     defined(CONFIG_FOR_TPLINK_WR820N_CN)    ||\
