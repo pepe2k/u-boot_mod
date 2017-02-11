@@ -107,6 +107,8 @@ Currently supported devices:
   - Comfast CF-E520N/CF-E530N
   - YunCore AP90Q
   - YunCore CPE830
+  - P&W CPE505N
+  - P&W R602N
 
 I tested this modification on most of these devices, with OpenWrt and OFW firmware. If you are not sure about the version of your device, please contact with me **before** you try to make an upgrade. Changing bootloader to a wrong version will probably damage your router and you will need special hardware to fix it, so please, **be very careful**.
 
@@ -151,6 +153,8 @@ More information about supported devices:
 | YunCore AP90Q | QCA9531 | 16 MiB | 128 MiB DDR2 | 256 KiB | R/W |
 | YunCore CPE830 | QCA9531 | 16 MiB | 64 MiB DDR2 | 256 KiB | R/W |
 | YunCore CPE870 | AR9341 | 8 MiB | 64 MiB DDR2 | 64 KiB, LZMA | R/W |
+| P&W CPE505N | QCA9531 | 16 MiB | 64 MiB DDR2 | 256 KiB | R/W |
+| P&W R602N | QCA9531 | 16 MiB | 64 MiB DDR2 | 256 KiB | R/W |
 
 *(LZMA) - U-Boot binary image is compressed with LZMA.*  
 *(R/W) - environment exists in separate FLASH block which allows you to save it and keep after power down.*

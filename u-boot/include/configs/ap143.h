@@ -48,6 +48,22 @@
 	#define CONFIG_QCA_GPIO_MASK_IN		GPIO17
 	#define CONFIG_QCA_GPIO_MASK_OUT_INIT_H	CONFIG_QCA_GPIO_MASK_LED_ACT_L
 
+#elif defined(CONFIG_FOR_P2W_CPE505N)
+
+	#define CONFIG_QCA_GPIO_MASK_LED_ACT_L	GPIO4  | GPIO11 | GPIO12 |\
+						GPIO14 | GPIO15
+	#define CONFIG_QCA_GPIO_MASK_OUT	CONFIG_QCA_GPIO_MASK_LED_ACT_L
+	#define CONFIG_QCA_GPIO_MASK_IN		GPIO17
+	#define CONFIG_QCA_GPIO_MASK_OUT_INIT_H	CONFIG_QCA_GPIO_MASK_LED_ACT_L
+
+#elif defined(CONFIG_FOR_P2W_R602N)
+
+	#define CONFIG_QCA_GPIO_MASK_LED_ACT_L	GPIO4  | GPIO11 | GPIO12 |\
+						GPIO14 | GPIO15 | GPIO16
+	#define CONFIG_QCA_GPIO_MASK_OUT	CONFIG_QCA_GPIO_MASK_LED_ACT_L
+	#define CONFIG_QCA_GPIO_MASK_IN		GPIO17
+	#define CONFIG_QCA_GPIO_MASK_OUT_INIT_H	CONFIG_QCA_GPIO_MASK_LED_ACT_L
+
 #elif defined(CONFIG_FOR_TPLINK_WR810N)
 
 	#define CONFIG_QCA_GPIO_MASK_LED_ACT_L	GPIO13
@@ -138,6 +154,16 @@
 				"rootfstype=jffs2 init=/sbin/init "\
 				"mtdparts=ath-nor0:64k(u-boot),64k(art),1536k(uImage),6464k(rootfs),64k(mib0)"
 
+#elif defined(CONFIG_FOR_P2W_CPE505N)    ||\
+      defined(CONFIG_FOR_P2W_R602N)      ||\
+      defined(CONFIG_FOR_YUNCORE_AP90Q)  ||\
+      defined(CONFIG_FOR_YUNCORE_CPE830) ||\
+      defined(CONFIG_FOR_ZBTLINK_ZBT_WE1526)
+
+	#define CONFIG_BOOTARGS	"console=ttyS0,115200 root=31:02 "\
+				"rootfstype=squashfs init=/sbin/init "\
+				"mtdparts=spi0.0:256k(u-boot),64k(u-boot-env),14528k(rootfs),1472k(kernel),64k(art),16000k(firmware)"
+
 #elif defined(CONFIG_FOR_TPLINK_WR810N)
 
 	#define CONFIG_BOOTARGS	"console=ttyS0,115200 root=31:02 "\
@@ -165,14 +191,6 @@
 				"rootfstype=jffs2 init=/sbin/init "\
 				"mtdparts=ath-nor0:256k(u-boot),64k(u-boot-env),6336k(rootfs),1408k(uImage),64k(mib0),64k(ART)"
 
-#elif defined(CONFIG_FOR_YUNCORE_AP90Q)  ||\
-      defined(CONFIG_FOR_YUNCORE_CPE830) ||\
-      defined(CONFIG_FOR_ZBTLINK_ZBT_WE1526)
-
-	#define CONFIG_BOOTARGS	"console=ttyS0,115200 root=31:02 "\
-				"rootfstype=squashfs init=/sbin/init "\
-				"mtdparts=spi0.0:256k(u-boot),64k(u-boot-env),14528k(rootfs),1472k(kernel),64k(art),16000k(firmware)"
-
 #endif
 
 /*
@@ -191,14 +209,18 @@
     defined(CONFIG_FOR_TPLINK_WR841N_V11)   ||\
     defined(CONFIG_FOR_TPLINK_WR841N_V9)
 	#define CFG_LOAD_ADDR	0x9F020000
-#elif defined(CONFIG_FOR_WALLYS_DR531)   ||\
+#elif defined(CONFIG_FOR_P2W_CPE505N)    ||\
+      defined(CONFIG_FOR_P2W_R602N)      ||\
+      defined(CONFIG_FOR_WALLYS_DR531)   ||\
       defined(CONFIG_FOR_YUNCORE_AP90Q)  ||\
       defined(CONFIG_FOR_YUNCORE_CPE830) ||\
       defined(CONFIG_FOR_ZBTLINK_ZBT_WE1526)
 	#define CFG_LOAD_ADDR	0x9F050000
 #endif
 
-#if defined(CONFIG_FOR_YUNCORE_AP90Q)  ||\
+#if defined(CONFIG_FOR_P2W_CPE505N)    ||\
+    defined(CONFIG_FOR_P2W_R602N)      ||\
+    defined(CONFIG_FOR_YUNCORE_AP90Q)  ||\
     defined(CONFIG_FOR_YUNCORE_CPE830) ||\
     defined(CONFIG_FOR_ZBTLINK_ZBT_WE1526)
 	#define CONFIG_BOOTCOMMAND	"bootm 0x9F050000 || bootm 0x9FE80000"
@@ -218,6 +240,14 @@
 	#define CFG_ENV_ADDR		0x9F018000
 	#define CFG_ENV_SIZE		0x7C00
 	#define CFG_ENV_SECT_SIZE	0x10000
+#elif defined(CONFIG_FOR_P2W_CPE505N)    ||\
+      defined(CONFIG_FOR_P2W_R602N)      ||\
+      defined(CONFIG_FOR_YUNCORE_AP90Q)  ||\
+      defined(CONFIG_FOR_YUNCORE_CPE830) ||\
+      defined(CONFIG_FOR_ZBTLINK_ZBT_WE1526)
+	#define CFG_ENV_ADDR		0x9F040000
+	#define CFG_ENV_SIZE		0xFC00
+	#define CFG_ENV_SECT_SIZE	0x10000
 #elif defined(CONFIG_FOR_TPLINK_WR802N)     ||\
       defined(CONFIG_FOR_TPLINK_WR810N)     ||\
       defined(CONFIG_FOR_TPLINK_WR820N_CN)  ||\
@@ -230,12 +260,6 @@
 #elif defined(CONFIG_FOR_WALLYS_DR531)
 	#define CFG_ENV_ADDR		0x9F030000
 	#define CFG_ENV_SIZE		0xF800
-	#define CFG_ENV_SECT_SIZE	0x10000
-#elif defined(CONFIG_FOR_YUNCORE_AP90Q)  ||\
-      defined(CONFIG_FOR_YUNCORE_CPE830) ||\
-      defined(CONFIG_FOR_ZBTLINK_ZBT_WE1526)
-	#define CFG_ENV_ADDR		0x9F040000
-	#define CFG_ENV_SIZE		0xFC00
 	#define CFG_ENV_SECT_SIZE	0x10000
 #endif
 
@@ -260,6 +284,14 @@
 	#define OFFSET_MAC_DATA_BLOCK		0x10000
 	#define OFFSET_MAC_DATA_BLOCK_LENGTH	0x10000
 	#define OFFSET_MAC_ADDRESS		0x00000
+#elif defined(CONFIG_FOR_P2W_CPE505N)    ||\
+      defined(CONFIG_FOR_P2W_R602N)      ||\
+      defined(CONFIG_FOR_YUNCORE_AP90Q)  ||\
+      defined(CONFIG_FOR_YUNCORE_CPE830) ||\
+      defined(CONFIG_FOR_ZBTLINK_ZBT_WE1526)
+	#define OFFSET_MAC_DATA_BLOCK		0xFF0000
+	#define OFFSET_MAC_DATA_BLOCK_LENGTH	0x010000
+	#define OFFSET_MAC_ADDRESS		0x000000
 #elif defined(CONFIG_FOR_TPLINK_WR802N)     ||\
       defined(CONFIG_FOR_TPLINK_WR810N)     ||\
       defined(CONFIG_FOR_TPLINK_WR820N_CN)  ||\
@@ -275,12 +307,6 @@
 	#define OFFSET_MAC_DATA_BLOCK		0x030000
 	#define OFFSET_MAC_DATA_BLOCK_LENGTH	0x010000
 	#define OFFSET_MAC_ADDRESS		0x00F810
-#elif defined(CONFIG_FOR_YUNCORE_AP90Q)  ||\
-      defined(CONFIG_FOR_YUNCORE_CPE830) ||\
-      defined(CONFIG_FOR_ZBTLINK_ZBT_WE1526)
-	#define OFFSET_MAC_DATA_BLOCK		0xFF0000
-	#define OFFSET_MAC_DATA_BLOCK_LENGTH	0x010000
-	#define OFFSET_MAC_ADDRESS		0x000000
 #endif
 
 /*
@@ -328,7 +354,9 @@
     defined(CONFIG_FOR_TPLINK_WR841N_V11)   ||\
     defined(CONFIG_FOR_TPLINK_WR841N_V9)
 	#define WEBFAILSAFE_UPLOAD_LIMITED_AREA_IN_BYTES	(192 * 1024)
-#elif defined(CONFIG_FOR_WALLYS_DR531)   ||\
+#elif defined(CONFIG_FOR_P2W_CPE505N)    ||\
+      defined(CONFIG_FOR_P2W_R602N)      ||\
+      defined(CONFIG_FOR_WALLYS_DR531)   ||\
       defined(CONFIG_FOR_YUNCORE_AP90Q)  ||\
       defined(CONFIG_FOR_YUNCORE_CPE830) ||\
       defined(CONFIG_FOR_ZBTLINK_ZBT_WE1526)
@@ -362,16 +390,18 @@
 	#define CONFIG_QCA_PLL_IN_FLASH_BLOCK_OFFSET	0x10000
 	#define CONFIG_QCA_PLL_IN_FLASH_BLOCK_SIZE	0x10000
 
-#elif defined(CONFIG_FOR_WALLYS_DR531)
-
-	#define CONFIG_QCA_PLL_IN_FLASH_BLOCK_OFFSET	0x30000
-	#define CONFIG_QCA_PLL_IN_FLASH_BLOCK_SIZE	0x10000
-
-#elif defined(CONFIG_FOR_YUNCORE_AP90Q)  ||\
+#elif defined(CONFIG_FOR_P2W_CPE505N)    ||\
+      defined(CONFIG_FOR_P2W_R602N)      ||\
+      defined(CONFIG_FOR_YUNCORE_AP90Q)  ||\
       defined(CONFIG_FOR_YUNCORE_CPE830) ||\
       defined(CONFIG_FOR_ZBTLINK_ZBT_WE1526)
 
 	#define CONFIG_QCA_PLL_IN_FLASH_BLOCK_OFFSET	0x40000
+	#define CONFIG_QCA_PLL_IN_FLASH_BLOCK_SIZE	0x10000
+
+#elif defined(CONFIG_FOR_WALLYS_DR531)
+
+	#define CONFIG_QCA_PLL_IN_FLASH_BLOCK_OFFSET	0x30000
 	#define CONFIG_QCA_PLL_IN_FLASH_BLOCK_SIZE	0x10000
 
 #endif
@@ -385,6 +415,8 @@
     !defined(CONFIG_FOR_COMFAST_CF_E320N_V2) &&\
     !defined(CONFIG_FOR_COMFAST_CF_E520N)    &&\
     !defined(CONFIG_FOR_COMFAST_CF_E530N)    &&\
+    !defined(CONFIG_FOR_P2W_CPE505N)         &&\
+    !defined(CONFIG_FOR_P2W_R602N)           &&\
     !defined(CONFIG_FOR_WALLYS_DR531)        &&\
     !defined(CONFIG_FOR_YUNCORE_AP90Q)       &&\
     !defined(CONFIG_FOR_YUNCORE_CPE830)      &&\
@@ -392,7 +424,9 @@
 	#define CONFIG_UPG_UBOOT_SIZE_BACKUP_HEX	0x20000
 #endif
 
-#if defined(CONFIG_FOR_YUNCORE_AP90Q)  ||\
+#if defined(CONFIG_FOR_P2W_CPE505N)    ||\
+    defined(CONFIG_FOR_P2W_R602N)      ||\
+    defined(CONFIG_FOR_YUNCORE_AP90Q)  ||\
     defined(CONFIG_FOR_YUNCORE_CPE830) ||\
     defined(CONFIG_FOR_ZBTLINK_ZBT_WE1526)
 	#define CONFIG_UPG_SCRIPTS_FW_ADDR_HEX	0x9F050000

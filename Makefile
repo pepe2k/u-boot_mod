@@ -247,6 +247,13 @@ d-link_dir-505:
 dragino_v2_ms14:
 	@$(call build,192,1,DEVICE_VENDOR=dragino)
 
+p2w_cpe505n \
+p2w_r602n \
+yuncore_ap90q \
+yuncore_cpe830 \
+zbtlink_zbt-we1526:
+	@$(call build,256,1,ETH_CONFIG=_s27)
+
 tp-link_tl-wdr3600 \
 tp-link_tl-wdr43x0:
 	@$(call build,123,1,ETH_CONFIG=_s17)
@@ -260,15 +267,8 @@ village-telco_mesh-potato_v2:
 wallys_dr531:
 	@$(call build,192,1,ETH_CONFIG=_s27)
 
-yuncore_ap90q \
-yuncore_cpe830:
-	@$(call build,256,1,ETH_CONFIG=_s27)
-
 yuncore_cpe870:
 	@$(call build,64,1,ETH_CONFIG=_s27)
-
-zbtlink_zbt-we1526:
-	@$(call build,256,1,ETH_CONFIG=_s27)
 
 # =============
 # CLEAN TARGETS
