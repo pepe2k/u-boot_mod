@@ -10,8 +10,6 @@ Images are built and uploaded on FTP only when master branch in repository was u
 Table of contents
 -----------------
 
-[README w języku polskim/README in Polish language](https://github.com/pepe2k/u-boot_mod/blob/master/READMEPL.md)
-
 - [Introduction](#introduction)
 - [Supported devices](#supported-devices)
 - [Known issues](#known-issues)
