@@ -18,7 +18,8 @@
 extern void qca_sys_clocks(u32 *cpu_clk, u32 *ddr_clk, u32 *ahb_clk,
 						   u32 *spi_clk, u32 *ref_clk);
 
-#if defined(OFFSET_MAC_ADDRESS)
+#if defined(CONFIG_CMD_MAC) &&\
+    defined(OFFSET_MAC_ADDRESS)
 /*
  * Show MAC address(es)
  */
@@ -115,7 +116,7 @@ int do_set_mac(cmd_tbl_t * cmdtp, int flag, int argc, char *argv[]){
 
 U_BOOT_CMD(setmac, 2, 0, do_set_mac, "save new MAC address in FLASH\n", "xx:xx:xx:xx:xx:xx\n\t- change MAC address stored in FLASH (xx - value in hex format)\n");
 
-#endif /* if defined(OFFSET_MAC_ADDRESS) */
+#endif /* if defined(CONFIG_CMD_MAC) && defined(OFFSET_MAC_ADDRESS) */
 
 #if defined(OFFSET_ROUTER_MODEL)
 /*
