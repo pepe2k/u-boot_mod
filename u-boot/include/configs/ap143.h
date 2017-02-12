@@ -344,6 +344,7 @@
 	#undef CONFIG_CMD_DHCP
 	#undef CONFIG_CMD_LOADB
 	#undef CONFIG_CMD_SNTP
+	#undef CONFIG_UPG_SCRIPTS_UBOOT
 #endif
 
 /*
