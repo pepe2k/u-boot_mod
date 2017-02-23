@@ -269,7 +269,7 @@
 #endif
 
 #if defined(CONFIG_FOR_ALFA_NETWORK_HORNET_UB)
-	#define CONFIG_BOOTCOMMAND	"bootm 0x9F050000 || bootm 0x9FE50000 || bootm 0x9F650000"
+	#define CONFIG_BOOTCOMMAND	"bootm 0x9F050000 || bootm 0x9F650000 || bootm 0x9FE50000"
 #else
 	#define CONFIG_BOOTCOMMAND	"bootm " MK_STR(CFG_LOAD_ADDR)
 #endif
