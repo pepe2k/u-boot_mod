@@ -680,9 +680,10 @@ How to compile the code?
 
 You can use one of the free toolchains:
 
-- Recommended and used for snapshots build: [LEDE SDK for AR71xx MIPS (trunk snapshot)](https://downloads.lede-project.org/snapshots/targets/ar71xx/generic/lede-sdk-ar71xx-generic_gcc-5.4.0_musl-1.1.15.Linux-x86_64.tar.bz2),
+- Recommended and used for snapshots build: [LEDE SDK for AR71xx MIPS (17.01.0 release)](https://downloads.lede-project.org/releases/17.01.0/targets/ar71xx/generic/lede-sdk-17.01.0-ar71xx-generic_gcc-5.4.0_musl-1.1.16.Linux-x86_64.tar.xz),
+- Recommended: [LEDE SDK for AR71xx MIPS (trunk snapshot)](https://downloads.lede-project.org/snapshots/targets/ar71xx/generic/lede-sdk-ar71xx-generic_gcc-5.4.0_musl.Linux-x86_64.tar.xz),
 - [OpenWrt SDK for AR71xx MIPS (Chaos Calmer release)](https://downloads.openwrt.org/chaos_calmer/15.05.1/ar71xx/generic/OpenWrt-SDK-15.05.1-ar71xx-generic_gcc-4.8-linaro_uClibc-0.9.33.2.Linux-x86_64.tar.bz2),
-- [OpenWrt Toolchain for AR71xx MIPS (trunk snapshot)](https://downloads.openwrt.org/snapshots/trunk/ar71xx/generic/OpenWrt-Toolchain-ar71xx-generic_gcc-5.3.0_musl-1.1.15.Linux-x86_64.tar.bz2),
+- [OpenWrt Toolchain for AR71xx MIPS (trunk snapshot)](https://downloads.openwrt.org/snapshots/trunk/ar71xx/generic/OpenWrt-Toolchain-ar71xx-generic_gcc-5.3.0_musl-1.1.16.Linux-x86_64.tar.bz2),
 - [ELDK (Embedded Linux Development Kit)](http://bit.ly/2djaTMn),
 - or any others...
 
