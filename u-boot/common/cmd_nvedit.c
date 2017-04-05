@@ -509,6 +509,7 @@ char *getenv(char *name){
 	return(NULL);
 }
 
+#if 0
 int getenv_r(char *name, char *buf, unsigned len){
 	int i, nxt;
 
@@ -536,6 +537,7 @@ int getenv_r(char *name, char *buf, unsigned len){
 
 	return(-1);
 }
+#endif
 
 #if defined(CFG_ENV_IS_IN_NVRAM)  ||\
     defined(CFG_ENV_IS_IN_EEPROM) ||\
