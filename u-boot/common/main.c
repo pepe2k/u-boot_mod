@@ -162,25 +162,32 @@ void main_loop(void)
 		gd->flags &= ~(GD_FLG_SILENT);
 		#endif
 
-		/*
-		 * Always clear values of variables used in recovery script
-		 * as they could be accidentally saved before
-		 */
-		setenv("stop_boot", NULL);
-		setenv("cnt", NULL);
-
-		run_command("run recovery", 0);
-
-		/* Should we stop booting after recovery mode? */
-		c = getenv("stop_boot");
-		stop_boot = c ? (int)simple_strtol(c, NULL, 10) : 0;
-
-		if (stop_boot) {
+		/* Do we have recovery script in env var at all? */
+		c = getenv("recovery");
+		if (c == NULL) {
+			puts("** Warning: recovery script is missing\n");
+			puts("   in env, use 'defenv' to reset env\n\n");
+		} else {
+			/*
+			 * Always clear values of variables used in recovery
+			 * script as they could be accidentally saved before
+			 */
 			setenv("stop_boot", NULL);
-			bootcmd = NULL;
-		}
+			setenv("cnt", NULL);
 
-		setenv("cnt", NULL);
+			run_command("run recovery", 0);
+
+			/* Should we stop booting after recovery mode? */
+			c = getenv("stop_boot");
+			stop_boot = c ? (int)simple_strtol(c, NULL, 10) : 0;
+
+			if (stop_boot) {
+				setenv("stop_boot", NULL);
+				bootcmd = NULL;
+			}
+
+			setenv("cnt", NULL);
+		}
 	}
 #endif /* CONFIG_RECOVERY_MODE */
 
