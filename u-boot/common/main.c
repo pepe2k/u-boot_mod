@@ -32,6 +32,8 @@
 DECLARE_GLOBAL_DATA_PTR;
 #endif
 
+#define MAX_STOPSTR_LEN	16
+
 static char *delete_char(char *buffer, char *p, int *colp, int *np, int plen);
 static int parse_line(char *, char *[]);
 
@@ -49,7 +51,13 @@ static char tab_seq[] = "        ";	/* used to expand TABs */
 static __inline__ int abortboot(int bootdelay)
 {
 	int abort = 0;
-	char stopc;
+	int tested = 0;
+	int stopstr_len = 0;
+	int envstopstr_len = 0;
+
+	char c;
+	char *envstopstr;
+	char stopstr[MAX_STOPSTR_LEN] = { 0 };
 
 #if defined(CONFIG_SILENT_CONSOLE)
 	if (gd->flags & GD_FLG_SILENT) {
@@ -59,35 +67,71 @@ static __inline__ int abortboot(int bootdelay)
 	}
 #endif
 
-	if (bootdelay > 0) {
+	if (bootdelay <= 0)
+		return abort;
+
+	/* Check value of 'bootstopkey' and just ignore it if it's over limit */
+	envstopstr = getenv("bootstopkey");
+	if (envstopstr) {
+		envstopstr_len = strlen(envstopstr);
+
+		if (envstopstr_len > MAX_STOPSTR_LEN)
+			envstopstr = NULL;
+	}
+
 #if defined(CONFIG_MENUPROMPT)
-		printf(CONFIG_MENUPROMPT, bootdelay);
+	printf(CONFIG_MENUPROMPT, bootdelay);
 #else
-		printf("Hit any key to stop booting: %2d ", bootdelay);
+	/*
+	 * Use custom CONFIG_MENUPROMPT if bootstopkey
+	 * string contains nonprintable characters (e.g. ESC)
+	 */
+	if (envstopstr)
+		printf("Enter '%s' to stop booting: %2d", envstopstr, bootdelay);
+	else
+		printf("Hit any key to stop booting: %2d", bootdelay);
 #endif
 
-		while ((bootdelay > 0) && (!abort)) {
-			int i;
+	while ((bootdelay > 0) && (!abort)) {
+		int i;
 
-			--bootdelay;
+		--bootdelay;
 
-			/* delay 100 * 10ms */
-			for (i = 0; !abort && i < 100; ++i) {
-				/* we got a key press */
-				if (tstc()) {
-					stopc = getc();
-					if (stopc != 0) {
-						abort = 1;
-						bootdelay = 0;
-						break;
-					}
-				}
-				udelay(10000);
+		/* delay 500 * 2 ms */
+		for (i = 0; !abort && i < 500; ++i, udelay(2000)) {
+			if (!tstc() || tested)
+				continue;
+
+			/* Ignore nulls */
+			c = getc();
+			if (c == 0)
+				continue;
+
+			/* Interrupt by any key if bootstopkey isn't used */
+			if (!envstopstr) {
+				abort = 1;
+				bootdelay = 0;
+				break;
 			}
-			printf("\b\b%d ", bootdelay);
+
+			/* Consume characters up to the strlen(envstopstr) */
+			if (stopstr_len < envstopstr_len)
+				stopstr[stopstr_len++] = c;
+
+			if (stopstr_len == envstopstr_len) {
+
+				if (memcmp(envstopstr, stopstr,
+					   envstopstr_len) == 0) {
+					abort = 1;
+					bootdelay = 0;
+					break;
+				} else
+					tested = 1;
+			}
 		}
-		printf("\n\n");
+		printf("\b\b%2d", bootdelay);
 	}
+	puts("\n\n");
 
 #if defined(CONFIG_SILENT_CONSOLE)
 	if (abort) {

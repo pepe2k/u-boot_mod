@@ -20,10 +20,6 @@
 	#define CONFIG_BOOTDELAY	1
 #endif
 
-#if !defined(CONFIG_MENUPROMPT)
-	#define CONFIG_MENUPROMPT	"Hit any key to stop booting: %2d "
-#endif
-
 /* Allow to disable console output, don't display console info */
 #define CONFIG_SILENT_CONSOLE	1
 #define CFG_CONSOLE_INFO_QUIET	1
