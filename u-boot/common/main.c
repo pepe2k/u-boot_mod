@@ -76,11 +76,7 @@ static __inline__ int abortboot(int bootdelay)
 				/* we got a key press */
 				if (tstc()) {
 					stopc = getc();
-#if defined(CONFIG_AUTOBOOT_STOP_CHAR)
-					if (stopc == CONFIG_AUTOBOOT_STOP_CHAR) {
-#else
 					if (stopc != 0) {
-#endif
 						abort = 1;
 						bootdelay = 0;
 						break;
