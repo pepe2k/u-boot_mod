@@ -272,8 +272,9 @@ static int flash_fill_sect_ranges(ulong addr_first, ulong addr_last, int *s_firs
 int do_flerase(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[]){
 	flash_info_t *info;
 	ulong bank, addr_first, addr_last;
-	int n, sect_first, sect_last;
+	int n;
 	int rcode = 0;
+	int sect_first = 0, sect_last = 0;
 
 	if(argc < 2){
 		print_cmd_help(cmdtp);
