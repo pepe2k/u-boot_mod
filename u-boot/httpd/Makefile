@@ -4,6 +4,9 @@
 
 include $(TOPDIR)/config.mk
 
+# Suppress warnings when building with size optimization
+CFLAGS += -fno-strict-aliasing
+
 LIB   = libhttpd.a
 OBJS += uip.o \
 	uip_arch.o \

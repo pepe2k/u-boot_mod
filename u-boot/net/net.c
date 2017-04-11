@@ -1383,8 +1383,6 @@ ushort getenv_VLAN(char *var){
 
 #if defined(CONFIG_CMD_HTTPD)
 
-#define BUF	((struct uip_eth_hdr *)&uip_buf[0])
-
 void NetSendHttpd(void){
 	volatile uchar *tmpbuf = NetTxPacket;
 	int i;
@@ -1401,10 +1399,12 @@ void NetSendHttpd(void){
 }
 
 void NetReceiveHttpd(volatile uchar * inpkt, int len){
+	struct uip_eth_hdr *eth_hdr = (struct uip_eth_hdr *)uip_buf;
+
 	memcpy(uip_buf, (const void *)inpkt, len);
 	uip_len = len;
 
-	if(BUF->type == htons(UIP_ETHTYPE_IP)){
+	if(eth_hdr->type == htons(UIP_ETHTYPE_IP)){
 		uip_arp_ipin();
 		uip_input();
 
@@ -1412,7 +1412,7 @@ void NetReceiveHttpd(volatile uchar * inpkt, int len){
 			uip_arp_out();
 			NetSendHttpd();
 		}
-	} else if(BUF->type == htons(UIP_ETHTYPE_ARP)){
+	} else if(eth_hdr->type == htons(UIP_ETHTYPE_ARP)){
 		uip_arp_arpin();
 
 		if(uip_len > 0){

@@ -58,6 +58,15 @@ ifndef CROSS_COMPILE
 endif
 export CROSS_COMPILE
 
+# By default, optimization for size (-Os) is enabled, set below option
+# to n or remove it if you want only basic optimization (-O/-O1)
+# BUILD_OPTIMIZED = n
+
+ifneq ($(BUILD_OPTIMIZED), n)
+  BUILD_OPTIMIZED = y
+endif
+export BUILD_OPTIMIZED
+
 # ==========================================================================
 
 # =======================
