@@ -165,7 +165,7 @@ More information about supported devices:
 Known issues
 ------------
 
-Current release is not loading kernel from some versions of TP-Link's official firmware. If you want to use the so-called OFW in any of supported TP-Link's router, do not use this modification. I am working on a solution for this issue.
+~~Current release is not loading kernel from some versions of TP-Link's official firmware. If you want to use the so-called OFW in any of supported TP-Link's router, do not use this modification. I am working on a solution for this issue.~~
 
 Modifications, changes
 ----------------------
