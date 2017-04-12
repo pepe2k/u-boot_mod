@@ -146,20 +146,18 @@ static void linux_env_set(char *env_name, char *env_val)
 
 void do_bootm_linux(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 {
-	char buf[16];
-	char *cmdline;
-	unsigned int flash_mb;
+	int lsdk_kernel;
+	char *cmdline, *s, buf[16];
 	image_header_t *hdr = &header;
-	void(*theKernel)(int, char **, char **, int);
+	void(*Kernel)(int, char **, char **);
+	void(*LSDKKernel)(int, char **, ulong, ulong);
 
 	cmdline = getenv("bootargs");
 
-	theKernel = (void (*)(int, char **, char **, int))ntohl(hdr->ih_ep);
-
 #if defined(DEBUG)
-	printf("## Bootargs: %s\n", cmdline);
-	printf("## Transferring control to Linux (at address %08lx) ...\n",
-	       (ulong)theKernel);
+	printf("## Bootargs: '%s'\n", cmdline);
+	printf("## Transferring control to Linux (at address 0x%08lx) ...\n",
+	       (ulong)(ntohl(hdr->ih_ep)));
 #endif
 
 	linux_params_init(UNCACHED_SDRAM(gd->bd->bi_boot_params), cmdline);
@@ -190,7 +188,28 @@ void do_bootm_linux(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 		      (ar7240_reg_rd(AR7240_GPIO_FUNC) | 0x88));
 #endif
 
-	/* Pass the flash size as expected by current Linux kernel for AR7100 */
-	flash_mb = gd->bd->bi_flashsize >> 20;
-	theKernel(linux_argc, linux_argv, linux_env, flash_mb);
+	/*
+	 * In some of old Atheros LSDK based firmware versions (kernel 2.6.x),
+	 * kernel expects RAM size (in bytes) in 3rd parameter and FLASH
+	 * size (in MB) in 4th. Also, most of old TP-Link firmwares follow
+	 * this 'broken' approach.
+	 *
+	 * To make it somehow universal, we will use here a dedicated env
+	 * flag 'lsdk_kernel' - if it's set to > 0, RAM and FLASH sizes
+	 * will be passed as 3rd and 4th parameters.
+	 */
+	s = getenv("lsdk_kernel");
+	lsdk_kernel = s ? simple_strtol(s, NULL, 10) : 0;
+
+	if (lsdk_kernel > 0) {
+		LSDKKernel = (void (*)(int, char **,
+				       ulong, ulong))ntohl(hdr->ih_ep);
+
+		LSDKKernel(linux_argc, linux_argv, gd->ram_size,
+			   gd->bd->bi_flashsize >> 20);
+	} else {
+		Kernel = (void (*)(int, char **, char **))ntohl(hdr->ih_ep);
+
+		Kernel(linux_argc, linux_argv, linux_env);
+	}
 }
