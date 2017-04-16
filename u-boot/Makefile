@@ -446,6 +446,13 @@ dragino_v2_ms14: ar933x_common
 	@$(call define_add,WEBFAILSAFE_DISABLE_UBOOT_UPGRADE,1)
 	@$(MKCONFIG) -a ap121 mips mips ap121 ar7240 ar7240
 
+engenius_ens202ext: ar934x_common
+	@$(call config_init,EnGenius ENS202EXT,ens202ext,16,1,1,QCA_AR9341_SOC)
+	@$(call define_add,CONFIG_FOR_ENGENIUS_ENS202EXT,1)
+	@$(call define_add,CFG_ATHRS27_PHY,1)
+	@$(call define_add,CFG_AG7240_NMACS,2)
+	@$(MKCONFIG) -a db12x mips mips db12x ar7240 ar7240
+
 gainstrong_oolite_v1_dev: ar933x_common
 	@$(call config_init,Gainstrong Oolite v1 (dev board),oolite-v1,16,11,,QCA_AR933X_SOC)
 	@$(call define_add,CONFIG_FOR_GS_OOLITE_V1_DEV,1)

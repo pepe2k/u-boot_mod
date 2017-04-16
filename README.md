@@ -85,6 +85,7 @@ Currently supported devices:
   - D-Link DIR-505 H/W ver. A1 ([photos in my gallery](http://galeria.tech-blog.pl/D-Link_DIR-505/))
 
 - **Atheros AR9341**:
+  - EnGenius ENS202EXT
   - TP-Link TL-MR3420 v2
   - TP-Link TL-WA801ND v2
   - TP-Link TL-WA830RE v2
@@ -129,6 +130,7 @@ More information about supported devices:
 | CreatComm Technology D3321| AR9331 | 8 MiB | 32 MiB DDR1 | 256 KiB | RW |
 | [D-Link DIR-505 H/W ver. A1](http://wiki.openwrt.org/toh/d-link/dir-505) | AR1311 | 8 MiB | 64 MiB DDR2 | 64 KiB, LZMA | RO |
 | [Dragino 2 (MS14)](http://wiki.openwrt.org/toh/dragino/ms14) | AR9331 | 16 MiB | 64 MiB DDR1 | 192 KiB | R/W |
+| [EnGenius ENS202EXT](https://wiki.openwrt.org/toh/engenius/engenius_ens202ext_1.0.0) | AR9341 | 16 MiB | 64 MiB DDR1 | 256 KiB | R/W |
 | GL Innovations GL-AR150 | AR9331 | 16 MiB | 64 MiB DDR2 | 256 KiB | 64 KiB, R/W |
 | [GL Innovations GL.iNet 64xxA](http://wiki.openwrt.org/toh/gl-inet/gl-inet) | AR9331 | 8/16 MiB | 64 MiB DDR1 | 64 KiB | RO |
 | GS-Oolite/Elink EL-M150 module | AR9331 | 4/8/16 MiB | 64 MiB DDR2 | 64 KiB, LZMA | RO |
