@@ -118,8 +118,8 @@ ifdef COMPRESSED_UBOOT
 endif
 
 ifeq ($(BUILD_OPTIMIZED),y)
-  CFLAGS += -Os -fno-reorder-functions
-  CPPFLAGS += -Os -fno-reorder-functions
+  CFLAGS += -Os -fno-reorder-functions -fno-delete-null-pointer-checks
+  CPPFLAGS += -Os -fno-reorder-functions -fno-delete-null-pointer-checks
 endif
 
 AFLAGS_DEBUG :=
