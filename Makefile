@@ -235,7 +235,8 @@ COMMON_ETHS27_TARGETS = \
 	tp-link_tl-wr841n_v10 \
 	tp-link_tl-wr841n_v11 \
 	tp-link_tl-wr841n_v8 \
-	tp-link_tl-wr841n_v9
+	tp-link_tl-wr841n_v9 \
+	tp-link_tl-wr842n_v3
 
 $(COMMON_ETHS27_TARGETS):
 	@$(call build,123,1,ETH_CONFIG=_s27)

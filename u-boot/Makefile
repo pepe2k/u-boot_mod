@@ -618,6 +618,13 @@ tp-link_tl-wr841n_v9: qca953x_common lsdk_kernel
 	@$(call define_add,CFG_ATH_GMAC_NMACS,2)
 	@$(MKCONFIG) -a ap143 mips mips ap143 ar7240 ar7240
 
+tp-link_tl-wr842n_v3: qca953x_common lsdk_kernel
+	@$(call config_init,TP-Link TL-WR842N/D v3,tl-wr842nd-v3,16,1,1,QCA_QCA953X_SOC)
+	@$(call define_add,CONFIG_FOR_TPLINK_WR842N_V3,1)
+	@$(call define_add,CFG_ATHRS27_PHY,1)
+	@$(call define_add,CFG_ATH_GMAC_NMACS,2)
+	@$(MKCONFIG) -a ap143 mips mips ap143 ar7240 ar7240
+
 unwireddevices_unwired-one: ar933x_common
 	@$(call config_init,Black Swift aka Unwired One,black-swift,16,11,1,QCA_AR933X_SOC)
 	@$(call define_add,CONFIG_FOR_BLACK_SWIFT_BOARD,1)
