@@ -94,6 +94,7 @@ extern u32 write_buff(flash_info_t *info, uchar *src, ulong addr, ulong cnt);
 /* FLASH vendors IDs */
 #define FLASH_VENDOR_JEDEC_ATMEL	0x1F
 #define FLASH_VENDOR_JEDEC_EON		0x1C
+#define FLASH_VENDOR_JEDEC_GIGADEVICE	0xC8
 #define FLASH_VENDOR_JEDEC_MACRONIX	0xC2
 #define FLASH_VENDOR_JEDEC_MICRON	0x20
 #define FLASH_VENDOR_JEDEC_SPANSION	0x01
