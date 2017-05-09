@@ -340,6 +340,7 @@ Currently supported FLASH types:
 - Micron M25P32 (4 MiB, JEDEC ID: 20 2016)
 - Windbond W25Q32 (4 MiB, JEDEC ID: EF 4016)
 - Macronix MX25L320 (4 MiB, JEDEC ID: C2 2016)
+- GigaDevice GD25Q32 (4 MiB, JEDEC ID: C8 4016)*
 
 **8 MiB**:
 
@@ -349,6 +350,7 @@ Currently supported FLASH types:
 - Micron M25P64 (8 MiB, JEDEC ID: 20 2017)
 - Windbond W25Q64 (8 MiB, JEDEC ID: EF 4017)*
 - Macronix MX25L64 (8 MiB, JEDEC ID: C2 2017, C2 2617)
+- GigaDevice GD25Q64 (8 MiB, JEDEC ID: C8 4017)
 
 **16 MiB**:
 
@@ -357,6 +359,7 @@ Currently supported FLASH types:
 - Macronix MX25L128 (16 MB, JEDEC ID: C2 2018, C2 2618)
 - Spansion S25FL127S (16 MB, JEDEC ID: 01 2018)*
 - Micron N25Q128 (16 MB, JEDEC ID: 20 BA18)
+- GigaDevice GD25Q128 (16 MiB, JEDEC ID: C8 4018)
 
 (*) tested
 
