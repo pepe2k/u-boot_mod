@@ -29,30 +29,33 @@
 #include "rarp.h"
 #include "tftp.h"
 
-#if (CONFIG_COMMANDS & CFG_CMD_NET)
+#if defined(CONFIG_CMD_NET)
 
 DECLARE_GLOBAL_DATA_PTR;
 
-#define TIMEOUT		5		/* Seconds before trying BOOTP again */
-#ifndef	CONFIG_NET_RETRY_COUNT
-# define TIMEOUT_COUNT	5		/* # of timeouts before giving up  */
+#define TIMEOUT	5	/* Seconds before trying BOOTP again */
+
+#if !defined(CONFIG_NET_RETRY_COUNT)
+	/* # of timeouts before giving up  */
+	#define TIMEOUT_COUNT	5
 #else
-# define TIMEOUT_COUNT  (CONFIG_NET_RETRY_COUNT)
+	#define TIMEOUT_COUNT	(CONFIG_NET_RETRY_COUNT)
 #endif
 
+int RarpTry;
 
-int		RarpTry;
-
-/*
- *	Handle a RARP received packet.
- */
-static void
-RarpHandler(uchar * dummi0, unsigned dummi1, unsigned dummi2, unsigned dummi3)
+/* Handle a RARP received packet */
+static void RarpHandler(uchar   *dummi0,
+			unsigned dummi1,
+			unsigned dummi2,
+			unsigned dummi3)
 {
 	char *s;
-#ifdef	DEBUG
+
+#if defined(DEBUG)
 	puts ("Got good RARP\n");
 #endif
+
 	if ((s = getenv("autoload")) != NULL) {
 		if (*s == 'n') {
 			/*
@@ -61,38 +64,37 @@ RarpHandler(uchar * dummi0, unsigned dummi1, unsigned dummi2, unsigned dummi3)
 			 */
 			NetState = NETLOOP_SUCCESS;
 			return;
-#if (CONFIG_COMMANDS & CFG_CMD_NFS)
+#if defined(CONFIG_CMD_NFS)
 		} else if ((s != NULL) && !strcmp(s, "NFS")) {
 			NfsStart();
 			return;
 #endif
 		}
 	}
-	TftpStart ();
+
+	TftpStart(TFTPGET);
 }
 
-
-/*
- *	Timeout on BOOTP request.
- */
-static void RarpTimeout(void){
+/* Timeout on BOOTP request */
+static void RarpTimeout(void)
+{
 	bd_t *bd = gd->bd;
 
 	if (RarpTry >= TIMEOUT_COUNT) {
-		puts ("\nRetry count exceeded; starting again\n");
-		NetStartAgain ();
+		puts("\nRetry count exceeded; starting again\n");
+		NetStartAgain();
 	} else {
-		NetSetTimeout (TIMEOUT * CFG_HZ, RarpTimeout);
-		RarpRequest ();
+		NetSetTimeout(TIMEOUT * CFG_HZ, RarpTimeout);
+		RarpRequest();
 	}
 }
 
-
-void RarpRequest (void){
-	bd_t *bd = gd->bd;
+void RarpRequest(void)
+{
 	int i;
+	ARP_t *rarp;
+	bd_t *bd = gd->bd;
 	volatile uchar *pkt;
-	ARP_t *	rarp;
 
 	printf("RARP broadcast %d\n", ++RarpTry);
 	pkt = NetTxPacket;
@@ -101,23 +103,23 @@ void RarpRequest (void){
 
 	rarp = (ARP_t *)pkt;
 
-	rarp->ar_hrd = htons (ARP_ETHER);
-	rarp->ar_pro = htons (PROT_IP);
+	rarp->ar_hrd = htons(ARP_ETHER);
+	rarp->ar_pro = htons(PROT_IP);
 	rarp->ar_hln = 6;
 	rarp->ar_pln = 4;
-	rarp->ar_op  = htons (RARPOP_REQUEST);
-	memcpy (&rarp->ar_data[0],  NetOurEther, 6);	/* source ET addr */
-	memcpy (&rarp->ar_data[6],  &NetOurIP,   4);	/* source IP addr */
-	memcpy (&rarp->ar_data[10], NetOurEther, 6);	/* dest ET addr = source ET addr ??*/
-	/* dest. IP addr set to broadcast */
-	for (i = 0; i <= 3; i++) {
+	rarp->ar_op  = htons(RARPOP_REQUEST);
+
+	memcpy(&rarp->ar_data[0],  NetOurEther, 6);	/* source ET addr */
+	memcpy(&rarp->ar_data[6],  &NetOurIP,   4);	/* source IP addr */
+	memcpy(&rarp->ar_data[10], NetOurEther, 6);	/* dest ET addr = source ET addr ??*/
+
+	/* Dest. IP addr set to broadcast */
+	for (i = 0; i <= 3; i++)
 		rarp->ar_data[16 + i] = 0xff;
-	}
 
 	NetSendPacket(NetTxPacket, (pkt - NetTxPacket) + ARP_HDR_SIZE);
 
 	NetSetTimeout(TIMEOUT * CFG_HZ, RarpTimeout);
 	NetSetHandler(RarpHandler);
 }
-
-#endif /* CFG_CMD_NET */
+#endif /* CONFIG_CMD_NET */

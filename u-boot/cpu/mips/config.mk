@@ -20,29 +20,11 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston,
 # MA 02111-1307 USA
 #
-#v=$(shell \
-mips-openwrt-linux-uclibc-as --version|grep "GNU assembler"|awk '{print $$3}'|awk -F . '{print $$2}')
 
-v=22
-MIPSFLAGS=$(shell \
-if [ "$v" -lt "14" ]; then \
-	echo "-mcpu=mips32"; \
-else \
-	echo "-mips32 -march=mips32 -mtune=mips32"; \
-fi)
+MIPSFLAGS := -fno-schedule-insns -fno-schedule-insns2
+MIPSFLAGS += -mips32r2 -march=mips32r2 -mtune=34kc
 
-ifndef ENDIANNESS
-ifneq (,$(findstring 4KCle,$(CROSS_COMPILE)))
-ENDIANNESS = -EL
-else
-ENDIANNESS = -EB
-endif
-endif
-
-#PLATFORM_CPPFLAGS      += -G 0 -mabicalls -fpic -g
-PLATFORM_CPPFLAGS      += -G 0 -mabicalls -fpic
-PLATFORM_CPPFLAGS      += -msoft-float
-PLATFORM_LDFLAGS       += -G 0 -static -n -nostdlib
-MIPSFLAGS += $(ENDIANNESS) -fno-schedule-insns -fno-schedule-insns2
-
+PLATFORM_CPPFLAGS += -G 0 -mabicalls -fpic -msoft-float
 PLATFORM_CPPFLAGS += $(MIPSFLAGS)
+
+PLATFORM_LDFLAGS += -G 0 -static -n -nostdlib

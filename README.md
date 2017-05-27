@@ -1,10 +1,14 @@
 U-Boot 1.1.4 modification for routers
 ==========
 
+Ready snapshot/test images
+--------------------------
+Starting from 24.09.2016, ready images, built on **Raspberry Pi 3** with **LEDE** toolchain, are available **[on my server](http://projects.dymacz.pl)**.
+
+Images are built and uploaded on FTP only when master branch in repository was updated - custom script checks this once per day. On the FTP you will find also toolchain which is used to build images.
+
 Table of contents
 -----------------
-
-[README w języku polskim/README in Polish language](https://github.com/pepe2k/u-boot_mod/blob/master/READMEPL.md)
 
 - [Introduction](#introduction)
 - [Supported devices](#supported-devices)
@@ -26,7 +30,7 @@ Table of contents
 - [How to use it?](#how-to-use-it)
 - [How to compile the code?](#how-to-compile-the-code)
     - [Building on Linux](#building-on-linux)
-    - [Building on OS X](#building-on-os-x)
+    - [Building on OS X](#building-on-macos-os-x)
 - [FAQ](#faq)
 - [License, outdated sources etc.](#license-outdated-sources-etc)
 - [Credits](#credits)
@@ -59,40 +63,54 @@ Currently supported devices:
 
 - **Atheros AR9331**:
   - 8devices Carambola 2 (for version with development board, [photos in my gallery](http://galeria.tech-blog.pl/8devices_Carambola_2/))
-  - TP-Link TL-MR3020 v1 ([photos in my gallery](http://galeria.tech-blog.pl/TPLINK_TL-MR3020/))
-  - TP-Link TL-MR3040 v1 and v2
-  - TP-Link TL-WR703N v1, ([photos in my gallery](http://galeria.tech-blog.pl/TPLINK_TL-WR703N/))
-  - TP-Link TL-WR720N v3 (version for Chinese market)
-  - TP-Link TL-WR710N v1 (version for European market, [photos in my gallery](http://galeria.tech-blog.pl/TP-Link_TL-WR710N-EU/))
+  - ALFA NETWORK Hornet-UB/Hornet-UB-64 (aka Hornet-UB x2)
+  - Black Swift
+  - Dragino 2 (MS14)
+  - GL Innovations GL-AR150
+  - GL Innovations GL.iNet 64xxA ([photos in my gallery](http://galeria.tech-blog.pl/GLiNet/))
+  - GS-Oolite/Elink EL-M150 module with dev board ([photos in my gallery](http://galeria.tech-blog.pl/Elink_EL-M150_Development-Board/))
   - TP-Link TL-MR10U v1 ([photos in my gallery](http://galeria.tech-blog.pl/TP-Link_TL-MR10U/))
   - TP-Link TL-MR13U v1
-  - TP-Link TL-WR740N v4 (and similar, like TL-WR741ND v4)
+  - TP-Link TL-MR3020 v1 ([photos in my gallery](http://galeria.tech-blog.pl/TPLINK_TL-MR3020/))
+  - TP-Link TL-MR3040 v1 and v2
   - TP-Link TL-MR3220 v2
-  - GS-Oolite/Elink EL-M150 module with dev board ([photos in my gallery](http://galeria.tech-blog.pl/Elink_EL-M150_Development-Board/))
-  - Dragino 2 (MS14)
+  - TP-Link TL-WR703N v1, ([photos in my gallery](http://galeria.tech-blog.pl/TPLINK_TL-WR703N/))
+  - TP-Link TL-WR710N v1 (version for European market, [photos in my gallery](http://galeria.tech-blog.pl/TP-Link_TL-WR710N-EU/))
+  - TP-Link TL-WR720N v3 (version for Chinese market)
+  - TP-Link TL-WR740N v4 (and similar, like TL-WR741ND v4)
   - Village Telco Mesh Potato 2 (based on Dragino MS14)
-  - GL.iNet 64xxA ([photos in my gallery](http://galeria.tech-blog.pl/GLiNet/))
-  - Black Swift
 
 - **Atheros AR1311 (similar to AR9331)**
   - D-Link DIR-505 H/W ver. A1 ([photos in my gallery](http://galeria.tech-blog.pl/D-Link_DIR-505/))
 
 - **Atheros AR9341**:
   - TP-Link TL-MR3420 v2
-  - TP-Link TL-WR841N/D v8
-  - TP-Link TL-WA830RE v2
   - TP-Link TL-WA801ND v2
+  - TP-Link TL-WA830RE v2
+  - TP-Link TL-WR841N/D v8
+  - YunCore CPE870
 
 - **Atheros AR9344**:
+  - TP-Link TL-WDR3500 v1
   - TP-Link TL-WDR3600 v1
   - TP-Link TL-WDR43x0 v1
-  - TP-Link TL-WDR3500 v1
 
 - **Qualcomm Atheros QCA953x**:
-  - TP-Link TL-WR841N/D v9
-  - TP-Link TL-WR820N (version for Chinese market)
+  - Comfast CF-E314N
+  - Comfast CF-E320N v2
+  - Comfast CF-E520N/CF-E530N
+  - P&W CPE505N
+  - P&W R602N
+  - TP-Link TL-WA850RE v2
   - TP-Link TL-WR802N
+  - TP-Link TL-WR810N
+  - TP-Link TL-WR820N (version for Chinese market)
+  - TP-Link TL-WR841N/D v9, v10, v11
+  - TP-Link TL-WR842N/D v3
   - Wallys DR531
+  - YunCore AP90Q
+  - YunCore CPE830
+  - Zbtlink ZBT-WE1526
 
 I tested this modification on most of these devices, with OpenWrt and OFW firmware. If you are not sure about the version of your device, please contact with me **before** you try to make an upgrade. Changing bootloader to a wrong version will probably damage your router and you will need special hardware to fix it, so please, **be very careful**.
 
@@ -101,32 +119,46 @@ More information about supported devices:
 | Model | SoC | FLASH | RAM | U-Boot image | U-Boot env |
 |:--- | :--- | ---: | ---: | ---: | ---: |
 | [8devices Carambola 2](http://8devices.com/carambola-2) | AR9331 | 16 MiB | 64 MiB DDR2 | 256 KiB | 64 KiB, R/W |
-| [TP-Link TL-MR3020 v1](http://wiki.openwrt.org/toh/tp-link/tl-mr3020) | AR9331 | 4 MiB | 32 MiB DDR1 | 64 KiB, LZMA | RO |
-| [TP-Link TL-MR3040 v1/2](http://wiki.openwrt.org/toh/tp-link/tl-mr3040) | AR9331 | 4 MiB | 32 MiB DDR1 | 64 KiB, LZMA | RO |
-| [TP-Link TL-WR703N](http://wiki.openwrt.org/toh/tp-link/tl-wr703n) | AR9331 | 4 MiB | 32 MiB DDR1 | 64 KiB, LZMA | RO |
-| [TP-Link TL-WR720N v3](http://wiki.openwrt.org/toh/tp-link/tl-wr720n) | AR9331 | 4 MiB | 32 MiB DDR1 | 64 KiB, LZMA | RO |
-| [TP-Link TL-WR710N v1](http://wiki.openwrt.org/toh/tp-link/tl-wr710n) | AR9331 | 8 MiB | 32 MiB DDR1 | 64 KiB, LZMA | RO |
+| [ALFA NETWORK Hornet-UB](https://wiki.openwrt.org/toh/alfa.network/hornet-ub) | AR9331 | 8/16 MiB | 32/64 MiB DDR1 | 256 KiB | R/W |
+| [Black Swift](http://www.black-swift.com) | AR9331 | 16 MiB | 64 MiB DDR2 | 128 KiB, LZMA | R/W |
+| Comfast CF-E314N | QCA9531 | 16 MiB | 64 MiB DDR2 | 64 KiB, LZMA | RO |
+| Comfast CF-E320N v2 | QCA9531 | 16 MiB | 64 MiB DDR2 | 64 KiB, LZMA | RO |
+| Comfast CF-E520N/CF-E530N | QCA9531 | 8 MiB | 32 MiB DDR2 | 64 KiB, LZMA | RO |
+| [D-Link DIR-505 H/W ver. A1](http://wiki.openwrt.org/toh/d-link/dir-505) | AR1311 | 8 MiB | 64 MiB DDR2 | 64 KiB, LZMA | RO |
+| [Dragino 2 (MS14)](http://wiki.openwrt.org/toh/dragino/ms14) | AR9331 | 16 MiB | 64 MiB DDR1 | 192 KiB | R/W |
+| GL Innovations GL-AR150 | AR9331 | 16 MiB | 64 MiB DDR2 | 256 KiB | 64 KiB, R/W |
+| [GL Innovations GL.iNet 64xxA](http://wiki.openwrt.org/toh/gl-inet/gl-inet) | AR9331 | 8/16 MiB | 64 MiB DDR1 | 64 KiB | RO |
+| GS-Oolite/Elink EL-M150 module | AR9331 | 4/8/16 MiB | 64 MiB DDR2 | 64 KiB, LZMA | RO |
+| P&W CPE505N | QCA9531 | 16 MiB | 64 MiB DDR2 | 256 KiB | R/W |
+| P&W R602N | QCA9531 | 16 MiB | 64 MiB DDR2 | 256 KiB | R/W |
 | [TP-Link TL-MR10U v1](http://wiki.openwrt.org/toh/tp-link/tl-mr10u) | AR9331 | 4 MiB | 32 MiB DDR1 | 64 KiB, LZMA | RO |
 | [TP-Link TL-MR13U v1](http://wiki.openwrt.org/toh/tp-link/tl-mr13u) | AR9331 | 4 MiB | 32 MiB DDR1 | 64 KiB, LZMA | RO |
-| [TP-Link TL-WR740N v4](http://wiki.openwrt.org/toh/tp-link/tl-wr740n) | AR9331 | 4 MiB | 32 MiB DDR1 | 64 KiB, LZMA | RO |
+| [TP-Link TL-MR3020 v1](http://wiki.openwrt.org/toh/tp-link/tl-mr3020) | AR9331 | 4 MiB | 32 MiB DDR1 | 64 KiB, LZMA | RO |
+| [TP-Link TL-MR3040 v1/2](http://wiki.openwrt.org/toh/tp-link/tl-mr3040) | AR9331 | 4 MiB | 32 MiB DDR1 | 64 KiB, LZMA | RO |
 | [TP-Link TL-MR3220 v2](http://wiki.openwrt.org/toh/tp-link/tl-mr3420) | AR9331 | 4 MiB | 32 MiB DDR1 | 64 KiB, LZMA | RO |
-| GS-Oolite/Elink EL-M150 module | AR9331 | 4/8/16 MiB | 64 MiB DDR2 | 64 KiB, LZMA | RO |
-| [Dragino 2 (MS14)](http://wiki.openwrt.org/toh/dragino/ms14) | AR9331 | 16 MiB | 64 MiB DDR1 | 192 KiB | R/W |
-| Village Telco Mesh Potato 2 | AR9331 | 16 MiB | 64 MiB DDR1 | 192 KiB | R/W |
-| [GL.iNet](http://wiki.openwrt.org/toh/gl-inet/gl-inet) | AR9331 | 8/16 MiB | 64 MiB DDR1 | 64 KiB | RO |
-| [Black Swift](http://www.black-swift.com) | AR9331 | 16 MiB | 64 MiB DDR2 | 128 KiB, LZMA | R/W |
 | [TP-Link TL-MR3420 v2](http://wikidevi.com/wiki/TP-LINK_TL-MR3420_v2) | AR9341 | 4 MiB | 32 MiB DDR1 | 64 KiB, LZMA | RO |
-| [TP-Link TL-WR841N/D v8](http://wiki.openwrt.org/toh/tp-link/tl-wr841nd) | AR9341 | 4 MiB | 32 MiB DDR1 | 64 KiB, LZMA | RO |
-| [TP-Link TL-WA830RE v2](http://wikidevi.com/wiki/TP-LINK_TL-WA830RE_v2) | AR9341 | 4 MiB | 32 MiB DDR1 | 64 KiB, LZMA | RO |
 | [TP-Link TL-WA801ND v2](http://wikidevi.com/wiki/TP-LINK_TL-WA801ND_v2) | AR9341 | 4 MiB | 32 MiB DDR1 | 64 KiB, LZMA | RO |
+| [TP-Link TL-WA830RE v2](http://wikidevi.com/wiki/TP-LINK_TL-WA830RE_v2) | AR9341 | 4 MiB | 32 MiB DDR1 | 64 KiB, LZMA | RO |
+| TP-Link TL-WA850RE v2 | QCA9533 | 4 MiB | 32 MiB DDR1 | 64 KiB, LZMA | RO |
+| [TP-Link TL-WDR3500 v1](http://wiki.openwrt.org/toh/tp-link/tl-wdr3500) | AR9344 | 8 MiB | 128 MiB DDR2 | 64 KiB, LZMA | RO |
 | [TP-Link TL-WDR3600 v1](http://wiki.openwrt.org/toh/tp-link/tl-wdr3600) | AR9344 | 8 MiB | 128 MiB DDR2 | 64 KiB, LZMA | RO |
 | [TP-Link TL-WDR43x0 v1](http://wiki.openwrt.org/toh/tp-link/tl-wdr4300) | AR9344 | 8 MiB | 128 MiB DDR2 | 64 KiB, LZMA | RO |
-| [TP-Link TL-WDR3500 v1](http://wiki.openwrt.org/toh/tp-link/tl-wdr3500) | AR9344 | 8 MiB | 128 MiB DDR2 | 64 KiB, LZMA | RO |
-| [D-Link DIR-505 H/W ver. A1](http://wiki.openwrt.org/toh/d-link/dir-505) | AR1311 | 8 MiB | 64 MiB DDR2 | 64 KiB, LZMA | RO |
-| [TP-Link TL-WR841N/D v9](https://wiki.openwrt.org/toh/tp-link/tl-wr841nd) | QCA9533 | 4 MiB | 32 MiB DDR1 | 64 KiB, LZMA | RO |
-| [TP-Link TL-WR820N](https://wiki.openwrt.org/toh/tp-link/tl-wr820n) | QCA9531 | 4 MiB | 64 MiB DDR2 | 64 KiB, LZMA | RO |
+| [TP-Link TL-WR703N](http://wiki.openwrt.org/toh/tp-link/tl-wr703n) | AR9331 | 4 MiB | 32 MiB DDR1 | 64 KiB, LZMA | RO |
+| [TP-Link TL-WR710N v1](http://wiki.openwrt.org/toh/tp-link/tl-wr710n) | AR9331 | 8 MiB | 32 MiB DDR1 | 64 KiB, LZMA | RO |
+| [TP-Link TL-WR720N v3](http://wiki.openwrt.org/toh/tp-link/tl-wr720n) | AR9331 | 4 MiB | 32 MiB DDR1 | 64 KiB, LZMA | RO |
+| [TP-Link TL-WR740N v4](http://wiki.openwrt.org/toh/tp-link/tl-wr740n) | AR9331 | 4 MiB | 32 MiB DDR1 | 64 KiB, LZMA | RO |
 | [TP-Link TL-WR802N](https://wikidevi.com/wiki/TP-LINK_TL-WR802N_v1.0) | QCA9533 | 4 MiB | 32 MiB DDR1 | 64 KiB, LZMA | RO |
+| [TP-Link TL-WR810N](https://wiki.openwrt.org/toh/tp-link/tl-wr810n) | QCA9531 | 8 MiB | 64 MiB DDR2 | 64 KiB, LZMA | RO |
+| [TP-Link TL-WR820N](https://wiki.openwrt.org/toh/tp-link/tl-wr820n) | QCA9531 | 4 MiB | 64 MiB DDR2 | 64 KiB, LZMA | RO |
+| [TP-Link TL-WR841N/D v8](http://wiki.openwrt.org/toh/tp-link/tl-wr841nd) | AR9341 | 4 MiB | 32 MiB DDR1 | 64 KiB, LZMA | RO |
+| [TP-Link TL-WR841N/D v9/10/11](https://wiki.openwrt.org/toh/tp-link/tl-wr841nd) | QCA9533 | 4 MiB | 32 MiB DDR1 | 64 KiB, LZMA | RO |
+| TP-Link TL-WR842N/D v3 | QCA9531 | 16 MiB | 64 MiB DDR2 | 64 KiB, LZMA | RO |
+| Village Telco Mesh Potato 2 | AR9331 | 16 MiB | 64 MiB DDR1 | 192 KiB | R/W |
 | Wallys DR531 | QCA9531 | 8 MiB | 64 MiB DDR2 | 192 KiB | R/W |
+| YunCore AP90Q | QCA9531 | 16 MiB | 128 MiB DDR2 | 256 KiB | R/W |
+| YunCore CPE830 | QCA9531 | 16 MiB | 64 MiB DDR2 | 256 KiB | R/W |
+| YunCore CPE870 | AR9341 | 8 MiB | 64 MiB DDR2 | 64 KiB, LZMA | R/W |
+| Zbtlink ZBT-WE1526 | QCA9531 | 16 MiB | 128 MiB DDR2 | 256 KiB | R/W |
 
 *(LZMA) - U-Boot binary image is compressed with LZMA.*  
 *(R/W) - environment exists in separate FLASH block which allows you to save it and keep after power down.*
@@ -135,7 +167,7 @@ More information about supported devices:
 Known issues
 ------------
 
-Current release is not loading kernel from some versions of TP-Link's official firmware. If you want to use the so-called OFW in any of supported TP-Link's router, do not use this modification. I am working on a solution for this issue.
+~~Current release is not loading kernel from some versions of TP-Link's official firmware. If you want to use the so-called OFW in any of supported TP-Link's router, do not use this modification. I am working on a solution for this issue.~~
 
 Modifications, changes
 ----------------------
@@ -190,7 +222,7 @@ Erasing: #
 
 Erased sectors: 1
 
-Writting at address: 0x9F010000
+Writing at address: 0x9F010000
 
 uboot> reset
 ```
@@ -251,7 +283,7 @@ Erasing: #######################################
 Erased sectors: 60
 
 Copying to FLASH...
-Writting at address: 0x9F020000
+Writing at address: 0x9F020000
 
 Done!
 
@@ -308,6 +340,7 @@ Currently supported FLASH types:
 - Micron M25P32 (4 MiB, JEDEC ID: 20 2016)
 - Windbond W25Q32 (4 MiB, JEDEC ID: EF 4016)
 - Macronix MX25L320 (4 MiB, JEDEC ID: C2 2016)
+- GigaDevice GD25Q32 (4 MiB, JEDEC ID: C8 4016)*
 
 **8 MiB**:
 
@@ -317,13 +350,16 @@ Currently supported FLASH types:
 - Micron M25P64 (8 MiB, JEDEC ID: 20 2017)
 - Windbond W25Q64 (8 MiB, JEDEC ID: EF 4017)*
 - Macronix MX25L64 (8 MiB, JEDEC ID: C2 2017, C2 2617)
+- GigaDevice GD25Q64 (8 MiB, JEDEC ID: C8 4017)
 
 **16 MiB**:
 
 - Winbond W25Q128 (16 MB, JEDEC ID: EF 4018)*
+- Winbond W25Q128FW (16 MB, JEDEC ID: EF 6018, 1,8 V)*
 - Macronix MX25L128 (16 MB, JEDEC ID: C2 2018, C2 2618)
 - Spansion S25FL127S (16 MB, JEDEC ID: 01 2018)*
 - Micron N25Q128 (16 MB, JEDEC ID: 20 BA18)
+- GigaDevice GD25Q128 (16 MiB, JEDEC ID: C8 4018)
 
 (*) tested
 
@@ -649,9 +685,11 @@ How to compile the code?
 
 You can use one of the free toolchains:
 
-- [OpenWrt Toolchain for AR71xx MIPS](https://downloads.openwrt.org/snapshots/trunk/ar71xx/generic/OpenWrt-Toolchain-ar71xx-generic_gcc-5.3.0_musl-1.1.14.Linux-x86_64.tar.bz2),
-- ~~[Sourcery CodeBench Lite Edition for MIPS GNU/Linux](https://sourcery.mentor.com/GNUToolchain/subscription3130?lite=MIPS)~~,
-- [ELDK (Embedded Linux Development Kit)](ftp://ftp.denx.de/pub/eldk/),
+- Recommended and used for snapshots build: [LEDE SDK for AR71xx MIPS (17.01.0 release)](https://downloads.lede-project.org/releases/17.01.0/targets/ar71xx/generic/lede-sdk-17.01.0-ar71xx-generic_gcc-5.4.0_musl-1.1.16.Linux-x86_64.tar.xz),
+- Recommended: [LEDE SDK for AR71xx MIPS (trunk snapshot)](https://downloads.lede-project.org/snapshots/targets/ar71xx/generic/lede-sdk-ar71xx-generic_gcc-5.4.0_musl.Linux-x86_64.tar.xz),
+- [OpenWrt SDK for AR71xx MIPS (Chaos Calmer release)](https://downloads.openwrt.org/chaos_calmer/15.05.1/ar71xx/generic/OpenWrt-SDK-15.05.1-ar71xx-generic_gcc-4.8-linaro_uClibc-0.9.33.2.Linux-x86_64.tar.bz2),
+- [OpenWrt Toolchain for AR71xx MIPS (trunk snapshot)](https://downloads.openwrt.org/snapshots/trunk/ar71xx/generic/OpenWrt-Toolchain-ar71xx-generic_gcc-5.3.0_musl-1.1.16.Linux-x86_64.tar.bz2),
+- [ELDK (Embedded Linux Development Kit)](http://bit.ly/2djaTMn),
 - or any others...
 
 I am using **OpenWrt Toolchain for AR71xx MIPS** (32-bit, virtual machine) and all released binary images were/will be built using this set.
@@ -674,9 +712,9 @@ make tplink_wr703n
 
 will start building U-Boot image for **TP-Link TL-WR703N**.
 
-### Building on OS X
+### Building on macOS (OS X)
 
-You can build using the openwrt/lede toolchain as above under OS X as long as you install several gnu command line tools via brew. Note that bash is required to correct the usage of colorized echo output within the Makefiles (I was suprised how inconsistent FreeBSD is with Linux in this regard).
+You can build using the OpenWrt/LEDE toolchain as above under macOS (OS X) as long as you install several gnu command line tools via brew. Note that bash is required to correct the usage of colorized echo output within the Makefiles (I was suprised how inconsistent FreeBSD is with Linux/GNU in this regard).
 
 ```
 brew install bash coreutils gnu-sed
@@ -687,8 +725,6 @@ Subsequently, in addition to the toolchain being in your path, you will need to 
 ```
 export PATH=/usr/local/opt/coreutils/libexec/gnubin:/usr/local/opt/gnu-sed/libexec/gnubin:$PATH
 ```
-
-Lastly, you will need a localised (osx) build of lzma replacing the supplied ELF32 binary in the host_utils folder. I have tested with [lzma-4.32.7](http://tukaani.org/lzma/lzma-4.32.7.tar.gz) ; just run ./configure and then make and grab the executable from src/lzma.
 
 This process was tested on Yosemite and El Capitan.
 

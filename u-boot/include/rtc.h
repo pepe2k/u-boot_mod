@@ -60,4 +60,4 @@ void GregorianDay(struct rtc_time *);
 void to_tm(int, struct rtc_time *);
 unsigned long mktime(unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int);
 
-#endif	/* _RTC_H_ */
+#endif /* _RTC_H_ */

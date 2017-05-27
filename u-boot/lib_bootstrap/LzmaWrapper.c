@@ -21,13 +21,6 @@
 ** 2 Nov 2006   Lin Mars        init version which derived from LzmaTest.c from
 **                              LZMA v4.43 SDK
 *******************************************************************************/
-#define LZMA_NO_STDIO
-#ifndef LZMA_NO_STDIO
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#endif
-
 #include <config.h>
 #include <common.h>
 #include <linux/types.h>
@@ -40,184 +33,129 @@
 #include "LzmaDecode.h"
 #include "LzmaWrapper.h"
 
-#ifdef DEBUG_ENABLE_BOOTSTRAP_PRINTF
-static const char *kCantReadMessage = "Can not read from source buffer";
-static const char *kCantAllocateMessage = "Not enough buffer for decompression";
-#endif
+static int MyReadFileAndCheck(unsigned char *src,
+			      void *dest,
+			      size_t size,
+			      size_t *rpos)
+{
+	if (size == 0)
+		return 0;
 
-static size_t rpos=0;
+	memcpy(dest, src + *rpos, size);
+	*rpos += size;
 
-static int MyReadFileAndCheck(unsigned char *src, void *dest, size_t size){
-  if (size == 0)
-    return 0;
-  memcpy(dest, src + rpos, size);
-  rpos += size;
-  return 1;
+	return 1;
 }
 
-int lzma_inflate(unsigned char *source, int s_len, unsigned char *dest, int *d_len){
-  /* We use two 32-bit integers to construct 64-bit integer for file size.
-     You can remove outSizeHigh, if you don't need >= 4GB supporting,
-     or you can use UInt64 outSize, if your compiler supports 64-bit integers*/
-  UInt32 outSize = 0;
-  UInt32 outSizeHigh = 0;
-  SizeT outSizeFull;
-  unsigned char *outStream;
-  
-  int waitEOS = 1; 
-  /* waitEOS = 1, if there is no uncompressed size in headers, 
-   so decoder will wait EOS (End of Stream Marker) in compressed stream */
+int lzma_inflate(unsigned char *source,
+		 int s_len,
+		 unsigned char *dest,
+		 int *d_len)
+{
+	/*
+	 * We use two 32-bit integers to construct 64-bit integer for file size.
+	 * You can remove outSizeHigh, if you don't need >= 4GB supporting,
+	 * or you can use UInt64 outSize, if your compiler supports 64-bit integers
+	 */
+	unsigned char *outStream;
+	UInt32 outSize = 0;
+	SizeT outSizeFull;
 
-  SizeT compressedSize;
-  unsigned char *inStream;
+	size_t rpos = 0;
 
-  CLzmaDecoderState state;  /* it's about 24-80 bytes structure, if int is 32-bit */
-  unsigned char properties[LZMA_PROPERTIES_SIZE];
+	/*
+	 * waitEOS = 1, if there is no uncompressed size in headers,
+	 * so decoder will wait EOS (End of Stream Marker) in compressed stream
+	 */
+	int waitEOS = 1;
 
-  int res;
+	SizeT compressedSize;
+	unsigned char *inStream;
 
-  if (sizeof(UInt32) < 4)
-  {
-#ifdef DEBUG_ENABLE_BOOTSTRAP_PRINTF
-    printf("LZMA decoder needs correct UInt32\n");
-#endif
-    return LZMA_RESULT_DATA_ERROR;
-  }
+	/* It's about 24-80 bytes structure, if int is 32-bit */
+	CLzmaDecoderState state;
+	unsigned char properties[LZMA_PROPERTIES_SIZE];
 
-  {
-    long length=s_len;
-    if ((long)(SizeT)length != length)
-    {
+	int res;
 
-#ifdef DEBUG_ENABLE_BOOTSTRAP_PRINTF
-      printf("Too big compressed stream\n");
-#endif
-      return LZMA_RESULT_DATA_ERROR;
-    }
-    compressedSize = (SizeT)(length - (LZMA_PROPERTIES_SIZE + 8));
-  }
+	compressedSize = (SizeT)(s_len - (LZMA_PROPERTIES_SIZE + 8));
 
-  /* Read LZMA properties for compressed stream */
+	/* Read LZMA properties for compressed stream */
+	if (!MyReadFileAndCheck(source, properties,
+				sizeof(properties), &rpos)) {
+		return LZMA_RESULT_DATA_ERROR;
+	}
 
-  if (!MyReadFileAndCheck(source, properties, sizeof(properties)))
-  {
+	/* Read uncompressed size */
+	int i;
+	for (i = 0; i < 8; i++) {
+		unsigned char b;
 
-#ifdef DEBUG_ENABLE_BOOTSTRAP_PRINTF
-    printf("%s\n", kCantReadMessage);
-#endif
-    return LZMA_RESULT_DATA_ERROR;
-  }
+		if (!MyReadFileAndCheck(source, &b, 1, &rpos))
+			return LZMA_RESULT_DATA_ERROR;
 
-  /* Read uncompressed size */
-  {
-    int i;
-    for (i = 0; i < 8; i++)
-    {
-      unsigned char b;
-      if (!MyReadFileAndCheck(source, &b, 1))
-      {
+		if (b != 0xFF)
+			waitEOS = 0;
 
-#ifdef DEBUG_ENABLE_BOOTSTRAP_PRINTF
-        printf("%s\n", kCantReadMessage);
-#endif
-        return LZMA_RESULT_DATA_ERROR;
-      }
-      if (b != 0xFF)
-        waitEOS = 0;
-      if (i < 4)
-        outSize += (UInt32)(b) << (i * 8);
-      else
-        outSizeHigh += (UInt32)(b) << ((i - 4) * 8);
-    }
-    
-    if (waitEOS)
-    {
+		if (i < 4)
+			outSize += (UInt32)(b) << (i * 8);
+	}
 
-#ifdef DEBUG_ENABLE_BOOTSTRAP_PRINTF
-      printf("Stream with EOS marker is not supported");
-#endif
-      return LZMA_RESULT_DATA_ERROR;
-    }
-    outSizeFull = (SizeT)outSize;
-    if (sizeof(SizeT) >= 8)
-      outSizeFull |= (((SizeT)outSizeHigh << 16) << 16);
-    else if (outSizeHigh != 0 || (UInt32)(SizeT)outSize != outSize)
-    {
+	if (waitEOS)
+		return LZMA_RESULT_DATA_ERROR;
 
-#ifdef DEBUG_ENABLE_BOOTSTRAP_PRINTF
-      printf("Too big uncompressed stream");
-#endif
-      return LZMA_RESULT_DATA_ERROR;
-    }
-  }
+	outSizeFull = (SizeT)outSize;
 
-  /* Decode LZMA properties and allocate memory */
-  if (LzmaDecodeProperties(&state.Properties, properties, LZMA_PROPERTIES_SIZE) != LZMA_RESULT_OK)
-  {
+	if ((UInt32)(SizeT)outSize != outSize)
+		return LZMA_RESULT_DATA_ERROR;
 
-#ifdef DEBUG_ENABLE_BOOTSTRAP_PRINTF
-    printf("Incorrect stream properties");
-#endif
-    return LZMA_RESULT_DATA_ERROR;
-  }
-  state.Probs = (CProb *)malloc(LzmaGetNumProbs(&state.Properties) * sizeof(CProb));
+	/* Decode LZMA properties and allocate memory */
+	if (LzmaDecodeProperties(&state.Properties, properties,
+				 LZMA_PROPERTIES_SIZE) != LZMA_RESULT_OK)
+		return LZMA_RESULT_DATA_ERROR;
 
-  if (outSizeFull == 0)
-    outStream = 0;
-  else
-  {
-    if (outSizeFull > (int)d_len)
-      outStream = 0;
-    else
-      outStream = dest;
-  }
+	state.Probs = (CProb *)malloc(LzmaGetNumProbs(&state.Properties)
+				      * sizeof(CProb));
 
-  if (compressedSize == 0)
-    inStream = 0;
-  else
-  {
-    if ((compressedSize+rpos) > s_len )
-      inStream = 0;
-    else
-      inStream = source + rpos;
-  }
+	if (outSizeFull == 0) {
+		outStream = 0;
+	} else {
+		if (outSizeFull > (int)d_len)
+			outStream = 0;
+		else
+			outStream = dest;
+	}
 
-  if (state.Probs == 0 
-    || (outStream == 0 && outSizeFull != 0)
-    || (inStream == 0 && compressedSize != 0)
-    )
-  {
-    free(state.Probs);
+	if (compressedSize == 0) {
+		inStream = 0;
+	} else {
+		if ((compressedSize + rpos) > s_len )
+			inStream = 0;
+		else
+			inStream = source + rpos;
+	}
 
-#ifdef DEBUG_ENABLE_BOOTSTRAP_PRINTF
-    printf("%s\n", kCantAllocateMessage);
-#endif
-    return LZMA_RESULT_DATA_ERROR;
-  }
+	if (state.Probs == 0 ||
+	    (outStream == 0 && outSizeFull != 0) ||
+	    (inStream == 0 && compressedSize != 0)) {
+		free(state.Probs);
+		return LZMA_RESULT_DATA_ERROR;
+	}
 
-  /* Decompress */
-  {
-    SizeT inProcessed;
-    SizeT outProcessed;
-    res = LzmaDecode(&state,
-      inStream, compressedSize, &inProcessed,
-      outStream, outSizeFull, &outProcessed);
-    if (res != 0)
-    {
+	/* Decompress */
+	SizeT inProcessed;
+	SizeT outProcessed;
 
-#ifdef DEBUG_ENABLE_BOOTSTRAP_PRINTF
-      printf("\nDecoding error = %d\n", res);
-#endif
-      res = 1;
-    }
-    else
-    {
-      *d_len = outProcessed;
-    }
-  }
+	res = LzmaDecode(&state, inStream, compressedSize, &inProcessed,
+			 outStream, outSizeFull, &outProcessed);
+	if (res != 0)
+		res = 1;
+	else
+		*d_len = outProcessed;
 
-  free(state.Probs);
-  return res;
+	free(state.Probs);
+
+	return res;
 }
 
 #endif /* CONFIG_LZMA */

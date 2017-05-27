@@ -28,7 +28,6 @@
 #include <version.h>
 #include <net.h>
 #include <environment.h>
-#include <tinf.h>
 #include "LzmaWrapper.h"
 
 /*#define DEBUG_ENABLE_BOOTSTRAP_PRINTF*/
@@ -79,11 +78,6 @@ void *malloc(unsigned int size)
 		return (void *)(mem_malloc_start - size);
 	}
 
-	return NULL;
-}
-
-void *realloc(void *src, unsigned int size)
-{
 	return NULL;
 }
 
@@ -223,7 +217,7 @@ void bootstrap_board_init_r(gd_t *id, ulong dest_addr)
 {
 	int i;
 	ulong addr;
-	ulong data, len, checksum;
+	ulong data, len;
 	image_header_t header;
 	image_header_t *hdr = &header;
 	unsigned int destLen;
@@ -236,15 +230,6 @@ void bootstrap_board_init_r(gd_t *id, ulong dest_addr)
 	memmove(&header, (char *)addr, sizeof(image_header_t));
 
 	if (ntohl(hdr->ih_magic) != IH_MAGIC)
-		return;
-
-	data = (ulong)&header;
-	len = sizeof(image_header_t);
-
-	checksum = ntohl(hdr->ih_hcrc);
-	hdr->ih_hcrc = 0;
-
-	if (tinf_crc32((unsigned char *)data, len) != checksum)
 		return;
 
 	data = addr + sizeof(image_header_t);

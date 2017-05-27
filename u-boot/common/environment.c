@@ -21,23 +21,30 @@
  * MA 02111-1307 USA
  */
 
+/* Dirty trick to get only #defines */
 #ifndef __ASSEMBLY__
-#define	__ASSEMBLY__			/* Dirty trick to get only #defines	*/
+	#define __ASSEMBLY__
 #endif
-#define	__ASM_STUB_PROCESSOR_H__	/* don't include asm/processor.		*/
+
+/* Don't include asm/processor */
+#define __ASM_STUB_PROCESSOR_H__
+
 #include <config.h>
-#undef	__ASSEMBLY__
+
+#undef __ASSEMBLY__
 #include <environment.h>
+#include <env_scripts.h>
 
 /*
  * Handle HOSTS that have prepended
  * crap on symbol names, not TARGETS.
  */
 #if defined(__APPLE__)
-/* Leading underscore on symbols */
-#  define SYM_CHAR "_"
-#else /* No leading character on symbols */
-#  define SYM_CHAR
+	/* Leading underscore on symbols */
+	#define SYM_CHAR "_"
+#else
+	/* No leading character on symbols */
+	#define SYM_CHAR
 #endif
 
 /*
@@ -51,16 +58,16 @@
  * a seperate section.  Note that ENV_CRC is only defined when building
  * U-Boot itself.
  */
-#if (defined(CONFIG_CMI)		|| \
-     defined(CONFIG_FADS)		|| \
-     defined(CONFIG_HYMOD)		|| \
-     defined(CONFIG_ICU862)		|| \
-     defined(CONFIG_R360MPI)	|| \
-     defined(CONFIG_TQM8xxL)	|| \
-     defined(CONFIG_RRVISION)	|| \
-     defined(CONFIG_TRAB)   	|| \
-     defined(CONFIG_PPCHAMELEONEVB) )	&& \
-     defined(ENV_CRC) /* Environment embedded in U-Boot .ppcenv section */
+#if (defined(CONFIG_CMI)      ||\
+     defined(CONFIG_FADS)     ||\
+     defined(CONFIG_HYMOD)    ||\
+     defined(CONFIG_ICU862)   ||\
+     defined(CONFIG_R360MPI)  ||\
+     defined(CONFIG_TQM8xxL)  ||\
+     defined(CONFIG_RRVISION) ||\
+     defined(CONFIG_TRAB)     ||\
+     defined(CONFIG_PPCHAMELEONEVB) \
+    ) && defined(ENV_CRC) /* Environment embedded in U-Boot .ppcenv section */
 
 	/* XXX - This only works with GNU C */
 	#define __PPCENV__ __attribute__ ((section(".ppcenv")))
@@ -100,102 +107,118 @@
  * computed CRC.  Otherwise define it as ~0.
  */
 #if !defined(ENV_CRC)
-#  define ENV_CRC	~0
+	#define ENV_CRC	~0
 #endif
 
 env_t environment __PPCENV__ = {
 	ENV_CRC,	/* CRC Sum */
-#ifdef CFG_REDUNDAND_ENVIRONMENT
+#if defined(CFG_REDUNDAND_ENVIRONMENT)
 	1,		/* Flags: valid */
 #endif
 	{
 #if defined(CONFIG_BOOTARGS)
-	 	 	 	 "bootargs="	CONFIG_BOOTARGS				"\0"
+		"bootargs=" CONFIG_BOOTARGS "\0"
 #endif
 #if defined(CONFIG_BOOTCOMMAND)
-	 	 	 	 "bootcmd="		CONFIG_BOOTCOMMAND			"\0"
+		"bootcmd=" CONFIG_BOOTCOMMAND "\0"
+#endif
+#if defined(CONFIG_AUTOBOOT_STOP_STR)
+		"bootstopkey=" CONFIG_AUTOBOOT_STOP_STR "\0"
 #endif
 #if defined(CONFIG_RAMBOOTCOMMAND)
-	 	 	 	 "ramboot="		CONFIG_RAMBOOTCOMMAND		"\0"
+		"ramboot=" CONFIG_RAMBOOTCOMMAND "\0"
 #endif
 #if defined(CONFIG_NFSBOOTCOMMAND)
-	 	 	 	 "nfsboot="		CONFIG_NFSBOOTCOMMAND		"\0"
+		"nfsboot=" CONFIG_NFSBOOTCOMMAND "\0"
 #endif
 #if defined(CONFIG_BOOTDELAY) && (CONFIG_BOOTDELAY >= 0)
-	 	 	 	 "bootdelay="	MK_STR(CONFIG_BOOTDELAY)	"\0"
+		"bootdelay=" MK_STR(CONFIG_BOOTDELAY) "\0"
 #endif
 #if defined(CONFIG_BAUDRATE) && (CONFIG_BAUDRATE >= 0)
-	 	 	 	 "baudrate="	MK_STR(CONFIG_BAUDRATE)		"\0"
+		"baudrate=" MK_STR(CONFIG_BAUDRATE) "\0"
 #endif
-#ifdef	CONFIG_LOADS_ECHO
-	 	 	 	 "loads_echo="	MK_STR(CONFIG_LOADS_ECHO)	"\0"
+#if defined(CONFIG_LOADS_ECHO)
+		"loads_echo=" MK_STR(CONFIG_LOADS_ECHO) "\0"
 #endif
-#ifdef	CONFIG_ETHADDR
-	 	 	 	 "ethaddr="		MK_STR(CONFIG_ETHADDR)		"\0"
+#if defined(CONFIG_ETHADDR)
+		"ethaddr=" MK_STR(CONFIG_ETHADDR) "\0"
 #endif
-#ifdef	CONFIG_ETH1ADDR
-	 	 	 	 "eth1addr="	MK_STR(CONFIG_ETH1ADDR)		"\0"
+#if defined(CONFIG_ETH1ADDR)
+		"eth1addr=" MK_STR(CONFIG_ETH1ADDR) "\0"
 #endif
-#ifdef	CONFIG_ETH2ADDR
-	 	 	 	 "eth2addr="	MK_STR(CONFIG_ETH2ADDR)		"\0"
+#if defined(CONFIG_ETH2ADDR)
+		"eth2addr=" MK_STR(CONFIG_ETH2ADDR) "\0"
 #endif
-#ifdef	CONFIG_ETH3ADDR
-	 	 	 	 "eth3addr="	MK_STR(CONFIG_ETH3ADDR)		"\0"
+#if defined(CONFIG_ETH3ADDR)
+		"eth3addr=" MK_STR(CONFIG_ETH3ADDR) "\0"
 #endif
-#ifdef	CONFIG_ETHPRIME
-	 	 	 	 "ethprime="	CONFIG_ETHPRIME				"\0"
+#if defined(CONFIG_ETHPRIME)
+		"ethprime=" CONFIG_ETHPRIME "\0"
 #endif
-#ifdef	CONFIG_IPADDR
-	 	 	 	 "ipaddr="		MK_STR(CONFIG_IPADDR)		"\0"
+#if defined(CONFIG_IPADDR)
+		"ipaddr=" MK_STR(CONFIG_IPADDR) "\0"
 #endif
-#ifdef	CONFIG_SERVERIP
-	 	 	 	 "serverip="	MK_STR(CONFIG_SERVERIP)		"\0"
+#if defined(CONFIG_SERVERIP)
+		"serverip=" MK_STR(CONFIG_SERVERIP) "\0"
 #endif
-#ifdef	CFG_AUTOLOAD
-	 	 	 	 "autoload="	CFG_AUTOLOAD				"\0"
+#if defined(CONFIG_AUTOLOAD)
+		"autoload=" MK_STR(CONFIG_AUTOLOAD) "\0"
 #endif
-#ifdef	CONFIG_ROOTPATH
-	 	 	 	 "rootpath="	MK_STR(CONFIG_ROOTPATH)		"\0"
+#if defined(CONFIG_ROOTPATH)
+		"rootpath=" MK_STR(CONFIG_ROOTPATH) "\0"
 #endif
-#ifdef	CONFIG_GATEWAYIP
-	 	 	 	 "gatewayip="	MK_STR(CONFIG_GATEWAYIP)	"\0"
+#if defined(CONFIG_GATEWAYIP)
+		"gatewayip=" MK_STR(CONFIG_GATEWAYIP) "\0"
 #endif
-#ifdef	CONFIG_NETMASK
-	 	 	 	 "netmask="		MK_STR(CONFIG_NETMASK)		"\0"
+#if defined(CONFIG_NETMASK)
+		"netmask=" MK_STR(CONFIG_NETMASK) "\0"
 #endif
-#ifdef	CONFIG_HOSTNAME
-	 	 	 	 "hostname="	MK_STR(CONFIG_HOSTNAME)		"\0"
+#if defined(CONFIG_HOSTNAME)
+		"hostname=" MK_STR(CONFIG_HOSTNAME) "\0"
 #endif
-#ifdef	CONFIG_BOOTFILE
-	 	 	 	 "bootfile="	MK_STR(CONFIG_BOOTFILE)		"\0"
+#if defined(CONFIG_BOOTFILE)
+		"bootfile=" MK_STR(CONFIG_BOOTFILE) "\0"
 #endif
-#ifdef	CONFIG_LOADADDR
-	 	 	 	 "loadaddr="	MK_STR(CONFIG_LOADADDR)		"\0"
+#if defined(CONFIG_LOADADDR)
+		"loadaddr=" MK_STR(CONFIG_LOADADDR) "\0"
 #endif
-#ifdef	CONFIG_NETCONSOLE_PORT
-	 	 	 	 "ncport="		MK_STR(CONFIG_NETCONSOLE_PORT)	"\0"
+#if defined(CONFIG_NETCONSOLE_PORT)
+		"ncport=" MK_STR(CONFIG_NETCONSOLE_PORT) "\0"
 #endif
-#ifdef	CONFIG_CLOCKS_IN_MHZ
-	 	 	 	 "clocks_in_mhz=" "1"							"\0"
+#if defined(CONFIG_CLOCKS_IN_MHZ)
+		"clocks_in_mhz=1\0"
 #endif
 #if defined(CONFIG_PCI_BOOTDELAY) && (CONFIG_PCI_BOOTDELAY > 0)
-	 	 	 	 "pcidelay="	MK_STR(CONFIG_PCI_BOOTDELAY)	"\0"
+		"pcidelay=" MK_STR(CONFIG_PCI_BOOTDELAY) "\0"
 #endif
-#ifdef  CONFIG_EXTRA_ENV_SETTINGS
-	 	 	 	 CONFIG_EXTRA_ENV_SETTINGS
+#if defined(CONFIG_LSDK_KERNEL)
+		"lsdk_kernel=1\0"
 #endif
-	"\0"		/* Term. env_t.data with 2 NULs */
-	}
-};
-#ifdef CFG_ENV_ADDR_REDUND
-env_t redundand_environment __PPCENV__ = {
-	0,		/* CRC Sum: invalid */
-	0,		/* Flags:   invalid */
-	{
+#if defined(CONFIG_EXTRA_ENV_SETTINGS)
+		CONFIG_EXTRA_ENV_SETTINGS
+#endif
+#if defined(CONFIG_ENV_UPG_SCRIPTS_UBOOT)
+		CONFIG_ENV_UPG_SCRIPTS_UBOOT
+#endif
+#if defined(CONFIG_ENV_UPG_SCRIPTS_FW)
+		CONFIG_ENV_UPG_SCRIPTS_FW
+#endif
+#if defined(CONFIG_ENV_BTN_RECOVERY_SCRIPT)
+		CONFIG_ENV_BTN_RECOVERY_SCRIPT
+#endif
 	"\0"
 	}
 };
-#endif	/* CFG_ENV_ADDR_REDUND */
+
+#if defined(CFG_ENV_ADDR_REDUND)
+env_t redundand_environment __PPCENV__ = {
+	0,	/* CRC Sum: invalid */
+	0,	/* Flags:   invalid */
+	{
+		"\0"
+	}
+};
+#endif /* CFG_ENV_ADDR_REDUND */
 
 /*
  * These will end up in the .text section
@@ -203,13 +226,10 @@ env_t redundand_environment __PPCENV__ = {
  * in the image.  When this is used for
  * tools/envcrc, they are placed in the
  * .data/.sdata section.
- *
  */
 unsigned long env_size __PPCTEXT__ = sizeof(env_t);
 
-/*
- * Add in absolutes.
- */
+/* Add in absolutes */
 GEN_ABS(env_offset, CFG_ENV_OFFSET);
 
 #endif /* ENV_IS_EMBEDDED */

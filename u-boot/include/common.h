@@ -106,7 +106,7 @@ typedef volatile unsigned char	vu_char;
 #else
 #define debug(fmt,args...)
 #define debugX(level,fmt,args...)
-#endif	/* DEBUG */
+#endif /* DEBUG */
 
 typedef void (interrupt_handler_t)(void *);
 
@@ -184,14 +184,15 @@ void	init_cmd_timeout(void);
 void	reset_cmd_timeout(void);
 
 /* lib_$(ARCH)/board.c */
-void	board_init_f  (ulong);
-void	board_init_r  (gd_t *, ulong);
-int		checkboard    (void);
-int		checkflash    (void);
-int		checkdram     (void);
-char *	strmhz(char *buf, long hz);
-int		last_stage_init(void);
-extern	ulong monitor_flash_len;
+void board_init_f(ulong);
+void board_init_r(gd_t *, ulong);
+char *strmhz(char *buf, long hz);
+int  checkboard(void);
+int  checkflash(void);
+int  checkdram(void);
+int  last_stage_init(void);
+int  reset_button_status(void);
+extern ulong monitor_flash_len;
 
 /* common/flash.c */
 void flash_perror (int);
@@ -199,18 +200,9 @@ void flash_perror (int);
 /* common/cmd_autoscript.c */
 int	autoscript (ulong addr);
 
-/*
- * Only TP-Link OFW and OpenWrt for TP-Link routers
- * use different (simply) image header
- */
-#ifdef CONFIG_TPLINK_IMAGE_HEADER
-#include "tpLinuxTag.h"
-void print_image_hdr(tplink_image_header_t *hdr);
-#else
-void print_image_hdr(image_header_t *hdr);
-#endif /* CONFIG_TPLINK_IMAGE_HEADER */
-
-extern ulong load_addr;		/* Default Load Address */
+extern u32 load_addr;	/* Default Load Address */
+extern u32 save_addr;	/* Default Save Address */
+extern u32 save_size;	/* Default Save Size */
 
 /* common/cmd_nvedit.c */
 int		env_init     (void);
@@ -557,6 +549,8 @@ int	tstc(void);
 void	putc(const char c);
 void	puts(const char *s);
 void	printf(const char *fmt, ...);
+void	printf_err(const char *fmt, ...);
+void	printf_wrn(const char *fmt, ...);
 //void	vprintf(const char *fmt, va_list args);
 
 /* stderr */
@@ -581,4 +575,32 @@ int	fgetc(int file);
 
 int	pcmcia_init (void);
 
-#endif	/* __COMMON_H_ */
+/*
+ * Optional BOOTP fields
+ */
+#define CONFIG_BOOTP_SUBNETMASK		0x00000001
+#define CONFIG_BOOTP_GATEWAY		0x00000002
+#define CONFIG_BOOTP_HOSTNAME		0x00000004
+#define CONFIG_BOOTP_NISDOMAIN		0x00000008
+#define CONFIG_BOOTP_BOOTPATH		0x00000010
+#define CONFIG_BOOTP_BOOTFILESIZE	0x00000020
+#define CONFIG_BOOTP_DNS		0x00000040
+#define CONFIG_BOOTP_DNS2		0x00000080
+#define CONFIG_BOOTP_SEND_HOSTNAME	0x00000100
+#define CONFIG_BOOTP_NTPSERVER		0x00000200
+#define CONFIG_BOOTP_TIMEOFFSET		0x00000400
+#define CONFIG_BOOTP_VENDOREX		0x80000000
+
+#define CONFIG_BOOTP_ALL	(~CONFIG_BOOTP_VENDOREX)
+
+#define CONFIG_BOOTP_DEFAULT	(CONFIG_BOOTP_SUBNETMASK |\
+				 CONFIG_BOOTP_BOOTPATH   |\
+				 CONFIG_BOOTP_HOSTNAME   |\
+				 CONFIG_BOOTP_GATEWAY    |\
+				 CONFIG_BOOTP_SEND_HOSTNAME)
+
+#ifndef CONFIG_BOOTP_MASK
+#define CONFIG_BOOTP_MASK	CONFIG_BOOTP_DEFAULT
+#endif
+
+#endif /* __COMMON_H_ */

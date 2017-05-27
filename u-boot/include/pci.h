@@ -373,4 +373,4 @@ struct pci_controller {
 	int current_busno;
 };
 
-#endif	/* _PCI_H */
+#endif /* _PCI_H */

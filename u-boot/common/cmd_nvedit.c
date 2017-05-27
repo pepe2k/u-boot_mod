@@ -43,7 +43,7 @@
 #include <serial.h>
 #include <linux/stddef.h>
 #include <asm/byteorder.h>
-#if (CONFIG_COMMANDS & CFG_CMD_NET)
+#if defined(CONFIG_CMD_NET)
 #include <net.h>
 #endif
 
@@ -109,10 +109,10 @@ int do_printenv(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[]){
 			}
 		}
 
-#if defined(CFG_ENV_IS_IN_NVRAM) || \
-	defined(CFG_ENV_IS_IN_EEPROM) || \
-	((CONFIG_COMMANDS & (CFG_CMD_ENV|CFG_CMD_FLASH)) == (CFG_CMD_ENV|CFG_CMD_FLASH)) || \
-    ((CONFIG_COMMANDS & (CFG_CMD_ENV|CFG_CMD_NAND)) == (CFG_CMD_ENV|CFG_CMD_NAND))
+#if defined(CFG_ENV_IS_IN_NVRAM)  ||\
+    defined(CFG_ENV_IS_IN_EEPROM) ||\
+    (defined(CONFIG_CMD_ENV) && defined(CONFIG_CMD_FLASH)) ||\
+    (defined(CONFIG_CMD_ENV) && defined(CONFIG_CMD_NAND))
 		printf("\nEnvironment size: %d/%d bytes\n\n", i, ENV_SIZE);
 #else
 		printf("\nEnvironment size: %d bytes\n\n", i);
@@ -146,7 +146,7 @@ int do_printenv(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[]){
 			break;
 		}
 		if(k < 0){
-			printf("## Error: \"%s\" not defined\n", name);
+			printf_err("'%s' not defined\n", name);
 			rcode++;
 		}
 	}
@@ -202,7 +202,7 @@ int _do_setenv(int flag, int argc, char *argv[]){
 
 		if(console != -1){
 			if(argc < 3){ /* Cannot delete it! */
-				printf("## Error: can't delete \"%s\"\n", name);
+				printf_err("can't delete '%s'\n", name);
 				return(1);
 			}
 
@@ -232,8 +232,8 @@ int _do_setenv(int flag, int argc, char *argv[]){
 			}
 
 			if(i == N_BAUDRATES){
-				printf("## Error: baudrate %d bps is not supported,\n", baudrate);
-				printf("          choose one from the list:\n\n");
+				printf_err("baudrate %d bps is not supported,\n"
+					   "          choose one from the list:\n\n", baudrate);
 				for(i = 0; i < N_BAUDRATES; ++i){
 					printf("- %7d bps%s\n", baudrate_table[i], baudrate_table[i] == gd->baudrate ? " [current]" : "");
 				}
@@ -314,7 +314,7 @@ int _do_setenv(int flag, int argc, char *argv[]){
 	}
 
 	if(len > (&env_data[ENV_SIZE] - env)){
-		printf("## Error: environment overflow, \"%s\" deleted\n", name);
+		printf_err("environment overflow, '%s' deleted\n", name);
 		return(1);
 	}
 
@@ -380,12 +380,12 @@ int _do_setenv(int flag, int argc, char *argv[]){
 		return(0);
 	}
 
-#if (CONFIG_COMMANDS & CFG_CMD_NET)
+#if defined(CONFIG_CMD_NET)
 	if(strcmp(argv[1], "bootfile") == 0){
 		copy_filename(BootFile, argv[2], sizeof(BootFile));
 		return(0);
 	}
-#endif	/* CFG_CMD_NET */
+#endif /* CONFIG_CMD_NET */
 
 	return(0);
 }
@@ -397,15 +397,7 @@ void setenv(char *varname, char *varvalue){
 
 int do_setenv(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[]){
 	if(argc < 2){
-#ifdef CFG_LONGHELP
-		if(cmdtp->help != NULL){
-			printf("Usage:\n%s %s\n", cmdtp->name, cmdtp->help);
-		} else {
-			printf("Usage:\n%s %s\n", cmdtp->name, cmdtp->usage);
-		}
-#else
-		printf("Usage:\n%s %s\n", cmdtp->name, cmdtp->usage);
-#endif
+		print_cmd_help(cmdtp);
 		return(1);
 	}
 
@@ -416,7 +408,7 @@ int do_setenv(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[]){
  * Prompt for environment variable
  */
 
-#if (CONFIG_COMMANDS & CFG_CMD_ASKENV)
+#if defined(CONFIG_CMD_ASKENV)
 int do_askenv( cmd_tbl_t *cmdtp, int flag, int argc, char *argv[]){
 	extern char console_buffer[CFG_CBSIZE];
 	char message[CFG_CBSIZE];
@@ -430,29 +422,13 @@ int do_askenv( cmd_tbl_t *cmdtp, int flag, int argc, char *argv[]){
 	local_args[3] = NULL;
 
 	if(argc < 2){
-#ifdef CFG_LONGHELP
-		if(cmdtp->help != NULL){
-			printf("Usage:\n%s %s\n", cmdtp->name, cmdtp->help);
-		} else {
-			printf("Usage:\n%s %s\n", cmdtp->name, cmdtp->usage);
-		}
-#else
-		printf("Usage:\n%s %s\n", cmdtp->name, cmdtp->usage);
-#endif
+		print_cmd_help(cmdtp);
 		return(1);
 	}
 	/* Check the syntax */
 	switch(argc){
 		case 1:
-#ifdef CFG_LONGHELP
-		if(cmdtp->help != NULL){
-			printf("Usage:\n%s %s\n", cmdtp->name, cmdtp->help);
-		} else {
-			printf("Usage:\n%s %s\n", cmdtp->name, cmdtp->usage);
-		}
-#else
-		printf("Usage:\n%s %s\n", cmdtp->name, cmdtp->usage);
-#endif
+		print_cmd_help(cmdtp);
 		return(1);
 
 		case 2: /* askenv envname */
@@ -506,7 +482,7 @@ int do_askenv( cmd_tbl_t *cmdtp, int flag, int argc, char *argv[]){
 	/* Continue calling setenv code */
 	return(_do_setenv(flag, len, local_args));
 }
-#endif	/* CFG_CMD_ASKENV */
+#endif /* CONFIG_CMD_ASKENV */
 
 /************************************************************************
  * Look up variable from environment,
@@ -533,6 +509,7 @@ char *getenv(char *name){
 	return(NULL);
 }
 
+#if 0
 int getenv_r(char *name, char *buf, unsigned len){
 	int i, nxt;
 
@@ -560,12 +537,12 @@ int getenv_r(char *name, char *buf, unsigned len){
 
 	return(-1);
 }
+#endif
 
-#if defined(CFG_ENV_IS_IN_NVRAM) || defined(CFG_ENV_IS_IN_EEPROM) || \
-    ((CONFIG_COMMANDS & (CFG_CMD_ENV|CFG_CMD_FLASH)) == \
-      (CFG_CMD_ENV|CFG_CMD_FLASH)) || \
-    ((CONFIG_COMMANDS & (CFG_CMD_ENV|CFG_CMD_NAND)) == \
-      (CFG_CMD_ENV|CFG_CMD_NAND))
+#if defined(CFG_ENV_IS_IN_NVRAM)  ||\
+    defined(CFG_ENV_IS_IN_EEPROM) ||\
+    (defined(CONFIG_CMD_ENV) && defined(CONFIG_CMD_FLASH)) ||\
+    (defined(CONFIG_CMD_ENV) && defined(CONFIG_CMD_NAND))
 int do_saveenv(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[]){
 	extern char * env_name_spec;
 
@@ -607,17 +584,14 @@ U_BOOT_CMD(setenv, CFG_MAXARGS, 0, do_setenv, "set environment variables\n",
 	"setenv name\n"
 	"\t- delete environment variable 'name'\n");
 
-#if defined(CFG_ENV_IS_IN_NVRAM) || defined(CFG_ENV_IS_IN_EEPROM) || \
-    ((CONFIG_COMMANDS & (CFG_CMD_ENV|CFG_CMD_FLASH)) == \
-      (CFG_CMD_ENV|CFG_CMD_FLASH)) || \
-    ((CONFIG_COMMANDS & (CFG_CMD_ENV|CFG_CMD_NAND)) == \
-      (CFG_CMD_ENV|CFG_CMD_NAND))
+#if defined(CFG_ENV_IS_IN_NVRAM)  ||\
+    defined(CFG_ENV_IS_IN_EEPROM) ||\
+    (defined(CONFIG_CMD_ENV) && defined(CONFIG_CMD_FLASH)) ||\
+    (defined(CONFIG_CMD_ENV) && defined(CONFIG_CMD_NAND))
 U_BOOT_CMD(saveenv, 1, 0, do_saveenv, "save environment variables to FLASH\n", NULL);
+#endif
 
-#endif	/* CFG_CMD_ENV */
-
-#if (CONFIG_COMMANDS & CFG_CMD_ASKENV)
-
+#if defined(CONFIG_CMD_ASKENV)
 U_BOOT_CMD(
 		askenv, CFG_MAXARGS, 1, do_askenv,
 		"get environment variables from stdin\n",
@@ -631,9 +605,9 @@ U_BOOT_CMD(
 		"    - display 'message' string and get environment variable 'name'"
 		"from stdin (max 'size' chars)\n"
 );
-#endif	/* CFG_CMD_ASKENV */
+#endif /* CONFIG_CMD_ASKENV */
 
-#if (CONFIG_COMMANDS & CFG_CMD_RUN)
+#if defined(CONFIG_CMD_RUN)
 int do_run(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[]);
 U_BOOT_CMD(run, CFG_MAXARGS, 1, do_run, "run commands in an environment variable\n", "var [...]\n\t- run the commands in the environment variable(s) 'var'\n");
-#endif  /* CFG_CMD_RUN */
+#endif /* CONFIG_CMD_RUN */

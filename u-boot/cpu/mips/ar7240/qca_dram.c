@@ -49,7 +49,7 @@ u32 qca_dram_size(void)
 
 #ifndef CONFIG_SKIP_LOWLEVEL_INIT
 	return ((i < max_i) ?
-			(i * QCA_DDR_SIZE_INCREMENT) : QCA_DRAM_MAX_SIZE_VAL);
+		(i * QCA_DDR_SIZE_INCREMENT) : QCA_DRAM_MAX_SIZE_VAL);
 #else
 	/*
 	 * TODO:
@@ -59,7 +59,7 @@ u32 qca_dram_size(void)
 	 * For now just return 1 MB smaller size
 	 */
 	return ((i < max_i) ?
-			(i * QCA_DDR_SIZE_INCREMENT) : QCA_DRAM_MAX_SIZE_VAL) - 1024 * 1024;
+		(i * QCA_DDR_SIZE_INCREMENT) : QCA_DRAM_MAX_SIZE_VAL) - 1024 * 1024;
 #endif
 }
 
@@ -79,7 +79,8 @@ u32 qca_dram_type(void)
 	u32 dram_type;
 
 	dram_type = ((qca_soc_reg_read(QCA_RST_BOOTSTRAP_REG)
-				 & QCA_RST_BOOTSTRAP_MEM_TYPE_MASK) >> QCA_RST_BOOTSTRAP_MEM_TYPE_SHIFT);
+		      & QCA_RST_BOOTSTRAP_MEM_TYPE_MASK)
+		     >> QCA_RST_BOOTSTRAP_MEM_TYPE_SHIFT);
 
 	switch (dram_type) {
 	case QCA_RST_BOOTSTRAP_MEM_TYPE_SDR_VAL:
@@ -110,7 +111,7 @@ u32 qca_dram_ddr_width(void)
 	return 16;
 	#else
 	if (qca_soc_reg_read(QCA_RST_BOOTSTRAP_REG)
-		& QCA_RST_BOOTSTRAP_DDR_WIDTH_32_MASK)
+	    & QCA_RST_BOOTSTRAP_DDR_WIDTH_32_MASK)
 		return 32;
 
 	return 16;
@@ -129,7 +130,7 @@ u32 qca_dram_cas_lat(void)
 	u32 reg;
 
 	reg = (qca_soc_reg_read(QCA_DDR_CFG_REG) & QCA_DDR_CFG_CAS_3LSB_MASK)
-		  >> QCA_DDR_CFG_CAS_3LSB_SHIFT;
+	      >> QCA_DDR_CFG_CAS_3LSB_SHIFT;
 
 	if (qca_soc_reg_read(QCA_DDR_CFG_REG) & QCA_DDR_CFG_CAS_MSB_MASK)
 		reg = reg + 8;
@@ -137,7 +138,7 @@ u32 qca_dram_cas_lat(void)
 	/* CAS_LATENCY value in DDR_CONFIG register == 2 * MEM_CAS */
 	return reg / 2;
 #else
-	return CONFIG_BOARD_DRAM_CAS_LATENCY
+	return CONFIG_BOARD_DRAM_CAS_LATENCY;
 #endif
 }
 
@@ -149,7 +150,7 @@ u32 qca_dram_trcd_lat(void)
 	u32 reg;
 
 	reg = (qca_soc_reg_read(QCA_DDR_CFG_REG) & QCA_DDR_CFG_TRCD_MASK)
-		  >> QCA_DDR_CFG_TRCD_SHIFT;
+	      >> QCA_DDR_CFG_TRCD_SHIFT;
 
 	return reg / 2;
 }
@@ -162,7 +163,7 @@ u32 qca_dram_trp_lat(void)
 	u32 reg;
 
 	reg = (qca_soc_reg_read(QCA_DDR_CFG_REG) & QCA_DDR_CFG_TRP_MASK)
-		  >> QCA_DDR_CFG_TRP_SHIFT;
+	      >> QCA_DDR_CFG_TRP_SHIFT;
 
 	return reg / 2;
 }
@@ -175,7 +176,7 @@ u32 qca_dram_tras_lat(void)
 	u32 reg;
 
 	reg = (qca_soc_reg_read(QCA_DDR_CFG_REG) & QCA_DDR_CFG_TRAS_MASK)
-		  >> QCA_DDR_CFG_TRAS_SHIFT;
+	      >> QCA_DDR_CFG_TRAS_SHIFT;
 
 	return reg / 2;
 }
@@ -185,13 +186,13 @@ u32 qca_dram_tras_lat(void)
  * DQS delay tap controller tune related functions
  * ===============================================
  */
-#define DQS_DELAY_TAP_DEFAULT_VAL		8
+#define DQS_DELAY_TAP_DEFAULT_VAL	8
 
 #if (SOC_TYPE & QCA_AR933X_SOC) |\
-	(SOC_TYPE & QCA_AR934X_SOC)
-	#define DQS_DELAY_TAP_MAX_VAL		62
+    (SOC_TYPE & QCA_AR934X_SOC)
+	#define DQS_DELAY_TAP_MAX_VAL	62
 #else
-	#define DQS_DELAY_TAP_MAX_VAL		63
+	#define DQS_DELAY_TAP_MAX_VAL	63
 #endif
 
 /*
@@ -200,7 +201,7 @@ u32 qca_dram_tras_lat(void)
 static void qca_ddr_tap_save(u32 tap, u32 ddr_width)
 {
 #if (SOC_TYPE & QCA_AR933X_SOC) |\
-	(SOC_TYPE & QCA_AR934X_SOC)
+    (SOC_TYPE & QCA_AR934X_SOC)
 	u32 tap_h;
 
 	/* It seems that AR93xx SoCs have two delay chains */
@@ -235,8 +236,8 @@ static void qca_ddr_tap_save(u32 tap, u32 ddr_width)
 #if (SOC_TYPE & QCA_AR933X_SOC)
 
 	#define DQS_DELAY_TAP_PATTERN_OFFSET	0x2000
-	#define DQS_DELAY_TAP_PATTERN_SIZE		0x1000
-	#define DQS_DELAY_TAP_TEST_LOOPS		2
+	#define DQS_DELAY_TAP_PATTERN_SIZE	0x1000
+	#define DQS_DELAY_TAP_TEST_LOOPS	2
 
 /*
  * Prepare pattern for further tests
@@ -290,7 +291,7 @@ static void qca_ddr_tap_tune(u32 ddr_width)
 	tap_lo = 0;
 
 	addr = (void *)KSEG1ADDR(DQS_DELAY_TAP_PATTERN_OFFSET
-							 + DQS_DELAY_TAP_PATTERN_SIZE);
+				 + DQS_DELAY_TAP_PATTERN_SIZE);
 
 	/*
 	 * Idea here is to test all possible tap values, one by one,
@@ -399,8 +400,8 @@ static void qca_ddr_tap_tune(u32 ddr_width)
 
 	/* How many test loops per tested tap value */
 	qca_soc_reg_write(QCA_DDR_PERF_COMP_ADDR_1_REG,
-					  (DQS_DELAY_TAP_TEST_LOOPS
-					   << QCA_DDR_PERF_COMP_ADDR_1_TEST_CNT_SHIFT));
+			  (DQS_DELAY_TAP_TEST_LOOPS
+			   << QCA_DDR_PERF_COMP_ADDR_1_TEST_CNT_SHIFT));
 
 	/*
 	 * Unknown magic value, original comment:
@@ -429,7 +430,7 @@ static void qca_ddr_tap_tune(u32 ddr_width)
 
 		/* Check how many tests failed */
 		fail = (reg & QCA_DDR_BIST_STATUS_FAIL_CNT_MASK)
-			   >> QCA_DDR_BIST_STATUS_FAIL_CNT_SHIFT;
+		       >> QCA_DDR_BIST_STATUS_FAIL_CNT_SHIFT;
 
 		if (fail == 0) {
 			if (!got_lo) {
@@ -477,44 +478,44 @@ static void qca_ddr_tap_tune(u32 ddr_width)
 #define DDRx_tMRD_ns	10
 #define DDRx_tRAS_ns	40
 #define DDRx_tRCD_ns	15
-#define DDRx_tRP_ns		15
+#define DDRx_tRP_ns	15
 #define DDRx_tRRD_ns	10
-#define DDRx_tWR_ns		15
+#define DDRx_tWR_ns	15
 #define DDRx_tWTR_ns	10
 
 #define DDR1_tRFC_ns	75
 #define DDR2_tRFC_ns	120
 
 #define DDR2_tFAW_ns	50
-#define DDR2_tWL_ns		5
+#define DDR2_tWL_ns	5
 
 #define DDR_addit_lat	0
 #define DDR_burst_len	8
 
 /* All above values are safe for clocks not lower than below values */
-#define DDR1_timing_clk_max		400
-#define DDR2_timing_clk_max		533
+#define DDR1_timing_clk_max	400
+#define DDR2_timing_clk_max	533
 
 /* Maximum timing values, based on register fields sizes */
-#define MAX_tFAW		BITS(0, 6)
-#define MAX_tMRD		BITS(0, 4)
-#define MAX_tRAS		BITS(0, 5)
-#define MAX_tRCD		BITS(0, 4)
-#define MAX_tRFC		BITS(0, 6)
-#define MAX_tRP			BITS(0, 4)
-#define MAX_tRRD		BITS(0, 4)
-#define MAX_tRTP		BITS(0, 4)
-#define MAX_tRTW		BITS(0, 5)
-#define MAX_tWL			BITS(0, 4)
-#define MAX_tWR			BITS(0, 4)
-#define MAX_tWTR		BITS(0, 5)
+#define MAX_tFAW	BITS(0, 6)
+#define MAX_tMRD	BITS(0, 4)
+#define MAX_tRAS	BITS(0, 5)
+#define MAX_tRCD	BITS(0, 4)
+#define MAX_tRFC	BITS(0, 6)
+#define MAX_tRP		BITS(0, 4)
+#define MAX_tRRD	BITS(0, 4)
+#define MAX_tRTP	BITS(0, 4)
+#define MAX_tRTW	BITS(0, 5)
+#define MAX_tWL		BITS(0, 4)
+#define MAX_tWR		BITS(0, 4)
+#define MAX_tWTR	BITS(0, 5)
 
 /*
  * Setup DDR_CONFIG register
  */
 static inline void qca_dram_set_ddr_cfg(u32 mem_cas,
-										u32 ddr_clk,
-										u32 mem_type)
+					u32 ddr_clk,
+					u32 mem_type)
 {
 #ifndef CONFIG_QCA_DDR_CFG_REG_VAL
 	u32 reg = 0;
@@ -609,9 +610,9 @@ static inline void qca_dram_set_ddr_cfg(u32 mem_cas,
  * Setup DDR_CONFIG2 register
  */
 static inline void qca_dram_set_ddr_cfg2(u32 mem_cas,
-										 u32 ddr_clk,
-										 u32 mem_type,
-										 u32 ddr_width)
+					 u32 ddr_clk,
+					 u32 mem_type,
+					 u32 ddr_width)
 {
 #ifndef CONFIG_QCA_DDR_CFG2_REG_VAL
 	u32 reg = 0;
@@ -625,7 +626,7 @@ static inline void qca_dram_set_ddr_cfg2(u32 mem_cas,
 	/* Gate open latency = 2 * MEM_CAS */
 	tmp = 2 * mem_cas;
 	tmp = (tmp << QCA_DDR_CFG2_GATE_OPEN_LATENCY_SHIFT)
-		  & QCA_DDR_CFG2_GATE_OPEN_LATENCY_MASK;
+	      & QCA_DDR_CFG2_GATE_OPEN_LATENCY_MASK;
 	reg = reg & ~QCA_DDR_CFG2_GATE_OPEN_LATENCY_MASK;
 	reg = reg | tmp;
 
@@ -638,7 +639,8 @@ static inline void qca_dram_set_ddr_cfg2(u32 mem_cas,
 			tmp = tmp + 2;
 	} else {
 		/* tWTR = 2 + BL + (2 * tWTR/tCK) */
-		tmp = 2 + DDR_burst_len + (((DDRx_tWTR_ns * ddr_clk) + 500) / 1000);
+		tmp = 2 + DDR_burst_len
+			+ (((DDRx_tWTR_ns * ddr_clk) + 500) / 1000);
 	}
 
 	if (tmp > MAX_tWTR)
@@ -686,9 +688,9 @@ static inline void qca_dram_set_ddr_cfg2(u32 mem_cas,
 
 	/* Always use burst length = 8 and type: sequential */
 	tmp = (DDR_burst_len << QCA_DDR_CFG2_BURST_LEN_SHIFT)
-		  & QCA_DDR_CFG2_BURST_LEN_MASK;
+	      & QCA_DDR_CFG2_BURST_LEN_MASK;
 	reg = reg & ~(QCA_DDR_CFG2_BURST_LEN_MASK
-				  | QCA_DDR_CFG2_BURST_TYPE_MASK);
+		      | QCA_DDR_CFG2_BURST_TYPE_MASK);
 	reg = reg | tmp;
 
 	qca_soc_reg_write(QCA_DDR_CFG2_REG, reg);
@@ -701,7 +703,7 @@ static inline void qca_dram_set_ddr_cfg2(u32 mem_cas,
  * Setup DDR2_CONFIG register (only for DDR2)
  */
 static inline void qca_dram_set_ddr2_cfg(u32 mem_cas,
-										 u32 ddr_clk)
+					 u32 ddr_clk)
 {
 #ifndef CONFIG_QCA_DDR_DDR2_CFG_REG_VAL
 	u32 reg = 0;
@@ -718,7 +720,7 @@ static inline void qca_dram_set_ddr2_cfg(u32 mem_cas,
 		tmp = MAX_tFAW;
 
 	tmp = (tmp << QCA_DDR_DDR2_CFG_DDR2_TFAW_SHIFT)
-		  & QCA_DDR_DDR2_CFG_DDR2_TFAW_MASK;
+	      & QCA_DDR_DDR2_CFG_DDR2_TFAW_MASK;
 	reg = reg & ~QCA_DDR_DDR2_CFG_DDR2_TFAW_MASK;
 	reg = reg | tmp;
 
@@ -732,13 +734,14 @@ static inline void qca_dram_set_ddr2_cfg(u32 mem_cas,
 	#endif
 
 	tmp = (tmp << QCA_DDR_DDR2_CFG_DDR2_TWL_SHIFT)
-		  & QCA_DDR_DDR2_CFG_DDR2_TWL_MASK;
+	      & QCA_DDR_DDR2_CFG_DDR2_TWL_MASK;
 	reg = reg & ~QCA_DDR_DDR2_CFG_DDR2_TWL_MASK;
 	reg = reg | tmp;
 
 	qca_soc_reg_write(QCA_DDR_DDR2_CFG_REG, reg);
 #else
-	qca_soc_reg_write(QCA_DDR_DDR2_CFG_REG, CONFIG_QCA_DDR_DDR2_CFG_REG_VAL);
+	qca_soc_reg_write(QCA_DDR_DDR2_CFG_REG,
+			  CONFIG_QCA_DDR_DDR2_CFG_REG_VAL);
 #endif
 }
 
@@ -757,12 +760,12 @@ static inline void qca_dram_set_en_refresh(void)
 	 */
 	if (qca_xtal_is_40mhz()) {
 		qca_soc_reg_write(QCA_DDR_REFRESH_REG,
-						  QCA_DDR_REFRESH_EN_MASK
-						  | (312 << QCA_DDR_REFRESH_PERIOD_SHIFT));
+				  QCA_DDR_REFRESH_EN_MASK
+				  | (312 << QCA_DDR_REFRESH_PERIOD_SHIFT));
 	} else {
 		qca_soc_reg_write(QCA_DDR_REFRESH_REG,
-						  QCA_DDR_REFRESH_EN_MASK
-						  | (195 << QCA_DDR_REFRESH_PERIOD_SHIFT));
+				  QCA_DDR_REFRESH_EN_MASK
+				  | (195 << QCA_DDR_REFRESH_PERIOD_SHIFT));
 	}
 }
 
@@ -817,12 +820,12 @@ void qca_dram_init(void)
 	if (ddr_width == 32) {
 		/* For 32-bit clear HALF_WIDTH and set VEC = 0xFF */
 		qca_soc_reg_read_clear(QCA_DDR_CTRL_CFG_REG,
-							   QCA_DDR_CTRL_CFG_HALF_WIDTH_MASK);
+				       QCA_DDR_CTRL_CFG_HALF_WIDTH_MASK);
 
 		qca_soc_reg_write(QCA_DDR_RD_DATA_THIS_CYCLE_REG, 0xFF);
 	} else {
 		qca_soc_reg_read_set(QCA_DDR_CTRL_CFG_REG,
-							 QCA_DDR_CTRL_CFG_HALF_WIDTH_MASK);
+				     QCA_DDR_CTRL_CFG_HALF_WIDTH_MASK);
 
 		qca_soc_reg_write(QCA_DDR_RD_DATA_THIS_CYCLE_REG, 0xFFFF);
 	}
@@ -830,6 +833,14 @@ void qca_dram_init(void)
 	/* If DDR_CLK < 2 * AHB_CLK, set DDR FSM wait control to 0xA24 */
 	if (ddr_clk < (2 * ahb_clk))
 		qca_soc_reg_write(QCA_DDR_FSM_WAIT_CTRL_REG, 0xA24);
+
+	/* If CPU clock < AHB clock, set SRAM REQ ACK */
+	if (cpu_clk < ahb_clk)
+		qca_soc_reg_read_set(QCA_DDR_CTRL_CFG_REG,
+				     QCA_DDR_CTRL_CFG_SRAM_REQ_ACK_MASK);
+	else
+		qca_soc_reg_read_clear(QCA_DDR_CTRL_CFG_REG,
+				       QCA_DDR_CTRL_CFG_SRAM_REQ_ACK_MASK);
 #endif
 
 	/*
@@ -841,21 +852,21 @@ void qca_dram_init(void)
 #if (SOC_TYPE & QCA_AR933X_SOC)
 	reg = qca_soc_reg_read(QCA_PLL_CPU_PLL_DITHER_FRAC_REG);
 	reg = (reg & QCA_PLL_CPU_PLL_DITHER_FRAC_NFRAC_MIN_MASK)
-		  >> QCA_PLL_CPU_PLL_DITHER_FRAC_NFRAC_MIN_SHIFT;
+	      >> QCA_PLL_CPU_PLL_DITHER_FRAC_NFRAC_MIN_SHIFT;
 
 	if (reg)
 		tmp = 1;
 #else
 	reg = qca_soc_reg_read(QCA_PLL_CPU_PLL_DITHER_REG);
 	reg = (reg & QCA_PLL_CPU_PLL_DITHER_NFRAC_MIN_MASK)
-		  >> QCA_PLL_CPU_PLL_DITHER_NFRAC_MIN_SHIFT;
+	      >> QCA_PLL_CPU_PLL_DITHER_NFRAC_MIN_SHIFT;
 
 	if (reg)
 		tmp = 1;
 
 	reg = qca_soc_reg_read(QCA_PLL_DDR_PLL_DITHER_REG);
 	reg = (reg & QCA_PLL_DDR_PLL_DITHER_NFRAC_MIN_MASK)
-		  >> QCA_PLL_DDR_PLL_DITHER_NFRAC_MIN_SHIFT;
+	      >> QCA_PLL_DDR_PLL_DITHER_NFRAC_MIN_SHIFT;
 
 	if (reg)
 		tmp = 1;
@@ -866,14 +877,14 @@ void qca_dram_init(void)
 		qca_soc_reg_read_set(QCA_DDR_TAP_CTRL_3_REG, (1 << 8));
 #else
 		qca_soc_reg_read_set(QCA_DDR_CTRL_CFG_REG,
-							 QCA_DDR_CTRL_CFG_CPU_DDR_SYNC_MASK);
+				     QCA_DDR_CTRL_CFG_CPU_DDR_SYNC_MASK);
 #endif
 	} else {
 #if (SOC_TYPE & QCA_AR933X_SOC)
 		qca_soc_reg_read_clear(QCA_DDR_TAP_CTRL_3_REG, (1 << 8));
 #else
 		qca_soc_reg_read_clear(QCA_DDR_CTRL_CFG_REG,
-							   QCA_DDR_CTRL_CFG_CPU_DDR_SYNC_MASK);
+				       QCA_DDR_CTRL_CFG_CPU_DDR_SYNC_MASK);
 #endif
 	}
 
@@ -888,17 +899,20 @@ void qca_dram_init(void)
 	}
 
 	/* Enable DDR2 */
-	if (mem_type == RAM_MEMORY_TYPE_DDR2) {
 #if (SOC_TYPE & QCA_AR933X_SOC)
+	if (mem_type == RAM_MEMORY_TYPE_DDR2)
 		qca_dram_set_ddr2_cfg(cas_lat, tmp_clk);
 #else
-		qca_soc_reg_write(QCA_DDR_CTRL_CFG_REG,
-						  QCA_DDR_CTRL_CFG_PAD_DDR2_SEL_MASK);
+	if (mem_type == RAM_MEMORY_TYPE_DDR2) {
+		qca_soc_reg_read_set(QCA_DDR_CTRL_CFG_REG,
+				     QCA_DDR_CTRL_CFG_PAD_DDR2_SEL_MASK);
 
 		qca_dram_set_ddr2_cfg(cas_lat, tmp_clk);
-#endif
-
+	} else {
+		qca_soc_reg_read_clear(QCA_DDR_CTRL_CFG_REG,
+				       QCA_DDR_CTRL_CFG_PAD_DDR2_SEL_MASK);
 	}
+#endif
 
 	/* Setup DDR timing related registers */
 	qca_dram_set_ddr_cfg(cas_lat, tmp_clk, mem_type);
@@ -930,10 +944,12 @@ void qca_dram_init(void)
 
 		/* OCD calibration, target EMR (nDQS disable, weak strength) */
 		qca_dram_set_emr(
-			_ddr_sdram_emr_val(0, 1, DDR_SDRAM_EMR_OCD_DEFAULT_VAL, 1, 0, 0));
+			_ddr_sdram_emr_val(0, 1, DDR_SDRAM_EMR_OCD_DEFAULT_VAL,
+					   1, 0, 0));
 
 		qca_dram_set_emr(
-			_ddr_sdram_emr_val(0, 1, DDR_SDRAM_EMR_OCD_EXIT_VAL, 1, 0, 0));
+			_ddr_sdram_emr_val(0, 1, DDR_SDRAM_EMR_OCD_EXIT_VAL,
+					   1, 0, 0));
 	} else {
 		/* Setup target MR */
 		qca_dram_set_mr(_ddr_sdram_mr_val(0, cas_lat, 0, 0));

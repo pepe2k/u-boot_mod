@@ -44,4 +44,4 @@
 #define Hit_Set_Virtual_SI	0x1e
 #define Hit_Set_Virtual_SD	0x1f
 
-#endif	/* __ASM_MIPS_CACHEOPS_H */
+#endif /* __ASM_MIPS_CACHEOPS_H */

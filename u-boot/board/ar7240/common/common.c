@@ -16,15 +16,11 @@
 #include <asm/addrspace.h>
 #include <soc/qca_soc_common.h>
 
-#ifndef CONFIG_BOARD_CUSTOM_STRING
-	#define CONFIG_BOARD_CUSTOM_STRING	"Unknown/OEM"
-#endif
-
-#define ALIGN_SIZE		"8"
+#define ALIGN_SIZE	"8"
 
 DECLARE_GLOBAL_DATA_PTR;
 
-static u32 mac_is_not_valid = 1;
+static u32 mac_is_not_valid = 0;
 
 /*
  * Put QCA SOC name, version and revision in buffer
@@ -94,7 +90,8 @@ void print_board_info(void)
 	char buffer[24];
 
 	/* Board name */
-	printf("%" ALIGN_SIZE "s %s\n", "BOARD:", CONFIG_BOARD_CUSTOM_STRING);
+	printf("%" ALIGN_SIZE "s %s\n",
+	       "BOARD:", MK_STR(CONFIG_BOARD_CUSTOM_STRING));
 
 	/* SOC name, version and revision */
 	qca_soc_name_rev(buffer);
@@ -127,9 +124,9 @@ void print_board_info(void)
 
 	/* tCL-tRCD-tRP-tRAS latency */
 	printf("CL%d-%d-%d-%d\n", qca_dram_cas_lat(),
-							  qca_dram_trcd_lat(),
-							  qca_dram_trp_lat(),
-							  qca_dram_tras_lat());
+				  qca_dram_trcd_lat(),
+				  qca_dram_trp_lat(),
+				  qca_dram_tras_lat());
 
 	/* SPI NOR FLASH sizes and types */
 	printf("%" ALIGN_SIZE "s ", "FLASH:");
@@ -159,34 +156,30 @@ void print_board_info(void)
 	#if (SOC_TYPE & QCA_AR934X_SOC) |\
 		(SOC_TYPE & QCA_QCA955X_SOC)
 	if (!qca_pcie0_in_ep_mode()) {
-		if (qca_pcie_dev_info(0, &vid, &did)) {
+		if (qca_pcie_dev_info(0, &vid, &did))
 			printf("%04X:%04X", vid, did);
-		} else {
+		else
 			puts("no device");
-		}
 	} else {
 		puts("EP mode");
 	}
 	#elif (SOC_TYPE & QCA_QCA953X_SOC)
-	if (qca_pcie_dev_info(0, &vid, &did)) {
+	if (qca_pcie_dev_info(0, &vid, &did))
 		printf("%04X:%04X", vid, did);
-	} else {
+	else
 		puts("no device");
-	}
 	#endif
 
 	#if (SOC_TYPE & QCA_QCA956X_SOC)
-	if (qca_pcie_dev_info(1, &vid, &did)) {
+	if (qca_pcie_dev_info(1, &vid, &did))
 		printf("%04X:%04X", vid, did);
-	} else {
+	else
 		puts("no device");
-	}
 	#elif (SOC_TYPE & QCA_QCA955X_SOC)
-	if (qca_pcie_dev_info(1, &vid, &did)) {
+	if (qca_pcie_dev_info(1, &vid, &did))
 		printf(", %04X:%04X", vid, did);
-	} else {
+	else
 		puts(", no device");
-	}
 	#endif
 
 	puts("\n");
@@ -197,11 +190,10 @@ void print_board_info(void)
 		bd->bi_enetaddr[0],bd->bi_enetaddr[1], bd->bi_enetaddr[2],
 		bd->bi_enetaddr[3], bd->bi_enetaddr[4], bd->bi_enetaddr[5]);
 
-	if (mac_is_not_valid) {
+	if (mac_is_not_valid)
 		puts(" (fixed)\n");
-	} else {
+	else
 		puts("\n");
-	}
 
 	/* System clocks */
 	printf("%" ALIGN_SIZE "s CPU/RAM/AHB/SPI/REF\n", "CLOCKS:");
@@ -238,13 +230,13 @@ void macaddr_init(u8 *mac_addr)
 	 * U/L bit == 0 -> Burned-In-Address (BIA) MAC address
 	 */
 	if (CHECK_BIT((buffer[0] & 0xFF), 0) != 0 ||
-		CHECK_BIT((buffer[0] & 0xFF), 1) != 0) {
+	    CHECK_BIT((buffer[0] & 0xFF), 1) != 0) {
 		memcpy(buffer, fixed_mac, 6);
-	} else {
-		mac_is_not_valid = 0;
+		mac_is_not_valid = 1;
 	}
 #else
 	memcpy(buffer, fixed_mac, 6);
+	mac_is_not_valid = 1;
 #endif
 
 	memcpy(mac_addr, buffer, 6);

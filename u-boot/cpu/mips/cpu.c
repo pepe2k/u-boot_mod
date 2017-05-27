@@ -19,7 +19,8 @@ int do_reset(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 	full_reset();
 
 	/* After full chip reset we should not reach next step... */
-	printf("\n## Error: RESET FAILED!\n");
+	puts("\n");
+	printf_err("RESET FAILED!\n");
 
 	return 0;
 }

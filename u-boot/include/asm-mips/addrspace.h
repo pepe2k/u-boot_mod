@@ -45,7 +45,7 @@
  */
 #ifndef __ASSEMBLY__
 #define UNCACHED_SDRAM(a)   KSEG1ADDR((a))
-#endif	/* __ASSEMBLY__ */
+#endif /* __ASSEMBLY__ */
 /*
  * Map an address to a certain kernel segment
  */

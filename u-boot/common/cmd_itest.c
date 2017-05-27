@@ -32,7 +32,125 @@
 #include <config.h>
 #include <command.h>
 
-#if (CONFIG_COMMANDS & CFG_CMD_ITEST)
+#if defined(CONFIG_CMD_ITEST) ||\
+    defined(CONFIG_CMD_SETEXPR)
+
+extern int cmd_get_data_size(char* arg, int default_size);
+
+static ulong evalexp(char *s, int w)
+{
+	ulong *p;
+	ulong l = 0;
+
+	/*
+	 * If the parameter starts with a * then
+	 * assume is a pointer to the value we want
+	 */
+	if (s[0] == '*') {
+		p = (ulong *)simple_strtoul(&s[1], NULL, 16);
+		l = *p;
+	} else {
+		l = simple_strtoul(s, NULL, 16);
+	}
+
+	if (w < 4)
+		return l & ((1 << (w * 8)) - 1);
+	else
+		return l;
+}
+#endif /* CONFIG_CMD_ITEST || CONFIG_CMD_SETEXPR */
+
+#if defined(CONFIG_CMD_SETEXPR)
+int do_setexpr(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
+{
+	ulong a, b, value;
+	char buf[16];
+	int w;
+
+	/*
+	 * We take 3, 5, or 6 arguments:
+	 * 3 : setexpr name value
+	 * 5 : setexpr name val1 op val2
+	 *     setexpr name [g]sub r s
+	 * 6 : setexpr name [g]sub r s t
+	 */
+
+	/* > 6 already tested by max command args */
+	if ((argc < 3) || (argc == 4)) {
+		print_cmd_help(cmdtp);
+		return 1;
+	}
+
+	w = cmd_get_data_size(argv[0], 4);
+
+	a = evalexp(argv[2], w);
+
+	/* Plain assignment: "setexpr name value" */
+	if (argc == 3) {
+		sprintf(buf, "%X", a);
+		setenv(argv[1], buf);
+		return 0;
+	}
+
+	/* Standard operators: "setexpr name val1 op val2" */
+	if (argc != 5) {
+		print_cmd_help(cmdtp);
+		return 1;
+	}
+
+	if (strlen(argv[3]) != 1) {
+		print_cmd_help(cmdtp);
+		return 1;
+	}
+
+	b = evalexp(argv[4], w);
+
+	switch (argv[3][0]) {
+	case '|':
+		value = a | b;
+		break;
+	case '&':
+		value = a & b;
+		break;
+	case '+':
+		value = a + b;
+		break;
+	case '^':
+		value = a ^ b;
+		break;
+	case '-':
+		value = a - b;
+		break;
+	case '*':
+		value = a * b;
+		break;
+	case '/':
+		value = a / b;
+		break;
+	case '%':
+		value = a % b;
+		break;
+	default:
+		printf_err("invalid op\n");
+		return 1;
+	}
+
+	sprintf(buf, "%X", value);
+	setenv(argv[1], buf);
+
+	return 0;
+}
+
+U_BOOT_CMD(setexpr, 6, 0, do_setexpr, "set env variable as the result of eval expr\n",
+	"[.b, .w, .l] name [*]val1 <op> [*]val2\n"
+	"\t- set env variable 'name' to the result of the evaluated\n"
+	"\t  expr specified by <op> (can be &, |, ^, +, -, *, /, %)\n"
+	"\t  size argument is only meaningful if val1 and/or val2 are memory addresses (*)\n"
+	"setexpr[.b, .w, .l] name [*]val\n"
+	"\t- load a 'val' into 'name' variable");
+#endif /* CONFIG_CMD_SETEXPR */
+
+#if defined(CONFIG_CMD_ITEST)
 
 #define EQ	0
 #define NE	1
@@ -42,8 +160,8 @@
 #define GE	5
 
 struct op_tbl_s {
-	char	*op;		/* operator string */
-	int	opcode;		/* internal representation of opcode */
+	char *op;	/* Operator string */
+	int opcode;	/* Internal representation of opcode */
 };
 
 typedef struct op_tbl_s op_tbl_t;
@@ -66,31 +184,17 @@ op_tbl_t op_table [] = {
 
 #define op_tbl_size (sizeof(op_table)/sizeof(op_table[0]))
 
-extern int cmd_get_data_size(char* arg, int default_size);
 
-static long evalexp(char *s, int w)
+static char *evalstr(char *s)
 {
-	long l, *p;
-
-	/* if the parameter starts with a * then assume is a pointer to the value we want */
-	if (s[0] == '*') {
-		p = (long *)simple_strtoul(&s[1], NULL, 16);
-		l = *p;
-	} else {
-		l = simple_strtoul(s, NULL, 16);
-	}
-
-	return (l & ((1 << (w * 8)) - 1));
-}
-
-static char * evalstr(char *s)
-{
-	/* if the parameter starts with a * then assume a string pointer else its a literal */
-	if (s[0] == '*') {
+	/*
+	 * If the parameter starts with a * then
+	 *assume a string pointer else its a literal
+	 */
+	if (s[0] == '*')
 		return (char *)simple_strtoul(&s[1], NULL, 16);
-	} else {
+	else
 		return s;
-	}
 }
 
 static int stringcomp(char *s, char *t, int op)
@@ -101,40 +205,55 @@ static int stringcomp(char *s, char *t, int op)
 	l = evalstr(s);
 	r = evalstr(t);
 
-	/* we'll do a compare based on the length of the shortest string */
+	/* We'll do a compare based on the length of the shortest string */
 	n = min(strlen(l), strlen(r));
 
 	p = strncmp(l, r, n);
+
 	switch (op) {
-	case EQ: return (p == 0);
-	case NE: return (p != 0);
-	case LT: return (p < 0);
-	case GT: return (p > 0);
-	case LE: return (p <= 0);
-	case GE: return (p >= 0);
+	case EQ:
+		return p == 0;
+	case NE:
+		return p != 0;
+	case LT:
+		return p < 0;
+	case GT:
+		return p > 0;
+	case LE:
+		return p <= 0;
+	case GE:
+		return p >= 0;
 	}
-	return (0);
+
+	return 0;
 }
 
-static int arithcomp (char *s, char *t, int op, int w)
+static int arithcomp(char *s, char *t, int op, int w)
 {
-	long l, r;
+	ulong l, r;
 
-	l = evalexp (s, w);
-	r = evalexp (t, w);
+	l = evalexp(s, w);
+	r = evalexp(t, w);
 
 	switch (op) {
-	case EQ: return (l == r);
-	case NE: return (l != r);
-	case LT: return (l < r);
-	case GT: return (l > r);
-	case LE: return (l <= r);
-	case GE: return (l >= r);
+	case EQ:
+		return l == r;
+	case NE:
+		return l != r;
+	case LT:
+		return l < r;
+	case GT:
+		return l > r;
+	case LE:
+		return l <= r;
+	case GE:
+		return l >= r;
 	}
-	return (0);
+
+	return 0;
 }
 
-int binary_test (char *op, char *arg1, char *arg2, int w)
+static int binary_test(char *op, char *arg1, char *arg2, int w)
 {
 	int len, i;
 	op_tbl_t *optp;
@@ -142,42 +261,35 @@ int binary_test (char *op, char *arg1, char *arg2, int w)
 	len = strlen(op);
 
 	for (optp = (op_tbl_t *)&op_table, i = 0;
-	     i < op_tbl_size;
-	     optp++, i++) {
-
-		if ((strncmp (op, optp->op, len) == 0) && (len == strlen (optp->op))) {
-			if (w == 0) {
-				return (stringcomp(arg1, arg2, optp->opcode));
-			} else {
-				return (arithcomp (arg1, arg2, optp->opcode, w));
-			}
+	     i < op_tbl_size; optp++, i++) {
+		if ((strncmp(op, optp->op, len) == 0) &&
+		    (len == strlen(optp->op))) {
+			if (w == 0)
+				return stringcomp(arg1, arg2, optp->opcode);
+			else
+				return arithcomp(arg1, arg2, optp->opcode, w);
 		}
 	}
 
-	printf("## Error: unknown operator '%s'\n", op);
-	return 0;	/* op code not found */
+	printf_err("unknown operator '%s'\n", op);
+
+	/* Op code not found */
+	return 0;
 }
 
-/* command line interface to the shell test */
-int do_itest ( cmd_tbl_t *cmdtp, int flag, int argc, char *argv[] )
+/* Command line interface to the shell test */
+int do_itest(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 {
-	int	value, w;
+	int value, w;
 
 	/* Validate arguments */
-	if ((argc != 4)){
-#ifdef CFG_LONGHELP
-		if(cmdtp->help != NULL){
-			printf("Usage:\n%s %s\n", cmdtp->name, cmdtp->help);
-		} else {
-			printf("Usage:\n%s %s\n", cmdtp->name, cmdtp->usage);
-		}
-#else
-		printf("Usage:\n%s %s\n", cmdtp->name, cmdtp->usage);
-#endif
+	if ((argc != 4)) {
+		print_cmd_help(cmdtp);
 		return 1;
 	}
 
-	/* Check for a data width specification.
+	/*
+	 * Check for a data width specification.
 	 * Defaults to long (4) if no specification.
 	 * Uses -2 as 'width' for .s (string) so as not to upset existing code
 	 */
@@ -185,14 +297,14 @@ int do_itest ( cmd_tbl_t *cmdtp, int flag, int argc, char *argv[] )
 	case 1:
 	case 2:
 	case 4:
-		value = binary_test (argv[2], argv[1], argv[3], w);
+		value = binary_test(argv[2], argv[1], argv[3], w);
 		break;
 	case -2:
-		value = binary_test (argv[2], argv[1], argv[3], 0);
+		value = binary_test(argv[2], argv[1], argv[3], 0);
 		break;
 	case -1:
 	default:
-		puts("## Error: invalid data width specifier\n");
+		printf_err("invalid data width specifier\n");
 		value = 0;
 		break;
 	}
@@ -200,5 +312,6 @@ int do_itest ( cmd_tbl_t *cmdtp, int flag, int argc, char *argv[] )
 	return !value;
 }
 
-U_BOOT_CMD(itest, 4, 0, do_itest, "return true/false on integer compare\n", "[.b, .w, .l, .s] [*]value1 <op> [*]value2\n");
-#endif	/* CONFIG_COMMANDS & CFG_CMD_ITEST */
+U_BOOT_CMD(itest, 4, 0, do_itest, "return true/false on int compare\n",
+	"[.b, .w, .l, .s] [*]val1 <op> [*]val2\n");
+#endif /* CONFIG_CMD_ITEST */

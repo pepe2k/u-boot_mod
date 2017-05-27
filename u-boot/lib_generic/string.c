@@ -20,6 +20,16 @@
 #include <linux/ctype.h>
 #include <malloc.h>
 
+#define __HAVE_ARCH_STRNICMP
+#define __HAVE_ARCH_STRRCHR
+#define __HAVE_ARCH_STRSPN
+#define __HAVE_ARCH_STRPBRK
+#define __HAVE_ARCH_STRTOK
+#define __HAVE_ARCH_STRSEP
+#define __HAVE_ARCH_STRSWAB
+#define __HAVE_ARCH_BCOPY
+#define __HAVE_ARCH_MEMSCAN
+#define __HAVE_ARCH_MEMCHR
 
 #ifndef __HAVE_ARCH_STRNICMP
 /**
@@ -53,8 +63,6 @@ int strnicmp(const char *s1, const char *s2, size_t len)
 	return (int)c1 - (int)c2;
 }
 #endif
-
-char * ___strtok;
 
 #ifndef __HAVE_ARCH_STRCPY
 /**
@@ -308,6 +316,7 @@ char * strpbrk(const char * cs,const char * ct)
 #endif
 
 #ifndef __HAVE_ARCH_STRTOK
+char * ___strtok;
 /**
  * strtok - Split a string into tokens
  * @s: The string to be searched

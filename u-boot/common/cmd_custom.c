@@ -1,22 +1,11 @@
 /*
- * (C) Copyright 2013
- * Piotr Dymacz (pepe2k), Real Time Systems, piotr@realtimesystems.pl, pepe2k@gmail.com
- * Custom commands for U-Boot 1.1.4 modification.
+ * Copyright (C) 2016 Piotr Dymacz <piotr@dymacz.pl>
  *
- * See file CREDITS for list of people who contributed to U-Boot project.
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * SPDX-License-Identifier: GPL-2.0
+ */
+
+/*
+ * Custom/miscellaneous commands
  */
 
 #include <common.h>
@@ -29,7 +18,8 @@
 extern void qca_sys_clocks(u32 *cpu_clk, u32 *ddr_clk, u32 *ahb_clk,
 						   u32 *spi_clk, u32 *ref_clk);
 
-#if defined(OFFSET_MAC_ADDRESS)
+#if defined(CONFIG_CMD_MAC) &&\
+    defined(OFFSET_MAC_ADDRESS)
 /*
  * Show MAC address(es)
  */
@@ -77,15 +67,7 @@ int do_set_mac(cmd_tbl_t * cmdtp, int flag, int argc, char *argv[]){
 
 	// allow only 2 arg (command name + mac), second argument length should be 17 (xx:xx:xx:xx:xx:xx)
 	if(argc != 2 || strlen(argv[1]) != 17){
-#if defined(CFG_LONGHELP)
-		if(cmdtp->help != NULL){
-			printf("Usage:\n%s %s\n", cmdtp->name, cmdtp->help);
-		} else {
-			printf("Usage:\n%s %s\n", cmdtp->name, cmdtp->usage);
-		}
-#else
-		printf("Usage:\n%s %s\n", cmdtp->name, cmdtp->usage);
-#endif
+		print_cmd_help(cmdtp);
 		return(1);
 	}
 
@@ -97,15 +79,15 @@ int do_set_mac(cmd_tbl_t * cmdtp, int flag, int argc, char *argv[]){
 	}
 
 	if(j != 5){
-		puts("## Error: given MAC address has wrong format (should be: xx:xx:xx:xx:xx:xx)!\n");
+		printf_err("given MAC address has wrong format (should be: xx:xx:xx:xx:xx:xx)!\n");
 		return(1);
 	}
 
 	// backup block with MAC address from flash in RAM
-	data_pointer = (unsigned char *)WEBFAILSAFE_UPLOAD_RAM_ADDRESS;
+	data_pointer = (unsigned char *)CONFIG_LOADADDR;
 
 	if(!data_pointer){
-		puts("## Error: couldn't allocate RAM for data block backup!\n");
+		printf_err("couldn't allocate RAM for data block backup!\n");
 		return(1);
 	}
 
@@ -123,7 +105,7 @@ int do_set_mac(cmd_tbl_t * cmdtp, int flag, int argc, char *argv[]){
 			"erase 0x%lX +0x%lX; cp.b 0x%lX 0x%lX 0x%lX",
 			CFG_FLASH_BASE + OFFSET_MAC_DATA_BLOCK,
 			OFFSET_MAC_DATA_BLOCK_LENGTH,
-			WEBFAILSAFE_UPLOAD_RAM_ADDRESS,
+			CONFIG_LOADADDR,
 			CFG_FLASH_BASE + OFFSET_MAC_DATA_BLOCK,
 			OFFSET_MAC_DATA_BLOCK_LENGTH);
 
@@ -134,7 +116,7 @@ int do_set_mac(cmd_tbl_t * cmdtp, int flag, int argc, char *argv[]){
 
 U_BOOT_CMD(setmac, 2, 0, do_set_mac, "save new MAC address in FLASH\n", "xx:xx:xx:xx:xx:xx\n\t- change MAC address stored in FLASH (xx - value in hex format)\n");
 
-#endif /* if defined(OFFSET_MAC_ADDRESS) */
+#endif /* if defined(CONFIG_CMD_MAC) && defined(OFFSET_MAC_ADDRESS) */
 
 #if defined(OFFSET_ROUTER_MODEL)
 /*
@@ -198,7 +180,7 @@ U_BOOT_CMD(startsc, 1, 0, do_start_sc, "start serial console\n", NULL);
 
 #endif /* if defined(CONFIG_NETCONSOLE) */
 
-#if !defined(CONFIG_FOR_DLINK_DIR505_A1)
+#if defined(CONFIG_CMD_ENV) && defined(CONFIG_CMD_FLASH)
 /*
  * Erase environment sector
  */
@@ -248,4 +230,84 @@ int do_default_env(cmd_tbl_t * cmdtp, int flag, int argc, char *argv[]){
 }
 
 U_BOOT_CMD(defenv, 1, 0, do_default_env, "reset environment variables to their default values\n", NULL);
-#endif /* if !defined(CONFIG_FOR_DLINK_DIR505_A1) */
+#endif /* if CONFIG_CMD_ENV && CONFIG_CMD_FLASH */
+
+/*
+ * Allows to get reset button status:
+ * - returns 0 if button is pressed
+ * - returns 1 if button is not pressed
+ *
+ * Logic here must be inverted as in shell
+ * 0 means success/true
+ *
+ * This allows to use it in scripts, ex.:
+ * if button; then ...; else ...; fi ...
+ *
+ * or, simply:
+ * button && echo pressed!
+ * button || echo not pressed!
+ */
+#if defined(CONFIG_CMD_BUTTON)
+int do_button(cmd_tbl_t * cmdtp, int flag, int argc, char *argv[])
+{
+#if defined(CFG_HUSH_PARSER)
+	return !reset_button_status();
+#else
+	int btn = reset_button_status();
+
+	if (btn)
+		puts("Reset button is pressed\n");
+	else
+		puts("Reset button is not pressed\n");
+
+	return !btn;
+#endif
+}
+
+U_BOOT_CMD(button, 1, 1, do_button,
+	"get reset button status\n", NULL);
+#endif /* CONFIG_CMD_BUTTON */
+
+/*
+ * Allows to delay execution
+ * for a given/specified time (in ms)
+ */
+#if defined(CONFIG_CMD_SLEEP)
+int do_sleep(cmd_tbl_t * cmdtp, int flag, int argc, char *argv[])
+{
+	if (argc != 2) {
+		print_cmd_help(cmdtp);
+		return 1;
+	}
+
+	milisecdelay(simple_strtoul(argv[1], NULL, 10));
+
+	return 0;
+}
+
+U_BOOT_CMD(sleep, 2, 1, do_sleep,
+	"sleep for specified time\n", "ms\n"
+	"\t- sleep for 'ms' number of milliseconds\n");
+#endif /* CONFIG_CMD_SLEEP */
+
+/*
+ * Turns on/off LED/s
+ */
+#if defined(CONFIG_CMD_LED)
+int do_ledon(cmd_tbl_t * cmdtp, int flag, int argc, char *argv[])
+{
+	all_led_on();
+
+	return 0;
+}
+
+int do_ledoff(cmd_tbl_t * cmdtp, int flag, int argc, char *argv[])
+{
+	all_led_off();
+
+	return 0;
+}
+
+U_BOOT_CMD(ledon,  1, 1, do_ledon,  "turn LED/s on\n", NULL);
+U_BOOT_CMD(ledoff, 1, 1, do_ledoff, "turn LED/s off\n", NULL);
+#endif /* CONFIG_CMD_LED */

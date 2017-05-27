@@ -14,18 +14,20 @@
 flash_info_t flash_info[CFG_MAX_FLASH_BANKS];
 
 /* List of supported and known SPI NOR FLASH chips */
-static char VENDOR_ATMEL[]    = "Atmel";
-static char VENDOR_EON[]      = "EON";
-static char VENDOR_MACRONIX[] = "Macronix";
-static char VENDOR_MICRON[]   = "Micron";
-static char VENDOR_SPANSION[] = "Spansion";
-static char VENDOR_WINBOND[]  = "Winbond";
+static char VENDOR_ATMEL[]      = "Atmel";
+static char VENDOR_EON[]        = "EON";
+static char VENDOR_GIGADEVICE[] = "GigaDevice";
+static char VENDOR_MACRONIX[]   = "Macronix";
+static char VENDOR_MICRON[]     = "Micron";
+static char VENDOR_SPANSION[]   = "Spansion";
+static char VENDOR_WINBOND[]    = "Winbond";
 
 const spi_nor_ids_info_t spi_nor_ids[] = {
 	/* 4 MiB */
 	{ "AT25DF321", 0x1F4700, SIZE_4MiB, SIZE_64KiB, 256, SPI_FLASH_CMD_ES_64KB },
 	{ "EN25Q32",   0x1C3016, SIZE_4MiB, SIZE_64KiB, 256, SPI_FLASH_CMD_ES_64KB },
 	{ "EN25F32",   0x1C3116, SIZE_4MiB, SIZE_64KiB, 256, SPI_FLASH_CMD_ES_64KB },
+	{ "GD25Q32",   0xC84016, SIZE_4MiB, SIZE_64KiB, 256, SPI_FLASH_CMD_ES_64KB },
 	{ "MX25L320",  0xC22016, SIZE_4MiB, SIZE_64KiB, 256, SPI_FLASH_CMD_ES_64KB },
 	{ "M25P32",    0x202016, SIZE_4MiB, SIZE_64KiB, 256, SPI_FLASH_CMD_ES_64KB },
 	{ "S25FL032P", 0x010215, SIZE_4MiB, SIZE_64KiB, 256, SPI_FLASH_CMD_ES_64KB },
@@ -34,6 +36,7 @@ const spi_nor_ids_info_t spi_nor_ids[] = {
 	/* 8 MiB */
 	{ "AT25DF641", 0x1F4800, SIZE_8MiB, SIZE_64KiB, 256, SPI_FLASH_CMD_ES_64KB },
 	{ "EN25Q64",   0x1C3017, SIZE_8MiB, SIZE_64KiB, 256, SPI_FLASH_CMD_ES_64KB },
+	{ "GD25Q64",   0xC84017, SIZE_8MiB, SIZE_64KiB, 256, SPI_FLASH_CMD_ES_64KB },
 	{ "MX25L64",   0xC22017, SIZE_8MiB, SIZE_64KiB, 256, SPI_FLASH_CMD_ES_64KB },
 	{ "MX25L64",   0xC22617, SIZE_8MiB, SIZE_64KiB, 256, SPI_FLASH_CMD_ES_64KB },
 	{ "M25P64",    0x202017, SIZE_8MiB, SIZE_64KiB, 256, SPI_FLASH_CMD_ES_64KB },
@@ -41,11 +44,13 @@ const spi_nor_ids_info_t spi_nor_ids[] = {
 	{ "W25Q64",    0xEF4017, SIZE_8MiB, SIZE_64KiB, 256, SPI_FLASH_CMD_ES_64KB },
 
 	/* 16 MiB */
+	{ "GD25Q128",  0xC84018, SIZE_16MiB, SIZE_64KiB, 256, SPI_FLASH_CMD_ES_64KB },
 	{ "MX25L128",  0xC22018, SIZE_16MiB, SIZE_64KiB, 256, SPI_FLASH_CMD_ES_64KB },
 	{ "MX25L128",  0xC22618, SIZE_16MiB, SIZE_64KiB, 256, SPI_FLASH_CMD_ES_64KB },
 	{ "N25Q128",   0x20BA18, SIZE_16MiB, SIZE_64KiB, 256, SPI_FLASH_CMD_ES_64KB },
 	{ "S25FL127S", 0x012018, SIZE_16MiB, SIZE_64KiB, 256, SPI_FLASH_CMD_ES_64KB },
 	{ "W25Q128",   0xEF4018, SIZE_16MiB, SIZE_64KiB, 256, SPI_FLASH_CMD_ES_64KB },
+	{ "W25Q128FW", 0xEF6018, SIZE_16MiB, SIZE_64KiB, 256, SPI_FLASH_CMD_ES_64KB },
 };
 
 const u32 spi_nor_ids_count = sizeof(spi_nor_ids) / sizeof(spi_nor_ids_info_t);
@@ -58,6 +63,9 @@ const char *flash_manuf_name(u32 jedec_id)
 		break;
 	case FLASH_VENDOR_JEDEC_EON:
 		return VENDOR_EON;
+		break;
+	case FLASH_VENDOR_JEDEC_GIGADEVICE:
+		return VENDOR_GIGADEVICE;
 		break;
 	case FLASH_VENDOR_JEDEC_MACRONIX:
 		return VENDOR_MACRONIX;
@@ -150,28 +158,28 @@ void flash_perror(int err)
 	case ERR_OK:
 		break;
 	case ERR_TIMOUT:
-		puts("## Error: timeout writing to FLASH\n");
+		printf_err("timeout writing to FLASH\n");
 		break;
 	case ERR_NOT_ERASED:
-		puts("## Error: FLASH not erased\n");
+		printf_err("FLASH not erased\n");
 		break;
 	case ERR_INVAL:
-		puts("## Error: outside available FLASH\n");
+		printf_err("outside available FLASH\n");
 		break;
 	case ERR_ALIGN:
-		puts("## Error: start and/or end address not on sector boundary\n");
+		printf_err("start and/or end address not on sector boundary\n");
 		break;
 	case ERR_UNKNOWN_FLASH_VENDOR:
-		puts("## Error: unknown vendor of FLASH\n");
+		printf_err("unknown vendor of FLASH\n");
 		break;
 	case ERR_UNKNOWN_FLASH_TYPE:
-		puts("## Error: unknown type of FLASH\n");
+		printf_err("unknown type of FLASH\n");
 		break;
 	case ERR_PROG_ERROR:
-		puts("## Error: general FLASH programming error\n");
+		printf_err("general FLASH programming error\n");
 		break;
 	default:
-		printf("## Error: %s[%d] FIXME: rc=%d\n", __FILE__, __LINE__, err);
+		printf_err("%s[%d] FIXME: rc=%d\n", __FILE__, __LINE__, err);
 		break;
 	}
 }

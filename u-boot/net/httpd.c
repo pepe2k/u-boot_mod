@@ -8,6 +8,8 @@
 #include <command.h>
 #include <net.h>
 #include <asm/byteorder.h>
+
+#if defined(CONFIG_CMD_HTTPD)
 #include "httpd.h"
 
 #include "../httpd/uipopt.h"
@@ -58,17 +60,17 @@ int do_http_upgrade(const ulong size, const int upgrade_type){
 		if(size % info->sector_size != 0){
 			printf("Backup: copying %d bytes of data from FLASH at address 0x%X to RAM at address 0x%X...\n",
 					backup_size - size,
-					WEBFAILSAFE_UPLOAD_UBOOT_ADDRESS + size,
-					WEBFAILSAFE_UPLOAD_RAM_ADDRESS + size);
+					CFG_FLASH_BASE + size,
+					CONFIG_LOADADDR + size);
 
 			sprintf(buf,
 					"cp.b 0x%lX 0x%lX 0x%lX",
-					WEBFAILSAFE_UPLOAD_UBOOT_ADDRESS + size,
-					WEBFAILSAFE_UPLOAD_RAM_ADDRESS + size,
+					CFG_FLASH_BASE + size,
+					CONFIG_LOADADDR + size,
 					backup_size - size);
 
 			if(!run_command(buf, 0)){
-				printf("## Error: couldn't backup FLASH data before U-Boot image upgrade!\n");
+				printf_err("couldn't backup FLASH data before U-Boot image upgrade!\n");
 				return(-1);
 			}
 		}
@@ -76,10 +78,10 @@ int do_http_upgrade(const ulong size, const int upgrade_type){
 		printf("\n\n****************************\n*     U-BOOT UPGRADING     *\n* DO NOT POWER OFF DEVICE! *\n****************************\n\n");
 		sprintf(buf,
 				"erase 0x%lX +0x%lX; cp.b 0x%lX 0x%lX 0x%lX",
-				WEBFAILSAFE_UPLOAD_UBOOT_ADDRESS,
+				CFG_FLASH_BASE,
 				backup_size,
-				WEBFAILSAFE_UPLOAD_RAM_ADDRESS,
-				WEBFAILSAFE_UPLOAD_UBOOT_ADDRESS,
+				CONFIG_LOADADDR,
+				CFG_FLASH_BASE,
 				backup_size);
 
 	} else if(upgrade_type == WEBFAILSAFE_UPGRADE_TYPE_FIRMWARE){
@@ -89,7 +91,7 @@ int do_http_upgrade(const ulong size, const int upgrade_type){
 				"erase 0x%lX +0x%lX; cp.b 0x%lX 0x%lX 0x%lX",
 				WEBFAILSAFE_UPLOAD_KERNEL_ADDRESS,
 				size,
-				WEBFAILSAFE_UPLOAD_RAM_ADDRESS,
+				CONFIG_LOADADDR,
 				WEBFAILSAFE_UPLOAD_KERNEL_ADDRESS,
 				size);
 
@@ -103,16 +105,16 @@ int do_http_upgrade(const ulong size, const int upgrade_type){
 				"erase 0x%lX +0x%lX; cp.b 0x%lX 0x%lX 0x%lX",
 				WEBFAILSAFE_UPLOAD_ART_ADDRESS,
 				WEBFAILSAFE_UPLOAD_ART_SIZE_IN_BYTES,
-				WEBFAILSAFE_UPLOAD_RAM_ADDRESS,
+				CONFIG_LOADADDR,
 				WEBFAILSAFE_UPLOAD_ART_ADDRESS,
 				WEBFAILSAFE_UPLOAD_ART_SIZE_IN_BYTES);
 #else
 		sprintf(buf,
 				"erase 0x%lX +0x%lX; cp.b 0x%lX 0x%lX 0x%lX",
-				WEBFAILSAFE_UPLOAD_UBOOT_ADDRESS + (info->size - WEBFAILSAFE_UPLOAD_ART_SIZE_IN_BYTES),
+				CFG_FLASH_BASE + (info->size - WEBFAILSAFE_UPLOAD_ART_SIZE_IN_BYTES),
 				WEBFAILSAFE_UPLOAD_ART_SIZE_IN_BYTES,
-				WEBFAILSAFE_UPLOAD_RAM_ADDRESS,
-				WEBFAILSAFE_UPLOAD_UBOOT_ADDRESS + (info->size - WEBFAILSAFE_UPLOAD_ART_SIZE_IN_BYTES),
+				CONFIG_LOADADDR,
+				CFG_FLASH_BASE + (info->size - WEBFAILSAFE_UPLOAD_ART_SIZE_IN_BYTES),
 				WEBFAILSAFE_UPLOAD_ART_SIZE_IN_BYTES);
 #endif
 
@@ -158,7 +160,7 @@ int do_http_progress(const int state){
 			break;
 
 		case WEBFAILSAFE_PROGRESS_UPGRADE_FAILED:
-			printf("## Error: HTTP ugrade failed!\n\n");
+			printf_err("HTTP ugrade failed!\n\n");
 
 			// blink LED fast for 4 sec
 			for(i = 0; i < 80; ++i){
@@ -176,3 +178,4 @@ int do_http_progress(const int state){
 
 	return(0);
 }
+#endif /* CONFIG_CMD_HTTPD */

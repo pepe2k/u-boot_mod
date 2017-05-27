@@ -1,24 +1,8 @@
 /*
- * (C) Copyright 2000-2006
- * Wolfgang Denk, DENX Software Engineering, wd@denx.de.
+ * Copyright (C) 2016 Piotr Dymacz <piotr@dymacz.pl>
+ * Copyright (C) 2000-2006 Wolfgang Denk, DENX Software Engineering, <wd@denx.de>
  *
- * See file CREDITS for list of people who contributed to this
- * project.
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License as
- * published by the Free Software Foundation; either version 2 of
- * the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
- * MA 02111-1307 USA
+ * SPDX-License-Identifier: GPL-2.0
  */
 
 /*
@@ -27,174 +11,58 @@
 #include <common.h>
 #include <command.h>
 #include <image.h>
+#include <tplink_image.h>
 #include <malloc.h>
 #include <LzmaWrapper.h>
 #include <environment.h>
 #include <asm/byteorder.h>
 #include <tinf.h>
 
-DECLARE_GLOBAL_DATA_PTR;
-
 #ifdef CFG_HUSH_PARSER
 #include <hush.h>
 #endif
 
-/* cmd_boot.c */
-extern int do_reset(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[]);
-
-/* net.c */
-extern void eth_halt(void);
-
-#if (CONFIG_COMMANDS & CFG_CMD_DATE) || defined(CONFIG_TIMESTAMP)
+#if defined(CONFIG_CMD_DATE) || defined(CONFIG_TIMESTAMP)
 #include <rtc.h>
 #endif
 
-/*
- *  Continue booting an OS image; caller already has:
- *  - copied image header to global variable `header'
- *  - checked header magic number, checksums (both header & image),
- *  - verified image architecture (PPC) and type (KERNEL or MULTI),
- *  - loaded (first part of) image to header load address,
- *  - disabled interrupts.
- */
+DECLARE_GLOBAL_DATA_PTR;
+
 extern void do_bootm_linux(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[]);
+extern int  do_reset(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[]);
+extern void eth_halt(void);
 
-#ifdef CONFIG_SILENT_CONSOLE
-static void fixup_silent_linux(void);
-#endif
-
-#if (CONFIG_COMMANDS & CFG_CMD_IMI)
-static int image_info(unsigned long addr);
-#endif
-
+/* U-Boot type image header */
 image_header_t header;
-ulong load_addr = CFG_LOAD_ADDR; /* default load address */
 
-#ifdef CONFIG_TPLINK_IMAGE_HEADER
-void fake_image_header(image_header_t *hdr, tplink_image_header_t *tpl_hdr){
-	memset(hdr, 0, sizeof(image_header_t));
+/* Default load address */
+u32 load_addr = CFG_LOAD_ADDR;
 
-	/* Build new header */
-	hdr->ih_magic	= htonl(IH_MAGIC);
-	hdr->ih_hcrc	= 0;
-	hdr->ih_time	= 0;
-	hdr->ih_size	= htonl(tpl_hdr->kernelLen);
-	hdr->ih_load	= htonl(tpl_hdr->kernelTextAddr);
-	hdr->ih_ep		= htonl(tpl_hdr->kernelEntryPoint);
-	hdr->ih_dcrc	= 0;
-	hdr->ih_os		= IH_OS_LINUX;
-	hdr->ih_arch	= IH_CPU_MIPS;
-	hdr->ih_type	= IH_TYPE_KERNEL;
-	hdr->ih_comp	= IH_COMP_LZMA;
+#define TPL_ALIGN_SIZE		21
+#define UBOOT_ALIGN_SIZE	14
 
-	strncpy((char *)hdr->ih_name, (char *)tpl_hdr->signiture_1, IH_NMLEN);
-}
-#endif /* CONFIG_TPLINK_IMAGE_HEADER */
-
-int do_bootm(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[]){
-	ulong addr, data, len;
-	uint unc_len = CFG_BOOTM_LEN;
-	int i;
-	image_header_t *hdr = &header;
-#ifdef CONFIG_TPLINK_IMAGE_HEADER
-	tplink_image_header_t *fileTag;
-#endif
-
-	if(argc < 2){
-		addr = load_addr;
-	} else {
-		addr = simple_strtoul(argv[1], NULL, 16);
-	}
-
-	printf("Booting image at: 0x%08lX\n", addr);
-
-#ifndef CONFIG_TPLINK_IMAGE_HEADER
-	memmove(&header, (char *)addr, sizeof(image_header_t));
-	print_image_hdr(hdr);
-
-	data = addr + sizeof(image_header_t);
-#else
-	fileTag = (tplink_image_header_t *)addr;
-	print_image_hdr(fileTag);
-
-	fake_image_header(hdr, fileTag);
-
-	data = addr + TAG_LEN;
-#endif /* !CONFIG_TPLINK_IMAGE_HEADER */
-
-	len = ntohl(hdr->ih_size);
-
-	/*
-	 * We have reached the point of no return: we are going to
-	 * overwrite all exception vector code, so we cannot easily
-	 * recover from any failures any more...
-	 */
-#ifdef CONFIG_NETCONSOLE
-	/*
-	* Stop the ethernet stack if NetConsole could have
-	* left it up
-	*/
-	eth_halt();
-#endif
-
-	/* TODO: should we flush caches for kernel? */
-	/*
-	 * Flush everything, restore caches for linux
-	 */
-	//mips_cache_flush();
-	//mips_icache_flush_ix();
-
-	/* XXX - this causes problems when booting from flash */
-	/* dcache_disable(); */
-
-	/*	case IH_COMP_LZMA:*/
-	puts("Uncompressing kernel image... ");
-
-	i = lzma_inflate((unsigned char *)data, len, (unsigned char*)ntohl(hdr->ih_load), (int *)&unc_len);
-
-	if(i != LZMA_RESULT_OK){
-		printf("## Error: LZMA error num: %d\n", i);
-		return(-1);
-	}
-
-	puts("OK!\n");
-
+/*
+ * Clears console variable from command line
+ */
 #ifdef CONFIG_SILENT_CONSOLE
-	fixup_silent_linux();
-#endif
-
-	do_bootm_linux(cmdtp, flag, argc, argv);
-
-#ifdef DEBUG
-	puts("\n## Error: control returned to monitor - resetting...\n");
-	do_reset(cmdtp, flag, argc, argv);
-#endif
-
-	return(1);
-}
-
-U_BOOT_CMD(bootm, 2, 1, do_bootm, "boot application image from memory\n", "[addr]\n"
-"\t- boot application image stored in memory at address 'addr'\n");
-
-#ifdef CONFIG_SILENT_CONSOLE
-static void fixup_silent_linux(){
-	char buf[256], *start, *end;
-	char *cmdline = getenv("bootargs");
+static void fixup_silent_linux(void)
+{
+	char buf[256];
+	char *cmdline, *end, *start;
 
 	/* Only fix cmdline when requested */
-	if(!(gd->flags & GD_FLG_SILENT)){
+	if (!(gd->flags & GD_FLG_SILENT)) {
 		return;
 	}
 
-#ifdef DEBUG
-	printf("before silent fix-up: %s\n", cmdline);
-#endif
+	cmdline = getenv("bootargs");
 
-	if(cmdline){
-		if((start = strstr(cmdline, "console=")) != NULL){
+	if (cmdline) {
+		if ((start = strstr(cmdline, "console=")) != NULL) {
 			end = strchr(start, ' ');
 			strncpy(buf, cmdline, (start - cmdline + 8));
-			if(end){
+
+			if (end) {
 				strcpy(buf + (start - cmdline + 8), end);
 			} else {
 				buf[start - cmdline + 8] = '\0';
@@ -208,275 +76,561 @@ static void fixup_silent_linux(){
 	}
 
 	setenv("bootargs", buf);
-	debug("after silent fix-up: %s\n", buf);
 }
 #endif /* CONFIG_SILENT_CONSOLE */
 
-#ifndef CONFIG_TPLINK_IMAGE_HEADER
-static void print_type(image_header_t *hdr){
-	char *os, *arch, *type, *comp;
+/*
+ * Prints information about TP-Link
+ * firmware format from header
+ */
+static void print_tpl_ih_v1(tplink_image_header_t *hdr)
+{
+	puts("\n");
 
-	switch(hdr->ih_os){
-		case IH_OS_INVALID:
-			os = "Invalid OS";
-			break;
-		case IH_OS_NETBSD:
-			os = "NetBSD";
-			break;
-		case IH_OS_LINUX:
-			os = "Linux";
-			break;
-		case IH_OS_VXWORKS:
-			os = "VxWorks";
-			break;
-		case IH_OS_QNX:
-			os = "QNX";
-			break;
-		case IH_OS_U_BOOT:
-			os = "U-Boot";
-			break;
-		case IH_OS_RTEMS:
-			os = "RTEMS";
-			break;
-		default:
-			os = "Unknown OS";
-			break;
+	/* Image/vendor name */
+	printf("   %-*s ", TPL_ALIGN_SIZE, "Vendor/image name:");
+	printf("%.*s %.*s\n",
+		sizeof(hdr->ih_vendor), hdr->ih_vendor,
+		sizeof(hdr->ih_info), hdr->ih_info);
+
+	/* Version (for vendor firmware only) */
+	if (hdr->ih_fw_ver_hi > 0) {
+		printf("   %-*s ", TPL_ALIGN_SIZE, "Firmware version:");
+		printf("%d.%d.%d\n",
+			ntohl(hdr->ih_fw_ver_hi),
+			ntohl(hdr->ih_fw_ver_mid),
+			ntohl(hdr->ih_fw_ver_lo));
 	}
 
-	switch(hdr->ih_arch){
-		case IH_CPU_INVALID:
-			arch = "Invalid CPU";
-			break;
-		case IH_CPU_ALPHA:
-			arch = "Alpha";
-			break;
-		case IH_CPU_ARM:
-			arch = "ARM";
-			break;
-		case IH_CPU_I386:
-			arch = "Intel x86";
-			break;
-		case IH_CPU_IA64:
-			arch = "IA64";
-			break;
-		case IH_CPU_MIPS:
-			arch = "MIPS";
-			break;
-		case IH_CPU_MIPS64:
-			arch = "MIPS 64 Bit";
-			break;
-		case IH_CPU_PPC:
-			arch = "PowerPC";
-			break;
-		case IH_CPU_S390:
-			arch = "IBM S390";
-			break;
-		case IH_CPU_SH:
-			arch = "SuperH";
-			break;
-		case IH_CPU_SPARC:
-			arch = "SPARC";
-			break;
-		case IH_CPU_SPARC64:
-			arch = "SPARC 64 Bit";
-			break;
-		case IH_CPU_M68K:
-			arch = "M68K";
-			break;
-		case IH_CPU_MICROBLAZE:
-			arch = "Microblaze";
-			break;
-		case IH_CPU_NIOS:
-			arch = "Nios";
-			break;
-		case IH_CPU_NIOS2:
-			arch = "Nios-II";
-			break;
-		default:
-			arch = "Unknown Architecture";
-			break;
-	}
+	/* Hardware id */
+	printf("   %-*s ", TPL_ALIGN_SIZE, "Hardware ID:");
+	printf("0x%X\n", ntohl(hdr->ih_hw_id));
 
-	switch(hdr->ih_type){
-		case IH_TYPE_INVALID:
-			type = "Invalid Image";
-			break;
-		case IH_TYPE_STANDALONE:
-			type = "Standalone Program";
-			break;
-		case IH_TYPE_KERNEL:
-			type = "Kernel Image";
-			break;
-		case IH_TYPE_RAMDISK:
-			type = "RAMDisk Image";
-			break;
-		case IH_TYPE_MULTI:
-			type = "Multi-File Image";
-			break;
-		case IH_TYPE_FIRMWARE:
-			type = "Firmware";
-			break;
-		case IH_TYPE_SCRIPT:
-			type = "Script";
-			break;
-		default:
-			type = "Unknown Image";
-			break;
-	}
+	/* Sizes of firmware parts */
+	printf("   %-*s ", TPL_ALIGN_SIZE, "Whole image size:");
+	print_size(ntohl(hdr->ih_fw_len), " ");
+	printf("(%d bytes)\n", ntohl(hdr->ih_fw_len));
 
-	switch(hdr->ih_comp){
-		case IH_COMP_NONE:
-			comp = "uncompressed";
-			break;
-		case IH_COMP_GZIP:
-			comp = "gzip compressed";
-			break;
-		case IH_COMP_BZIP2:
-			comp = "bzip2 compressed";
-			break;
-		case IH_COMP_LZMA:
-			comp = "lzma compressed";
-			break;
-		default:
-			comp = "unknown compression";
-			break;
-	}
+	printf("   %-*s ", TPL_ALIGN_SIZE, "Kernel size:");
+	print_size(ntohl(hdr->ih_kernel_len), " ");
+	printf("(%d bytes)\n", ntohl(hdr->ih_kernel_len));
 
-	printf("%s %s %s (%s)", arch, os, type, comp);
+	printf("   %-*s ", TPL_ALIGN_SIZE, "Rootfs size:");
+	print_size(ntohl(hdr->ih_rootfs_len), " ");
+	printf("(%d bytes)\n", ntohl(hdr->ih_rootfs_len));
+
+	printf("   %-*s ", TPL_ALIGN_SIZE, "Kernel load address:");
+	printf("0x%08X\n", ntohl(hdr->ih_kernel_load));
+
+	printf("   %-*s ", TPL_ALIGN_SIZE, "Kernel entry point:");
+	printf("0x%08X\n", ntohl(hdr->ih_kernel_ep));
+
+	/* TODO: MD5 sum verify */
+
+	puts("\n");
 }
 
-void print_image_hdr(image_header_t *hdr){
-#if (CONFIG_COMMANDS & CFG_CMD_DATE) || defined(CONFIG_TIMESTAMP)
-	time_t timestamp = (time_t)ntohl(hdr->ih_time);
+/*
+ * Returns image type in text
+ */
+static char *ih_img_type(uint8_t img)
+{
+	switch (img) {
+	case IH_TYPE_KERNEL:
+		return "Kernel";
+	case IH_TYPE_MULTI:
+		return "Multi-File";
+/*
+	case IH_TYPE_INVALID:
+		return "Invalid";
+	case IH_TYPE_STANDALONE:
+		return "Standalone program";
+	case IH_TYPE_RAMDISK:
+		return "RAMDisk";
+	case IH_TYPE_FIRMWARE:
+		return "Firmware";
+	case IH_TYPE_SCRIPT:
+		return "Script";
+*/
+	default:
+		return "unknown";
+	}
+}
+
+/*
+ * Returns architecture type in text
+ */
+static char *ih_arch_type(uint8_t arch)
+{
+	switch (arch) {
+	case IH_CPU_MIPS:
+		return "MIPS";
+/*
+	case IH_CPU_INVALID:
+		return "Invalid CPU";
+	case IH_CPU_ALPHA:
+		return "Alpha";
+	case IH_CPU_ARM:
+		return "ARM";
+	case IH_CPU_I386:
+		return "Intel x86";
+	case IH_CPU_IA64:
+		return "IA64";
+	case IH_CPU_MIPS64:
+		return "MIPS 64-bit";
+	case IH_CPU_PPC:
+		return "PowerPC";
+	case IH_CPU_S390:
+		return "IBM S390";
+	case IH_CPU_SH:
+		return "SuperH";
+	case IH_CPU_SPARC:
+		return "SPARC";
+	case IH_CPU_SPARC64:
+		return "SPARC 64-bit";
+	case IH_CPU_M68K:
+		return "M68K";
+	case IH_CPU_MICROBLAZE:
+		return "Microblaze";
+	case IH_CPU_NIOS:
+		return "Nios";
+	case IH_CPU_NIOS2:
+		return "Nios-II";
+*/
+	default:
+		return "unknown";
+	}
+}
+
+/*
+ * Returns compression type in text
+ */
+static char *ih_comp_type(uint8_t comp)
+{
+	switch (comp) {
+	case IH_COMP_LZMA:
+		return "LZMA";
+/*
+	case IH_COMP_NONE:
+		return "none";
+	case IH_COMP_GZIP:
+		return "GZIP";
+	case IH_COMP_BZIP2:
+		return "BZIP2";
+*/
+	default:
+		return "unknown";
+	}
+}
+
+/*
+ * Returns operating system type in text
+ */
+static char *ih_os_type(uint8_t os)
+{
+	switch (os) {
+	case IH_OS_LINUX:
+		return "Linux";
+/*
+	case IH_OS_INVALID:
+		return "Invalid OS";
+	case IH_OS_NETBSD:
+		return "NetBSD";
+	case IH_OS_VXWORKS:
+		return "VxWorks";
+	case IH_OS_QNX:
+		return "QNX";
+	case IH_OS_U_BOOT:
+		return "U-Boot";
+	case IH_OS_RTEMS:
+		return "RTEMS";
+*/
+	default:
+		return "unknown";
+	}
+}
+
+/*
+ * Prints information about standard
+ * U-Boot image format from header
+ */
+static void print_uboot_ih(image_header_t *hdr)
+{
+	int i;
+	u32 len;
+	u32 *len_ptr;
+#if defined(CONFIG_CMD_DATE) || defined(CONFIG_TIMESTAMP)
 	struct rtc_time tm;
+	time_t timestamp = (time_t)ntohl(hdr->ih_time);
 #endif
 
-	printf("\n   Image name:   %.*s\n", IH_NMLEN, hdr->ih_name);
+	puts("\n");
 
-#if (CONFIG_COMMANDS & CFG_CMD_DATE) || defined(CONFIG_TIMESTAMP)
+	printf("   %-*s ", UBOOT_ALIGN_SIZE, "Image name:");
+	printf("%.*s\n", sizeof(hdr->ih_name), hdr->ih_name);
+
+#if defined(CONFIG_CMD_DATE) || defined(CONFIG_TIMESTAMP)
+	printf("   %-*s ", UBOOT_ALIGN_SIZE, "Build date:");
 	to_tm(timestamp, &tm);
-	printf("   Created:      %4d-%02d-%02d  %2d:%02d:%02d UTC\n", tm.tm_year, tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec);
-#endif	/* CFG_CMD_DATE, CONFIG_TIMESTAMP */
+	printf("%4d-%02d-%02d %02d:%02d:%02d UTC\n",
+		tm.tm_year, tm.tm_mon, tm.tm_mday,
+		tm.tm_hour, tm.tm_min, tm.tm_sec);
+#endif
 
-	puts("   Image type:   ");
-	print_type(hdr);
+	printf("   %-*s ", UBOOT_ALIGN_SIZE, "Architecture:");
+	printf("%s\n", ih_arch_type(hdr->ih_arch));
 
-	printf("\n   Data size:    %d Bytes = ", ntohl(hdr->ih_size));
-	print_size(ntohl(hdr->ih_size), "\n");
+	printf("   %-*s ", UBOOT_ALIGN_SIZE, "OS/image type:");
+	printf("%s %s\n", ih_os_type(hdr->ih_os), ih_img_type(hdr->ih_type));
 
-	printf("   Load address: 0x%08X\n   Entry point:  0x%08X\n", ntohl(hdr->ih_load), ntohl(hdr->ih_ep));
+	printf("   %-*s ", UBOOT_ALIGN_SIZE, "Compression:");
+	printf("%s\n", ih_comp_type(hdr->ih_comp));
 
-	if(hdr->ih_type == IH_TYPE_MULTI){
-		int i;
-		ulong len;
-		ulong *len_ptr = (ulong *)((ulong)hdr + sizeof(image_header_t));
+	printf("   %-*s ", UBOOT_ALIGN_SIZE, "Data size:");
+	print_size(ntohl(hdr->ih_size), " ");
+	printf("(%d bytes)\n", ntohl(hdr->ih_size));
 
-		puts("   Contents:\n");
+	printf("   %-*s ", UBOOT_ALIGN_SIZE, "Load address:");
+	printf("0x%08X\n", ntohl(hdr->ih_load));
 
-		for(i = 0; (len = ntohl(*len_ptr)); ++i, ++len_ptr){
-			printf("      Image %d: %8ld Bytes = ", i, len);
-			print_size(len, "\n");
+	printf("   %-*s ", UBOOT_ALIGN_SIZE, "Entry point:");
+	printf("0x%08X\n", ntohl(hdr->ih_ep));
+
+	if (hdr->ih_type == IH_TYPE_MULTI) {
+		len_ptr = (u32 *)((u32)hdr + sizeof(image_header_t));
+
+		printf("\n   %-*s\n", UBOOT_ALIGN_SIZE, "Multi-File:");
+
+		for (i = 0; (len = ntohl(*len_ptr)); ++i, ++len_ptr) {
+			puts("   > ");
+			print_size(len, " ");
+			printf("(%d bytes)\n", len);
 		}
 	}
 
 	puts("\n");
 }
-#else
-void print_image_hdr(tplink_image_header_t *hdr){
-	printf("\n   Image name:   %.*s %.*s\n", SIG_LEN, hdr->signiture_1, SIG_LEN_2, hdr->signiture_2);
-	  puts("   Image type:   MIPS Linux Kernel Image (lzma compressed)\n");
-	printf("   Data size:    %d Bytes = ", ntohl(hdr->kernelLen));
-	print_size(ntohl(hdr->kernelLen), "\n");
-	printf("   Load address: 0x%08X\n   Entry point:  0x%08X\n\n", ntohl(hdr->kernelTextAddr), ntohl(hdr->kernelEntryPoint));
-}
-#endif /* !CONFIG_TPLINK_IMAGE_HEADER */
 
-#if (CONFIG_COMMANDS & CFG_CMD_BOOTD)
-int do_bootd(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[]){
-	int rcode = 0;
-#ifndef CFG_HUSH_PARSER
-	if(run_command (getenv ("bootcmd"), flag) < 0){
-		rcode = 1;
-	}
-#else
-	if(parse_string_outer(getenv("bootcmd"), FLAG_PARSE_SEMICOLON | FLAG_EXIT_FROM_LOOP) != 0){
-		rcode = 1;
-	}
-#endif
-	return(rcode);
-}
+/*
+ * Verifies U-Boot image data checksum
+ */
+static int ih_data_crc(u32 addr, image_header_t *hdr, int tpl_type, int verify)
+{
+	int ret = 0;
 
-U_BOOT_CMD(boot, 1, 1, do_bootd, "boot default, i.e., run 'bootcmd'\n", NULL);
+	printf("   %-*s ", UBOOT_ALIGN_SIZE, "Data CRC...");
 
-/* keep old command name "bootd" for backward compatibility */
-U_BOOT_CMD(bootd, 1, 1, do_bootd, "boot default, i.e., run 'bootcmd'\n", NULL);
-
-#endif /* CONFIG_COMMANDS & CFG_CMD_BOOTD */
-
-#if (CONFIG_COMMANDS & CFG_CMD_IMI)
-int do_iminfo(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[]){
-	ulong addr;
-	int rcode = 0;
-
-	if (argc == 2){
-		addr = simple_strtoul(argv[1], NULL, 16);
-		return image_info(addr);
-	} else {
-#ifdef CFG_LONGHELP
-		if(cmdtp->help != NULL){
-			printf("Usage:\n%s %s\n", cmdtp->name, cmdtp->help);
+	if (tpl_type == 0 && verify == 1) {
+		if (tinf_crc32((u8 *)addr, ntohl(hdr->ih_size))
+		    != ntohl(hdr->ih_dcrc)) {
+			puts("ERROR\n\n");
+			ret = 1;
 		} else {
-			printf("Usage:\n%s %s\n", cmdtp->name, cmdtp->usage);
+			puts("OK!\n");
 		}
-#else
-		printf("Usage:\n%s %s\n", cmdtp->name, cmdtp->usage);
-#endif
-		return(1);
+	} else {
+		puts("skipped\n");
 	}
 
-	return(rcode);
+	return ret;
 }
 
-static int image_info(ulong addr){
-	ulong data, len, checksum;
-	image_header_t *hdr = &header;
+/*
+ * Verifies U-Boot image header checksum
+ */
+static int ih_header_crc(image_header_t *hdr, int tpl_type)
+{
+	u32 crc;
+	int ret = 0;
 
-	printf("\nChecking image at 0x%08lX...\n", addr);
+	printf("   %-*s ", UBOOT_ALIGN_SIZE, "Header CRC...");
 
-	/* Copy header so we can blank CRC field for re-calculation */
-	memmove(&header, (char *)addr, sizeof(image_header_t));
+	if (tpl_type == 0) {
+		crc = ntohl(hdr->ih_hcrc);
+		hdr->ih_hcrc = 0;
 
-	data = (ulong)&header;
-	len  = sizeof(image_header_t);
+		if (tinf_crc32((u8 *)hdr, sizeof(image_header_t)) != crc) {
+			puts("ERROR\n\n");
+			ret = 1;
+		} else {
+			puts("OK!\n");
+		}
 
-	checksum = ntohl(hdr->ih_hcrc);
+		hdr->ih_hcrc = crc;
+	} else {
+		puts("skipped\n");
+	}
+
+	return ret;
+}
+
+/*
+ * Converts TP-Link header to stanard
+ * U-Boot image format header
+ */
+static void tpl_to_uboot_header(image_header_t *hdr,
+				tplink_image_header_t *tpl_hdr)
+{
+	memset(hdr, 0, sizeof(image_header_t));
+
+	/* Set only needed values */
 	hdr->ih_hcrc = 0;
+	hdr->ih_dcrc = 0;
 
-	if(tinf_crc32((uchar *)data, len) != checksum){
-		puts("## Error: bad header checksum!\n");
+	hdr->ih_ep   = htonl(tpl_hdr->ih_kernel_ep);
+	hdr->ih_size = htonl(tpl_hdr->ih_kernel_len);
+	hdr->ih_load = htonl(tpl_hdr->ih_kernel_load);
+
+	hdr->ih_os   = IH_OS_LINUX;
+	hdr->ih_arch = IH_CPU_MIPS;
+	hdr->ih_type = IH_TYPE_KERNEL;
+	hdr->ih_comp = IH_COMP_LZMA;
+}
+
+int do_bootm(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
+{
+	char *s;
+	u32 *len_ptr;
+	u32 addr, data, len;
+	int i, tpl_type, verify;
+	u32 unc_len = CFG_BOOTM_LEN;
+	image_header_t *hdr = &header;
+	tplink_image_header_t *tpl_hdr;
+
+	/*
+	 * By default don't verify data CRC checksum,
+	 * but allow to enable it, using environment
+	 **/
+	s = getenv("verify_data");
+	verify = (s && (*s == 'y')) ? 1 : 0;
+
+	if (argc < 2) {
+		addr = load_addr;
+	} else {
+		addr = simple_strtoul(argv[1], NULL, 16);
+	}
+
+	printf("Booting image from 0x%08lX...\n", addr);
+
+	/* Check what header type we have */
+	memmove(&data, (char *)addr, sizeof(u32));
+	tpl_type = 0;
+
+	switch (ntohl(data)) {
+	case TPL_IH_VERSION_V1:
+		tpl_type = 1;
+
+		tpl_hdr = (tplink_image_header_t *)addr;
+		print_tpl_ih_v1(tpl_hdr);
+
+		/* Convert to general format */
+		tpl_to_uboot_header(hdr, tpl_hdr);
+		break;
+	case IH_MAGIC:
+		print_uboot_ih((image_header_t *)addr);
+		memmove(&header, (char *)addr, sizeof(image_header_t));
+		break;
+	case TPL_IH_VERSION_V2:
+	case TPL_IH_VERSION_V3:
+	default:
+		printf_err("unsupported image header\n");
 		return 1;
 	}
 
-	/* for multi-file images we need the data part, too */
-	print_image_hdr((image_header_t *)addr);
-
-	data = addr + sizeof(image_header_t);
-	len  = ntohl(hdr->ih_size);
-
-	puts("   Verifying checksum... ");
-
-	if(tinf_crc32((uchar *)data, len) != ntohl(hdr->ih_dcrc)){
-		puts("bad data CRC!\n");
-		return(1);
+	/* Always verify header CRC */
+	if (ih_header_crc(hdr, tpl_type) != 0) {
+		printf_err("header checksum mismatch!\n");
+		return 1;
 	}
 
-	puts("OK!\n\n");
+	/* And data if enabled */
+	if (tpl_type) {
+		data = addr + sizeof(tplink_image_header_t);
+	} else {
+		data = addr + sizeof(image_header_t);
+	}
 
-	return(0);
+	if (ih_data_crc(data, hdr, tpl_type, verify) != 0) {
+		printf_err("data checksum mismatch!\n");
+		return 1;
+	}
+
+	puts("\n");
+
+	len = ntohl(hdr->ih_size);
+	len_ptr = (u32 *)data;
+
+	/* We support only MIPS */
+	if (hdr->ih_arch != IH_CPU_MIPS) {
+		printf_err("unsupported architecture!\n");
+		return 1;
+	}
+
+	/* Image type... */
+	switch (hdr->ih_type) {
+	case IH_TYPE_KERNEL:
+		break;
+	case IH_TYPE_MULTI:
+		/* OS kernel is always in first image */
+		len = ntohl(len_ptr[0]);
+		data += 8;
+
+		/* Move over list to first image */
+		for (i = 1; len_ptr[i]; ++i)
+			data += 4;
+
+		break;
+	default:
+		printf_err("unsupported image type!\n");
+		return 1;
+	}
+
+	/*
+	 * We have reached the point of no return: we are going to
+	 * overwrite all exception vector code, so we cannot easily
+	 * recover from any failures any more...
+	 */
+
+#ifdef CONFIG_NETCONSOLE
+	/*
+	* Stop the ethernet stack if NetConsole could have
+	* left it up
+	*/
+	puts("Stopping network... ");
+	eth_halt();
+	puts("OK!\n");
+#endif
+
+	/* TODO: should we flush caches for kernel? */
+	/*
+	 * Flush everything, restore caches for linux
+	 */
+	//mips_cache_flush();
+	//mips_icache_flush_ix();
+
+	/* XXX - this causes problems when booting from flash */
+	/* dcache_disable(); */
+
+	/* Compression type... */
+	switch (hdr->ih_comp) {
+	case IH_COMP_LZMA:
+		printf("Uncompressing %s... ", ih_img_type(hdr->ih_type));
+
+		/* Try to extract LZMA data... */
+		i = lzma_inflate((u8 *)data, len,
+			(u8 *)ntohl(hdr->ih_load), (int *)&unc_len);
+
+		/* TODO: more verbose LZMA errors */
+		if (i != LZMA_RESULT_OK) {
+			puts("ERROR\n");
+			printf_err("LZMA error '%d'!\n", i);
+			return 1;
+		}
+
+		puts("OK!\n");
+		break;
+	default:
+		printf_err("unsupported compression type '%s'!\n",
+			   ih_comp_type(hdr->ih_comp));
+
+		return 1;
+	}
+
+#ifdef CONFIG_SILENT_CONSOLE
+	fixup_silent_linux();
+#endif
+
+	do_bootm_linux(cmdtp, flag, argc, argv);
+
+	return 1;
 }
 
-U_BOOT_CMD(iminfo, 2, 1, do_iminfo, "print firmware header\n", "address\n"
-		"\t- print header information for firmware image startting at address 'address'\n"
-);
+U_BOOT_CMD(bootm, 2, 1, do_bootm,
+	"boot application image from memory\n", "[addr]\n"
+	"\t- boot application image stored in memory at address 'addr'\n");
 
-#endif	/* CFG_CMD_IMI */
+#if defined(CONFIG_CMD_BOOTD)
+int do_bootd(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
+{
+#ifndef CFG_HUSH_PARSER
+	if (run_command(getenv("bootcmd"), flag) < 0)
+		return 1;
+#else
+	if (parse_string_outer(getenv("bootcmd"),
+		FLAG_PARSE_SEMICOLON | FLAG_EXIT_FROM_LOOP) != 0)
+		return 1;
+#endif
+
+	return 0;
+}
+
+U_BOOT_CMD(boot, 1, 1, do_bootd, "boot default, run 'bootcmd'\n", NULL);
+#endif /* CONFIG_CMD_BOOTD */
+
+#if defined(CONFIG_CMD_IMI)
+int do_iminfo(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
+{
+	int tpl_type;
+	u32 addr, data;
+	image_header_t *hdr = &header;
+	tplink_image_header_t *tpl_hdr;
+
+	tpl_type = 0;
+
+	if (argc == 2) {
+		addr = simple_strtoul(argv[1], NULL, 16);
+	} else {
+		print_cmd_help(cmdtp);
+		return 1;
+	}
+
+	printf("\nChecking image at 0x%08lX...\n", addr);
+
+	/* Check what header type we have */
+	memmove(&data, (char *)addr, sizeof(u32));
+
+	switch (ntohl(data)) {
+	case TPL_IH_VERSION_V1:
+		tpl_type = 1;
+
+		tpl_hdr = (tplink_image_header_t *)addr;
+		print_tpl_ih_v1(tpl_hdr);
+		break;
+	case IH_MAGIC:
+		print_uboot_ih((image_header_t *)addr);
+		memmove(&header, (char *)addr, sizeof(image_header_t));
+		break;
+	case TPL_IH_VERSION_V2:
+	case TPL_IH_VERSION_V3:
+	default:
+		printf_err("unsupported image header\n");
+		return 1;
+	}
+
+	/* Always verify header CRC */
+	if (ih_header_crc(hdr, tpl_type) != 0) {
+		printf_err("header checksum mismatch!\n");
+		return 1;
+	}
+
+	/* And data.. here always */
+	if (tpl_type) {
+		data = addr + sizeof(tplink_image_header_t);
+	} else {
+		data = addr + sizeof(image_header_t);
+	}
+
+	if (ih_data_crc(data, hdr, tpl_type, 1) != 0) {
+		printf_err("data checksum mismatch!\n");
+		return 1;
+	}
+
+	puts("\n");
+
+	return 0;
+}
+
+U_BOOT_CMD(iminfo, 2, 1, do_iminfo,
+	"print firmware header\n", "address\n"
+	"\t- print header information for image at 'address'\n");
+#endif /* CONFIG_CMD_IMI */

@@ -81,35 +81,36 @@ extern u32 write_buff(flash_info_t *info, uchar *src, ulong addr, ulong cnt);
 #define SIZE_64MiB	64 * 1024 * 1024
 
 /* Return codes from flash_write(): */
-#define ERR_OK							0
-#define ERR_TIMOUT						1
-#define ERR_NOT_ERASED					2
-#define ERR_PROTECTED					4
-#define ERR_INVAL						8
-#define ERR_ALIGN						16
-#define ERR_UNKNOWN_FLASH_VENDOR		32
-#define ERR_UNKNOWN_FLASH_TYPE			64
-#define ERR_PROG_ERROR					128
+#define ERR_OK				0
+#define ERR_TIMOUT			1
+#define ERR_NOT_ERASED			2
+#define ERR_PROTECTED			4
+#define ERR_INVAL			8
+#define ERR_ALIGN			16
+#define ERR_UNKNOWN_FLASH_VENDOR	32
+#define ERR_UNKNOWN_FLASH_TYPE		64
+#define ERR_PROG_ERROR			128
 
 /* FLASH vendors IDs */
-#define FLASH_VENDOR_JEDEC_ATMEL		0x1F
-#define FLASH_VENDOR_JEDEC_EON			0x1C
-#define FLASH_VENDOR_JEDEC_MACRONIX		0xC2
-#define FLASH_VENDOR_JEDEC_MICRON		0x20
-#define FLASH_VENDOR_JEDEC_SPANSION		0x01
-#define FLASH_VENDOR_JEDEC_WINBOND		0xEF
+#define FLASH_VENDOR_JEDEC_ATMEL	0x1F
+#define FLASH_VENDOR_JEDEC_EON		0x1C
+#define FLASH_VENDOR_JEDEC_GIGADEVICE	0xC8
+#define FLASH_VENDOR_JEDEC_MACRONIX	0xC2
+#define FLASH_VENDOR_JEDEC_MICRON	0x20
+#define FLASH_VENDOR_JEDEC_SPANSION	0x01
+#define FLASH_VENDOR_JEDEC_WINBOND	0xEF
 
 /* Device IDs */
 #define FLASH_UNKNOWN	0xFFFFFF
 #define FLASH_CUSTOM	0x111111
 
 /* Basic SPI FLASH commands */
-#define SPI_FLASH_CMD_WRSR		0x01
-#define SPI_FLASH_CMD_PP		0x02
-#define SPI_FLASH_CMD_READ		0x03
-#define SPI_FLASH_CMD_WRDI		0x04
-#define SPI_FLASH_CMD_RDSR		0x05
-#define SPI_FLASH_CMD_WREN		0x06
+#define SPI_FLASH_CMD_WRSR	0x01
+#define SPI_FLASH_CMD_PP	0x02
+#define SPI_FLASH_CMD_READ	0x03
+#define SPI_FLASH_CMD_WRDI	0x04
+#define SPI_FLASH_CMD_RDSR	0x05
+#define SPI_FLASH_CMD_WREN	0x06
 
 /* SPI FLASH erase related commands */
 #define SPI_FLASH_CMD_ES_4KB	0x20
@@ -118,11 +119,11 @@ extern u32 write_buff(flash_info_t *info, uchar *src, ulong addr, ulong cnt);
 #define SPI_FLASH_CMD_ES_ALL	0xC7
 
 /* Other SPI FLASH commands */
-#define SPI_FLASH_CMD_JEDEC		0x9F
-#define SPI_FLASH_CMD_SFDP		0x5A
+#define SPI_FLASH_CMD_JEDEC	0x9F
+#define SPI_FLASH_CMD_SFDP	0x5A
 
 /* SFDP related defines */
-#define SPI_FLASH_SFDP_SIGN		0x50444653
+#define SPI_FLASH_SFDP_SIGN	0x50444653
 
 #endif /* !CFG_NO_FLASH */
 

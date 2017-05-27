@@ -244,7 +244,7 @@
 #include <linux/stddef.h>	/* for size_t */
 #else
 #include <sys/types.h>
-#endif	/* __STD_C */
+#endif /* __STD_C */
 
 #ifdef __cplusplus
 extern "C" {

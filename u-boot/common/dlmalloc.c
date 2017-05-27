@@ -218,9 +218,6 @@
 
 */
 
-
-
-
 /* Preliminaries */
 
 #ifndef __STD_C
@@ -944,9 +941,9 @@ void malloc_stats (void);
 static void malloc_update_mallinfo ();
 void malloc_stats();
 #endif
-#endif	/* 0 */
+#endif /* 0 */
 
-#endif	/* 0 */			/* Moved to malloc.h */
+#endif /* 0 */			/* Moved to malloc.h */
 #include <common.h>
 
 DECLARE_GLOBAL_DATA_PTR;
@@ -1141,8 +1138,6 @@ gAllocatedSize))
 
 #endif
 
-
-
 /*
   Type declarations
 */
@@ -1281,7 +1276,7 @@ nextchunk-> +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
        serviced via calls to mmap, and then later released via munmap.
 
 */
-
+
 /*  sizes, alignments */
 
 #define SIZE_SZ                (sizeof(INTERNAL_SIZE_T))
@@ -1304,9 +1299,6 @@ nextchunk-> +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 /* Check if m has acceptable alignment */
 
 #define aligned_OK(m)    (((unsigned long)((m)) & (MALLOC_ALIGN_MASK)) == 0)
-
-
-
 
 /*
   Physical chunk operations
@@ -1339,9 +1331,6 @@ nextchunk-> +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 /* Treat space at ptr + offset as a chunk */
 
 #define chunk_at_offset(p, s)  ((mchunkptr)(((char*)(p)) + (s)))
-
-
-
 
 /*
   Dealing with use bits
@@ -1379,9 +1368,6 @@ nextchunk-> +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 #define clear_inuse_bit_at_offset(p, s)\
  (((mchunkptr)(((char*)(p)) + (s)))->size &= ~(PREV_INUSE))
 
-
-
-
 /*
   Dealing with size fields
 */
@@ -1401,10 +1387,6 @@ nextchunk-> +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 /* Set size at footer (only when chunk is not in use) */
 
 #define set_foot(p, s)   (((mchunkptr)((char*)(p) + (s)))->prev_size = (s))
-
-
-
-
 
 /*
    Bins
@@ -1501,7 +1483,6 @@ void malloc_bin_reloc (void)
 		*p++ += gd->reloc_off;
 	}
 }
-
 
 /* field-extraction macros */
 
@@ -1537,8 +1518,6 @@ void malloc_bin_reloc (void)
 
 #define is_small_request(nb) (nb < MAX_SMALLBIN_SIZE - SMALLBIN_WIDTH)
 
-
-
 /*
     To help compensate for the large number of bins, a one-level index
     structure is used for bin-by-bin searching.  `binblocks' is a
@@ -1558,10 +1537,6 @@ void malloc_bin_reloc (void)
 #define idx2binblock(ix)    ((unsigned)1 << (ix / BINBLOCKWIDTH))
 #define mark_binblock(ii)   (binblocks |= idx2binblock(ii))
 #define clear_binblock(ii)  (binblocks &= ~(idx2binblock(ii)))
-
-
-
-
 
 /*  Other static bookkeeping data */
 
@@ -1591,14 +1566,12 @@ static struct mallinfo current_mallinfo = {  0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
 #if 0
 static unsigned int n_mmaps = 0;
-#endif	/* 0 */
+#endif /* 0 */
 static unsigned long mmapped_mem = 0;
 #if HAVE_MMAP
 static unsigned int max_n_mmaps = 0;
 static unsigned long max_mmapped_mem = 0;
 #endif
-
-
 
 /*
   Debugging support
@@ -1623,7 +1596,7 @@ static void do_check_chunk(p) mchunkptr p;
 {
 #if 0	/* causes warnings because assert() is off */
   INTERNAL_SIZE_T sz = p->size & ~PREV_INUSE;
-#endif	/* 0 */
+#endif /* 0 */
 
   /* No checkable chunk is mmapped */
   assert(!chunk_is_mmapped(p));
@@ -1647,7 +1620,7 @@ static void do_check_free_chunk(p) mchunkptr p;
   INTERNAL_SIZE_T sz = p->size & ~PREV_INUSE;
 #if 0	/* causes warnings because assert() is off */
   mchunkptr next = chunk_at_offset(p, sz);
-#endif	/* 0 */
+#endif /* 0 */
 
   do_check_chunk(p);
 
@@ -1714,7 +1687,7 @@ static void do_check_malloced_chunk(p, s) mchunkptr p; INTERNAL_SIZE_T s;
 #if 0	/* causes warnings because assert() is off */
   INTERNAL_SIZE_T sz = p->size & ~PREV_INUSE;
   long room = sz - s;
-#endif	/* 0 */
+#endif /* 0 */
 
   do_check_inuse_chunk(p);
 
@@ -1744,8 +1717,6 @@ static void do_check_malloced_chunk(p, s) mchunkptr p; INTERNAL_SIZE_T s;
 #define check_chunk(P)
 #define check_malloced_chunk(P,N)
 #endif
-
-
 
 /*
   Macro-based internal utilities
@@ -1815,10 +1786,6 @@ static void do_check_malloced_chunk(p, s) mchunkptr p; INTERNAL_SIZE_T s;
 
 #define clear_last_remainder \
   (last_remainder->fd = last_remainder->bk = last_remainder)
-
-
-
-
 
 /* Routines dealing with mmap(). */
 
@@ -1947,9 +1914,6 @@ static mchunkptr mremap_chunk(p, new_size) mchunkptr p; size_t new_size;
 
 #endif /* HAVE_MMAP */
 
-
-
-
 /*
   Extend the top-most chunk by obtaining memory from system.
   Main interface to sbrk (but see also malloc_trim).
@@ -2063,9 +2027,6 @@ static void malloc_extend_top(nb) INTERNAL_SIZE_T nb;
   /* We always land on a page boundary */
   assert(((unsigned long)((char*)top + top_size) & (pagesz - 1)) == 0);
 }
-
-
-
 
 /* Main public routines */
 
@@ -2365,9 +2326,6 @@ Void_t* mALLOc(bytes) size_t bytes;
 
 }
 
-
-
-
 /*
 
   free() algorithm :
@@ -2481,10 +2439,6 @@ void fREe(mem) Void_t* mem;
   if (!islr)
     frontlink(p, sz, idx, bck, fwd);
 }
-
-
-
-
 
 /*
 
@@ -2719,9 +2673,6 @@ Void_t* rEALLOc(oldmem, bytes) Void_t* oldmem; size_t bytes;
   return chunk2mem(newp);
 }
 
-
-
-
 /*
 
   memalign algorithm:
@@ -2838,9 +2789,6 @@ Void_t* mEMALIGn(alignment, bytes) size_t alignment; size_t bytes;
 
 }
 
-
-
-
 /*
     valloc just invokes memalign with alignment argument equal
     to the page size of the system (or as near to this as can
@@ -2945,8 +2893,6 @@ void cfree(mem) Void_t *mem;
 }
 #endif
 
-
-
 /*
 
     Malloc_trim gives memory back to the system (via negative
@@ -3026,8 +2972,6 @@ int malloc_trim(pad) size_t pad;
   }
 }
 
-
-
 /*
   malloc_usable_size:
 
@@ -3060,9 +3004,6 @@ size_t malloc_usable_size(mem) Void_t* mem;
     return chunksize(p) - 2*SIZE_SZ;
   }
 }
-
-
-
 
 /* Utility to update current_mallinfo for malloc_stats and mallinfo() */
 
@@ -3104,9 +3045,7 @@ static void malloc_update_mallinfo()
   current_mallinfo.keepcost = chunksize(top);
 
 }
-#endif	/* 0 */
-
-
+#endif /* 0 */
 
 /*
 
@@ -3138,7 +3077,7 @@ void malloc_stats()
 	  (unsigned int)max_n_mmaps);
 #endif
 }
-#endif	/* 0 */
+#endif /* 0 */
 
 /*
   mallinfo returns a copy of updated current mallinfo.
@@ -3150,10 +3089,7 @@ struct mallinfo mALLINFo()
   malloc_update_mallinfo();
   return current_mallinfo;
 }
-#endif	/* 0 */
-
-
-
+#endif /* 0 */
 
 /*
   mallopt:

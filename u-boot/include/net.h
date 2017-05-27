@@ -19,7 +19,7 @@
 #   define CONFIG_NET_MULTI
 #  endif
 # endif
-#endif	/* CONFIG_8xx */
+#endif /* CONFIG_8xx */
 
 #if defined(CONFIG_MPC5xxx)
 # if !defined(CONFIG_NET_MULTI)
@@ -27,7 +27,7 @@
 #   define CONFIG_NET_MULTI
 #  endif
 # endif
-#endif	/* CONFIG_MPC5xxx */
+#endif /* CONFIG_MPC5xxx */
 
 #if !defined(CONFIG_NET_MULTI) && defined(CONFIG_CPM2)
 #include <config.h>
@@ -343,7 +343,7 @@ extern int		NetState;		/* Network loop state		*/
 extern int		NetRestartWrap;		/* Tried all network devices	*/
 #endif
 
-typedef enum { BOOTP, RARP, ARP, TFTP, DHCP, PING, DNS, NFS, CDP, NETCONS, SNTP } proto_t;
+typedef enum { BOOTP, RARP, ARP, TFTPGET, TFTPPUT, DHCP, PING, DNS, NFS, CDP, NETCONS, SNTP } proto_t;
 
 /* Set active state */
 static inline __attribute__((always_inline)) int eth_init_state_only(bd_t *bis){
@@ -377,11 +377,11 @@ static inline __attribute__((always_inline)) int eth_is_on_demand_init(void){
 /* from net/net.c */
 extern char	BootFile[128];			/* Boot File name		*/
 
-#if (CONFIG_COMMANDS & CFG_CMD_PING)
+#if defined(CONFIG_CMD_PING)
 extern IPaddr_t	NetPingIP;			/* the ip address to ping 		*/
 #endif
 
-#if (CONFIG_COMMANDS & CFG_CMD_SNTP)
+#if defined(CONFIG_CMD_SNTP)
 extern IPaddr_t	NetNtpServerIP;			/* the ip address to NTP 	*/
 extern int NetTimeOffset;			/* offset time from UTC		*/
 #endif

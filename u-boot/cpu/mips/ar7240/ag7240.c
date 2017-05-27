@@ -12,7 +12,7 @@
 
 DECLARE_GLOBAL_DATA_PTR;
 
-#if (CONFIG_COMMANDS & CFG_CMD_MII)
+#if defined(CONFIG_CMD_MII)
 #include <miiphy.h>
 #else
 #define _1000BASET	1000
@@ -65,9 +65,8 @@ static int ag7240_send(struct eth_device *dev, volatile void *packet, int length
 		}
 	}
 
-	if (i == MAX_WAIT) {
-		printf("Tx Timed out\n");
-	}
+	if (i == MAX_WAIT)
+		printf_err("TX timeout\n");
 
 	f->pkt_start_addr = 0;
 	f->pkt_size = 0;
@@ -340,7 +339,7 @@ static int ag7240_check_link(ag7240_mac_t *mac)
 
 	default:
 		if((s != NULL) && (strcmp(s, "nc") != 0)){
-			printf("## Error: invalid speed detected\n");
+			printf_err("invalid speed detected\n");
 		}
 		return 0;
 	}
@@ -405,7 +404,7 @@ static int ag7240_alloc_fifo(int ndesc, ag7240_desc_t ** fifo)
 	size += CFG_CACHELINE_SIZE - 1;
 
 	if ((p = malloc(size)) == NULL) {
-		printf("Cant allocate fifos\n");
+		printf_err("can't allocate fifos\n");
 		return -1;
 	}
 
@@ -495,12 +494,12 @@ int ag7240_enet_initialize(bd_t * bis)
 	for (i = 0; i < CFG_AG7240_NMACS; i++) {
 
 		if ((dev[i] = (struct eth_device *) malloc(sizeof(struct eth_device))) == NULL) {
-			puts("## Error: malloc failed\n");
+			printf_err("malloc failed\n");
 			return 0;
 		}
 
 		if ((ag7240_macs[i] = (ag7240_mac_t *) malloc(sizeof(ag7240_mac_t))) == NULL) {
-			puts("## Error: malloc failed\n");
+			printf_err("malloc failed\n");
 			return 0;
 		}
 
@@ -526,7 +525,7 @@ int ag7240_enet_initialize(bd_t * bis)
 
 		eth_register(dev[i]);
 
-#if(CONFIG_COMMANDS & CFG_CMD_MII)
+#if defined(CONFIG_CMD_MII)
 		miiphy_register(dev[i]->name, ag7240_miiphy_read, ag7240_miiphy_write);
 #endif
 
@@ -650,9 +649,6 @@ uint16_t ag7240_miiphy_read(char *devname, uint32_t phy_addr, uint8_t reg)
 		rddata = ag7240_reg_rd(mac, AG7240_MII_MGMT_IND) & 0x1;
 	} while (rddata && --ii);
 
-	if (ii == 0)
-		printf("ERROR:%s:%d transaction failed\n", __func__, __LINE__);
-
 	ag7240_reg_wr(mac, AG7240_MII_MGMT_CMD, 0x0);
 	ag7240_reg_wr(mac, AG7240_MII_MGMT_ADDRESS, addr);
 	ag7240_reg_wr(mac, AG7240_MII_MGMT_CMD, AG7240_MGMT_CMD_READ);
@@ -661,9 +657,6 @@ uint16_t ag7240_miiphy_read(char *devname, uint32_t phy_addr, uint8_t reg)
 		udelay(5);
 		rddata = ag7240_reg_rd(mac, AG7240_MII_MGMT_IND) & 0x1;
 	} while (rddata && --ii);
-
-	if (ii == 0)
-		printf("ERROR! Leave ag7240_miiphy_read without polling correct status!\n");
 
 	val = ag7240_reg_rd(mac, AG7240_MII_MGMT_STATUS);
 	ag7240_reg_wr(mac, AG7240_MII_MGMT_CMD, 0x0);
@@ -687,16 +680,10 @@ void ag7240_miiphy_write(char *devname, uint32_t phy_addr, uint8_t reg, uint16_t
 		rddata = ag7240_reg_rd(mac, AG7240_MII_MGMT_IND) & 0x1;
 	} while (rddata && --ii);
 
-	if (ii == 0)
-		printf("ERROR:%s:%d transaction failed\n", __func__, __LINE__);
-
 	ag7240_reg_wr(mac, AG7240_MII_MGMT_ADDRESS, addr);
 	ag7240_reg_wr(mac, AG7240_MII_MGMT_CTRL, data);
 
 	do {
 		rddata = ag7240_reg_rd(mac, AG7240_MII_MGMT_IND) & 0x1;
 	} while (rddata && --ii);
-
-	if (ii == 0)
-		printf("ERROR! Leave ag7240_miiphy_write without polling correct status!\n");
 }

@@ -29,7 +29,7 @@
 #include <command.h>
 #include <rtc.h>
 
-#if (CONFIG_COMMANDS & CFG_CMD_DATE) || defined(CONFIG_TIMESTAMP)
+#if defined(CONFIG_CMD_DATE) || defined(CONFIG_TIMESTAMP)
 #define FEBRUARY			2
 #define	STARTOFTIME			1970
 #define SECDAY				86400L
@@ -139,4 +139,4 @@ unsigned long mktime(unsigned int year, unsigned int mon, unsigned int day, unsi
 	) * 60 + sec; /* finally seconds */
 }
 
-#endif	/* CFG_CMD_DATE */
+#endif /* CONFIG_CMD_DATE */

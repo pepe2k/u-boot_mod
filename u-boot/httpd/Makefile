@@ -4,25 +4,26 @@
 
 include $(TOPDIR)/config.mk
 
+# Suppress warnings when building with size optimization
+CFLAGS += -fno-strict-aliasing
+
 LIB   = libhttpd.a
-OBJS += uip.o uip_arch.o uip_arp.o httpd.o fs.o
+OBJS += uip.o \
+	uip_arch.o \
+	uip_arp.o \
+	httpd.o \
+	fs.o
 
-all:    $(LIB)
+all: $(LIB)
 
-fs.c:   fsdata.c
-
-fsdata.c:
-	    ./vendors/makefsdatac $(DEVICE_VENDOR)
-
-$(LIB): $(START) $(OBJS)
-	    $(AR) crv $@ $(OBJS)
+$(LIB): $(OBJS)
+	$(AR) crv $@ $(OBJS)
 
 #########################################################################
 
-.depend: Makefile $(OBJS:.o=.c)
-	     $(CC) -M $(CFLAGS) $(OBJS:.o=.c) > $@
+.depend: Makefile fsdata.c $(OBJS:.o=.c)
+	$(CC) -M $(CFLAGS) $(OBJS:.o=.c) > $@
 
 sinclude .depend
 
 #########################################################################
-

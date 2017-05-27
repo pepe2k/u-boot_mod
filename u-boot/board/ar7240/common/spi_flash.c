@@ -57,7 +57,7 @@ u32 flash_init(void)
 		jedec_id = qca_sf_jedec_id(bank);
 
 		if (jedec_id == 0) {
-			printf("## Error: SPI NOR FLASH chip in bank #%d\n"
+			printf_err("SPI NOR FLASH chip in bank #%d\n"
 				   "   is not responding, skipping\n\n", bank + 1);
 			continue;
 		}
@@ -73,7 +73,7 @@ u32 flash_init(void)
 				info->sector_size = sfdp_ss;
 				info->erase_cmd   = sfdp_ec;
 
-				printf("** Warning: SPI NOR FLASH in bank #%d is\n"
+				printf_wrn("SPI NOR FLASH in bank #%d is\n"
 					   "   unknown, JEDEC ID: 0x%06X\n\n", bank + 1, jedec_id);
 
 				printf("   Information provided in SFDP:\n"
@@ -95,7 +95,7 @@ u32 flash_init(void)
 					#error "Not supported CONFIG_DEFAULT_FLASH_SIZE_IN_MB value!"
 				#endif
 
-				printf("## Error: SPI NOR FLASH chip in bank #%d\n"
+				printf_err("SPI NOR FLASH chip in bank #%d\n"
 					   "   is unknown, JEDEC ID: 0x%06X, will\n"
 					   "   use fixed/predefined size: ", bank + 1, jedec_id);
 				print_size(info->size, "\n\n");
@@ -171,7 +171,7 @@ u32 write_buff(flash_info_t *info, uchar *source, ulong addr, ulong len)
 	u32 dst;
 	u8 *src;
 
-	printf("Writting at address: 0x%08lX\n", addr);
+	printf("Writing at address: 0x%08lX\n", addr);
 	addr = addr - CFG_FLASH_BASE;
 
 	while (total < len) {

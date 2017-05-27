@@ -74,4 +74,4 @@ int     ListInsertAfterItem(list_t list, void *ptrToItem, void *ptrToItemToInser
 int     ListInsertBeforeItem(list_t list, void *ptrToItem, void *ptrToItemToInsertBefore, CompareFunction compareFunction);
 #endif /* 0 */
 
-#endif	/* _LISTS_H_ */
+#endif /* _LISTS_H_ */

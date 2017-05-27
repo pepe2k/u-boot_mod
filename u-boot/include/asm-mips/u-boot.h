@@ -48,4 +48,4 @@ typedef struct bd_info {
 #define bi_env_data bi_env->data
 #define bi_env_crc  bi_env->crc
 
-#endif	/* _U_BOOT_H_ */
+#endif /* _U_BOOT_H_ */

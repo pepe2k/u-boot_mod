@@ -73,7 +73,7 @@
 	#if defined(CFG_ENV_ADDR_REDUND) || defined(CFG_ENV_OFFSET_REDUND)
 		#define CFG_REDUNDAND_ENVIRONMENT	1
 	#endif
-#endif	/* CFG_ENV_IS_IN_FLASH */
+#endif /* CFG_ENV_IS_IN_FLASH */
 
 #if defined(CFG_ENV_IS_IN_NAND)
 # ifndef CFG_ENV_OFFSET
@@ -105,4 +105,4 @@ typedef	struct environment_s {
 	unsigned char	data[ENV_SIZE]; /* Environment data		*/
 } env_t;
 
-#endif	/* _ENVIRONMENT_H_ */
+#endif /* _ENVIRONMENT_H_ */

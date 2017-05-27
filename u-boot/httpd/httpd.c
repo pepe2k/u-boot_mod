@@ -130,7 +130,7 @@ static int httpd_findandstore_firstchunk(void){
 
 			if(end){
 #if defined(WEBFAILSAFE_DISABLE_UBOOT_UPGRADE)
-				printf("## Error: U-Boot upgrade is not allowed on this board!\n");
+				printf_err("U-Boot upgrade is not allowed on this board!\n");
 				webfailsafe_upload_failed = 1;
 #else
 				webfailsafe_upgrade_type = WEBFAILSAFE_UPGRADE_TYPE_UBOOT;
@@ -142,7 +142,7 @@ static int httpd_findandstore_firstchunk(void){
 
 				if(end){
 #if defined(WEBFAILSAFE_DISABLE_ART_UPGRADE)
-					printf("## Error: U-Boot upgrade is not allowed on this board!\n");
+					printf_err("U-Boot upgrade is not allowed on this board!\n");
 					webfailsafe_upload_failed = 1;
 #else
 					printf("Upgrade type: ART\n");
@@ -155,14 +155,14 @@ static int httpd_findandstore_firstchunk(void){
 					// if we don't know the flash type, we won't allow to update ART,
 					// because we don't know flash size
 					if(info->flash_id == FLASH_CUSTOM){
-						printf("## Error: unknown FLASH type, can't update ART!\n");
+						printf_err("unknown FLASH type, can't update ART!\n");
 						webfailsafe_upload_failed = 1;
 					}
 #endif
 #endif /* if defined(WEBFAILSAFE_DISABLE_ART_UPGRADE) */
 				} else {
 
-					printf("## Error: input name not found!\n");
+					printf_err("input name not found!\n");
 					return(0);
 
 				}
@@ -193,21 +193,21 @@ static int httpd_findandstore_firstchunk(void){
 				// has correct size (for every type of upgrade)
 
 				// U-Boot
-				if((webfailsafe_upgrade_type == WEBFAILSAFE_UPGRADE_TYPE_UBOOT) && (hs->upload_total > WEBFAILSAFE_UPLOAD_UBOOT_SIZE_IN_BYTES)){
+				if((webfailsafe_upgrade_type == WEBFAILSAFE_UPGRADE_TYPE_UBOOT) && (hs->upload_total > CONFIG_MAX_UBOOT_SIZE)){
 
-					printf("## Error: file too big!\n");
+					printf_err("file too big!\n");
 					webfailsafe_upload_failed = 1;
 
 				// ART
 				} else if((webfailsafe_upgrade_type == WEBFAILSAFE_UPGRADE_TYPE_ART) && (hs->upload_total != WEBFAILSAFE_UPLOAD_ART_SIZE_IN_BYTES)){
 
-					printf("## Error: wrong file size, should be: %d bytes!\n", WEBFAILSAFE_UPLOAD_ART_SIZE_IN_BYTES);
+					printf_err("wrong file size, should be: %d bytes!\n", WEBFAILSAFE_UPLOAD_ART_SIZE_IN_BYTES);
 					webfailsafe_upload_failed = 1;
 
 				// firmware can't exceed: (FLASH_SIZE -  WEBFAILSAFE_UPLOAD_LIMITED_AREA_IN_BYTES)
 				} else if(hs->upload_total > (info->size - WEBFAILSAFE_UPLOAD_LIMITED_AREA_IN_BYTES)){
 
-					printf("## Error: file too big!\n");
+					printf_err("file too big!\n");
 					webfailsafe_upload_failed = 1;
 
 				}
@@ -227,7 +227,7 @@ static int httpd_findandstore_firstchunk(void){
 			}
 
 		} else {
-			printf("## Error: couldn't find start of data!\n");
+			printf_err("couldn't find start of data!\n");
 		}
 
 	}
@@ -306,7 +306,7 @@ void httpd_appcall(void){
 					}
 
 					if(i != 0){
-						printf("## Error: request file name too long!\n");
+						printf_err("request file name too long!\n");
 						httpd_state_reset();
 						uip_abort();
 						return;
@@ -321,7 +321,7 @@ void httpd_appcall(void){
 					} else {
 						// check if we have requested file
 						if(!fs_open((const char *)&uip_appdata[4], &fsfile)){
-							printf("## Error: file not found!\n");
+							printf_err("file not found!\n");
 							fs_open(file_404_html.name, &fsfile);
 						}
 					}
@@ -373,14 +373,14 @@ void httpd_appcall(void){
 #endif
 
 						} else {
-							printf("## Error: couldn't find \"Content-Length\"!\n");
+							printf_err("couldn't find 'Content-Length'!\n");
 							httpd_state_reset();
 							uip_abort();
 							return;
 						}
 
 					} else {
-						printf("## Error: couldn't find \"Content-Length\"!\n");
+						printf_err("couldn't find 'Content-Length'!\n");
 						httpd_state_reset();
 						uip_abort();
 						return;
@@ -388,7 +388,7 @@ void httpd_appcall(void){
 
 					// we don't support very small files (< 10 KB)
 					if(hs->upload_total < 10240){
-						printf("## Error: request for upload < 10 KB data!\n");
+						printf_err("request for upload < 10 KB data!\n");
 						httpd_state_reset();
 						uip_abort();
 						return;
@@ -427,21 +427,21 @@ void httpd_appcall(void){
 #endif
 
 							} else {
-								printf("## Error: couldn't allocate memory for boundary!\n");
+								printf_err("couldn't allocate memory for boundary!\n");
 								httpd_state_reset();
 								uip_abort();
 								return;
 							}
 
 						} else {
-							printf("## Error: couldn't find boundary!\n");
+							printf_err("couldn't find boundary!\n");
 							httpd_state_reset();
 							uip_abort();
 							return;
 						}
 
 					} else {
-						printf("## Error: couldn't find boundary!\n");
+						printf_err("couldn't find boundary!\n");
 						httpd_state_reset();
 						uip_abort();
 						return;
@@ -455,18 +455,18 @@ void httpd_appcall(void){
 					 * find beginning of the data in first packet
 					 */
 
-					webfailsafe_data_pointer = (u8_t *)WEBFAILSAFE_UPLOAD_RAM_ADDRESS;
+					webfailsafe_data_pointer = (u8_t *)CONFIG_LOADADDR;
 
 					if(!webfailsafe_data_pointer){
-						printf("## Error: couldn't allocate RAM for data!\n");
+						printf_err("couldn't allocate RAM for data!\n");
 						httpd_state_reset();
 						uip_abort();
 						return;
 					} else {
-						printf("Data will be downloaded at 0x%X in RAM\n", WEBFAILSAFE_UPLOAD_RAM_ADDRESS);
+						printf("Data will be downloaded at 0x%X in RAM\n", CONFIG_LOADADDR);
 					}
 
-					memset((void *)webfailsafe_data_pointer, 0xFF, WEBFAILSAFE_UPLOAD_UBOOT_SIZE_IN_BYTES);
+					memset((void *)webfailsafe_data_pointer, 0xFF, CONFIG_MAX_UBOOT_SIZE);
 
 					if(httpd_findandstore_firstchunk()){
 						data_start_found = 1;
@@ -544,7 +544,7 @@ void httpd_appcall(void){
 					if(!data_start_found){
 
 						if(!httpd_findandstore_firstchunk()){
-							printf("## Error: couldn't find start of data in next packet!\n");
+							printf_err("couldn't find start of data in next packet!\n");
 							httpd_state_reset();
 							uip_abort();
 							return;

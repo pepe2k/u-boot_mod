@@ -10,7 +10,7 @@
 #include <rtc.h>
 #include "sntp.h"
 
-#if ((CONFIG_COMMANDS & CFG_CMD_NET) && (CONFIG_COMMANDS & CFG_CMD_SNTP))
+#if defined(CONFIG_CMD_NET) && defined(CONFIG_CMD_SNTP)
 
 DECLARE_GLOBAL_DATA_PTR;
 
@@ -46,7 +46,7 @@ static void SntpSend(void){
 }
 
 static void SntpTimeout(void){
-	puts("## Error: timeout\n");
+	printf_err("timeout\n");
 	NetState = NETLOOP_FAIL;
 
 	return;
@@ -73,7 +73,7 @@ static void SntpHandler(uchar *pkt, unsigned dest, unsigned src, unsigned len){
 
 	to_tm(ntohl(seconds) - 2208988800UL + NetTimeOffset, &tm);
 
-#if (CONFIG_COMMANDS & CFG_CMD_DATE)
+#if defined(CONFIG_CMD_DATE)
 	// TODO: find out how to use RTC on
 	//rtc_set(&tm);
 #endif
@@ -95,4 +95,4 @@ void SntpStart(void){
 	SntpSend();
 }
 
-#endif /* CONFIG_COMMANDS & CFG_CMD_SNTP */
+#endif /* CONFIG_CMD_NET && CONFIG_CMD_SNTP */

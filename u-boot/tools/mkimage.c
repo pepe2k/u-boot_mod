@@ -53,7 +53,7 @@ typedef		unsigned int	uint32_t;
 
 #define     ntohl(a)	SWAP_LONG(a)
 #define     htonl(a)	SWAP_LONG(a)
-#endif	/* __WIN32__ */
+#endif /* __WIN32__ */
 
 #ifndef	O_BINARY		/* should be define'd on __WIN32__ */
 #define O_BINARY	0
@@ -441,7 +441,7 @@ NXTARG:		;
 	}
 
 	/* We're a bit of paranoid */
-#if defined(_POSIX_SYNCHRONIZED_IO) && !defined(__sun__) && !defined(__FreeBSD__)
+#if defined(_POSIX_SYNCHRONIZED_IO) && !defined(__sun__) && !defined(__FreeBSD__) && !defined(__APPLE__)
 	(void) fdatasync (ifd);
 #else
 	(void) fsync (ifd);
@@ -491,7 +491,7 @@ NXTARG:		;
 	(void) munmap((void *)ptr, sbuf.st_size);
 
 	/* We're a bit of paranoid */
-#if defined(_POSIX_SYNCHRONIZED_IO) && !defined(__sun__) && !defined(__FreeBSD__)
+#if defined(_POSIX_SYNCHRONIZED_IO) && !defined(__sun__) && !defined(__FreeBSD__) && !defined(__APPLE__)
 	(void) fdatasync (ifd);
 #else
 	(void) fsync (ifd);

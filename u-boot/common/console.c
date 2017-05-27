@@ -209,7 +209,6 @@ void puts(const char *s){
 
 void printf(const char *fmt, ...){
 	va_list args;
-	//uint i;
 	char printbuffer[CFG_PBSIZE];
 
 	va_start(args, fmt);
@@ -217,28 +216,44 @@ void printf(const char *fmt, ...){
 	/* For this to work, printbuffer must be larger than
 	 * anything we ever want to print.
 	 */
-	//i = vsprintf(printbuffer, fmt, args);
 	vsprintf(printbuffer, fmt, args);
 	va_end(args);
 
 	/* Print the string */
 	puts(printbuffer);
 }
-#if 0
-void vprintf(const char *fmt, va_list args){
-	//uint i;
+
+void printf_err(const char *fmt, ...)
+{
+	va_list args;
 	char printbuffer[CFG_PBSIZE];
 
-	/* For this to work, printbuffer must be larger than
-	 * anything we ever want to print.
-	 */
-	//i = vsprintf(printbuffer, fmt, args);
-	vsprintf(printbuffer, fmt, args);
+	va_start(args, fmt);
 
-	/* Print the string */
+	puts("## Error: ");
+
+	vsprintf(printbuffer, fmt, args);
+	va_end(args);
+
 	puts(printbuffer);
 }
-#endif
+
+void printf_wrn(const char *fmt, ...)
+{
+	va_list args;
+
+	char printbuffer[CFG_PBSIZE];
+
+	va_start(args, fmt);
+
+	puts("** Warning: ");
+
+	vsprintf(printbuffer, fmt, args);
+	va_end(args);
+
+	puts(printbuffer);
+}
+
 /* test if ctrl-c was pressed */
 static int ctrlc_disabled = 0; /* see disable_ctrl() */
 static int ctrlc_was_pressed = 0;
