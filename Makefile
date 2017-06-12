@@ -23,6 +23,8 @@ ifneq ($(HOSTOS), darwin)
   endif
 endif
 
+
+export MAKECMD=make --silent ARCH=mips CROSS_COMPILE=mips-openwrt-linux-musl-
 export HOSTOS
 export HOSTARCH
 export BUILD_TOPDIR = $(PWD)
@@ -31,6 +33,7 @@ export SOURCE_DIR   = $(BUILD_TOPDIR)/u-boot
 export BIN_DIR      = $(BUILD_TOPDIR)/bin
 export SUB_MAKE_CMD = $(MAKE) --silent --no-print-directory \
                       ARCH=mips V=1 SHELL=$(SHELL)
+export CONFIG_BOOTDELAY=1
 
 # ==========================================================================
 # You can override some default configuration options below or pass them on
@@ -50,8 +53,8 @@ export SUB_MAKE_CMD = $(MAKE) --silent --no-print-directory \
 # IMG_LZMA =
 
 # Define _absolute_ path to your toolchain directory, for example:
-# export TOOLCHAIN_DIR:=/home/user/toolchain-mips_24kc_gcc-5.4.0_musl-1.1.15
-# export PATH:=$(TOOLCHAIN_DIR)/bin:$(PATH)
+export TOOLCHAIN_DIR:=$(BUILD_TOPDIR)/toolchain/
+export PATH:=$(TOOLCHAIN_DIR)/bin:$(PATH)
 
 ifndef CROSS_COMPILE
   CROSS_COMPILE = mips-openwrt-linux-musl-
@@ -225,6 +228,7 @@ $(COMMON_AR933X_TARGETS):
 
 COMMON_ETHS27_TARGETS = \
 	tp-link_tl-mr3420_v2 \
+	tp-link_tl-mr3420_v3 \
 	tp-link_tl-wa801nd_v2 \
 	tp-link_tl-wa850re_v2 \
 	tp-link_tl-wa830re_v2 \
