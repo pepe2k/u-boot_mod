@@ -191,6 +191,7 @@ int  checkboard(void);
 int  checkflash(void);
 int  checkdram(void);
 int  last_stage_init(void);
+int  last_reset_wdt(void);
 int  reset_button_status(void);
 extern ulong monitor_flash_len;
 

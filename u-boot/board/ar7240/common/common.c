@@ -77,6 +77,22 @@ void qca_soc_name_rev(char *buf)
 }
 
 /*
+ * Returns last reset reason:
+ * 1 -> reset by watchdog
+ * 0 -> normal reset
+ */
+int last_reset_wdt()
+{
+	u32 reg;
+
+	reg = qca_soc_reg_read(QCA_RST_WATCHDOG_TIMER_CTRL_REG);
+	if (reg & QCA_RST_WATCHDOG_TIMER_CTRL_LAST_MASK)
+		return 1;
+
+	return 0;
+}
+
+/*
  * Prints available information about the board
  */
 void print_board_info(void)
@@ -88,6 +104,10 @@ void print_board_info(void)
 	u32 bank;
 	bd_t *bd = gd->bd;
 	char buffer[24];
+
+	/* Show warning if last reboot was caused by SOC watchdog */
+	if (last_reset_wdt())
+		puts("** Warning: reset caused by watchdog!\n\n");
 
 	/* Board name */
 	printf("%" ALIGN_SIZE "s %s\n",

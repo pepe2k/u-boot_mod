@@ -311,3 +311,15 @@ int do_ledoff(cmd_tbl_t * cmdtp, int flag, int argc, char *argv[])
 U_BOOT_CMD(ledon,  1, 1, do_ledon,  "turn LED/s on\n", NULL);
 U_BOOT_CMD(ledoff, 1, 1, do_ledoff, "turn LED/s off\n", NULL);
 #endif /* CONFIG_CMD_LED */
+
+/*
+ * Checks if last reset was caused by watchdog
+ */
+#if defined(CONFIG_CMD_RSTBYWDT)
+int do_rstbywdt(cmd_tbl_t * cmdtp, int flag, int argc, char *argv[])
+{
+	return !last_reset_wdt();
+}
+
+U_BOOT_CMD(rstbywdt, 1, 1, do_rstbywdt, "check if last reset was caused by watchdog\n", NULL);
+#endif /* CONFIG_CMD_RSTBYWDT */
