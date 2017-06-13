@@ -48,7 +48,7 @@
 		"uboot_size=" MK_STR(CONFIG_UPG_SCRIPTS_UBOOT_SIZE_HEX) "\0" \
 		"uboot_upg=" \
 			"if ping $serverip; then " \
-				"tftp $loadaddr $uboot_name && " \
+				"tftpb $loadaddr $uboot_name && " \
 				"if itest.l $filesize <= $uboot_size; then " \
 					"erase $uboot_addr +$uboot_size && " \
 					"cp.b $loadaddr $uboot_addr $uboot_size && " \
@@ -69,7 +69,7 @@
 			"if ping $serverip; then " \
 				"mw.b $loadaddr 0xFF $uboot_bckp && " \
 				"cp.b $uboot_addr $loadaddr $uboot_bckp && " \
-				"tftp $loadaddr $uboot_name && " \
+				"tftpb $loadaddr $uboot_name && " \
 				"if itest.l $filesize <= $uboot_size; then " \
 					"erase $uboot_addr +$uboot_bckp && " \
 					"cp.b $loadaddr $uboot_addr $uboot_bckp && " \
@@ -99,7 +99,7 @@
 		"fw_addr=" MK_STR(CONFIG_UPG_SCRIPTS_FW_ADDR_HEX) "\0" \
 		"fw_upg=" \
 			"if ping $serverip; then " \
-				"tftp $loadaddr $bootfile && " \
+				"tftpb $loadaddr $bootfile && " \
 				"erase $fw_addr +$filesize && " \
 				"cp.b $loadaddr $fw_addr $filesize && " \
 				"echo DONE! Firmware upgraded!; " \
