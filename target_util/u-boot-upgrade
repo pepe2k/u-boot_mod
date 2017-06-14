@@ -11,11 +11,12 @@
 
       MTD_DEVICE="mtd0"
    NEW_UBOOT_DIR="/etc/u-boot_mod"
- NEW_UBOOT_FNAME=
+ NEW_UBOOT_FNAME=""
+  MTD_BACKUP_MD5=""
 MTD_BACKUP_FNAME="mtd0_backup.bin"
 
 echo_info() {
-	echo -e "[\e[93minfo\e[0m] $1"
+	echo -e "[\e[96minfo\e[0m] $1"
 }
 
 echo_err() {
@@ -26,229 +27,270 @@ echo_ok() {
 	echo -e "[\e[92m ok \e[0m] $1"
 }
 
-show_disclaimer() {
-	local answer
+echo_warn() {
+	echo -e "[\e[93mwarn\e[0m] $1"
+}
+
+wait_for_yesno() {
+	local question="$1"
 
 	echo ""
-	echo "================================================================="
-	echo -e "     \e[93mDISCLAIMER: you are using this script at your own risk!\e[0m"
-	echo ""
-	echo "     The author of U-Boot modification and this script takes"
-	echo "     no responsibility for any of the results of using them."
-	echo ""
-	echo -e "          \e[31mUpdating U-Boot is a very dangerous operation"
-	echo -e "        and may damage your device! You have been warned!\e[0m"
-	echo "================================================================="
-	read -p "   Are you sure you want to continue (type 'yes' or 'no')? " answer
+	read -p "-----> $question (type 'yes' or 'no')? " answer
 
 	while true; do
-		case $answer in
-			yes)
-				echo "================================================================="
-				echo ""
-				break
-				;;
-			no)
-				exit 0
-				;;
-			*)
-				read -p "   Please, type 'yes' or 'no': " answer
-				;;
+		case "$answer" in
+		"yes")
+			echo ""
+			return 0
+			;;
+		"no")
+			echo ""
+			return 1
+			;;
+		*)
+			read -p "Please, type 'yes' or 'no': " answer
+			;;
 		esac
 	done
 }
 
+show_disclaimer() {
+	echo ""
+	echo "======================================================="
+	echo -ne "\e[93m"
+	echo "DISCLAIMER: you are using this script at your own risk!"
+	echo -ne "\e[0m"
+	echo ""
+	echo "The author of U-Boot modification and this script takes"
+	echo "no responsibility for any of the results of using them."
+	echo ""
+	echo -ne "\e[31m"
+	echo "     Updating U-Boot is a very dangerous operation"
+	echo "   and may damage your device! You have been warned!"
+	echo -ne "\e[0m"
+	echo "======================================================="
+
+	wait_for_yesno "Do you want to continue" || return 1
+}
+
 find_new_uboot_file() {
-	local answer
-	local filesqty
-	local new_ubot_md5
+	local filesqty=""
+	local new_ubot_md5=""
 
-	if [ ! -d $NEW_UBOOT_DIR ]; then
-		echo_err "Directory $NEW_UBOOT_DIR does not exist"
-		exit 1
-	fi
+	[ -d "$NEW_UBOOT_DIR" ] || {
+		echo_err "Directory '$NEW_UBOOT_DIR' does not exist"
+		return 1
+	}
 
-	cd $NEW_UBOOT_DIR 2>/dev/null
-	if [ $? -ne 0 ]; then
-		echo_err "Could not change directory to $NEW_UBOOT_DIR"
-		exit 1
-	fi
+	cd "$NEW_UBOOT_DIR" >/dev/null 2>&1 || {
+		echo_err "Could not change directory to '$NEW_UBOOT_DIR'"
+		return 1
+	}
 
-	filesqty=`ls -1 | grep "\.bin" | wc -l`
+	filesqty="$(find . -maxdepth 1 -name "*.bin" | wc -l)"
 
-	if [ $filesqty -eq 0 ]; then
-		echo_err "Could not find any binary file in $NEW_UBOOT_DIR"
-		exit 1
-	fi
+	[ "$filesqty" -eq "0" ] && {
+		echo_err "Could not find any binary file in '$NEW_UBOOT_DIR'"
+		return 1
+	}
 
-	if [ $filesqty -gt 1 ]; then
-		echo_err "Found more than one binary file in $NEW_UBOOT_DIR"
-		exit 1
-	fi
+	[ "$filesqty" -gt "1" ] && {
+		echo_err "Found more than one binary file in '$NEW_UBOOT_DIR'"
+		return 1
+	}
 
-	NEW_UBOOT_FNAME=`ls -1 | grep "\.bin"`
-	new_ubot_md5="`basename $NEW_UBOOT_FNAME .bin`.md5"
+	NEW_UBOOT_FNAME="$(basename "$(find . -maxdepth 1 -name "*.bin")")"
+	new_ubot_md5="$(basename "$NEW_UBOOT_FNAME" .bin).md5"
 
-	if [ ! -e $new_ubot_md5 ]; then
-		echo_err "Checksum file $new_ubot_md5 does not exist"
-		exit 1
-	fi
+	[ -e "$new_ubot_md5" ] || {
+		[ -e "md5sums" ] && \
+		grep -q "$NEW_UBOOT_FNAME" "md5sums" && \
+		grep "$NEW_UBOOT_FNAME" "md5sums" > "$new_ubot_md5" && \
+		echo_info "Checksum file successfully created from 'md5sums'"
+	}
 
-	echo_ok "Found U-Boot image file: $NEW_UBOOT_FNAME"
-	read -p "       Do you want to use this file (type 'yes' or 'no')? " answer
+	[ -e "$new_ubot_md5" ] || {
+		echo_err "Checksum file '$new_ubot_md5' does not exist"
+		return 1
+	}
 
-	while true; do
-		case $answer in
-			yes)
-				break
-				;;
-			no)
-				exit 0
-				;;
-			*)
-				read -p "       Please, type 'yes' or 'no': " answer
-				;;
-		esac
-	done
+	echo_ok "Found U-Boot image file: '$NEW_UBOOT_FNAME'"
 
-	md5sum -cs $new_ubot_md5 &>/dev/null
-	if [ $? -ne 0 ]; then
+	wait_for_yesno "Do you want to use this file" || return 1
+
+	md5sum -cs "$new_ubot_md5" >/dev/null 2>&1 || {
 		echo_err "MD5 checksum of new U-Boot image file is wrong"
-		exit 1
-	fi
+		return 1
+	}
 
 	echo_ok "MD5 checksum of new U-Boot image file is correct"
 }
 
 backup_mtd_zero() {
-	local answer
-
-	if [ ! -c /dev/$MTD_DEVICE ]; then
+	[ -c "/dev/$MTD_DEVICE" ] || {
 		echo_err "Device /dev/$MTD_DEVICE does not exist"
-		exit 1
-	fi
+		return 1
+	}
 
-	cd /tmp 2>/dev/null
-	if [ $? -ne 0 ]; then
-		echo_err "Could not change directory to /tmp"
-		exit 1
-	fi
+	cd /tmp >/dev/null 2>&1 || {
+		echo_err "Could not change directory to '/tmp'"
+		return 1
+	}
 
-	if [ -e $MTD_BACKUP_FNAME ]; then
-		rm -f $MTD_BACKUP_FNAME 2>/dev/null
-	fi
+	[ -e "$MTD_BACKUP_FNAME" ] && rm -f "$MTD_BACKUP_FNAME" >/dev/null 2>&1
 
-	dd if=/dev/$MTD_DEVICE of=$MTD_BACKUP_FNAME &>/dev/null
-	if [ $? -ne 0 ]; then
-		echo_err "Could not backup /dev/$MTD_DEVICE"
-		exit 1
-	fi
+	dd if=/dev/"$MTD_DEVICE" of="$MTD_BACKUP_FNAME" >/dev/null 2>&1 || {
+		echo_err "Could not backup '/dev/$MTD_DEVICE'"
+		return 1
+	}
+
+	MTD_BACKUP_MD5="$(md5sum "$MTD_BACKUP_FNAME" | awk '{print $1}')"
+	[ -n "$MTD_BACKUP_MD5" ] || {
+		echo_err "Could not calculate MD5 of backup file"
+		return 1
+	}
 
 	echo_ok "Backup of /dev/$MTD_DEVICE successfully created"
-	read -p "       Do you want to store backup in $NEW_UBOOT_DIR/backup/ (recommended, type 'yes' or 'no')? " answer
 
-	while true; do
-		case $answer in
-			yes)
-				cp -f $MTD_BACKUP_FNAME $NEW_UBOOT_DIR/backup/$MTD_BACKUP_FNAME &>/dev/null
-				if [ $? -ne 0 ]; then
-					echo_err "Could not copy backup file $MTD_BACKUP_FNAME to $NEW_UBOOT_DIR/backup/"
-					exit 1
-				fi
+	wait_for_yesno "Do you want to store backup (recommended) in '$NEW_UBOOT_DIR/backup/'" || return 0
 
-				echo_ok "Backup of /dev/$MTD_DEVICE successfully copied to $NEW_UBOOT_DIR/backup/"
-				break
-				;;
-			no)
-				break
-				;;
-			*)
-				read -p "       Please, type 'yes' or 'no': " answer
-				;;
-		esac
-	done
+	mkdir -p "$NEW_UBOOT_DIR/backup" >/dev/null 2>&1 || {
+		echo_err "Could not create '$NEW_UBOOT_DIR/backup'"
+		return 1
+	}
+
+	cp -f "$MTD_BACKUP_FNAME" "$NEW_UBOOT_DIR/backup/$MTD_BACKUP_FNAME" >/dev/null 2>&1 || {
+		echo_err "Could not copy backup file '$MTD_BACKUP_FNAME' to '$NEW_UBOOT_DIR/backup/'"
+		return 1
+	}
+
+	echo_ok "Backup of '/dev/$MTD_DEVICE' successfully copied to '$NEW_UBOOT_DIR/backup/'"
+}
+
+check_rw_status() {
+	local mtdrw="kmod-mtd-rw"
+	local rwfalg="0x400"
+	local flags=""
+
+	[ -e "/sys/class/mtd/$MTD_DEVICE/flags" ] || return 0
+
+	flags="$(cat /sys/class/mtd/$MTD_DEVICE/flags)"
+	[ "$((flags & rwfalg))" -gt "0" ] && {
+		echo_info "Partition '/dev/$MTD_DEVICE' is writable"
+		return 0
+	}
+
+	echo_warn "Partition '/dev/$MTD_DEVICE' is not writable"
+
+	opkg list-installed | grep -q "$mtdrw" || {
+		wait_for_yesno "Do you want to install '$mtdrw' and unclock '/dev/$MTD_DEVICE'" || return 1
+
+		echo_info "Updating packages..."
+
+		opkg update > /dev/null 2>&1 || {
+			echo_err "Could not update packages, check your Internet connection"
+			return 1
+		}
+
+		echo_ok "Packages successfully updated, installing '$mtdrw'..."
+
+		opkg install "$mtdrw" > /dev/null 2>&1 || {
+			echo_err "Could not install '$mtdrw' package"
+			return 1
+		}
+
+		echo_ok "Package '$mtdrw' successfully installed"
+	}
+
+	echo_info "Unlocking '/dev/$MTD_DEVICE' partition..."
+
+	insmod mtd-rw i_want_a_brick=1 >/dev/null 2>&1 || {
+		echo_err "Could not load 'mtd-rw' kernel module"
+		return 1
+	}
+
+	flags="$(cat /sys/class/mtd/$MTD_DEVICE/flags)"
+	[ "$((flags & rwfalg))" -gt "0" ] || {
+		echo_err "Could not unlock '/dev/$MTD_DEVICE' partition"
+		return 1
+	}
+
+	echo_ok "Partition '/dev/$MTD_DEVICE' successfully unlocked"
 }
 
 combine_images() {
-	local new_size
-	local old_size
+	local new_size=""
+	local old_size=""
 
-	new_size=`wc -c $NEW_UBOOT_DIR/$NEW_UBOOT_FNAME | awk '{print $1}'`
-	old_size=`wc -c /tmp/$MTD_BACKUP_FNAME | awk '{print $1}'`
+	new_size="$(wc -c "$NEW_UBOOT_DIR/$NEW_UBOOT_FNAME" | awk '{print $1}')"
+	old_size="$(wc -c "/tmp/$MTD_BACKUP_FNAME" | awk '{print $1}')"
 
-	if [ "x$old_size" = "x" ] || \
-	   [ "x$new_size" = "x" ]; then
+	[ -n "$old_size" ] || [ -n "$new_size" ] || {
 		echo_err "Could not get size of new U-Boot image and/or backup file"
-		exit 1
-	fi
+		return 1
+	}
 
 	# Allow to use only images not bigger than mtd0 size
-	if [ $new_size -gt $old_size ]; then
-		echo_err "New U-Boot image size ($new_size bytes) is bigger than $MTD_DEVICE partition size ($old_size bytes)"
-		exit 1
-	fi
+	[ "$new_size" -gt "$old_size" ] && {
+		echo_err "New U-Boot image size ('$new_size' bytes) is bigger than '$MTD_DEVICE' partition size ('$old_size' bytes)"
+		return 1
+	}
 
-	dd if=$NEW_UBOOT_DIR/$NEW_UBOOT_FNAME of=/tmp/$MTD_BACKUP_FNAME conv=notrunc &>/dev/null
-	if [ $? -ne 0 ]; then
+	dd if="$NEW_UBOOT_DIR/$NEW_UBOOT_FNAME" of="/tmp/$MTD_BACKUP_FNAME" conv=notrunc >/dev/null 2>&1 || {
 		echo_err "Could not combine new U-Boot image with backup file"
-		exit 1
-	fi
+		return 1
+	}
 
 	echo_ok "New U-Boot image successfully combined with backup file"
 }
 
 write_new_image() {
-	local answer
-	local verify_result
+	local newmd5=""
 
 	echo_info "New U-Boot image is ready to be written into FLASH"
-	read -p "       Are you sure you want to continue (type 'yes' or 'no')? " answer
 
-	while true; do
-		case $answer in
-			yes)
-				break
-				;;
-			no)
-				exit 0
-				;;
-			*)
-				read -p "       Please, type 'yes' or 'no': " answer
-				;;
-		esac
-	done
+	wait_for_yesno "Do you want to continue" || return 1
 
 	# Erase mtd0 and write new image...
-	mtd -e /dev/$MTD_DEVICE write /tmp/$MTD_BACKUP_FNAME /dev/$MTD_DEVICE &>/dev/null
-	if [ $? -ne 0 ]; then
-		echo_err "FATAL ERROR: could not write new U-Boot image into FLASH"
-		echo_err "DO NOT RESET YOUR DEVICE NOW AND TRY AGAIN!"
-		exit 1
-	fi
+	mtd -e "/dev/$MTD_DEVICE" write "/tmp/$MTD_BACKUP_FNAME" "/dev/$MTD_DEVICE" >/dev/null 2>&1 || {
+		echo_warn "Could not write new U-Boot image into FLASH"
+
+		newmd5="$(md5sum "/dev/$MTD_DEVICE" | awk '{print $1}')"
+
+		[ "$MTD_BACKUP_MD5" = "$newmd5" ] && {
+			echo_ok "Original '/dev/$MTD_DEVICE' partition content was not changed"
+			return 0
+		}
+
+		echo_err "FATAL ERROR: '/dev/$MTD_DEVICE' and old U-Boot image are not equal"
+		echo_err "DO NOT REBOOT OR POWER DOWN YOUR DEVICE NOW AND TRY AGAIN!"
+		return 1
+	}
 
 	echo_ok "New U-Boot image successfully written into FLASH"
 
 	# Verify MD5 of mtd0 and prepared image
-	verify_result=`mtd verify /tmp/$MTD_BACKUP_FNAME /dev/$MTD_DEVICE 2>&1 | grep "Success"`
-	if [ "x$verify_result" = "x" ]; then
-		echo_err "FATAL ERROR: MD5 checksum of $MTD_DEVICE and new U-Boot image are not equal"
-		echo_err "DO NOT RESET YOUR DEVICE NOW AND TRY AGAIN!"
-		exit 1
-	fi
+	mtd verify "/tmp/$MTD_BACKUP_FNAME" "/dev/$MTD_DEVICE" 2>&1 | grep -q "Success" || {
+		echo_err "FATAL ERROR: '/dev/$MTD_DEVICE' and new U-Boot image are not equal"
+		echo_err "DO NOT REBOOT OR POWER DOWN YOUR DEVICE NOW AND TRY AGAIN!"
+		return 1
+	}
 
-	echo_ok "MD5 checksum of $MTD_DEVICE and new U-Boot image are equal"
+	echo_ok "'/dev/$MTD_DEVICE' and new U-Boot image are equal"
 
-	echo_info "Done!"
+	echo_info "Done! You can now reboot your device!"
+	echo ""
 }
 
 #======================
 # Execution begins here
 #======================
 
-show_disclaimer
-find_new_uboot_file
-backup_mtd_zero
-combine_images
+show_disclaimer     && \
+find_new_uboot_file && \
+backup_mtd_zero     && \
+check_rw_status     && \
+combine_images      && \
 write_new_image
 
 exit 0
