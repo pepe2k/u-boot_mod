@@ -92,6 +92,15 @@
 	#define CONFIG_QCA_GPIO_MASK_IN		GPIO12
 	#define CONFIG_QCA_GPIO_MASK_OUT_INIT_H	CONFIG_QCA_GPIO_MASK_LED_ACT_L
 
+#elif defined(CONFIG_FOR_TPLINK_MR3420_V3)
+
+	#define CONFIG_QCA_GPIO_MASK_LED_ACT_L	GPIO1  | GPIO3  | GPIO4  |\
+						GPIO11 | GPIO13 | GPIO14 |\
+						GPIO15 | GPIO16
+	#define CONFIG_QCA_GPIO_MASK_OUT	CONFIG_QCA_GPIO_MASK_LED_ACT_L
+	#define CONFIG_QCA_GPIO_MASK_IN		GPIO12 | GPIO17
+	#define CONFIG_QCA_GPIO_MASK_OUT_INIT_H	CONFIG_QCA_GPIO_MASK_LED_ACT_L
+
 #elif defined(CONFIG_FOR_TPLINK_WR841N_V10) ||\
       defined(CONFIG_FOR_TPLINK_WR841N_V9)
 
@@ -209,7 +218,8 @@
 				"rootfstype=squashfs init=/sbin/init "\
 				"mtdparts=ath-nor0:32k(u-boot1),32k(u-boot2),3008k(rootfs),896k(uImage),64k(mib0),64k(art)"
 
-#elif defined(CONFIG_FOR_TPLINK_WA850RE_V2) ||\
+#elif defined(CONFIG_FOR_TPLINK_MR3420_V3) ||\
+      defined(CONFIG_FOR_TPLINK_WA850RE_V2) ||\
       defined(CONFIG_FOR_TPLINK_WR841N_V10) ||\
       defined(CONFIG_FOR_TPLINK_WR841N_V11) ||\
       defined(CONFIG_FOR_TPLINK_WR841N_V9)  ||\
@@ -243,6 +253,7 @@
     defined(CONFIG_FOR_COMFAST_CF_E320N_V2) ||\
     defined(CONFIG_FOR_COMFAST_CF_E520N)    ||\
     defined(CONFIG_FOR_COMFAST_CF_E530N)    ||\
+    defined(CONFIG_FOR_TPLINK_MR3420_V3)    ||\
     defined(CONFIG_FOR_TPLINK_WA850RE_V2)   ||\
     defined(CONFIG_FOR_TPLINK_WR802N)       ||\
     defined(CONFIG_FOR_TPLINK_WR810N)       ||\
@@ -292,7 +303,8 @@
 	#define CFG_ENV_ADDR		0x9F040000
 	#define CFG_ENV_SIZE		0xFC00
 	#define CFG_ENV_SECT_SIZE	0x10000
-#elif defined(CONFIG_FOR_TPLINK_WA850RE_V2) ||\
+#elif defined(CONFIG_FOR_TPLINK_MR3420_V3)  ||\
+      defined(CONFIG_FOR_TPLINK_WA850RE_V2) ||\
       defined(CONFIG_FOR_TPLINK_WR802N)     ||\
       defined(CONFIG_FOR_TPLINK_WR810N)     ||\
       defined(CONFIG_FOR_TPLINK_WR820N_CN)  ||\
@@ -343,7 +355,8 @@
 	#define OFFSET_MAC_DATA_BLOCK		0x3c0000
 	#define OFFSET_MAC_DATA_BLOCK_LENGTH	0x010000
 	#define OFFSET_MAC_ADDRESS		0x000008
-#elif defined(CONFIG_FOR_TPLINK_WR802N)     ||\
+#elif defined(CONFIG_FOR_TPLINK_MR3420_V3)  ||\
+      defined(CONFIG_FOR_TPLINK_WR802N)     ||\
       defined(CONFIG_FOR_TPLINK_WR810N)     ||\
       defined(CONFIG_FOR_TPLINK_WR820N_CN)  ||\
       defined(CONFIG_FOR_TPLINK_WR841N_V10) ||\
@@ -404,6 +417,7 @@
     defined(CONFIG_FOR_COMFAST_CF_E320N_V2) ||\
     defined(CONFIG_FOR_COMFAST_CF_E520N)    ||\
     defined(CONFIG_FOR_COMFAST_CF_E530N)    ||\
+    defined(CONFIG_FOR_TPLINK_MR3420_V3)    ||\
     defined(CONFIG_FOR_TPLINK_WR802N)       ||\
     defined(CONFIG_FOR_TPLINK_WR810N)       ||\
     defined(CONFIG_FOR_TPLINK_WR820N_CN)    ||\
@@ -444,6 +458,7 @@
     defined(CONFIG_FOR_COMFAST_CF_E520N)    ||\
     defined(CONFIG_FOR_COMFAST_CF_E530N)    ||\
     defined(CONFIG_FOR_TPLINK_WA850RE_V2)   ||\
+    defined(CONFIG_FOR_TPLINK_MR3420_V3)    ||\
     defined(CONFIG_FOR_TPLINK_WR802N)       ||\
     defined(CONFIG_FOR_TPLINK_WR810N)       ||\
     defined(CONFIG_FOR_TPLINK_WR820N_CN)    ||\
