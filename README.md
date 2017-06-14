@@ -101,6 +101,7 @@ Currently supported devices:
   - Comfast CF-E520N/CF-E530N
   - P&W CPE505N
   - P&W R602N
+  - TP-Link TL-MR3420 v3
   - TP-Link TL-WA850RE v2
   - TP-Link TL-WR802N
   - TP-Link TL-WR810N
@@ -137,6 +138,7 @@ More information about supported devices:
 | [TP-Link TL-MR3040 v1/2](http://wiki.openwrt.org/toh/tp-link/tl-mr3040) | AR9331 | 4 MiB | 32 MiB DDR1 | 64 KiB, LZMA | RO |
 | [TP-Link TL-MR3220 v2](http://wiki.openwrt.org/toh/tp-link/tl-mr3420) | AR9331 | 4 MiB | 32 MiB DDR1 | 64 KiB, LZMA | RO |
 | [TP-Link TL-MR3420 v2](http://wikidevi.com/wiki/TP-LINK_TL-MR3420_v2) | AR9341 | 4 MiB | 32 MiB DDR1 | 64 KiB, LZMA | RO |
+| [TP-Link TL-MR3420 v3](http://wikidevi.com/wiki/TP-LINK_TL-MR3420_v3) | QCA9531 | 4 MiB | 32 MiB DDR2 | 64 KiB, LZMA | RO |
 | [TP-Link TL-WA801ND v2](http://wikidevi.com/wiki/TP-LINK_TL-WA801ND_v2) | AR9341 | 4 MiB | 32 MiB DDR1 | 64 KiB, LZMA | RO |
 | [TP-Link TL-WA830RE v2](http://wikidevi.com/wiki/TP-LINK_TL-WA830RE_v2) | AR9341 | 4 MiB | 32 MiB DDR1 | 64 KiB, LZMA | RO |
 | TP-Link TL-WA850RE v2 | QCA9533 | 4 MiB | 32 MiB DDR1 | 64 KiB, LZMA | RO |
