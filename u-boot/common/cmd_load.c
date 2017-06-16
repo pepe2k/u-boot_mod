@@ -209,6 +209,9 @@ static ulong load_serial(ulong offset)
 			sprintf(buf, "0x%lX", size);
 			setenv("filesize", buf);
 
+			sprintf(buf, "0x%lX", addr);
+			setenv("fileaddr", buf);
+
 			return addr;
 		case SREC_START:
 			break;
@@ -518,6 +521,9 @@ int do_load_serial_bin(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 
 		sprintf(buf, "0x%X", size_dl);
 		setenv("filesize", buf);
+
+		sprintf(buf, "0x%lX", address);
+		setenv("fileaddr", buf);
 	} else {
 		puts("\n");
 		printf_err("downloaded data size is zero!\n");
