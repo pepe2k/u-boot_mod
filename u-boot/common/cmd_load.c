@@ -116,6 +116,8 @@ int do_load_serial(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 		if(i == N_BAUDRATES){
 			printf_err("baudrate %d bps is not supported, will use current: %d bps\n",
 				   load_baudrate, current_baudrate);
+
+			load_baudrate = current_baudrate;
 		} else {
 			switch_baudrate(load_baudrate, 0);
 		}
@@ -310,6 +312,8 @@ int do_save_serial(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 		if(i == N_BAUDRATES){
 			printf_err("baudrate %d bps is not supported, will use current: %d bps\n",
 				   save_baudrate, current_baudrate);
+
+			save_baudrate = current_baudrate;
 		} else {
 			switch_baudrate(save_baudrate, 0);
 		}
@@ -504,6 +508,8 @@ int do_load_serial_bin(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 		if(i == N_BAUDRATES){
 			printf_err("baudrate %d bps is not supported, will use current: %d bps\n",
 				   load_baudrate, current_baudrate);
+
+			load_baudrate = current_baudrate;
 		} else {
 			switch_baudrate(load_baudrate, 0);
 		}
