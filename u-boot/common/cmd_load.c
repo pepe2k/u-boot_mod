@@ -206,7 +206,7 @@ static ulong load_serial(ulong offset)
 
 			flush_cache(start_addr, size);
 
-			sprintf(buf, "%lX", size);
+			sprintf(buf, "0x%lX", size);
 			setenv("filesize", buf);
 
 			return addr;
@@ -516,7 +516,7 @@ int do_load_serial_bin(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 
 		flush_cache(address, size_dl);
 
-		sprintf(buf, "%X", size_dl);
+		sprintf(buf, "0x%X", size_dl);
 		setenv("filesize", buf);
 	} else {
 		puts("\n");

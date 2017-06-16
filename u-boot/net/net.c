@@ -515,10 +515,10 @@ int NetLoop(proto_t protocol){
 					char buf[10];
 					printf("\nBytes transferred: %ld (0x%lx)\n", NetBootFileXferSize, NetBootFileXferSize);
 
-					sprintf(buf, "%lx", NetBootFileXferSize);
+					sprintf(buf, "0x%lX", NetBootFileXferSize);
 					setenv("filesize", buf);
 
-					sprintf(buf, "%lX", (unsigned long)load_addr);
+					sprintf(buf, "0x%lX", (unsigned long)load_addr);
 					setenv("fileaddr", buf);
 				}
 
