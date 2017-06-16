@@ -57,20 +57,19 @@ static const unsigned long baudrate_table[] = CFG_BAUDRATE_TABLE;
 
 static void switch_baudrate(int baudrate, int back)
 {
-		printf("Switch%s baudrate to %d bps and press ENTER...\n", back > 0 ? " back" : "", baudrate);
-		udelay(50000);
+	printf("Switch%s baudrate to %d bps and press ENTER...\n", back > 0 ? " back" : "", baudrate);
+	udelay(50000);
 
-		gd->baudrate = baudrate;
+	gd->baudrate = baudrate;
 
-		serial_setbrg();
+	serial_setbrg();
 
-		udelay(50000);
+	udelay(50000);
 
-		for(;;){
-			if(getc() == '\r'){
-				break;
-			}
-		}
+	for (;;) {
+		if (getc() == '\r')
+			break;
+	}
 }
 #endif
 
@@ -88,39 +87,35 @@ int do_load_serial(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 
 	load_baudrate = current_baudrate = gd->baudrate;
 
-	if(((env_echo = getenv("loads_echo")) != NULL) && (*env_echo == '1')){
+	if (((env_echo = getenv("loads_echo")) != NULL) && (*env_echo == '1')) {
 		do_echo = 1;
-	} else {
+	else
 		do_echo = 0;
-	}
 
-	if(argc >= 2){
+	if (argc >= 2)
 		offset = simple_strtoul(argv[1], NULL, 16);
-	}
 
-	if(argc == 3){
+	if (argc == 3) {
 		load_baudrate = (int)simple_strtoul(argv[2], NULL, 10);
 
 		/* default to current baudrate */
-		if(load_baudrate == 0)
+		if (load_baudrate == 0)
 			load_baudrate = current_baudrate;
 	}
 
-	if(load_baudrate != current_baudrate){
-		for(i = 0; i < N_BAUDRATES; ++i){
-			if(load_baudrate == baudrate_table[i]){
+	if (load_baudrate != current_baudrate) {
+		for (i = 0; i < N_BAUDRATES; ++i) {
+			if (load_baudrate == baudrate_table[i])
 				break;
-			}
 		}
 
-		if(i == N_BAUDRATES){
+		if (i == N_BAUDRATES) {
 			printf_err("baudrate %d bps is not supported, will use current: %d bps\n",
 				   load_baudrate, current_baudrate);
 
 			load_baudrate = current_baudrate;
-		} else {
+		} else
 			switch_baudrate(load_baudrate, 0);
-		}
 	}
 
 	printf("Ready for S-Record download...\n");
@@ -132,22 +127,20 @@ int do_load_serial(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 	 * is sent by 'cu' after sending a file), and give the
 	 * box some time (100 * 1 ms)
 	 */
-	for(i=0; i<100; ++i){
-		if(tstc()){
+	for (i=0; i<100; ++i) {
+		if (tstc())
 			(void)getc();
-		}
 
 		udelay(1000);
 	}
 
-	if(addr == ~0){
+	if (addr == ~0) {
 		printf_err("S-Record download aborted!\n");
 		rcode = 1;
 	}
 
-	if(load_baudrate != current_baudrate){
+	if (load_baudrate != current_baudrate)
 		switch_baudrate(current_baudrate, 1);
-	}
 
 	return rcode;
 }
@@ -156,36 +149,35 @@ static ulong load_serial(ulong offset)
 {
 	char	record[SREC_MAXRECLEN + 1];	/* buffer for one S-Record */
 	char	binbuf[SREC_MAXBINLEN];		/* buffer for binary data */
-	int		binlen;						/* no. of data bytes in S-Rec. */
-	int		type;						/* return code for record type */
-	ulong	addr;						/* load address from S-Record */
-	ulong	size;						/* number of bytes transferred */
+	int	binlen;				/* no. of data bytes in S-Rec. */
+	int	type;				/* return code for record type */
+	ulong	addr;				/* load address from S-Record */
+	ulong	size;				/* number of bytes transferred */
 	char	buf[32];
 	ulong	store_addr;
 	ulong	start_addr = ~0;
 	ulong	end_addr   =  0;
-	int		line_count =  0;
+	int	line_count =  0;
 
-	while(read_record(record, SREC_MAXRECLEN + 1) >= 0){
+	while (read_record(record, SREC_MAXRECLEN + 1) >= 0) {
 		type = srec_decode(record, &binlen, &addr, binbuf);
 
-		if(type < 0){
-			return(~0);	/* Invalid S-Record */
-		}
+		if (type < 0)
+			return ~0;	/* Invalid S-Record */
 
-		switch(type){
+		switch (type) {
 		case SREC_DATA2:
 		case SREC_DATA3:
 		case SREC_DATA4:
 			store_addr = addr + offset;
 
 #ifndef CFG_NO_FLASH
-			if(addr2info(store_addr)){
+			if (addr2info(store_addr)) {
 				int rc = flash_write((char *)binbuf, store_addr, binlen);
 
-				if(rc != 0){
+				if (rc != 0) {
 					flash_perror(rc);
-					return (~0);
+					return ~0;
 				}
 			} else
 #endif
@@ -193,10 +185,10 @@ static ulong load_serial(ulong offset)
 				memcpy((char *)(store_addr), binbuf, binlen);
 			}
 
-			if((store_addr) < start_addr)
+			if ((store_addr) < start_addr)
 				start_addr = store_addr;
 
-			if((store_addr + binlen - 1) > end_addr)
+			if ((store_addr + binlen - 1) > end_addr)
 				end_addr = store_addr + binlen - 1;
 			break;
 		case SREC_END2:
@@ -217,7 +209,7 @@ static ulong load_serial(ulong offset)
 			sprintf(buf, "%lX", size);
 			setenv("filesize", buf);
 
-			return(addr);
+			return addr;
 		case SREC_START:
 			break;
 		default:
@@ -225,14 +217,14 @@ static ulong load_serial(ulong offset)
 		}
 
 		/* print a '.' every 100 lines */
-		if(!do_echo){
-			if((++line_count % 100) == 0)
+		if (!do_echo) {
+			if ((++line_count % 100) == 0)
 				putc('.');
 		}
 	}
 
 	/* Download aborted */
-	return(~0);
+	return ~0;
 }
 
 static int read_record(char *buf, ulong len)
@@ -243,38 +235,38 @@ static int read_record(char *buf, ulong len)
 	/* always leave room for terminating '\0' byte */
 	--len;
 
-	for(p=buf; p < buf+len; ++p){
+	for (p=buf; p < buf+len; ++p) {
 		/* read character */
 		c = getc();
 
 		/* ... and echo it */
-		if(do_echo)
+		if (do_echo)
 			putc(c);
 
-		switch(c){
+		switch (c) {
 		case '\r':
 		case '\n':
 			*p = '\0';
-			return(p - buf);
+			return (p - buf);
 		case '\0':
 		/* ^C - Control C */
 		case 0x03:
-			return(-1);
+			return -1;
 		default:
 			*p = c;
 		}
 
 		/* Check for the console hangup (if any different from serial) */
-		if(gd->jt[XF_getc] != getc) {
-			if(ctrlc()){
-				return(-1);
-			}
+		if (gd->jt[XF_getc] != getc) {
+			if (ctrlc())
+				return -1;
 		}
 	}
 
 	/* line too long - truncate */
 	*p = '\0';
-	return(p - buf);
+
+	return (p - buf);
 }
 
 #if defined(CONFIG_CMD_SAVES)
@@ -286,62 +278,56 @@ int do_save_serial(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 
 	save_baudrate = current_baudrate = gd->baudrate;
 
-	if(argc >= 2){
+	if (argc >= 2)
 		offset = simple_strtoul(argv[1], NULL, 16);
-	}
 
-	if(argc >= 3){
+	if (argc >= 3)
 		size = simple_strtoul(argv[2], NULL, 16);
-	}
 
-	if(argc == 4){
+	if (argc == 4) {
 		save_baudrate = (int)simple_strtoul(argv[3], NULL, 10);
 
 		/* default to current baudrate */
-		if(save_baudrate == 0)
+		if (save_baudrate == 0)
 			save_baudrate = current_baudrate;
 	}
 
-	if(save_baudrate != current_baudrate){
-		for(i = 0; i < N_BAUDRATES; ++i){
-			if(save_baudrate == baudrate_table[i]){
+	if (save_baudrate != current_baudrate) {
+		for (i = 0; i < N_BAUDRATES; ++i) {
+			if (save_baudrate == baudrate_table[i])
 				break;
-			}
 		}
 
-		if(i == N_BAUDRATES){
+		if (i == N_BAUDRATES) {
 			printf_err("baudrate %d bps is not supported, will use current: %d bps\n",
 				   save_baudrate, current_baudrate);
 
 			save_baudrate = current_baudrate;
-		} else {
+		} else
 			switch_baudrate(save_baudrate, 0);
-		}
 	}
 
 	printf("Ready for S-Record upload, press ENTER to proceed...\n");
 
-	for(;;){
-		if(getc() == '\r')
+	for (;;) {
+		if (getc() == '\r')
 			break;
 	}
 
-	if(save_serial(offset, size)){
+	if (save_serial(offset, size))
 		printf_err("S-Record upload aborted!\n");
-	} else {
+	else
 		printf("\nS-Record upload complete!\n");
-	}
 
-	if(save_baudrate != current_baudrate){
+	if (save_baudrate != current_baudrate)
 		switch_baudrate(current_baudrate, 1);
-	}
 
 	return 0;
 }
 
-#define SREC3_START				"S0030000FC\n"
-#define SREC3_FORMAT			"S3%02X%08lX%s%02X\n"
-#define SREC3_END				"S70500000000FA\n"
+#define SREC3_START		"S0030000FC\n"
+#define SREC3_FORMAT		"S3%02X%08lX%s%02X\n"
+#define SREC3_END		"S70500000000FA\n"
 #define SREC_BYTES_PER_RECORD	16
 
 static int save_serial(ulong address, ulong count)
@@ -355,12 +341,12 @@ static int save_serial(ulong address, ulong count)
 	checksum = 0;
 
 	/* write the header */
-	if(write_record(SREC3_START))
-		return(-1);
+	if (write_record(SREC3_START))
+		return -1;
 
 	do {
 		/* collect hex data in the buffer */
-		if(count){
+		if (count) {
 			/* get one byte */
 			c = *(volatile uchar*)(address + reclen);
 
@@ -374,19 +360,19 @@ static int save_serial(ulong address, ulong count)
 			--count;
 		}
 
-		if(reclen == SREC_BYTES_PER_RECORD || count == 0){
+		if (reclen == SREC_BYTES_PER_RECORD || count == 0) {
 			/* enough data collected for one record: dump it */
 			/* build & write a data record: */
-			if(reclen){
+			if (reclen) {
 				/* address + data + checksum */
 				length = 4 + reclen + 1;
 
 				/* accumulate length bytes into checksum */
-				for(i = 0; i < 2; i++)
+				for (i = 0; i < 2; i++)
 					checksum += (length >> (8*i)) & 0xff;
 
 				/* accumulate address bytes into checksum */
-				for(i = 0; i < 4; i++)
+				for (i = 0; i < 4; i++)
 					checksum += (address >> (8*i)) & 0xff;
 
 				/* make proper checksum byte: */
@@ -395,8 +381,8 @@ static int save_serial(ulong address, ulong count)
 				/* output one record: */
 				sprintf(record, SREC3_FORMAT, length, address, data, checksum);
 
-				if(write_record(record))
-					return(-1);
+				if (write_record(record))
+					return -1;
 			}
 
 			/* increment address */
@@ -404,28 +390,27 @@ static int save_serial(ulong address, ulong count)
 			checksum  = 0;
 			reclen    = 0;
 		}
-	} while(count);
+	} while (count);
 
 	/* write the final record */
-	if(write_record(SREC3_END))
-		return(-1);
+	if (write_record(SREC3_END))
+		return -1;
 
-	return(0);
+	return 0;
 }
 
 static int write_record(char *buf)
 {
 	char c;
 
-	while((c = *buf++))
+	while ((c = *buf++))
 		putc(c);
 
 	/* Check for the console hangup (if any different from serial) */
-	if(ctrlc()){
-		return(-1);
-	}
+	if (ctrlc())
+		return -1;
 
-	return(0);
+	return 0;
 }
 #endif /* CONFIG_CMD_SAVES */
 #endif /* CONFIG_CMD_LOADS */
@@ -433,20 +418,20 @@ static int write_record(char *buf)
 /* loadb command (load binary) included */
 #if defined(CONFIG_CMD_LOADB)
 
-#define XON_CHAR		17
-#define XOFF_CHAR		19
-#define START_CHAR		0x01
-#define ETX_CHAR		0x03
-#define END_CHAR		0x0D
-#define SPACE			0x20
-#define K_ESCAPE		0x23
-#define SEND_TYPE		'S'
-#define DATA_TYPE		'D'
-#define ACK_TYPE		'Y'
-#define NACK_TYPE		'N'
-#define BREAK_TYPE		'B'
-#define tochar(x)		((char) (((x) + SPACE) & 0xff))
-#define untochar(x)		((int) (((x) - SPACE) & 0xff))
+#define XON_CHAR	17
+#define XOFF_CHAR	19
+#define START_CHAR	0x01
+#define ETX_CHAR	0x03
+#define END_CHAR	0x0D
+#define SPACE		0x20
+#define K_ESCAPE	0x23
+#define SEND_TYPE	'S'
+#define DATA_TYPE	'D'
+#define ACK_TYPE	'Y'
+#define NACK_TYPE	'N'
+#define BREAK_TYPE	'B'
+#define tochar(x)	((char) (((x) + SPACE) & 0xff))
+#define untochar(x)	((int) (((x) - SPACE) & 0xff))
 
 extern int os_data_count;
 extern int os_data_header[8];
@@ -471,61 +456,62 @@ int do_load_serial_bin(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 	load_baudrate = current_baudrate = gd->baudrate;
 
 	/* pre-set address from $loadaddr */
-	if((s = getenv("loadaddr")) != NULL){
+	if ((s = getenv("loadaddr")) != NULL)
 		address = simple_strtoul(s, NULL, 16);
-	}
 
-	if(argc >= 2){
+	if (argc >= 2)
 		address = simple_strtoul(argv[1], NULL, 16);
-	}
 
-	if(address == 0){
+	if (address == 0) {
 		printf_err("destination address can't be 0x0!\n");
 		return 1;
 	}
 
 	/* don't allow to write directly to FLASH (that will need erase before!) */
-	if(addr2info(address) != NULL){
+	if (addr2info(address) != NULL) {
 		printf_err("destination address in FLASH is not allowed!\n");
 		return 1;
 	}
 
-	if(argc == 3){
+	if (argc == 3) {
 		load_baudrate = (int)simple_strtoul(argv[2], NULL, 10);
 
 		/* default to current baudrate */
-		if(load_baudrate == 0)
+		if (load_baudrate == 0)
 			load_baudrate = current_baudrate;
 	}
 
-	if(load_baudrate != current_baudrate){
-		for(i = 0; i < N_BAUDRATES; ++i){
-			if(load_baudrate == baudrate_table[i]){
+	if (load_baudrate != current_baudrate) {
+		for (i = 0; i < N_BAUDRATES; ++i) {
+			if (load_baudrate == baudrate_table[i])
 				break;
-			}
 		}
 
-		if(i == N_BAUDRATES){
+		if (i == N_BAUDRATES) {
 			printf_err("baudrate %d bps is not supported, will use current: %d bps\n",
 				   load_baudrate, current_baudrate);
 
 			load_baudrate = current_baudrate;
-		} else {
+		} else
 			switch_baudrate(load_baudrate, 0);
-		}
 	}
 
-	if(strcmp(argv[0],"loady") == 0){
-		printf("Ready for binary (Ymodem) download to 0x%08lX at %d bps...\n", address, load_baudrate);
+	printf("Ready for binary (%s) download to 0x%08lX at %d bps...\n",
+	       strcmp(argv[0],"loady") == 0 ? "Ymodem" : "Kermit",
+	       address, load_baudrate);
+
+	if (strcmp(argv[0],"loady") == 0)
 		size_dl = load_serial_ymodem(address);
-	} else {
-		printf("Ready for binary (Kermit) download to 0x%08lX at %d bps...\n", address, load_baudrate);
+	else
 		size_dl = load_serial_bin(address);
-	}
 
-	if(size_dl > 0){
-		printf("\n%s download complete!\n", strcmp(argv[0],"loady") == 0 ? "Ymodem" : "Kermit");
-		printf("Total downloaded size: 0x%08lX (%d bytes)\n", size_dl, size_dl);
+	if (size_dl > 0) {
+		printf("\n%s download complete!\n",
+		       strcmp(argv[0],"loady") == 0 ? "Ymodem" : "Kermit");
+
+		printf("Total downloaded size: 0x%08lX (%d bytes)\n",
+		       size_dl, size_dl);
+
 		printf("   Data start address: 0x%08lX\n\n", address);
 
 		flush_cache(address, size_dl);
@@ -538,9 +524,8 @@ int do_load_serial_bin(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 		rcode = 1;
 	}
 
-	if(load_baudrate != current_baudrate){
+	if (load_baudrate != current_baudrate)
 		switch_baudrate(current_baudrate, 1);
-	}
 
 	return rcode;
 }
@@ -557,10 +542,9 @@ static int load_serial_bin(ulong address)
 	 * is sent by 'cu' after sending a file), and give the
 	 * box some time (100 * 1 ms)
 	 */
-	for(i = 0; i < 100; ++i) {
-		if(tstc()){
+	for (i = 0; i < 100; ++i) {
+		if (tstc())
 			(void)getc();
-		}
 
 		udelay(1000);
 	}
@@ -572,29 +556,27 @@ void send_pad(void)
 {
 	int count = his_pad_count;
 
-	while(count-- > 0)
+	while (count-- > 0)
 		putc(his_pad_char);
 }
 
 /* converts escaped kermit char to binary char */
 char ktrans(char in)
 {
-	if((in & 0x60) == 0x40){
-		return(char)(in & ~0x40);
-	} else if((in & 0x7f) == 0x3f){
-		return(char)(in | 0x40);
-	} else {
+	if ((in & 0x60) == 0x40)
+		return (char)(in & ~0x40);
+	else if ((in & 0x7f) == 0x3f)
+		return (char)(in | 0x40);
+	else
 		return in;
-	}
 }
 
 int chk1(char *buffer)
 {
 	int total = 0;
 
-	while(*buffer){
+	while (*buffer)
 		total += *buffer++;
-	}
 
 	return (int)((total + ((total >> 6) & 0x03)) & 0x3f);
 }
@@ -603,9 +585,8 @@ void s1_sendpacket(char *packet)
 {
 	send_pad();
 
-	while(*packet){
+	while (*packet)
 		putc(*packet++);
-	}
 }
 
 static char a_b[24];
@@ -674,7 +655,7 @@ static void os_data_restore(void)
 
 static void bin_data_char(char new_char)
 {
-	switch(os_data_state){
+	switch (os_data_state) {
 	/* data */
 	case 0:
 		*os_data_addr++ = new_char;
@@ -712,18 +693,15 @@ void k_data_restore(void)
 
 void k_data_char(char new_char)
 {
-	if(k_data_escape){
+	if (k_data_escape) {
 		/* last char was escape - translate this character */
 		os_data_char(ktrans(new_char));
 		k_data_escape = 0;
 	} else {
-		if(new_char == his_quote){
-			/* this char is escape - remember */
-			k_data_escape = 1;
-		} else {
-			/* otherwise send this char as-is */
-			os_data_char(new_char);
-		}
+		if (new_char == his_quote)
+			k_data_escape = 1;	/* this char is escape - remember */
+		else
+			os_data_char(new_char);	/* otherwise send this char as-is */
 	}
 }
 
@@ -739,34 +717,34 @@ void handle_send_packet(int n)
 	int bytes;
 
 	/* initialize some protocol parameters */
-	his_eol = END_CHAR;		/* default end of line character */
+	his_eol = END_CHAR;	/* default end of line character */
 	his_pad_count = 0;
 	his_pad_char  = '\0';
 	his_quote     = K_ESCAPE;
 
 	/* ignore last character if it filled the buffer */
-	if(send_ptr == &send_parms[SEND_DATA_SIZE - 1])
+	if (send_ptr == &send_parms[SEND_DATA_SIZE - 1])
 		--send_ptr;
 
 	/* how many bytes we'll process */
 	bytes = send_ptr - send_parms;
 
 	do {
-		if(bytes-- <= 0)
+		if (bytes-- <= 0)
 			break;
 
 		/* handle MAXL - max length */
 		/* ignore what he says - most I'll take (here) is 94 */
 		a_b[++length] = tochar(94);
 
-		if(bytes-- <= 0)
+		if (bytes-- <= 0)
 			break;
 
 		/* handle TIME - time you should wait for my packets */
 		/* ignore what he says - don't wait for my ack longer than 1 second */
 		a_b[++length] = tochar(1);
 
-		if(bytes-- <= 0)
+		if (bytes-- <= 0)
 			break;
 
 		/* handle NPAD - number of pad chars I need */
@@ -774,7 +752,7 @@ void handle_send_packet(int n)
 		his_pad_count = untochar(send_parms[2]);
 		a_b[++length] = tochar(0);
 
-		if(bytes-- <= 0)
+		if (bytes-- <= 0)
 			break;
 
 		/* handle PADC - pad chars I need */
@@ -782,7 +760,7 @@ void handle_send_packet(int n)
 		his_pad_char = ktrans(send_parms[3]);
 		a_b[++length] = 0x40;	/* He should ignore this */
 
-		if(bytes-- <= 0)
+		if (bytes-- <= 0)
 			break;
 
 		/* handle EOL - end of line he needs */
@@ -790,7 +768,7 @@ void handle_send_packet(int n)
 		his_eol = untochar(send_parms[4]);
 		a_b[++length] = tochar(END_CHAR);
 
-		if(bytes-- <= 0)
+		if (bytes-- <= 0)
 			break;
 
 		/* handle QCTL - quote control char he'll use */
@@ -798,28 +776,28 @@ void handle_send_packet(int n)
 		his_quote = send_parms[5];
 		a_b[++length] = '#';
 
-		if(bytes-- <= 0)
+		if (bytes-- <= 0)
 			break;
 
 		/* handle QBIN - 8-th bit prefixing */
 		/* ignore what he says - I refuse */
 		a_b[++length] = 'N';
 
-		if(bytes-- <= 0)
+		if (bytes-- <= 0)
 			break;
 
 		/* handle CHKT - the clock check type */
 		/* ignore what he says - I do type 1 (for now) */
 		a_b[++length] = '1';
 
-		if(bytes-- <= 0)
+		if (bytes-- <= 0)
 			break;
 
 		/* handle REPT - the repeat prefix */
 		/* ignore what he says - I refuse (for now) */
 		a_b[++length] = 'N';
 
-		if(bytes-- <= 0)
+		if (bytes-- <= 0)
 			break;
 
 		/* handle CAPAS - the capabilities mask */
@@ -828,7 +806,7 @@ void handle_send_packet(int n)
 		a_b[++length] = tochar(0);	/* no windows */
 		a_b[++length] = tochar(94);	/* large packet msb */
 		a_b[++length] = tochar(94);	/* large packet lsb */
-	} while(0);
+	} while (0);
 
 	a_b[0] = START_CHAR;
 	a_b[1] = tochar(length);
@@ -882,7 +860,7 @@ static int k_recv(void)
 	 */
 
 	/* enter main loop */
-	while(!done){
+	while (!done) {
 		/* set the send packet pointer to begining of send packet parms */
 		send_ptr = send_parms;
 
@@ -894,14 +872,14 @@ static int k_recv(void)
 
 		/* get a packet */
 		/* wait for the starting character or ^C */
-		for(;;){
-			switch(getc()){
+		for (;;) {
+			switch (getc()) {
 			/* start packet */
 			case START_CHAR:
 				goto START;
 			/* ^C waiting for packet */
 			case ETX_CHAR:
-				return(0);
+				return 0;
 			default:
 				;
 			}
@@ -911,7 +889,7 @@ START:
 		/* get length of packet */
 		sum = 0;
 		new_char = getc();
-		if((new_char & 0xE0) == 0)
+		if ((new_char & 0xE0) == 0)
 			goto packet_error;
 
 		sum += new_char & 0xff;
@@ -919,7 +897,7 @@ START:
 
 		/* get sequence number */
 		new_char = getc();
-		if((new_char & 0xE0) == 0)
+		if ((new_char & 0xE0) == 0)
 			goto packet_error;
 
 		sum += new_char & 0xff;
@@ -933,7 +911,7 @@ START:
 		 * that I don't need to buffer the incoming data packets and can write
 		 * the data into memory in real time.
 		 */
-		if(n == last_n){
+		if (n == last_n) {
 			/* same sequence number, restore the previous state */
 			k_state = k_state_saved;
 			k_data_restore();
@@ -947,7 +925,7 @@ START:
 
 		/* get packet type */
 		new_char = getc();
-		if((new_char & 0xE0) == 0)
+		if ((new_char & 0xE0) == 0)
 			goto packet_error;
 
 		sum += new_char & 0xff;
@@ -955,17 +933,17 @@ START:
 		--length;
 
 		/* check for extended length */
-		if(length == -2){
+		if (length == -2) {
 			/* (length byte was 0, decremented twice) */
 			/* get the two length bytes */
 			new_char = getc();
-			if((new_char & 0xE0) == 0)
+			if ((new_char & 0xE0) == 0)
 				goto packet_error;
 
 			sum += new_char & 0xff;
 			len_hi = untochar(new_char);
 			new_char = getc();
-			if((new_char & 0xE0) == 0)
+			if ((new_char & 0xE0) == 0)
 				goto packet_error;
 
 			sum += new_char & 0xff;
@@ -973,10 +951,10 @@ START:
 			length = len_hi * 95 + len_lo;
 			/* check header checksum */
 			new_char = getc();
-			if((new_char & 0xE0) == 0)
+			if ((new_char & 0xE0) == 0)
 				goto packet_error;
 
-			if(new_char != tochar((sum + ((sum >> 6) & 0x03)) & 0x3f))
+			if (new_char != tochar((sum + ((sum >> 6) & 0x03)) & 0x3f))
 				goto packet_error;
 
 			sum += new_char & 0xff;
@@ -984,37 +962,38 @@ START:
 		}
 
 		/* bring in rest of packet */
-		while(length > 1){
+		while (length > 1) {
 			new_char = getc();
-			if((new_char & 0xE0) == 0)
+			if ((new_char & 0xE0) == 0)
 				goto packet_error;
 
 			sum += new_char & 0xff;
 			--length;
 
-			if(k_state == DATA_TYPE){
+			if (k_state == DATA_TYPE) {
 				/* pass on the data if this is a data packet */
 				k_data_char(new_char);
-			} else if(k_state == SEND_TYPE){
+			} else if (k_state == SEND_TYPE) {
 				/* save send pack in buffer as is */
 				*send_ptr++ = new_char;
+
 				/* if too much data, back off the pointer */
-				if(send_ptr >= &send_parms[SEND_DATA_SIZE])
+				if (send_ptr >= &send_parms[SEND_DATA_SIZE])
 					--send_ptr;
 			}
 		}
 
 		/* get and validate checksum character */
 		new_char = getc();
-		if((new_char & 0xE0) == 0)
+		if ((new_char & 0xE0) == 0)
 			goto packet_error;
 
-		if(new_char != tochar((sum + ((sum >> 6) & 0x03)) & 0x3f))
+		if (new_char != tochar((sum + ((sum >> 6) & 0x03)) & 0x3f))
 			goto packet_error;
 
 		/* get END_CHAR */
 		new_char = getc();
-		if(new_char != END_CHAR) {
+		if (new_char != END_CHAR) {
 packet_error:
 			/* restore state machines */
 			k_state = k_state_saved;
@@ -1022,27 +1001,27 @@ packet_error:
 
 			/* send a negative acknowledge packet in */
 			send_nack(n);
-		} else if(k_state == SEND_TYPE){
+		} else if (k_state == SEND_TYPE) {
 			/* crack the protocol parms, build an appropriate ack packet */
 			handle_send_packet(n);
 		} else {
 			/* send simple acknowledge packet in */
 			send_ack(n);
 			/* quit if end of transmission */
-			if(k_state == BREAK_TYPE)
+			if (k_state == BREAK_TYPE)
 				done = 1;
 		}
 
 		++z;
 	}
 
-	return((ulong)os_data_addr - (ulong)bin_start_address);
+	return ((ulong)os_data_addr - (ulong)bin_start_address);
 }
 
 static int getcxmodem(void)
 {
-	if(tstc())
-		return(getc());
+	if (tstc())
+		return getc();
 
 	return -1;
 }
@@ -1062,8 +1041,8 @@ static ulong load_serial_ymodem(ulong address)
 
 	res = xyzModem_stream_open(&info, &err);
 
-	if(!res){
-		while((res = xyzModem_stream_read(ymodemBuf, 1024, &err)) > 0){
+	if (!res) {
+		while ((res = xyzModem_stream_read(ymodemBuf, 1024, &err)) > 0) {
 			store_addr = addr + address;
 			size += res;
 			addr += res;
@@ -1086,30 +1065,34 @@ static ulong load_serial_ymodem(ulong address)
 /* -------------------------------------------------------------------- */
 
 #if defined(CONFIG_CMD_LOADS)
-U_BOOT_CMD(loads, 3, 0, do_load_serial, "load S-Record file over serial\n",
-	"[off] [baud]\n"
-	"\t- load S-Record file over serial with offset 'off' and baudrate 'baud'\n"
+U_BOOT_CMD(loads, 3, 0, do_load_serial,
+	   "load S-Record file over serial\n",
+	   "[off] [baud]\n"
+	   "\t- load S-Record file over serial with offset 'off' and baudrate 'baud'\n"
 );
 
 /*
  * SAVES always requires LOADS support, but not vice versa
  */
 #if defined(CONFIG_CMD_SAVES)
-U_BOOT_CMD(saves, 4, 0, do_save_serial, "save S-Record file over serial\n",
-	"[addr] [size] [baud]\n"
-	"\t- upload S-Record file over serial from address 'addr', size 'size' with baudrate 'baud'\n"
+U_BOOT_CMD(saves, 4, 0, do_save_serial,
+	   "save S-Record file over serial\n",
+	   "[addr] [size] [baud]\n"
+	   "\t- upload S-Record file over serial from address 'addr', size 'size' with baudrate 'baud'\n"
 );
 #endif /* CONFIG_CMD_SAVES */
 #endif /* CONFIG_CMD_LOADS */
 
 #if defined(CONFIG_CMD_LOADB)
-U_BOOT_CMD(loadb, 3, 0, do_load_serial_bin, "load binary file over serial (Kermit mode)\n",
-	"[addr] [baud]\n"
-	"\t- load binary file over serial at address 'addr', with baudrate 'baud'\n"
+U_BOOT_CMD(loadb, 3, 0, do_load_serial_bin,
+	   "load binary file over serial (Kermit mode)\n",
+	   "[addr] [baud]\n"
+	   "\t- load binary file over serial at address 'addr', with baudrate 'baud'\n"
 );
 
-U_BOOT_CMD(loady, 3, 0, do_load_serial_bin, "load binary file over serial (Ymodem mode)\n",
-	"[addr] [baud]\n"
-	"\t- load binary file over serial at address 'addr', with baudrate 'baud'\n"
+U_BOOT_CMD(loady, 3, 0, do_load_serial_bin,
+	   "load binary file over serial (Ymodem mode)\n",
+	   "[addr] [baud]\n"
+	   "\t- load binary file over serial at address 'addr', with baudrate 'baud'\n"
 );
 #endif /* CONFIG_CMD_LOADB */
