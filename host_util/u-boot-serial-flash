@@ -1,0 +1,277 @@
+#!/usr/bin/kermit +
+
+# Disable input echo
+# (change this to 'on' for debug)
+set input echo off
+
+assign prog    "\fbasename(\%0)"
+assign dev     "/dev/ttyUSB0"
+assign brate   "115200"
+assign flaaddr "0x9f000000"
+assign ramaddr "0x80800000"
+assign waitstr "Hit any key to stop booting"
+assign stopstr " \10"
+assign prompt  "u-boot> "
+assign skipopt "(use '-' to skip and use default)"
+
+assign filesz  0
+assign bckpsz  0
+assign eraseszhex 0x0
+
+# =============
+# Custom macros
+# =============
+def usage {
+	echo "Usage:"
+	echo "  \m(prog) <file> [dev] [brate] [waitstr] [stopstr] [prompt]"
+	echo
+	echo "Arguments:"
+	echo "  file       image file to send (required)"
+	echo "  dev        serial device (optional, default: '\m(dev)')"
+	echo "  brate      baudrate (optional, default: '\m(brate)')"
+	echo "  waitstr    string to wait for before sending 'stopstr' (optional, default: '\m(waitstr)')"
+	echo "  stopstr    auto boot interrupt string (optional, default: '<SPACE><LF>')"
+	echo "             for special characters, use \\x, where x is ASCII code (e.g. for <ESC> use \\27)"
+	echo "  prompt     command line prompt string in U-Boot (optional, default: '\m(prompt)')"
+	echo
+	echo "Skip optional argument with '-', example:"
+	echo "  \m(prog) u-boot.bin - - - 'tpl' 'ar7240>'"
+	echo
+}
+
+def echo_err {
+	if defined \%1 echo "[ERRO]: \%1!"
+	exit 1
+}
+
+def echo_info {
+	if defined \%1 echo "[INFO]: \%1"
+}
+
+def echo_ok {
+	if defined \%1 echo "[ OK ]: \%1"
+}
+
+def askuser {
+	echo
+	ask \%m ">>>>>>  \%1 (type 'y' to continue)? "
+	if not defined \%m exit 0
+	else if not equal \%m "y" exit 0
+	echo
+}
+
+def argsummary {
+	echo_info "File to send:  '\m(file)'"
+	echo_info "Serial device: '\m(dev)'"
+	echo_info "Baudrate:      '\m(brate)'"
+	echo_info "CLI prompt:    '\m(prompt)'"
+	echo_info "Wait string:   '\m(waitstr)'"
+
+	echo
+
+	echo_info "File size:   '\m(filesz)'"
+	echo_info "Backup size: '\m(bckpsz)' (rounded up to 64K block)"
+	echo_info "Erase size:  '\m(eraseszhex)' (hex)"
+
+	askuser "Do you want to continue"
+}
+
+def waitpromt {
+	assign tout 3
+	if defined \%1 assign tout \%1
+
+	input \m(tout) "\m(prompt)"
+	if fail echo_err "Timeout occurred waiting for prompt string"
+}
+
+def interrupt {
+	input 15 "\m(waitstr)"
+	if fail echo_err "Timeout occurred waiting for wait string"
+
+	out "\m(stopstr)"
+	waitpromt
+}
+
+def cmdtest {
+	lineout "?"
+
+	input 2 "\fpattern(\%1*-*\10)"
+	if fail echo_err "Command '\%1' is not available"
+
+	waitpromt
+}
+
+def checkretval {
+	lineout "echo $?"
+
+	input 3 "\fpattern(0*\10)"
+	if fail echo_err "\%1"
+
+	waitpromt
+}
+
+def sendcmd {
+	echo_info "Sending command: '\%1'"
+	lineout "\%1"
+}
+
+# =====================
+# Execution begins here
+# =====================
+
+# We need 7 args
+if < \v(argc) 7 {
+	usage
+	exit 1
+}
+
+# File to send
+if not defined \%1 {
+	usage
+	echo_err "U-Boot image file not specified"
+}
+assign file \%1
+
+if not exist \m(file) {
+	usage
+	echo_err "Specified file: '\m(file)' does not exist"
+}
+
+assign filesz \fsize(\m(file))
+if fail {
+	usage
+	echo_err "Incorrect file specified: '\m(file)'"
+}
+
+assign i \Feval(\m(filesz) / 65536)
+assign bckpsz \Feval(\m(i) * 65536)
+
+if > \m(filesz) \m(bckpsz) {
+	assign i \Feval((\m(filesz) / 65536) + 1)
+	assign bckpsz \Feval(\m(i) * 65536)
+}
+
+assign eraseszhex "0x\fn2hex(\m(bckpsz))"
+if fail echo_err "Could not convert erase size to hex"
+
+# Serial device
+if not defined \%2 {
+	usage
+	echo_err "Serial device not specified \m(skipopt)"
+} else if not equal \%2 "-" assign dev \%2
+
+set line \m(dev)
+if fail {
+	usage
+	echo_err "Incorrect serial device specified: '\m(dev)'"
+}
+
+# Baudrate
+if not defined \%3 {
+	usage
+	echo_err "Baudrate not specified \m(skipopt)"
+} else if not equal \%3 "-" assign brate \%3
+
+set speed \m(brate)
+if fail {
+	usage
+	echo_err "Incorrect baudrate specified: '\m(brate)'"
+}
+
+# Wait for string
+if not defined \%4 {
+	usage
+	echo_err "Wait string not specified \m(skipopt)"
+} else if not equal \%4 "-" assign waitstr \%4
+
+# Stop string
+if not defined \%5 {
+	usage
+	echo_err "Stop string not specified \m(skipopt)"
+} else if not equal \%5 "-" assign stopstr \%5
+
+# CLI prompt
+if not defined \%6 {
+	usage
+	echo_err "U-Boot CLI prompt not specified \m(skipopt)"
+} else if not equal \%6 "-" assign prompt \%6
+
+argsummary
+
+# Default configuration
+robust
+set serial        8n1
+set file type     bin
+set carrier-watch off
+set prefixing     all
+set flow-control  none
+set handshake     none
+set modem         none
+
+set window 10
+set send packet-length 1000
+
+echo_info "Power on device now..."
+
+interrupt
+
+# Check if we have 'echo' and 'loadb' commands
+cmdtest "echo"
+cmdtest "loadb"
+
+# Backup existing image in RAM (round up to 64K block)
+echo_info "Backuping data in RAM..."
+sendcmd "cp.b \m(flaaddr) \m(ramaddr) \m(eraseszhex)"
+
+waitpromt 5
+checkretval "Could not backup data in RAM"
+
+# Start loadb
+sendcmd "loadb \m(ramaddr)"
+input 3 "\fpattern(Ready for binary*download*\10)"
+if fail echo_err "Timeout occurred waiting for binary download ready"
+
+# Send file to RAM
+echo_info "Sending selected file to RAM at \m(ramaddr) (this may take a while)..."
+send /quiet "\m(file)"
+
+if = \v(status) 1 echo_err "File send failed"
+
+waitpromt
+checkretval "File send failed"
+
+askuser "File sent successfully, do you want to write it to FLASH"
+
+# Erase flash and copy data from RAM to flash
+echo_info "Erasing FLASH, copying data from RAM to FLASH..."
+sendcmd "erase \m(flaaddr) +\m(eraseszhex) && cp.b \m(ramaddr) \m(flaaddr) \m(eraseszhex)"
+
+waitpromt 15
+checkretval "Erase/copy commands failed, do not reset the board"
+echo_ok "Done!"
+
+echo
+ask \%m ">>>>>>  Reset board now or switch to U-Boot CLI (type 'y' for reset)? "
+if not defined \%m {
+	connect
+	quit
+} else if not equal \%m "y" {
+	connect
+	quit
+} else {
+	echo
+	# Reset board and check if it's alive
+	echo_info "Resetting the board..."
+	sendcmd "reset"
+}
+
+interrupt
+echo_ok "U-Boot flashed successfully!"
+
+echo
+ask \%m ">>>>>>  Exit now or switch to U-Boot CLI (type 'y' to exit)? "
+if not defined \%m connect
+else if not equal \%m "y" connect
+else quit
+
+quit
