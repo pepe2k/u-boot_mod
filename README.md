@@ -65,6 +65,7 @@ Currently supported devices:
   - 8devices Carambola 2 (for version with development board, [photos in my gallery](http://galeria.tech-blog.pl/8devices_Carambola_2/))
   - ALFA NETWORK Hornet-UB/Hornet-UB-64 (aka Hornet-UB x2)
   - Black Swift
+  - CreatComm Technology D3321
   - Dragino 2 (MS14)
   - GL Innovations GL-AR150
   - GL Innovations GL.iNet 64xxA ([photos in my gallery](http://galeria.tech-blog.pl/GLiNet/))
@@ -124,6 +125,7 @@ More information about supported devices:
 | Comfast CF-E314N | QCA9531 | 16 MiB | 64 MiB DDR2 | 64 KiB, LZMA | RO |
 | Comfast CF-E320N v2 | QCA9531 | 16 MiB | 64 MiB DDR2 | 64 KiB, LZMA | RO |
 | Comfast CF-E520N/CF-E530N | QCA9531 | 8 MiB | 32 MiB DDR2 | 64 KiB, LZMA | RO |
+| CreatComm Technology D3321| AR9331 | 8 MiB | 32 MiB DDR1 | 256 KiB | RW |
 | [D-Link DIR-505 H/W ver. A1](http://wiki.openwrt.org/toh/d-link/dir-505) | AR1311 | 8 MiB | 64 MiB DDR2 | 64 KiB, LZMA | RO |
 | [Dragino 2 (MS14)](http://wiki.openwrt.org/toh/dragino/ms14) | AR9331 | 16 MiB | 64 MiB DDR1 | 192 KiB | R/W |
 | GL Innovations GL-AR150 | AR9331 | 16 MiB | 64 MiB DDR2 | 256 KiB | 64 KiB, R/W |

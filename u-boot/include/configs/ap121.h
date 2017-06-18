@@ -50,6 +50,17 @@
 	#define CONFIG_QCA_GPIO_MASK_IN		GPIO11
 	#define CONFIG_QCA_GPIO_MASK_OUT_INIT_H	CONFIG_QCA_GPIO_MASK_LED_ACT_L
 
+#elif defined(CONFIG_FOR_CREATCOMM_D3321)
+
+	#define CONFIG_QCA_GPIO_MASK_LED_ACT_H	GPIO0  | GPIO13 | GPIO14 |\
+						GPIO15 | GPIO16
+	#define CONFIG_QCA_GPIO_MASK_LED_ACT_L	GPIO17 | GPIO27
+	#define CONFIG_QCA_GPIO_MASK_OUT	CONFIG_QCA_GPIO_MASK_LED_ACT_L |\
+						CONFIG_QCA_GPIO_MASK_LED_ACT_H
+	#define CONFIG_QCA_GPIO_MASK_IN		GPIO12
+	#define CONFIG_QCA_GPIO_MASK_OUT_INIT_H	CONFIG_QCA_GPIO_MASK_LED_ACT_L
+	#define CONFIG_QCA_GPIO_MASK_OUT_INIT_L	CONFIG_QCA_GPIO_MASK_LED_ACT_H
+
 #elif defined(CONFIG_FOR_DLINK_DIR505_A1)
 
 	#define CONFIG_QCA_GPIO_MASK_LED_ACT_L	GPIO26 | GPIO27
@@ -201,6 +212,12 @@
 				"rootfstype=squashfs init=/sbin/init "\
 				"mtdparts=ar7240-nor0:128k(u-boot),64k(u-boot-env),16128k(firmware),64k(art)"
 
+#elif defined(CONFIG_FOR_CREATCOMM_D3321)
+
+	#define CONFIG_BOOTARGS	"console=ttyS0,115200 root=31:03 "\
+				"rootfstype=squashfs init=/sbin/init "\
+				"mtdparts=ar7240-nor0:256k(u-boot),64k(u-boot-env),1216k(uImage),5952k(rootfs),256k(config),384k(customer),64k(ART) mem=32M"
+
 #elif defined(CONFIG_FOR_DLINK_DIR505_A1)
 
 	#define CONFIG_BOOTARGS	"console=ttyS0,115200 root=31:06 "\
@@ -255,6 +272,7 @@
  */
 #if defined(CONFIG_FOR_8DEVICES_CARAMBOLA2)    ||\
     defined(CONFIG_FOR_ALFA_NETWORK_HORNET_UB) ||\
+    defined(CONFIG_FOR_CREATCOMM_D3321)        ||\
     defined(CONFIG_FOR_GL_AR150)
 	#define CFG_LOAD_ADDR	0x9F050000
 #elif defined(CONFIG_FOR_BLACK_SWIFT_BOARD)
@@ -281,6 +299,7 @@
  */
 #if defined(CONFIG_FOR_8DEVICES_CARAMBOLA2)    ||\
     defined(CONFIG_FOR_ALFA_NETWORK_HORNET_UB) ||\
+    defined(CONFIG_FOR_CREATCOMM_D3321)        ||\
     defined(CONFIG_FOR_GL_AR150)
 	#define CFG_ENV_ADDR		0x9F040000
 	#define CFG_ENV_SIZE		0x8000
@@ -322,6 +341,7 @@
  */
 #if defined(CONFIG_FOR_8DEVICES_CARAMBOLA2)    ||\
     defined(CONFIG_FOR_ALFA_NETWORK_HORNET_UB) ||\
+    defined(CONFIG_FOR_CREATCOMM_D3321)        ||\
     defined(CONFIG_FOR_DRAGINO_V2)             ||\
     defined(CONFIG_FOR_MESH_POTATO_V2)
 	#define OFFSET_MAC_DATA_BLOCK		0xFF0000
@@ -356,6 +376,7 @@
 #if !defined(CONFIG_FOR_8DEVICES_CARAMBOLA2)    &&\
     !defined(CONFIG_FOR_ALFA_NETWORK_HORNET_UB) &&\
     !defined(CONFIG_FOR_BLACK_SWIFT_BOARD)      &&\
+    !defined(CONFIG_FOR_CREATCOMM_D3321)        &&\
     !defined(CONFIG_FOR_DLINK_DIR505_A1)        &&\
     !defined(CONFIG_FOR_DRAGINO_V2)             &&\
     !defined(CONFIG_FOR_GL_AR150)               &&\
@@ -422,6 +443,8 @@
 	#define WEBFAILSAFE_UPLOAD_LIMITED_AREA_IN_BYTES	(448 * 1024)
 #elif defined(CONFIG_FOR_BLACK_SWIFT_BOARD)
 	#define WEBFAILSAFE_UPLOAD_LIMITED_AREA_IN_BYTES	(256 * 1024)
+#elif defined(CONFIG_FOR_CREATCOMM_D3321)
+	#define WEBFAILSAFE_UPLOAD_LIMITED_AREA_IN_BYTES	(1856 * 1024)
 #elif defined(CONFIG_FOR_DLINK_DIR505_A1)
 	#define WEBFAILSAFE_UPLOAD_LIMITED_AREA_IN_BYTES	(512 * 1024)
 #elif defined(CONFIG_FOR_DRAGINO_V2) ||\
@@ -442,6 +465,7 @@
 
 #if defined(CONFIG_FOR_8DEVICES_CARAMBOLA2)    ||\
     defined(CONFIG_FOR_ALFA_NETWORK_HORNET_UB) ||\
+    defined(CONFIG_FOR_CREATCOMM_D3321)        ||\
     defined(CONFIG_FOR_GL_AR150)
 
 	#define CONFIG_QCA_PLL_IN_FLASH_BLOCK_OFFSET	0x40000
@@ -474,6 +498,7 @@
 #if !defined(CONFIG_FOR_8DEVICES_CARAMBOLA2)    &&\
     !defined(CONFIG_FOR_ALFA_NETWORK_HORNET_UB) &&\
     !defined(CONFIG_FOR_BLACK_SWIFT_BOARD)      &&\
+    !defined(CONFIG_FOR_CREATCOMM_D3321)        &&\
     !defined(CONFIG_FOR_DLINK_DIR505_A1)        &&\
     !defined(CONFIG_FOR_DRAGINO_V2)             &&\
     !defined(CONFIG_FOR_GL_AR150)               &&\

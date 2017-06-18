@@ -429,6 +429,11 @@ comfast_cf-e530n: qca953x_common
 	@$(call define_add,CFG_ATH_GMAC_NMACS,2)
 	@$(MKCONFIG) -a ap143 mips mips ap143 ar7240 ar7240
 
+creatcomm-technology_d3321: ar933x_common
+	@$(call config_init,CreatComm Technology D3321,d3321,8,12,1,QCA_AR933X_SOC)
+	@$(call define_add,CONFIG_FOR_CREATCOMM_D3321,1)
+	@$(MKCONFIG) -a ap121 mips mips ap121 ar7240 ar7240
+
 d-link_dir-505: ar933x_common
 	@$(call config_init,D-Link DIR-505,dir-505,8,11,1,QCA_AR933X_SOC)
 	@$(call define_add,CONFIG_FOR_DLINK_DIR505_A1,1)
