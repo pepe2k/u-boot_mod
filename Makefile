@@ -261,6 +261,7 @@ dragino_v2_ms14:
 
 p2w_cpe505n \
 p2w_r602n \
+engenius_ens202ext \
 yuncore_ap90q \
 yuncore_cpe830 \
 zbtlink_zbt-we1526:
