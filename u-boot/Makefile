@@ -507,6 +507,13 @@ tp-link_tl-mr3420_v2: ar934x_common lsdk_kernel
 	@$(call define_add,CFG_AG7240_NMACS,2)
 	@$(MKCONFIG) -a db12x mips mips db12x ar7240 ar7240
 
+tp-link_tl-mr3420_v3: qca953x_common lsdk_kernel
+	@$(call config_init,TP-Link TL-MR3420 v3,tl-mr3420-v3,4,12,1,QCA_QCA953X_SOC)
+	@$(call define_add,CONFIG_FOR_TPLINK_MR3420_V3,1)
+	@$(call define_add,CFG_ATHRS27_PHY,1)
+	@$(call define_add,CFG_ATH_GMAC_NMACS,2)
+	@$(MKCONFIG) -a ap143 mips mips ap143 ar7240 ar7240
+
 tp-link_tl-wa801nd_v2: ar934x_common lsdk_kernel
 	@$(call config_init,TP-Link TL-WA801ND v2,tl-wa801nd-v2,4,17,1,QCA_AR9341_SOC)
 	@$(call define_add,CONFIG_FOR_TPLINK_WA801ND_V2,1)
