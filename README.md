@@ -108,6 +108,7 @@ Currently supported devices:
   - TP-Link TL-WR820N (version for Chinese market)
   - TP-Link TL-WR841N/D v9, v10, v11
   - TP-Link TL-WR842N/D v3
+  - TP-Link TL-WR902AC v1
   - Wallys DR531
   - YunCore AP90Q
   - YunCore CPE830
@@ -155,6 +156,7 @@ More information about supported devices:
 | [TP-Link TL-WR841N/D v8](http://wiki.openwrt.org/toh/tp-link/tl-wr841nd) | AR9341 | 4 MiB | 32 MiB DDR1 | 64 KiB, LZMA | RO |
 | [TP-Link TL-WR841N/D v9/10/11](https://wiki.openwrt.org/toh/tp-link/tl-wr841nd) | QCA9533 | 4 MiB | 32 MiB DDR1 | 64 KiB, LZMA | RO |
 | TP-Link TL-WR842N/D v3 | QCA9531 | 16 MiB | 64 MiB DDR2 | 64 KiB, LZMA | RO |
+| TP-Link TL-WR902AC v1 | QCA9531 | 8 MiB | 64 MiB DDR2 | 128 KiB, LZMA | RO |
 | Village Telco Mesh Potato 2 | AR9331 | 16 MiB | 64 MiB DDR1 | 192 KiB | R/W |
 | Wallys DR531 | QCA9531 | 8 MiB | 64 MiB DDR2 | 192 KiB | R/W |
 | YunCore AP90Q | QCA9531 | 16 MiB | 128 MiB DDR2 | 256 KiB | R/W |
