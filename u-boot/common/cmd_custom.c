@@ -185,10 +185,11 @@ U_BOOT_CMD(startsc, 1, 0, do_start_sc, "start serial console\n", NULL);
  * Erase environment sector
  */
 int do_default_env(cmd_tbl_t * cmdtp, int flag, int argc, char *argv[]){
-	int	rc, rcode = 0;
+	int rcode = 0;
 	int len;
 	ulong end_addr, flash_sect_addr;
 #if defined(CFG_ENV_SECT_SIZE) && (CFG_ENV_SECT_SIZE > CFG_ENV_SIZE)
+	int rc;
 	ulong flash_offset;
 	unsigned char env_buffer[CFG_ENV_SECT_SIZE];
 #endif
