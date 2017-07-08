@@ -251,7 +251,7 @@
  * For upgrade scripts in environment
  * ==================================
  */
-#if !defined(CONFIG_FOR_ENGENIUS_ENS202EXT) ||\
+#if !defined(CONFIG_FOR_ENGENIUS_ENS202EXT) &&\
     !defined(CONFIG_FOR_YUNCORE_CPE870)
 	#define CONFIG_UPG_UBOOT_SIZE_BACKUP_HEX	0x20000
 #endif
