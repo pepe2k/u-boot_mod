@@ -205,8 +205,8 @@ void main_loop(void)
 		/* Do we have recovery script in env var at all? */
 		c = getenv("recovery");
 		if (c == NULL) {
-			puts("** Warning: recovery script is missing\n");
-			puts("   in env, use 'defenv' to reset env\n\n");
+			printf_wrn("recovery script is missing\n"
+				   "   in env, use 'defenv' to reset env\n\n");
 		} else {
 			/*
 			 * Always clear values of variables used in recovery

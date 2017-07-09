@@ -107,7 +107,7 @@ void print_board_info(void)
 
 	/* Show warning if last reboot was caused by SOC watchdog */
 	if (last_reset_wdt())
-		puts("** Warning: reset caused by watchdog!\n\n");
+		printf_wrn("reset caused by watchdog!\n\n");
 
 	/* Board name */
 	printf("%" ALIGN_SIZE "s %s\n",
