@@ -211,7 +211,7 @@ void	env_relocate (void);
 char	*getenv	     (char *);
 int		getenv_r     (char *name, char *buf, unsigned len);
 int		saveenv	     (void);
-void	setenv	     (char *, char *);
+int	setenv	     (char *, char *);
 
 
 #ifdef CONFIG_ARM

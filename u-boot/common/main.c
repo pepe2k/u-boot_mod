@@ -202,12 +202,28 @@ void main_loop(void)
 		gd->flags &= ~(GD_FLG_SILENT);
 		#endif
 
-		/* Do we have recovery script in env var at all? */
 		c = getenv("recovery");
-		if (c == NULL) {
-			printf_wrn("recovery script is missing\n"
-				   "   in env, use 'defenv' to reset env\n\n");
-		} else {
+
+		/*
+		 * If recovery script is missing in saved env, try default one,
+		 * copy 'recovery' var (if available) from it and save changes
+		 */
+		#if defined(CONFIG_CMD_ENV) && defined(CONFIG_CMD_FLASH)
+		if (c == NULL && gd->env_valid) {
+			gd->env_valid = 0;
+			c = getenv("recovery");
+			gd->env_valid = 1;
+
+			if (c) {
+				if (setenv("recovery", c) == 0)
+					saveenv();
+				else
+					c = NULL;
+			}
+		}
+		#endif
+
+		if (c) {
 			/*
 			 * Always clear values of variables used in recovery
 			 * script as they could be accidentally saved before
@@ -227,6 +243,13 @@ void main_loop(void)
 			}
 
 			setenv("cnt", NULL);
+		} else {
+			/*
+			 * We should have recovery script at least in def env
+			 * as 'CONFIG_BTN_RECOVERY_SCRIPT' is defined here,
+			 * but show the error anyway, just in case...
+			 */
+			 printf_err("recovery script is missing in env!\n\n");
 		}
 	}
 #endif /* CONFIG_RECOVERY_MODE */
