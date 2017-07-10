@@ -34,6 +34,10 @@ DECLARE_GLOBAL_DATA_PTR;
 
 #define MAX_STOPSTR_LEN	16
 
+#if defined(CONFIG_CMD_HTTPD)
+#include <net.h>
+#endif
+
 static char *delete_char(char *buffer, char *p, int *colp, int *np, int plen);
 static int parse_line(char *, char *[]);
 
@@ -156,6 +160,7 @@ static __inline__ int abortboot(int bootdelay)
 void main_loop(void)
 {
 	char *bootcmd;
+	int rc = 0;
 
 #if defined(CONFIG_BTN_RECOVERY_SCRIPT)
 	int stop_boot;
@@ -165,7 +170,6 @@ void main_loop(void)
 #ifndef CFG_HUSH_PARSER
 	static char lastcommand[CFG_CBSIZE] = { 0, };
 	int flag, len;
-	int rc = 1;
 #endif
 
 #if defined(CONFIG_BOOTDELAY) &&\
@@ -263,23 +267,39 @@ void main_loop(void)
 	if (bootdelay >= 0 && bootcmd && !abortboot(bootdelay)) {
 		/* Try to boot */
 	#ifndef CFG_HUSH_PARSER
-		run_command(bootcmd, 0);
+		rc = run_command(bootcmd, 0);
 	#else
-		parse_string_outer(bootcmd, FLAG_PARSE_SEMICOLON |
-					    FLAG_EXIT_FROM_LOOP);
+		rc = parse_string_outer(bootcmd, FLAG_PARSE_SEMICOLON |
+						 FLAG_EXIT_FROM_LOOP);
 	#endif
 	}
 #else
 	if (bootcmd) {
 		/* Try to boot */
 	#ifndef CFG_HUSH_PARSER
-		run_command(bootcmd, 0);
+		rc = run_command(bootcmd, 0);
 	#else
-		parse_string_outer(bootcmd, FLAG_PARSE_SEMICOLON |
-					    FLAG_EXIT_FROM_LOOP);
+		rc = parse_string_outer(bootcmd, FLAG_PARSE_SEMICOLON |
+						 FLAG_EXIT_FROM_LOOP);
 	#endif
 	}
 #endif /* CONFIG_BOOTDELAY && CONFIG_BOOTDELAY >= 0 */
+
+#ifndef CFG_HUSH_PARSER
+	if (rc < 0) {
+#else
+	if (rc != 0) {
+#endif
+		puts("\n");
+		printf_err("failed to execute 'bootcmd'!\n");
+
+#if defined(CONFIG_CMD_HTTPD)
+		puts("   Starting web server for update...\n\n");
+		NetLoopHttpd();
+#else
+		puts("\n");
+#endif
+	}
 
 	/* Main loop for monitor command processing */
 #if defined(CFG_HUSH_PARSER)
