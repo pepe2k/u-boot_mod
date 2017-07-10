@@ -230,6 +230,7 @@ COMMON_ETHS27_TARGETS = \
 	tp-link_tl-wa850re_v2 \
 	tp-link_tl-wa830re_v2 \
 	tp-link_tl-wdr3500 \
+        tp-link_cpe510 \
 	tp-link_tl-wr802n \
 	tp-link_tl-wr810n \
 	tp-link_tl-wr820n_CN \
@@ -268,6 +269,9 @@ yuncore_ap90q \
 yuncore_cpe830 \
 zbtlink_zbt-we1526:
 	@$(call build,256,1,ETH_CONFIG=_s27)
+
+tp-link_cpe510:
+	@$(call build,128,1,ETH_CONFIG=_s27)
 
 tp-link_tl-wdr3600 \
 tp-link_tl-wdr43x0:

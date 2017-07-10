@@ -39,7 +39,14 @@
 	#define CONFIG_QCA_GPIO_MASK_IN		GPIO16 | GPIO17
 	#define CONFIG_QCA_GPIO_MASK_OUT_INIT_H	GPIO21 | GPIO22 |\
 						CONFIG_QCA_GPIO_MASK_LED_ACT_L
-
+#elif defined(CONFIG_FOR_TPLINK_CPE510_V1)
+	#define CONFIG_QCA_GPIO_MASK_LED_ACT_L	GPIO11 | GPIO12 | GPIO13 |\
+						GPIO14 | GPIO15 | GPIO16 
+	#define CONFIG_QCA_GPIO_MASK_OUT	GPIO21 | GPIO22 |\
+						CONFIG_QCA_GPIO_MASK_LED_ACT_L
+	#define CONFIG_QCA_GPIO_MASK_IN		GPIO4
+	#define CONFIG_QCA_GPIO_MASK_OUT_INIT_H	GPIO21 | GPIO22 |\
+						CONFIG_QCA_GPIO_MASK_LED_ACT_L
 #elif defined(CONFIG_FOR_TPLINK_WDR3500_V1)
 
 	#define CONFIG_QCA_GPIO_MASK_LED_ACT_L	GPIO11 | GPIO13 | GPIO14 |\
@@ -116,6 +123,8 @@
 				"rootfstype=squashfs,jffs2 init=/sbin/init "\
 				"mtdparts=ath-nor0:64k(u-boot),64k(u-boot-env),6528k(rootfs),1408K(uImage)"\
 				",7936k@0x20000(firmware),64k(NVRAM),64k(ART),8128k@0x00000(firmware2)"
+#elif defined(CONFIG_FOR_TPLINK_CPE510_V1)
+	#define CONFIG_BOOTARGS	"console=ttyS0,115200 root=31:04 rootfstype=squashfs init=/init mtdparts=spi0.0:128k(u-boot)ro,64k(pation-table)ro,64k(product-info)ro,1536k(kernel),6144k(rootfs),192k(config)ro,64k(art) mem=64M"
 
 #else
 
