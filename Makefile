@@ -257,6 +257,9 @@ gl-inet_gl-usb150:
 alfa-network_ap121f:
 	@$(call build,192,1)
 
+alfa-network_r36a:
+	@$(call build,384,1,ETH_CONFIG=_s27)
+
 comfast_cf-e314n \
 comfast_cf-e320n_v2 \
 comfast_cf-e520n \
