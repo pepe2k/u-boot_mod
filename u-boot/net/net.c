@@ -1539,8 +1539,34 @@ int NetLoopHttpd(void){
 
 	webfailsafe_is_running = 1;
 
+	int led_off = 0;
+	int cnt_up = 1;
+	int cnt = 0;
+
 	// infinite loop
 	for(;;){
+		if (cnt == led_off)
+			all_led_off();
+		else if (cnt == 0)
+			all_led_on();
+
+		cnt++;
+
+		if (cnt == 1024) {
+			cnt = 0;
+
+			if (cnt_up) {
+				led_off++;
+
+				if (led_off == 1024)
+					cnt_up = 0;
+			} else {
+				led_off--;
+
+				if (led_off == 0)
+					cnt_up = 1;
+			}
+		}
 
 		/*
 		 *	Check the ethernet for a new packet.
@@ -1561,6 +1587,8 @@ int NetLoopHttpd(void){
 
 			/* Invalidate the last protocol */
 			eth_set_last_protocol(BOOTP);
+
+			all_led_off();
 
 			printf("\nWeb failsafe mode aborted!\n\n");
 			return(-1);
@@ -1599,6 +1627,8 @@ int NetLoopHttpd(void){
 	NetBootFileXferSize = 0;
 
 	do_http_progress(WEBFAILSAFE_PROGRESS_UPGRADE_FAILED);
+
+	all_led_off();
 
 	// go to restart
 	goto restart;
