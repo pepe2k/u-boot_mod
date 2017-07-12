@@ -249,6 +249,9 @@ creatcomm-technology_d3321 \
 gl-innovations_gl-ar150:
 	@$(call build,256,1)
 
+alfa-network_ap121f:
+	@$(call build,192,1)
+
 comfast_cf-e314n \
 comfast_cf-e320n_v2 \
 comfast_cf-e520n \

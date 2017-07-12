@@ -396,6 +396,11 @@ lsdk_kernel:
 	@$(call define_add,CONFIG_FOR_8DEVICES_CARAMBOLA2,1)
 	@$(MKCONFIG) -a ap121 mips mips ap121 ar7240 ar7240
 
+alfa-network_ap121f: ar933x_common
+	@$(call config_init,ALFA NETWORK AP121F,ap121f,16,12,1,QCA_AR933X_SOC)
+	@$(call define_add,CONFIG_FOR_ALFA_NETWORK_AP121F,1)
+	@$(MKCONFIG) -a ap121 mips mips ap121 ar7240 ar7240
+
 alfa-network_hornet-ub: ar933x_common
 	@$(call config_init,ALFA NETWORK Hornet-UB,hornet-ub,8,12,1,QCA_AR933X_SOC)
 	@$(call define_add,CONFIG_FOR_ALFA_NETWORK_HORNET_UB,1)
