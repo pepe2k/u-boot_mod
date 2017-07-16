@@ -64,6 +64,23 @@
 	#error "GPIOs for active low LEDs must be included in CONFIG_QCA_GPIO_MASK_OUT!"
 #endif
 
+#if defined(CONFIG_QCA_GPIO_MASK_LED_ACT_H) &&\
+    defined(CONFIG_QCA_GPIO_MASK_LED_ACT_L)
+	#if ((CONFIG_QCA_GPIO_MASK_LED_ACT_H) &\
+	     (CONFIG_QCA_GPIO_MASK_LED_ACT_L))
+		#error "Same GPIO/s included in CONFIG_QCA_GPIO_MASK_LED_ACT_H and CONFIG_QCA_GPIO_MASK_LED_ACT_L"
+	#endif
+#endif
+
+/* Output GPIOs cannot have initial value hi and low at the same time */
+#if defined(CONFIG_QCA_GPIO_MASK_OUT_INIT_H) &&\
+    defined(CONFIG_QCA_GPIO_MASK_OUT_INIT_L)
+	#if ((CONFIG_QCA_GPIO_MASK_OUT_INIT_H) &\
+	     (CONFIG_QCA_GPIO_MASK_OUT_INIT_L))
+		#error "Same GPIO/s included in CONFIG_QCA_GPIO_MASK_OUT_INIT_H and CONFIG_QCA_GPIO_MASK_OUT_INIT_L"
+	#endif
+#endif
+
 .globl lowlevel_gpio_init
 .type  lowlevel_gpio_init, @function
 .align 4
