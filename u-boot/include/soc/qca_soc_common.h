@@ -554,6 +554,8 @@
 	#define QCA_GPIO_COUNT	18
 #elif (SOC_TYPE & QCA_QCA955X_SOC)
 	#define QCA_GPIO_COUNT	24
+#elif (SOC_TYPE & QCA_QCA956X_SOC)
+	#define QCA_GPIO_COUNT	23
 #endif
 
 #define QCA_GPIO_OE_REG			QCA_GPIO_BASE_REG + 0x00
