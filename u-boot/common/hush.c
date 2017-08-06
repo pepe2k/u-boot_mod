@@ -1564,5 +1564,12 @@ static char * make_string(char ** inp) {
 	return str;
 }
 
+int do_true(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
+{
+	return 0;
+}
+
+U_BOOT_CMD(true, 1, 1, do_true, "return true\n", NULL);
+
 #endif /* CFG_HUSH_PARSER */
 /****************************************************************************/
