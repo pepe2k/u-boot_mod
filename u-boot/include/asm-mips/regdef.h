@@ -14,6 +14,7 @@
 /*
  * Symbolic register names for 32 bit ABI
  */
+#if defined(__ASSEMBLY__)
 #define zero    $0      /* wired zero */
 #define AT      $1      /* assembler temp  - uppercase because of ".set at" */
 #define v0      $2      /* return value */
@@ -48,5 +49,6 @@
 #define fp      $30     /* frame pointer */
 #define s8	$30	/* same like fp! */
 #define ra      $31     /* return address */
+#endif /* !__ASSEMBLY__ */
 
 #endif /* __ASM_MIPS_REGDEF_H */
