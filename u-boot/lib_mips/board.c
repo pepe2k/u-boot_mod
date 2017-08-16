@@ -397,6 +397,10 @@ void board_init_r(gd_t *id, ulong dest_addr)
 	pci_init();
 #endif
 
+#if defined(CONFIG_USB)
+	usb_init();
+#endif
+
 	/* Leave this here (after malloc(), environment and PCI are working) */
 	/* Initialize devices */
 	devices_init();

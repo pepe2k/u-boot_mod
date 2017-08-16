@@ -11,6 +11,7 @@ OBJS	+= qca_clocks.o
 OBJS	+= qca_sf.o
 OBJS	+= qca_dram.o
 OBJS	+= qca_pci.o
+OBJS	+= qca_usb.o
 SOBJS	+= qca_gpio_init.o
 
 ifeq ($(BOARD), ap121)

@@ -430,6 +430,7 @@ comfast_cf-e520n: qca953x_common
 comfast_cf-e530n: qca953x_common
 	@$(call config_init,Comfast CF-E530N,cf-e530n,8,17,1,QCA_QCA953X_SOC)
 	@$(call define_add,CONFIG_FOR_COMFAST_CF_E530N,1)
+	@$(call define_add,CONFIG_USB,1)
 	@$(call define_add,CFG_ATHRS27_PHY,1)
 	@$(call define_add,CFG_ATH_GMAC_NMACS,2)
 	@$(MKCONFIG) -a ap143 mips mips ap143 ar7240 ar7240
@@ -483,6 +484,7 @@ p2w_cpe505n: qca953x_common
 p2w_r602n: qca953x_common
 	@$(call config_init,P&W R602N,r602n,16,17,1,QCA_QCA953X_SOC)
 	@$(call define_add,CONFIG_FOR_P2W_R602N,1)
+	@$(call define_add,CONFIG_USB,1)
 	@$(call define_add,CFG_ATHRS27_PHY,1)
 	@$(call define_add,CFG_ATH_GMAC_NMACS,2)
 	@$(MKCONFIG) -a ap143 mips mips ap143 ar7240 ar7240
@@ -522,6 +524,7 @@ tp-link_tl-mr3420_v2: ar934x_common lsdk_kernel
 tp-link_tl-mr3420_v3: qca953x_common lsdk_kernel
 	@$(call config_init,TP-Link TL-MR3420 v3,tl-mr3420-v3,4,12,1,QCA_QCA953X_SOC)
 	@$(call define_add,CONFIG_FOR_TPLINK_MR3420_V3,1)
+	@$(call define_add,CONFIG_USB,1)
 	@$(call define_add,CFG_ATHRS27_PHY,1)
 	@$(call define_add,CFG_ATH_GMAC_NMACS,2)
 	@$(MKCONFIG) -a ap143 mips mips ap143 ar7240 ar7240
@@ -529,6 +532,7 @@ tp-link_tl-mr3420_v3: qca953x_common lsdk_kernel
 tp-link_tl-mr6400_v1v2: qca953x_common lsdk_kernel
 	@$(call config_init,TP-Link TL-MR6400 v1/v2,tl-mr6400-v1v2,8,12,1,QCA_QCA953X_SOC)
 	@$(call define_add,CONFIG_FOR_TPLINK_MR6400_V1V2,1)
+	@$(call define_add,CONFIG_USB,1)
 	@$(call define_add,CONFIG_QCA_ETH_PHY_SWAP,1)
 	@$(call define_add,CFG_ATHRS27_PHY,1)
 	@$(call define_add,CFG_ATH_GMAC_NMACS,2)
@@ -611,6 +615,7 @@ tp-link_tl-wr802n: qca953x_common lsdk_kernel
 tp-link_tl-wr810n: qca953x_common lsdk_kernel
 	@$(call config_init,TP-Link TL-WR810N,tl-wr810n,8,12,1,QCA_QCA953X_SOC)
 	@$(call define_add,CONFIG_FOR_TPLINK_WR810N,1)
+	@$(call define_add,CONFIG_USB,1)
 	@$(call define_add,CFG_ATHRS27_PHY,1)
 	@$(call define_add,CFG_ATH_GMAC_NMACS,2)
 	@$(MKCONFIG) -a ap143 mips mips ap143 ar7240 ar7240
@@ -618,6 +623,7 @@ tp-link_tl-wr810n: qca953x_common lsdk_kernel
 tp-link_tl-wr820n_CN: qca953x_common lsdk_kernel
 	@$(call config_init,TP-Link TL-WR820N CN,tl-wr820n,4,12,1,QCA_QCA953X_SOC)
 	@$(call define_add,CONFIG_FOR_TPLINK_WR820N_CN,1)
+	@$(call define_add,CONFIG_USB,1)
 	@$(call define_add,CFG_ATHRS27_PHY,1)
 	@$(call define_add,CFG_ATH_GMAC_NMACS,2)
 	@$(MKCONFIG) -a ap143 mips mips ap143 ar7240 ar7240
@@ -653,6 +659,7 @@ tp-link_tl-wr841n_v9: qca953x_common lsdk_kernel
 tp-link_tl-wr842n_v3: qca953x_common lsdk_kernel
 	@$(call config_init,TP-Link TL-WR842N/D v3,tl-wr842nd-v3,16,1,1,QCA_QCA953X_SOC)
 	@$(call define_add,CONFIG_FOR_TPLINK_WR842N_V3,1)
+	@$(call define_add,CONFIG_USB,1)
 	@$(call define_add,CFG_ATHRS27_PHY,1)
 	@$(call define_add,CFG_ATH_GMAC_NMACS,2)
 	@$(MKCONFIG) -a ap143 mips mips ap143 ar7240 ar7240
@@ -660,6 +667,7 @@ tp-link_tl-wr842n_v3: qca953x_common lsdk_kernel
 tp-link_tl-wr902ac_v1: qca953x_common lsdk_kernel
 	@$(call config_init,TP-Link TL-WR902AC,tl-wr902ac,8,3,1,QCA_QCA953X_SOC)
 	@$(call define_add,CONFIG_FOR_TPLINK_WR902AC_V1,1)
+	@$(call define_add,CONFIG_USB,1)
 	@$(call define_add,CFG_ATHRS27_PHY,1)
 	@$(call define_add,CFG_ATH_GMAC_NMACS,2)
 	@$(call define_add,CONFIG_PCI,1)
@@ -680,6 +688,7 @@ village-telco_mesh-potato_v2: ar933x_common
 wallys_dr531: qca953x_common
 	@$(call config_init,Wallys DR531,dr531,8,17,1,QCA_QCA953X_SOC)
 	@$(call define_add,CONFIG_FOR_WALLYS_DR531,1)
+	@$(call define_add,CONFIG_USB,1)
 	@$(call define_add,CFG_ATHRS27_PHY,1)
 	@$(call define_add,CFG_ATH_GMAC_NMACS,2)
 	@$(call define_add,CONFIG_PCI,1)
@@ -709,6 +718,7 @@ yuncore_cpe870: ar934x_common
 zbtlink_zbt-we1526: qca953x_common
 	@$(call config_init,Zbtlink ZBT-WE1526,zbt-we1526,16,17,1,QCA_QCA953X_SOC)
 	@$(call define_add,CONFIG_FOR_ZBTLINK_ZBT_WE1526,1)
+	@$(call define_add,CONFIG_USB,1)
 	@$(call define_add,CFG_ATHRS27_PHY,1)
 	@$(call define_add,CFG_ATH_GMAC_NMACS,2)
 	@$(MKCONFIG) -a ap143 mips mips ap143 ar7240 ar7240
