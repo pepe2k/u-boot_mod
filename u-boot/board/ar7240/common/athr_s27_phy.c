@@ -112,7 +112,11 @@ static athrPhyInfo_t athrPhyInfo[] = {
 
     {TRUE,   /* port 1 -- LAN port 1 */
      FALSE,
+#if defined(CONFIG_QCA_ETH_PHY_SWAP)
+     ENET_UNIT_WAN,
+#else
      ENET_UNIT_LAN,
+#endif
      0,
      ATHR_PHY0_ADDR,
      ATHR_LAN_PORT_VLAN
@@ -145,7 +149,11 @@ static athrPhyInfo_t athrPhyInfo[] = {
 
     {TRUE,  /* port 5 -- WAN Port 5 */
      FALSE,
+#if defined(CONFIG_QCA_ETH_PHY_SWAP)
+     ENET_UNIT_LAN,
+#else
      ENET_UNIT_WAN,
+#endif
      0,
      ATHR_PHY4_ADDR,
      ATHR_LAN_PORT_VLAN    /* Send to all ports */
@@ -238,6 +246,12 @@ void athrs27_force_10M(int phyAddr,int duplex)
 
 int athrs27_reg_init(void)
 {
+#if defined(CONFIG_QCA_ETH_PHY_SWAP)
+	int phyWanAddr = ATHR_PHY0_ADDR;
+#else
+	int phyWanAddr = ATHR_PHY4_ADDR;
+#endif
+
 #ifdef S27_PHY_DEBUG
     uint32_t rd_val;
 #endif
@@ -247,11 +261,11 @@ int athrs27_reg_init(void)
     athrs27_reg_rmw(0x8,(1<<28));  /* Set WAN port is connected to GE0 */
 
 #if defined(S27_FORCE_100M)
-    athrs27_force_100M(ATHR_PHY4_ADDR,1);
+    athrs27_force_100M(phyWanAddr,1);
 #elif  defined(S27_FORCE_10M)
-    athrs27_force_10M(ATHR_PHY4_ADDR,1);
+    athrs27_force_10M(phyWanAddr,1);
 #else
-    s27_wr_phy(ATHR_PHY4_ADDR,ATHR_PHY_CONTROL,0x9000);
+    s27_wr_phy(phyWanAddr,ATHR_PHY_CONTROL,0x9000);
 
 #endif
 #ifdef S27_PHY_DEBUG

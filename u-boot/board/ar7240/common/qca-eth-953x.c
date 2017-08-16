@@ -176,6 +176,9 @@ void ath_gmac_mii_setup(ath_gmac_mac_t *mac)
 	//ath_reg_wr(SWITCH_CLOCK_SPARE_ADDRESS, 0x520);
 	if ((mac->mac_unit == 1)) {
 		ath_reg_wr(ATH_ETH_CFG, ETH_CFG_ETH_RXDV_DELAY_SET(3) |
+#if defined(CONFIG_QCA_ETH_PHY_SWAP)
+					ATH_ETH_CFG_SW_PHY_SWAP |
+#endif
 					ETH_CFG_ETH_RXD_DELAY_SET(3)|
 					ETH_CFG_RGMII_GE0_SET(1));
 
@@ -192,6 +195,9 @@ void ath_gmac_mii_setup(ath_gmac_mac_t *mac)
 
 	if (is_vir_phy()) {
 		ath_reg_wr(ATH_ETH_CFG, ETH_CFG_ETH_RXDV_DELAY_SET(3) |
+#if defined(CONFIG_QCA_ETH_PHY_SWAP)
+					ATH_ETH_CFG_SW_PHY_SWAP |
+#endif
 					ETH_CFG_ETH_RXD_DELAY_SET(3)|
 					ETH_CFG_RGMII_GE0_SET(1));
 		ath_reg_wr(ETH_XMII_ADDRESS, ETH_XMII_TX_INVERT_SET(1) |
@@ -207,6 +213,9 @@ void ath_gmac_mii_setup(ath_gmac_mac_t *mac)
 	if (is_s27()) {
         	mgmt_cfg_val = 2;
 		ath_reg_wr(ETH_CFG_ADDRESS, ETH_CFG_MII_GE0_SET(1)|
+#if defined(CONFIG_QCA_ETH_PHY_SWAP)
+					ATH_ETH_CFG_SW_PHY_SWAP |
+#endif
                                         ETH_CFG_MII_GE0_SLAVE_SET(1));
 		udelay(1000);
 		ath_gmac_reg_wr(mac, ATH_MAC_MII_MGMT_CFG, mgmt_cfg_val | (1 << 31));
