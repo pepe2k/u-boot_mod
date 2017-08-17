@@ -64,6 +64,15 @@
 	#define CONFIG_QCA_GPIO_MASK_IN		GPIO17
 	#define CONFIG_QCA_GPIO_MASK_OUT_INIT_H	CONFIG_QCA_GPIO_MASK_LED_ACT_L
 
+#elif defined(CONFIG_FOR_TPLINK_MR22U_V1)
+
+	#define CONFIG_QCA_GPIO_MASK_LED_ACT_L	GPIO13
+	#define CONFIG_QCA_GPIO_MASK_OUT	GPIO11 |\
+						CONFIG_QCA_GPIO_MASK_LED_ACT_L
+	#define CONFIG_QCA_GPIO_MASK_IN		GPIO12 | GPIO14 | GPIO16
+	#define CONFIG_QCA_GPIO_MASK_OUT_INIT_H	GPIO11 |\
+						CONFIG_QCA_GPIO_MASK_LED_ACT_L
+
 #elif defined(CONFIG_FOR_TPLINK_MR6400_V1V2)
 
 	#define CONFIG_QCA_GPIO_MASK_LED_ACT_H	GPIO0  | GPIO1 | GPIO3 |\
@@ -216,7 +225,8 @@
 				"rootfstype=squashfs init=/sbin/init "\
 				"mtdparts=spi0.0:256k(u-boot),64k(u-boot-env),14528k(rootfs),1472k(kernel),64k(art),16000k(firmware)"
 
-#elif defined(CONFIG_FOR_TPLINK_MR6400_V1V2) ||\
+#elif defined(CONFIG_FOR_TPLINK_MR22U_V1)    ||\
+      defined(CONFIG_FOR_TPLINK_MR6400_V1V2) ||\
       defined(CONFIG_FOR_TPLINK_WR810N_V1)
 
 	#define CONFIG_BOOTARGS	"console=ttyS0,115200 root=31:02 "\
@@ -264,6 +274,7 @@
     defined(CONFIG_FOR_COMFAST_CF_E320N_V2) ||\
     defined(CONFIG_FOR_COMFAST_CF_E520N)    ||\
     defined(CONFIG_FOR_COMFAST_CF_E530N)    ||\
+    defined(CONFIG_FOR_TPLINK_MR22U_V1)     ||\
     defined(CONFIG_FOR_TPLINK_MR3420_V3)    ||\
     defined(CONFIG_FOR_TPLINK_MR6400_V1V2)  ||\
     defined(CONFIG_FOR_TPLINK_WA850RE_V2)   ||\
@@ -315,7 +326,8 @@
 	#define CFG_ENV_ADDR		0x9F040000
 	#define CFG_ENV_SIZE		0xFC00
 	#define CFG_ENV_SECT_SIZE	0x10000
-#elif defined(CONFIG_FOR_TPLINK_MR3420_V3)    ||\
+#elif defined(CONFIG_FOR_TPLINK_MR22U_V1)     ||\
+      defined(CONFIG_FOR_TPLINK_MR3420_V3)    ||\
       defined(CONFIG_FOR_TPLINK_MR6400_V1V2)  ||\
       defined(CONFIG_FOR_TPLINK_WA850RE_V2)   ||\
       defined(CONFIG_FOR_TPLINK_WR802N_V1)    ||\
@@ -368,7 +380,8 @@
 	#define OFFSET_MAC_DATA_BLOCK		0x3c0000
 	#define OFFSET_MAC_DATA_BLOCK_LENGTH	0x010000
 	#define OFFSET_MAC_ADDRESS		0x000008
-#elif defined(CONFIG_FOR_TPLINK_MR3420_V3)    ||\
+#elif defined(CONFIG_FOR_TPLINK_MR22U_V1)     ||\
+      defined(CONFIG_FOR_TPLINK_MR3420_V3)    ||\
       defined(CONFIG_FOR_TPLINK_MR6400_V1V2)  ||\
       defined(CONFIG_FOR_TPLINK_WR802N_V1)    ||\
       defined(CONFIG_FOR_TPLINK_WR810N_V1)    ||\
@@ -431,6 +444,7 @@
     defined(CONFIG_FOR_COMFAST_CF_E320N_V2) ||\
     defined(CONFIG_FOR_COMFAST_CF_E520N)    ||\
     defined(CONFIG_FOR_COMFAST_CF_E530N)    ||\
+    defined(CONFIG_FOR_TPLINK_MR22U_V1)     ||\
     defined(CONFIG_FOR_TPLINK_MR3420_V3)    ||\
     defined(CONFIG_FOR_TPLINK_MR6400_V1V2)  ||\
     defined(CONFIG_FOR_TPLINK_WR802N_V1)    ||\
@@ -459,7 +473,8 @@
  * PLL/Clocks configuration
  * ========================
  */
-#if defined(CONFIG_FOR_TPLINK_WA850RE_V2)   ||\
+#if defined(CONFIG_FOR_TPLINK_MR22U_V1)     ||\
+    defined(CONFIG_FOR_TPLINK_WA850RE_V2)   ||\
     defined(CONFIG_FOR_TPLINK_WR802N_V1)    ||\
     defined(CONFIG_FOR_TPLINK_WR820N_V1_CN) ||\
     defined(CONFIG_FOR_TPLINK_WR841N_V9)
@@ -472,6 +487,7 @@
     defined(CONFIG_FOR_COMFAST_CF_E320N_V2) ||\
     defined(CONFIG_FOR_COMFAST_CF_E520N)    ||\
     defined(CONFIG_FOR_COMFAST_CF_E530N)    ||\
+    defined(CONFIG_FOR_TPLINK_MR22U_V1)     ||\
     defined(CONFIG_FOR_TPLINK_MR3420_V3)    ||\
     defined(CONFIG_FOR_TPLINK_MR6400_V1V2)  ||\
     defined(CONFIG_FOR_TPLINK_WA850RE_V2)   ||\

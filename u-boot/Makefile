@@ -504,6 +504,14 @@ tp-link_tl-mr13u_v1: ar933x_common lsdk_kernel
 	@$(call define_add,CONFIG_FOR_TPLINK_MR13U_V1,1)
 	@$(MKCONFIG) -a ap121 mips mips ap121 ar7240 ar7240
 
+tp-link_tl-mr22u_v1: qca953x_common lsdk_kernel
+	@$(call config_init,TP-Link TL-MR22U v1,tl-mr22u-v1,8,12,,QCA_QCA953X_SOC)
+	@$(call define_add,CONFIG_FOR_TPLINK_MR22U_V1,1)
+	@$(call define_add,CONFIG_USB,1)
+	@$(call define_add,CFG_ATHRS27_PHY,1)
+	@$(call define_add,CFG_ATH_GMAC_NMACS,2)
+	@$(MKCONFIG) -a ap143 mips mips ap143 ar7240 ar7240
+
 tp-link_tl-mr3020_v1: ar933x_common lsdk_kernel
 	@$(call config_init,TP-Link TL-MR3020 v1,tl-mr3020-v1,4,11,,QCA_AR933X_SOC)
 	@$(call define_add,CONFIG_FOR_TPLINK_MR3020_V1,1)
