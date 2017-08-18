@@ -70,6 +70,7 @@ Currently supported devices:
   - Dragino 2 (MS14)
   - GL.iNet 64xxA ([photos in my gallery](http://galeria.tech-blog.pl/GLiNet/))
   - GL.iNet GL-AR150
+  - GL.iNet GL-USB150
   - GS-Oolite/Elink EL-M150 module with dev board ([photos in my gallery](http://galeria.tech-blog.pl/Elink_EL-M150_Development-Board/))
   - TP-Link TL-MR10U v1 ([photos in my gallery](http://galeria.tech-blog.pl/TP-Link_TL-MR10U/))
   - TP-Link TL-MR13U v1
@@ -137,6 +138,7 @@ More information about supported devices:
 | [EnGenius ENS202EXT](https://wiki.openwrt.org/toh/engenius/engenius_ens202ext_1.0.0) | AR9341 | 16 MiB | 64 MiB DDR1 | 256 KiB | R/W |
 | [GL.iNet 64xxA](http://wiki.openwrt.org/toh/gl-inet/gl-inet) | AR9331 | 8/16 MiB | 64 MiB DDR1 | 64 KiB | RO |
 | GL.iNet GL-AR150 | AR9331 | 16 MiB | 64 MiB DDR2 | 256 KiB | R/W |
+| GL.iNet GL-USB150 | AR9331 | 16 MiB | 64 MiB DDR2 | 256 KiB | R/W |
 | GS-Oolite/Elink EL-M150 module | AR9331 | 4/8/16 MiB | 64 MiB DDR2 | 64 KiB, LZMA | RO |
 | P&W CPE505N | QCA9531 | 16 MiB | 64 MiB DDR2 | 256 KiB | R/W |
 | P&W R602N | QCA9531 | 16 MiB | 64 MiB DDR2 | 256 KiB | R/W |

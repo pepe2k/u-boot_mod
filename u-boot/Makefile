@@ -474,6 +474,11 @@ gl-inet_gl-ar150: ar933x_common
 	@$(call define_add,CONFIG_FOR_GL_AR150,1)
 	@$(MKCONFIG) -a ap121 mips mips ap121 ar7240 ar7240
 
+gl-inet_gl-usb150: ar933x_common
+	@$(call config_init,GL.iNet GL-USB150,gl-usb150,16,11,,QCA_AR933X_SOC)
+	@$(call define_add,CONFIG_FOR_GL_USB150,1)
+	@$(MKCONFIG) -a ap121 mips mips ap121 ar7240 ar7240
+
 p2w_cpe505n: qca953x_common
 	@$(call config_init,P&W CPE505N,cpe505n,16,17,1,QCA_QCA953X_SOC)
 	@$(call define_add,CONFIG_FOR_P2W_CPE505N,1)

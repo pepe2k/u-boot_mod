@@ -247,7 +247,8 @@ $(COMMON_ETHS27_TARGETS):
 8devices_carambola2 \
 alfa-network_hornet-ub \
 creatcomm-technology_d3321 \
-gl-inet_gl-ar150:
+gl-inet_gl-ar150 \
+gl-inet_gl-usb150:
 	@$(call build,256,1)
 
 alfa-network_ap121f:
