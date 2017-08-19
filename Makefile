@@ -209,7 +209,7 @@ endef
 
 COMMON_AR933X_TARGETS = \
 	gainstrong_oolite_v1_dev \
-	gl-innovations_gl-inet-6416 \
+	gl-inet_6416 \
 	tp-link_tl-mr10u \
 	tp-link_tl-mr13u \
 	tp-link_tl-mr3020 \
@@ -247,7 +247,7 @@ $(COMMON_ETHS27_TARGETS):
 8devices_carambola2 \
 alfa-network_hornet-ub \
 creatcomm-technology_d3321 \
-gl-innovations_gl-ar150:
+gl-inet_gl-ar150:
 	@$(call build,256,1)
 
 alfa-network_ap121f:
