@@ -210,13 +210,13 @@ endef
 COMMON_AR933X_TARGETS = \
 	gainstrong_oolite_v1_dev \
 	gl-inet_6416 \
-	tp-link_tl-mr10u \
-	tp-link_tl-mr13u \
-	tp-link_tl-mr3020 \
-	tp-link_tl-mr3040 \
+	tp-link_tl-mr10u_v1 \
+	tp-link_tl-mr13u_v1 \
+	tp-link_tl-mr3020_v1 \
+	tp-link_tl-mr3040_v1v2 \
 	tp-link_tl-mr3220_v2 \
-	tp-link_tl-wr703n \
-	tp-link_tl-wr710n \
+	tp-link_tl-wr703n_v1 \
+	tp-link_tl-wr710n_v1 \
 	tp-link_tl-wr720n_v3_CN \
 	tp-link_tl-wr740n_v4
 
@@ -230,10 +230,10 @@ COMMON_ETHS27_TARGETS = \
 	tp-link_tl-wa801nd_v2 \
 	tp-link_tl-wa850re_v2 \
 	tp-link_tl-wa830re_v2 \
-	tp-link_tl-wdr3500 \
-	tp-link_tl-wr802n \
-	tp-link_tl-wr810n \
-	tp-link_tl-wr820n_CN \
+	tp-link_tl-wdr3500_v1 \
+	tp-link_tl-wr802n_v1 \
+	tp-link_tl-wr810n_v1 \
+	tp-link_tl-wr820n_v1_CN \
 	tp-link_tl-wr841n_v10 \
 	tp-link_tl-wr841n_v11 \
 	tp-link_tl-wr841n_v8 \
@@ -274,8 +274,8 @@ yuncore_cpe830 \
 zbtlink_zbt-we1526:
 	@$(call build,256,1,ETH_CONFIG=_s27)
 
-tp-link_tl-wdr3600 \
-tp-link_tl-wdr43x0:
+tp-link_tl-wdr3600_v1 \
+tp-link_tl-wdr43x0_v1:
 	@$(call build,123,1,ETH_CONFIG=_s17)
 
 unwireddevices_unwired-one:

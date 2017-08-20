@@ -494,23 +494,23 @@ p2w_r602n: qca953x_common
 	@$(call define_add,CFG_ATH_GMAC_NMACS,2)
 	@$(MKCONFIG) -a ap143 mips mips ap143 ar7240 ar7240
 
-tp-link_tl-mr10u: ar933x_common lsdk_kernel
-	@$(call config_init,TP-Link TL-MR10U,tl-mr10u,4,11,,QCA_AR933X_SOC)
+tp-link_tl-mr10u_v1: ar933x_common lsdk_kernel
+	@$(call config_init,TP-Link TL-MR10U v1,tl-mr10u-v1,4,11,,QCA_AR933X_SOC)
 	@$(call define_add,CONFIG_FOR_TPLINK_MR10U_V1,1)
 	@$(MKCONFIG) -a ap121 mips mips ap121 ar7240 ar7240
 
-tp-link_tl-mr13u: ar933x_common lsdk_kernel
-	@$(call config_init,TP-Link TL-MR13U,tl-mr13u,4,11,,QCA_AR933X_SOC)
+tp-link_tl-mr13u_v1: ar933x_common lsdk_kernel
+	@$(call config_init,TP-Link TL-MR13U v1,tl-mr13u-v1,4,11,,QCA_AR933X_SOC)
 	@$(call define_add,CONFIG_FOR_TPLINK_MR13U_V1,1)
 	@$(MKCONFIG) -a ap121 mips mips ap121 ar7240 ar7240
 
-tp-link_tl-mr3020: ar933x_common lsdk_kernel
-	@$(call config_init,TP-Link TL-MR3020,tl-mr3020,4,11,,QCA_AR933X_SOC)
+tp-link_tl-mr3020_v1: ar933x_common lsdk_kernel
+	@$(call config_init,TP-Link TL-MR3020 v1,tl-mr3020-v1,4,11,,QCA_AR933X_SOC)
 	@$(call define_add,CONFIG_FOR_TPLINK_MR3020_V1,1)
 	@$(MKCONFIG) -a ap121 mips mips ap121 ar7240 ar7240
 
-tp-link_tl-mr3040: ar933x_common lsdk_kernel
-	@$(call config_init,TP-Link TL-MR3040,tl-mr3040,4,11,,QCA_AR933X_SOC)
+tp-link_tl-mr3040_v1v2: ar933x_common lsdk_kernel
+	@$(call config_init,TP-Link TL-MR3040 v1/v2,tl-mr3040-v1v2,4,11,,QCA_AR933X_SOC)
 	@$(call define_add,CONFIG_FOR_TPLINK_MR3040_V1V2,1)
 	@$(MKCONFIG) -a ap121 mips mips ap121 ar7240 ar7240
 
@@ -564,16 +564,16 @@ tp-link_tl-wa850re_v2: qca953x_common lsdk_kernel
 	@$(call define_add,CFG_ATH_GMAC_NMACS,2)
 	@$(MKCONFIG) -a ap143 mips mips ap143 ar7240 ar7240
 
-tp-link_tl-wdr3500: ar934x_common lsdk_kernel
-	@$(call config_init,TP-Link TL-WDR3500,tl-wdr3500,8,16,1,QCA_AR9344_SOC)
+tp-link_tl-wdr3500_v1: ar934x_common lsdk_kernel
+	@$(call config_init,TP-Link TL-WDR3500 v1,tl-wdr3500-v1,8,16,1,QCA_AR9344_SOC)
 	@$(call define_add,CONFIG_FOR_TPLINK_WDR3500_V1,1)
 	@$(call define_add,CFG_ATHRS27_PHY,1)
 	@$(call define_add,CFG_AG7240_NMACS,2)
 	@$(call define_add,CONFIG_PCI,1)
 	@$(MKCONFIG) -a db12x mips mips db12x ar7240 ar7240
 
-tp-link_tl-wdr3600: ar934x_common lsdk_kernel
-	@$(call config_init,TP-Link TL-WDR3600,tl-wdr3600,8,16,1,QCA_AR9344_SOC)
+tp-link_tl-wdr3600_v1: ar934x_common lsdk_kernel
+	@$(call config_init,TP-Link TL-WDR3600 v1,tl-wdr3600-v1,8,16,1,QCA_AR9344_SOC)
 	@$(call define_add,CONFIG_FOR_TPLINK_WDR3600_V1,1)
 	@$(call define_add,CFG_ATHRS17_PHY,1)
 	@$(call define_add,CFG_AG7240_NMACS,1)
@@ -581,8 +581,8 @@ tp-link_tl-wdr3600: ar934x_common lsdk_kernel
 	@$(call define_add,CFG_DUAL_PHY_SUPPORT,1)
 	@$(MKCONFIG) -a db12x mips mips db12x ar7240 ar7240
 
-tp-link_tl-wdr43x0: ar934x_common lsdk_kernel
-	@$(call config_init,TP-Link TL-WDR43x0,tl-wdr43x0,8,16,1,QCA_AR9344_SOC)
+tp-link_tl-wdr43x0_v1: ar934x_common lsdk_kernel
+	@$(call config_init,TP-Link TL-WDR43x0 v1,tl-wdr43x0-v1,8,16,1,QCA_AR9344_SOC)
 	@$(call define_add,CONFIG_FOR_TPLINK_WDR43X0_V1,1)
 	@$(call define_add,CFG_ATHRS17_PHY,1)
 	@$(call define_add,CFG_AG7240_NMACS,1)
@@ -590,13 +590,13 @@ tp-link_tl-wdr43x0: ar934x_common lsdk_kernel
 	@$(call define_add,CFG_DUAL_PHY_SUPPORT,1)
 	@$(MKCONFIG) -a db12x mips mips db12x ar7240 ar7240
 
-tp-link_tl-wr703n: ar933x_common lsdk_kernel
-	@$(call config_init,TP-Link TL-WR703N,tl-wr703n,4,11,,QCA_AR933X_SOC)
+tp-link_tl-wr703n_v1: ar933x_common lsdk_kernel
+	@$(call config_init,TP-Link TL-WR703N v1,tl-wr703n-v1,4,11,,QCA_AR933X_SOC)
 	@$(call define_add,CONFIG_FOR_TPLINK_WR703N_V1,1)
 	@$(MKCONFIG) -a ap121 mips mips ap121 ar7240 ar7240
 
-tp-link_tl-wr710n: ar933x_common lsdk_kernel
-	@$(call config_init,TP-Link TL-WR710N,tl-wr710n,8,11,,QCA_AR933X_SOC)
+tp-link_tl-wr710n_v1: ar933x_common lsdk_kernel
+	@$(call config_init,TP-Link TL-WR710N v1,tl-wr710n-v1,8,11,,QCA_AR933X_SOC)
 	@$(call define_add,CONFIG_FOR_TPLINK_WR710N_V1,1)
 	@$(MKCONFIG) -a ap121 mips mips ap121 ar7240 ar7240
 
@@ -610,24 +610,24 @@ tp-link_tl-wr740n_v4: ar933x_common lsdk_kernel
 	@$(call define_add,CONFIG_FOR_TPLINK_WR740N_V4,1)
 	@$(MKCONFIG) -a ap121 mips mips ap121 ar7240 ar7240
 
-tp-link_tl-wr802n: qca953x_common lsdk_kernel
-	@$(call config_init,TP-Link TL-WR802N,tl-wr802n,4,12,1,QCA_QCA953X_SOC)
-	@$(call define_add,CONFIG_FOR_TPLINK_WR802N,1)
+tp-link_tl-wr802n_v1: qca953x_common lsdk_kernel
+	@$(call config_init,TP-Link TL-WR802N v1,tl-wr802n-v1,4,12,1,QCA_QCA953X_SOC)
+	@$(call define_add,CONFIG_FOR_TPLINK_WR802N_V1,1)
 	@$(call define_add,CFG_ATHRS27_PHY,1)
 	@$(call define_add,CFG_ATH_GMAC_NMACS,2)
 	@$(MKCONFIG) -a ap143 mips mips ap143 ar7240 ar7240
 
-tp-link_tl-wr810n: qca953x_common lsdk_kernel
-	@$(call config_init,TP-Link TL-WR810N,tl-wr810n,8,12,1,QCA_QCA953X_SOC)
-	@$(call define_add,CONFIG_FOR_TPLINK_WR810N,1)
+tp-link_tl-wr810n_v1: qca953x_common lsdk_kernel
+	@$(call config_init,TP-Link TL-WR810N v1,tl-wr810n-v1,8,12,1,QCA_QCA953X_SOC)
+	@$(call define_add,CONFIG_FOR_TPLINK_WR810N_V1,1)
 	@$(call define_add,CONFIG_USB,1)
 	@$(call define_add,CFG_ATHRS27_PHY,1)
 	@$(call define_add,CFG_ATH_GMAC_NMACS,2)
 	@$(MKCONFIG) -a ap143 mips mips ap143 ar7240 ar7240
 
-tp-link_tl-wr820n_CN: qca953x_common lsdk_kernel
-	@$(call config_init,TP-Link TL-WR820N CN,tl-wr820n,4,12,1,QCA_QCA953X_SOC)
-	@$(call define_add,CONFIG_FOR_TPLINK_WR820N_CN,1)
+tp-link_tl-wr820n_v1_CN: qca953x_common lsdk_kernel
+	@$(call config_init,TP-Link TL-WR820N v1 CN,tl-wr820n-v1,4,12,1,QCA_QCA953X_SOC)
+	@$(call define_add,CONFIG_FOR_TPLINK_WR820N_V1_CN,1)
 	@$(call define_add,CONFIG_USB,1)
 	@$(call define_add,CFG_ATHRS27_PHY,1)
 	@$(call define_add,CFG_ATH_GMAC_NMACS,2)
