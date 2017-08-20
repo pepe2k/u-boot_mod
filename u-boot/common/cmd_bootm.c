@@ -418,6 +418,7 @@ int do_bootm(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 
 	switch (ntohl(data)) {
 	case TPL_IH_VERSION_V1:
+	case TPL_IH_VERSION_V2:
 		tpl_type = 1;
 
 		tpl_hdr = (tplink_image_header_t *)addr;
@@ -430,7 +431,6 @@ int do_bootm(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 		print_uboot_ih((image_header_t *)addr);
 		memmove(&header, (char *)addr, sizeof(image_header_t));
 		break;
-	case TPL_IH_VERSION_V2:
 	case TPL_IH_VERSION_V3:
 	default:
 		printf_err("unsupported image header\n");
@@ -591,6 +591,7 @@ int do_iminfo(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 
 	switch (ntohl(data)) {
 	case TPL_IH_VERSION_V1:
+	case TPL_IH_VERSION_V2:
 		tpl_type = 1;
 
 		tpl_hdr = (tplink_image_header_t *)addr;
@@ -600,7 +601,6 @@ int do_iminfo(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 		print_uboot_ih((image_header_t *)addr);
 		memmove(&header, (char *)addr, sizeof(image_header_t));
 		break;
-	case TPL_IH_VERSION_V2:
 	case TPL_IH_VERSION_V3:
 	default:
 		printf_err("unsupported image header\n");
