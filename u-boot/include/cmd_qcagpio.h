@@ -779,6 +779,57 @@ static const gpio_out_func gpio_out_funcs[] = {
 	},
 #elif (SOC_TYPE & QCA_QCA956X_SOC)
 	{
+		.value = 1,
+		.name  = "led_act0"
+	}, {
+		.value = 2,
+		.name  = "led_act1"
+	}, {
+		.value = 3,
+		.name  = "led_act2"
+	}, {
+		.value = 4,
+		.name  = "led_act3"
+	}, {
+		.value = 5,
+		.name  = "led_act4"
+	}, {
+		.value = 6,
+		.name  = "led_col0"
+	}, {
+		.value = 7,
+		.name  = "led_col1"
+	}, {
+		.value = 8,
+		.name  = "led_col2"
+	}, {
+		.value = 9,
+		.name  = "led_col3"
+	}, {
+		.value = 10,
+		.name  = "led_col4"
+	}, {
+		.value = 11,
+		.name  = "led_dup0"
+	}, {
+		.value = 12,
+		.name  = "led_dup1"
+	}, {
+		.value = 13,
+		.name  = "led_dup2"
+	}, {
+		.value = 14,
+		.name  = "led_dup3"
+	}, {
+		.value = 15,
+		.name  = "led_dup4"
+	}, {
+		.value = 16,
+		.name  = "led_link0"
+	}, {
+		.value = 17,
+		.name  = "led_link1"
+	}, {
 		.value = 18,
 		.name  = "uart1_tx"
 	}, {
@@ -814,6 +865,21 @@ static const gpio_out_func gpio_out_funcs[] = {
 	}, {
 		.value = 31,
 		.name  = "led_sgmii_link_inv"
+	}, {
+		.value = 32,
+		.name  = "ge0_mii_mdo"
+	}, {
+		.value = 33,
+		.name  = "ge0_mii_mdc"
+	}, {
+		.value = 34,
+		.name  = "led_link2"
+	}, {
+		.value = 35,
+		.name  = "led_link3"
+	}, {
+		.value = 36,
+		.name  = "led_link4"
 	}, {
 		.value = 37,
 		.name  = "spi_cs1"
@@ -856,6 +922,9 @@ static const gpio_out_func gpio_out_funcs[] = {
 	}, {
 		.value = 73,
 		.name  = "i2c_clk"
+	}, {
+		.value = 74,
+		.name  = "usb_suspend"
 	}, {
 		.value = 77,
 		.name  = "i2c_sda"
