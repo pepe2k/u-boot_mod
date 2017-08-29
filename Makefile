@@ -279,6 +279,9 @@ tp-link_tl-wdr3600_v1 \
 tp-link_tl-wdr43x0_v1:
 	@$(call build,123,1,ETH_CONFIG=_s17)
 
+tp-link_tl-wr1041n_v2::
+	@$(call build,123,1,ETH_CONFIG=_s17)
+
 unwireddevices_unwired-one:
 	@$(call build,128,1,DEVICE_VENDOR=SE)
 

@@ -53,6 +53,9 @@ void qca_soc_name_rev(char *buf)
 	case QCA_RST_REVISION_ID_MAJOR_AR9341_VAL:
 		sprintf(buf, "AR9341 rev. %d", rev);
 		break;
+	case QCA_RST_REVISION_ID_MAJOR_AR9342_VAL:
+		sprintf(buf, "AR9342 rev. %d", rev);
+		break;
 	case QCA_RST_REVISION_ID_MAJOR_AR9344_VAL:
 		sprintf(buf, "AR9344 rev. %d", rev);
 		break;
