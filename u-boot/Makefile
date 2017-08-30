@@ -598,6 +598,14 @@ tp-link_tl-wdr43x0_v1: ar934x_common lsdk_kernel
 	@$(call define_add,CFG_DUAL_PHY_SUPPORT,1)
 	@$(MKCONFIG) -a db12x mips mips db12x ar7240 ar7240
 
+tp-link_tl-wr1041n_v2: ar934x_common lsdk_kernel
+	@$(call config_init,TP-Link TL-WR1041N v2,tl-wr1041n-v2,4,14,1,QCA_AR9342_SOC)
+	@$(call define_add,CONFIG_FOR_TPLINK_WR1041N_V2,1)
+	@$(call define_add,CFG_ATHRS17_PHY,1)
+	@$(call define_add,CFG_AG7240_NMACS,1)
+	@$(call define_add,CFG_DUAL_PHY_SUPPORT,1)
+	@$(MKCONFIG) -a db12x mips mips db12x ar7240 ar7240
+
 tp-link_tl-wr703n_v1: ar933x_common lsdk_kernel
 	@$(call config_init,TP-Link TL-WR703N v1,tl-wr703n-v1,4,11,,QCA_AR933X_SOC)
 	@$(call define_add,CONFIG_FOR_TPLINK_WR703N_V1,1)
