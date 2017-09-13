@@ -285,6 +285,9 @@ wallys_dr531:
 yuncore_cpe870:
 	@$(call build,64,1,ETH_CONFIG=_s27)
 
+d-link_dap-1533:
+	@$(call build,123,1,ETH_CONFIG=_s17)
+
 # =============
 # CLEAN TARGETS
 # =============

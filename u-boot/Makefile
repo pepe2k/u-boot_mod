@@ -700,6 +700,15 @@ zbtlink_zbt-we1526: qca953x_common
 	@$(call define_add,CFG_ATH_GMAC_NMACS,2)
 	@$(MKCONFIG) -a ap143 mips mips ap143 ar7240 ar7240
 
+d-link_dap-1533: ar934x_common lsdk_kernel
+	@$(call config_init,D-Link DAP-1533,dap-1533,8,17,1,QCA_AR9344_SOC)
+	@$(call define_add,CONFIG_FOR_DLINK_DAP1533,1)
+	@$(call define_add,CFG_ATHRS17_PHY,1)
+	@$(call define_add,CFG_AG7240_NMACS,1)
+	@$(call define_add,CONFIG_PCI,1)
+	@$(call define_add,CFG_DUAL_PHY_SUPPORT,1)
+	@$(MKCONFIG) -a db12x mips mips db12x ar7240 ar7240
+
 # =============
 # CLEAN TARGETS
 # =============
