@@ -240,8 +240,18 @@ void macaddr_init(u8 *mac_addr)
 	u8 fixed_mac[6] = {0x00, 0x03, 0x7F, 0x09, 0x0B, 0xAD};
 
 #if defined(OFFSET_MAC_ADDRESS)
-	memcpy(buffer, (void *)(CFG_FLASH_BASE
-		+ OFFSET_MAC_DATA_BLOCK + OFFSET_MAC_ADDRESS), 6);
+	#if defined(MAC_ADDRESS_TYPE_STR)
+		char str_mac[18];
+		memcpy(&str_mac, (void *)(CFG_FLASH_BASE + OFFSET_MAC_DATA_BLOCK 
+		    + OFFSET_MAC_ADDRESS), sizeof(str_mac));
+		for (int i=0; i<6; i++) {
+			str_mac[i*3 + 2] = 0x00;
+			buffer[i] = simple_strtoul(&str_mac[i*3], NULL, 16);
+	}
+	#else
+		memcpy(buffer, (void *)(CFG_FLASH_BASE
+			+ OFFSET_MAC_DATA_BLOCK + OFFSET_MAC_ADDRESS), 6);
+    #endif
 
 	/*
 	 * Check first LSBit (I/G bit) and second LSBit (U/L bit) in MSByte of vendor part

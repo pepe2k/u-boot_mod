@@ -31,8 +31,22 @@ int do_print_mac(cmd_tbl_t * cmdtp, int flag, int argc, char *argv[]){
 
 #if defined(OFFSET_MAC_ADDRESS2)
 	// get MAC1 and MAC2 addresses from flash and print them
-	memcpy(buffer,  (void *)(CFG_FLASH_BASE + OFFSET_MAC_DATA_BLOCK + OFFSET_MAC_ADDRESS),  6);
-	memcpy(buffer2, (void *)(CFG_FLASH_BASE + OFFSET_MAC_DATA_BLOCK + OFFSET_MAC_ADDRESS2), 6);
+	#if defined(MAC_ADDRESS_TYPE_STR)
+		char str_mac[18], str_mac2[18];
+		memcpy(&str_mac, (void *)(CFG_FLASH_BASE + OFFSET_MAC_DATA_BLOCK 
+		    + OFFSET_MAC_ADDRESS), sizeof(str_mac));
+		memcpy(&str_mac2, (void *)(CFG_FLASH_BASE + OFFSET_MAC_DATA_BLOCK 
+		    + OFFSET_MAC_ADDRESS2), sizeof(str_mac2));
+		for (int i=0; i<6; i++) {
+			str_mac[i*3 + 2] = 0x00;
+			str_mac2[i*3 + 2] = 0x00;
+			buffer[i] = simple_strtoul(&str_mac[i*3], NULL, 16);
+			buffer2[i] = simple_strtoul(&str_mac2[i*3], NULL, 16);
+		}
+	#else
+		memcpy(buffer,  (void *)(CFG_FLASH_BASE + OFFSET_MAC_DATA_BLOCK + OFFSET_MAC_ADDRESS),  6);
+		memcpy(buffer2, (void *)(CFG_FLASH_BASE + OFFSET_MAC_DATA_BLOCK + OFFSET_MAC_ADDRESS2), 6);
+	#endif
 
 	puts("Current MAC addresses stored in FLASH:\n");
 	printf("MAC1 at 0x%X: %02X:%02X:%02X:%02X:%02X:%02X\n", CFG_FLASH_BASE + OFFSET_MAC_DATA_BLOCK + OFFSET_MAC_ADDRESS,
@@ -42,7 +56,17 @@ int do_print_mac(cmd_tbl_t * cmdtp, int flag, int argc, char *argv[]){
 															  buffer2[0] & 0xFF, buffer2[1] & 0xFF, buffer2[2] & 0xFF, buffer2[3] & 0xFF, buffer2[4] & 0xFF, buffer2[5] & 0xFF);
 #else
 	// get MAC address from flash and print it
-	memcpy(buffer, (void *)(CFG_FLASH_BASE + OFFSET_MAC_DATA_BLOCK + OFFSET_MAC_ADDRESS), 6);
+	#if defined(MAC_ADDRESS_TYPE_STR)
+		char str_mac[18];
+		memcpy(&str_mac, (void *)(CFG_FLASH_BASE + OFFSET_MAC_DATA_BLOCK 
+		    + OFFSET_MAC_ADDRESS), sizeof(str_mac));
+		for (int i=0; i<6; i++) {
+			str_mac[i*3 + 2] = 0x00;
+			buffer[i] = simple_strtoul(&str_mac[i*3], NULL, 16);
+        }
+	#else
+		memcpy(buffer, (void *)(CFG_FLASH_BASE + OFFSET_MAC_DATA_BLOCK + OFFSET_MAC_ADDRESS), 6);
+	#endif
 
 	printf("Current MAC address stored in FLASH at offset 0x%X: ", CFG_FLASH_BASE + OFFSET_MAC_DATA_BLOCK + OFFSET_MAC_ADDRESS);
 	printf("%02X:%02X:%02X:%02X:%02X:%02X\n\n", buffer[0] & 0xFF, buffer[1] & 0xFF, buffer[2] & 0xFF, buffer[3] & 0xFF, buffer[4] & 0xFF, buffer[5] & 0xFF);
@@ -96,9 +120,13 @@ int do_set_mac(cmd_tbl_t * cmdtp, int flag, int argc, char *argv[]){
 	memcpy((void *)data_pointer, (void *)(CFG_FLASH_BASE + OFFSET_MAC_DATA_BLOCK), OFFSET_MAC_DATA_BLOCK_LENGTH);
 
 	// store new MAC address in RAM
-	for(i = 0; i < 6; i++){
-		data_pointer[OFFSET_MAC_ADDRESS + i] = simple_strtoul((char *)(argv[1] + i*3), NULL, 16);
-	}
+	#if defined(MAC_ADDRESS_TYPE_STR)
+        memcpy(&data_pointer[OFFSET_MAC_ADDRESS], (void *)argv[1], 17);
+    #else
+        for(i = 0; i < 6; i++){
+            data_pointer[OFFSET_MAC_ADDRESS + i] = simple_strtoul((char *)(argv[1] + i*3), NULL, 16);
+        }
+    #endif
 
 	// now we can erase flash and write data from RAM
 	sprintf(buf,
