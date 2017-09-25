@@ -67,6 +67,7 @@ Currently supported devices:
   - ALFA NETWORK Hornet-UB/Hornet-UB-64 (aka Hornet-UB x2)
   - Black Swift
   - CreatComm Technology D3321
+  - D-Link DIR-601 H/W ver. B1
   - Dragino 2 (MS14)
   - GL.iNet 64xxA ([photos in my gallery](http://galeria.tech-blog.pl/GLiNet/))
   - GL.iNet GL-AR150
@@ -138,6 +139,7 @@ More information about supported devices:
 | Comfast CF-E520N/CF-E530N | QCA9531 | 8 MiB | 32 MiB DDR2 | 64 KiB, LZMA | RO |
 | CreatComm Technology D3321| AR9331 | 8 MiB | 32 MiB DDR1 | 256 KiB | RW |
 | [D-Link DIR-505 H/W ver. A1](http://wiki.openwrt.org/toh/d-link/dir-505) | AR1311 | 8 MiB | 64 MiB DDR2 | 64 KiB, LZMA | RO |
+| [D-Link DIR-601 H/W ver. B1](https://wiki.openwrt.org/toh/trendnet/tew-712br) | AR9331 | 4 MiB | 32 MiB DDR1 | 64 KiB, LZMA | RO |
 | [Dragino 2 (MS14)](http://wiki.openwrt.org/toh/dragino/ms14) | AR9331 | 16 MiB | 64 MiB DDR1 | 192 KiB | R/W |
 | [EnGenius ENS202EXT](https://wiki.openwrt.org/toh/engenius/engenius_ens202ext_1.0.0) | AR9341 | 16 MiB | 64 MiB DDR1 | 256 KiB | R/W |
 | [GL.iNet 64xxA](http://wiki.openwrt.org/toh/gl-inet/gl-inet) | AR9331 | 8/16 MiB | 64 MiB DDR1 | 64 KiB | RO |

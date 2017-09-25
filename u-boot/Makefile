@@ -445,6 +445,11 @@ d-link_dir-505: ar933x_common
 	@$(call define_add,CONFIG_FOR_DLINK_DIR505_A1,1)
 	@$(MKCONFIG) -a ap121 mips mips ap121 ar7240 ar7240
 
+d-link_dir-601: ar933x_common
+	@$(call config_init,D-Link DIR-601,dir-601,4,11,1,QCA_AR933X_SOC)
+	@$(call define_add,CONFIG_FOR_DLINK_DIR601_B1,1)
+	@$(MKCONFIG) -a ap121 mips mips ap121 ar7240 ar7240
+
 dragino_v2_ms14: ar933x_common
 	@$(call config_init,Dragino v2 (MS14),dragino-v2,16,11,1,QCA_AR933X_SOC)
 	@$(call define_add,CONFIG_FOR_DRAGINO_V2,1)
