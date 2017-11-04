@@ -29,6 +29,13 @@
 	#define CONFIG_QCA_GPIO_MASK_IN		GPIO1
 	#define CONFIG_QCA_GPIO_MASK_OUT_INIT_H	CONFIG_QCA_GPIO_MASK_LED_ACT_L
 
+#elif defined(CONFIG_FOR_GL_AR300)
+
+	#define CONFIG_QCA_GPIO_MASK_LED_ACT_L	GPIO13 | GPIO14
+	#define CONFIG_QCA_GPIO_MASK_OUT	CONFIG_QCA_GPIO_MASK_LED_ACT_L
+	#define CONFIG_QCA_GPIO_MASK_IN		GPIO16
+	#define CONFIG_QCA_GPIO_MASK_OUT_INIT_H	CONFIG_QCA_GPIO_MASK_LED_ACT_L
+
 #elif defined(CONFIG_FOR_TPLINK_WDR3600_V1) ||\
       defined(CONFIG_FOR_TPLINK_WDR43X0_V1)
 
@@ -109,6 +116,12 @@
 				"rootfstype=squashfs init=/etc/preinit "\
 				"mtdparts=spi0.0:256k(u-boot)ro,64k(u-boot-env),320k(custom),1536k(kernel),12096k(rootfs),2048k(failsafe),64k(art)ro"
 
+#elif defined(CONFIG_FOR_GL_AR300)
+
+	#define CONFIG_BOOTARGS	"console=ttyATH0,115200 root=31:02 "\
+				"rootfstype=squashfs init=/sbin/init "\
+				"mtdparts=ath-nor0:256k(u-boot),64k(u-boot-env),16000k(firmware),64k(art)ro"
+
 #elif defined(CONFIG_FOR_TPLINK_WDR3500_V1) ||\
       defined(CONFIG_FOR_TPLINK_WDR3600_V1) ||\
       defined(CONFIG_FOR_TPLINK_WDR43X0_V1)
@@ -139,6 +152,8 @@
  */
 #if defined(CONFIG_FOR_ENGENIUS_ENS202EXT)
 	#define CFG_LOAD_ADDR		0x9F0A0000
+#elif defined(CONFIG_FOR_GL_AR300)
+	#define CFG_LOAD_ADDR		0x9F050000
 #elif defined(CONFIG_FOR_YUNCORE_CPE870)
 	#define CFG_LOAD_ADDR		0x9F680000
 #else
@@ -155,6 +170,10 @@
 #if defined(CONFIG_FOR_ENGENIUS_ENS202EXT)
 	#define CFG_ENV_ADDR		0x9F040000
 	#define CFG_ENV_SIZE		0x10000
+	#define CFG_ENV_SECT_SIZE	0x10000
+#elif defined(CONFIG_FOR_GL_AR300)
+	#define CFG_ENV_ADDR		0x9F040000
+	#define CFG_ENV_SIZE		0xFC00
 	#define CFG_ENV_SECT_SIZE	0x10000
 #elif defined(CONFIG_FOR_YUNCORE_CPE870)
 	#define CFG_ENV_ADDR		0x9F020000
@@ -180,7 +199,8 @@
  * MAC address/es, model and WPS pin offsets in FLASH
  * ==================================================
  */
-#if defined(CONFIG_FOR_YUNCORE_CPE870)
+#if defined(CONFIG_FOR_GL_AR300) ||\
+    defined(CONFIG_FOR_YUNCORE_CPE870)
 	#define OFFSET_MAC_DATA_BLOCK		0xFF0000
 	#define OFFSET_MAC_DATA_BLOCK_LENGTH	0x010000
 	#define OFFSET_MAC_ADDRESS		0x000000
@@ -226,6 +246,8 @@
 /* Firmware size limit */
 #if defined(CONFIG_FOR_ENGENIUS_ENS202EXT)
 	#define WEBFAILSAFE_UPLOAD_LIMITED_AREA_IN_BYTES	(2752 * 1024)
+#elif defined(CONFIG_FOR_GL_AR300)
+	#define WEBFAILSAFE_UPLOAD_LIMITED_AREA_IN_BYTES	(384 * 1024)
 #elif defined(CONFIG_FOR_YUNCORE_CPE870)
 	#define WEBFAILSAFE_UPLOAD_LIMITED_AREA_IN_BYTES	(256 * 1024)
 #else
@@ -239,15 +261,20 @@
  */
 #define CONFIG_QCA_PLL	QCA_PLL_PRESET_550_400_200
 
-#if defined(CONFIG_FOR_TPLINK_MR3420_V2)  ||\
-    defined(CONFIG_FOR_TPLINK_WA801ND_V2) ||\
-    defined(CONFIG_FOR_TPLINK_WA830RE_V2) ||\
-    defined(CONFIG_FOR_TPLINK_WDR3600_V1) ||\
-    defined(CONFIG_FOR_TPLINK_WDR43X0_V1) ||\
-    defined(CONFIG_FOR_TPLINK_WDR3500_V1) ||\
-    defined(CONFIG_FOR_TPLINK_WR1041N_V2) ||\
-    defined(CONFIG_FOR_TPLINK_WR841N_V8)  ||\
-    defined(CONFIG_FOR_YUNCORE_CPE870)
+#if defined(CONFIG_FOR_GL_AR300)
+
+	#define CONFIG_QCA_PLL_IN_FLASH_BLOCK_OFFSET	0x40000
+	#define CONFIG_QCA_PLL_IN_FLASH_BLOCK_SIZE	0x10000
+
+#elif defined(CONFIG_FOR_TPLINK_MR3420_V2)  ||\
+      defined(CONFIG_FOR_TPLINK_WA801ND_V2) ||\
+      defined(CONFIG_FOR_TPLINK_WA830RE_V2) ||\
+      defined(CONFIG_FOR_TPLINK_WDR3600_V1) ||\
+      defined(CONFIG_FOR_TPLINK_WDR43X0_V1) ||\
+      defined(CONFIG_FOR_TPLINK_WDR3500_V1) ||\
+      defined(CONFIG_FOR_TPLINK_WR1041N_V2) ||\
+      defined(CONFIG_FOR_TPLINK_WR841N_V8)  ||\
+      defined(CONFIG_FOR_YUNCORE_CPE870)
 
 	#define CONFIG_QCA_PLL_IN_FLASH_BLOCK_OFFSET	0x10000
 	#define CONFIG_QCA_PLL_IN_FLASH_BLOCK_SIZE	0x10000
@@ -260,6 +287,7 @@
  * ==================================
  */
 #if !defined(CONFIG_FOR_ENGENIUS_ENS202EXT) &&\
+    !defined(CONFIG_FOR_GL_AR300)           &&\
     !defined(CONFIG_FOR_YUNCORE_CPE870)
 	#define CONFIG_UPG_UBOOT_SIZE_BACKUP_HEX	0x20000
 #endif

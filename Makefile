@@ -268,6 +268,7 @@ dragino_v2_ms14:
 	@$(call build,192,1,DEVICE_VENDOR=dragino)
 
 engenius_ens202ext \
+gl-inet_gl-ar300 \
 p2w_cpe505n \
 p2w_r602n \
 yuncore_ap90q \

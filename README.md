@@ -98,6 +98,7 @@ Currently supported devices:
   - TP-Link TL-WR1041N v2
 
 - **Atheros AR9344**:
+  - GL.iNet GL-AR300
   - TP-Link TL-WDR3500 v1
   - TP-Link TL-WDR3600 v1
   - TP-Link TL-WDR43x0 v1
@@ -142,6 +143,7 @@ More information about supported devices:
 | [EnGenius ENS202EXT](https://wiki.openwrt.org/toh/engenius/engenius_ens202ext_1.0.0) | AR9341 | 16 MiB | 64 MiB DDR1 | 256 KiB | R/W |
 | [GL.iNet 64xxA](http://wiki.openwrt.org/toh/gl-inet/gl-inet) | AR9331 | 8/16 MiB | 64 MiB DDR1 | 64 KiB | RO |
 | GL.iNet GL-AR150 | AR9331 | 16 MiB | 64 MiB DDR2 | 256 KiB | R/W |
+| GL.iNet GL-AR300 | AR9344 | 16 MiB | 128 MiB DDR2 | 256 KiB | R/W |
 | GL.iNet GL-USB150 | AR9331 | 16 MiB | 64 MiB DDR2 | 256 KiB | R/W |
 | GS-Oolite/Elink EL-M150 module | AR9331 | 4/8/16 MiB | 64 MiB DDR2 | 64 KiB, LZMA | RO |
 | P&W CPE505N | QCA9531 | 16 MiB | 64 MiB DDR2 | 256 KiB | R/W |
