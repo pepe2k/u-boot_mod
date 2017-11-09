@@ -137,7 +137,7 @@ More information about supported devices:
 | Comfast CF-E314N | QCA9531 | 16 MiB | 64 MiB DDR2 | 64 KiB, LZMA | RO |
 | Comfast CF-E320N v2 | QCA9531 | 16 MiB | 64 MiB DDR2 | 64 KiB, LZMA | RO |
 | Comfast CF-E520N/CF-E530N | QCA9531 | 8 MiB | 32 MiB DDR2 | 64 KiB, LZMA | RO |
-| CreatComm Technology D3321| AR9331 | 8 MiB | 32 MiB DDR1 | 256 KiB | RW |
+| CreatComm Technology D3321 | AR9331 | 8 MiB | 32 MiB DDR1 | 256 KiB | RW |
 | [D-Link DIR-505 H/W ver. A1](http://wiki.openwrt.org/toh/d-link/dir-505) | AR1311 | 8 MiB | 64 MiB DDR2 | 64 KiB, LZMA | RO |
 | [Dragino 2 (MS14)](http://wiki.openwrt.org/toh/dragino/ms14) | AR9331 | 16 MiB | 64 MiB DDR1 | 192 KiB | R/W |
 | [EnGenius ENS202EXT](https://wiki.openwrt.org/toh/engenius/engenius_ens202ext_1.0.0) | AR9341 | 16 MiB | 64 MiB DDR1 | 256 KiB | R/W |
@@ -182,7 +182,7 @@ More information about supported devices:
 | YunCore CPE870 | AR9341 | 8 MiB | 64 MiB DDR2 | 64 KiB, LZMA | R/W |
 | Zbtlink ZBT-WE1526 | QCA9531 | 16 MiB | 128 MiB DDR2 | 256 KiB | R/W |
 
-*(LZMA) - U-Boot binary image is compressed with LZMA.*  
+*(LZMA) - U-Boot binary image is compressed with LZMA.*
 *(R/W) - environment exists in separate FLASH block which allows you to save it and keep after power down.*
 *(RO) - environment is read only, you can change and add new variables only during runtime.*
 
@@ -392,7 +392,7 @@ How to install it?
 
 ### Cautions, backups
 
-**You do so at your own risk!**   
+**You do so at your own risk!**
 **If you make any mistake or something goes wrong during upgrade, in worst case, your router will not boot again!**
 
 It is a good practice to backup your original U-Boot image/partition (especially for TP-Link devices) **before** you make any changes. For example, using OpenWrt (TP-Link TL-WR703N with 16 MiB FLASH):
@@ -466,7 +466,7 @@ For a long time I have been using without any problems a small and very cheap (a
 
 2. Set a fixed IP address on your PC (in this tutorial we will use **192.168.1.2** for the PC and **192.168.1.1** for the router) and connect it to the router, using RJ45 network cable (in most case you will need to use one of the available LAN ports, but WAN port should also work).
 
-3. Connect USB to UART adapter to the router and start any application to communicate with it, like [PuTTY](http://www.chiark.greenend.org.uk/~sgtatham/putty/download.html).   
+3. Connect USB to UART adapter to the router and start any application to communicate with it, like [PuTTY](http://www.chiark.greenend.org.uk/~sgtatham/putty/download.html).
 Configure adapter to use the following settings:
   * Baud rate: 115200
   * Data bits: 8
@@ -475,8 +475,8 @@ Configure adapter to use the following settings:
   * Handshaking: none
 4. Power on the router, wait for a line like one of the following and interrupt the process of loading a kernel:
 
-  `Autobooting in 1 seconds` (for most **TP-Link** routers, you should enter `tpl` at this point)   
-  `Hit ESC key to stop autoboot:  1` (for **8devices Carambola 2**, use `ESC` key)   
+  `Autobooting in 1 seconds` (for most **TP-Link** routers, you should enter `tpl` at this point)
+  `Hit ESC key to stop autoboot:  1` (for **8devices Carambola 2**, use `ESC` key)
   `Hit any key to stop autoboot:  1` (for **D-Link DIR-505**, use any key)
 
 5. Set `ipaddr` and `serverip` environment variables:
