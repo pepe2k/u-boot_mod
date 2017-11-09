@@ -397,12 +397,12 @@ lsdk_kernel:
 	@$(MKCONFIG) -a ap121 mips mips ap121 ar7240 ar7240
 
 alfa-network_ap121f: ar933x_common
-	@$(call config_init,ALFA NETWORK AP121F,ap121f,16,12,1,QCA_AR933X_SOC)
+	@$(call config_init,ALFA Network AP121F,ap121f,16,12,1,QCA_AR933X_SOC)
 	@$(call define_add,CONFIG_FOR_ALFA_NETWORK_AP121F,1)
 	@$(MKCONFIG) -a ap121 mips mips ap121 ar7240 ar7240
 
 alfa-network_hornet-ub: ar933x_common
-	@$(call config_init,ALFA NETWORK Hornet-UB,hornet-ub,8,12,1,QCA_AR933X_SOC)
+	@$(call config_init,ALFA Network Hornet-UB,hornet-ub,8,12,1,QCA_AR933X_SOC)
 	@$(call define_add,CONFIG_FOR_ALFA_NETWORK_HORNET_UB,1)
 	@$(MKCONFIG) -a ap121 mips mips ap121 ar7240 ar7240
 
@@ -440,14 +440,14 @@ creatcomm-technology_d3321: ar933x_common
 	@$(call define_add,CONFIG_FOR_CREATCOMM_D3321,1)
 	@$(MKCONFIG) -a ap121 mips mips ap121 ar7240 ar7240
 
-d-link_dir-505: ar933x_common
-	@$(call config_init,D-Link DIR-505,dir-505,8,11,1,QCA_AR933X_SOC)
+d-link_dir-505_a1: ar933x_common
+	@$(call config_init,D-Link DIR-505 A1,dir-505-a1,8,11,1,QCA_AR933X_SOC)
 	@$(call define_add,CONFIG_FOR_DLINK_DIR505_A1,1)
 	@$(MKCONFIG) -a ap121 mips mips ap121 ar7240 ar7240
 
-dragino_v2_ms14: ar933x_common
-	@$(call config_init,Dragino v2 (MS14),dragino-v2,16,11,1,QCA_AR933X_SOC)
-	@$(call define_add,CONFIG_FOR_DRAGINO_V2,1)
+dragino_ms14: ar933x_common
+	@$(call config_init,Dragino MS14/N,ms14,16,11,1,QCA_AR933X_SOC)
+	@$(call define_add,CONFIG_FOR_DRAGINO_MS14,1)
 	@$(call define_add,WEBFAILSAFE_DISABLE_ART_UPGRADE,1)
 	@$(call define_add,WEBFAILSAFE_DISABLE_UBOOT_UPGRADE,1)
 	@$(MKCONFIG) -a ap121 mips mips ap121 ar7240 ar7240
@@ -466,24 +466,24 @@ gainstrong_oolite_v1_dev: ar933x_common
 
 gl-inet_6416: ar933x_common
 	@$(call config_init,GL.iNet 6416,glinet-6416,8,11,,QCA_AR933X_SOC)
-	@$(call define_add,CONFIG_FOR_GL_INET,1)
+	@$(call define_add,CONFIG_FOR_GLINET_6416,1)
 	@$(MKCONFIG) -a ap121 mips mips ap121 ar7240 ar7240
 
 gl-inet_gl-ar150: ar933x_common
 	@$(call config_init,GL.iNet GL-AR150,gl-ar150,16,11,,QCA_AR933X_SOC)
-	@$(call define_add,CONFIG_FOR_GL_AR150,1)
+	@$(call define_add,CONFIG_FOR_GLINET_GL_AR150,1)
 	@$(MKCONFIG) -a ap121 mips mips ap121 ar7240 ar7240
 
 gl-inet_gl-ar300: ar934x_common
 	@$(call config_init,GL.iNet GL-AR300,gl-ar300,16,16,1,QCA_AR9344_SOC)
-	@$(call define_add,CONFIG_FOR_GL_AR300,1)
+	@$(call define_add,CONFIG_FOR_GLINET_GL_AR300,1)
 	@$(call define_add,CFG_ATHRS27_PHY,1)
 	@$(call define_add,CFG_AG7240_NMACS,2)
 	@$(MKCONFIG) -a db12x mips mips db12x ar7240 ar7240
 
 gl-inet_gl-usb150: ar933x_common
 	@$(call config_init,GL.iNet GL-USB150,gl-usb150,16,11,,QCA_AR933X_SOC)
-	@$(call define_add,CONFIG_FOR_GL_USB150,1)
+	@$(call define_add,CONFIG_FOR_GLINET_GL_USB150,1)
 	@$(MKCONFIG) -a ap121 mips mips ap121 ar7240 ar7240
 
 p2w_cpe505n: qca953x_common
@@ -702,13 +702,13 @@ tp-link_tl-wr902ac_v1: qca953x_common lsdk_kernel
 	@$(MKCONFIG) -a ap143 mips mips ap143 ar7240 ar7240
 
 unwireddevices_unwired-one: ar933x_common
-	@$(call config_init,Black Swift aka Unwired One,black-swift,16,11,1,QCA_AR933X_SOC)
-	@$(call define_add,CONFIG_FOR_BLACK_SWIFT_BOARD,1)
+	@$(call config_init,Unwired Devices Unwired One,unwired-one,16,11,1,QCA_AR933X_SOC)
+	@$(call define_add,CONFIG_FOR_UNWIRED_DEVICES_UNWIRED_ONE,1)
 	@$(MKCONFIG) -a ap121 mips mips ap121 ar7240 ar7240
 
 village-telco_mesh-potato_v2: ar933x_common
 	@$(call config_init,Village Telco Mesh Potato 2,mesh-potato-v2,16,11,1,QCA_AR933X_SOC)
-	@$(call define_add,CONFIG_FOR_MESH_POTATO_V2,1)
+	@$(call define_add,CONFIG_FOR_VILLAGE_TELCO_MP2,1)
 	@$(call define_add,WEBFAILSAFE_DISABLE_ART_UPGRADE,1)
 	@$(call define_add,WEBFAILSAFE_DISABLE_UBOOT_UPGRADE,1)
 	@$(MKCONFIG) -a ap121 mips mips ap121 ar7240 ar7240

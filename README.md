@@ -63,11 +63,11 @@ Currently supported devices:
 
 - **Atheros AR9331**:
   - 8devices Carambola 2 (for version with development board, [photos in my gallery](http://galeria.tech-blog.pl/8devices_Carambola_2/))
-  - ALFA NETWORK AP121F
-  - ALFA NETWORK Hornet-UB/Hornet-UB-64 (aka Hornet-UB x2)
+  - ALFA Network AP121F
+  - ALFA Network Hornet-UB/Hornet-UB-64 (aka Hornet-UB x2)
   - Black Swift
   - CreatComm Technology D3321
-  - Dragino 2 (MS14)
+  - Dragino MS14/N
   - GL.iNet 64xxA ([photos in my gallery](http://galeria.tech-blog.pl/GLiNet/))
   - GL.iNet GL-AR150
   - GL.iNet GL-USB150
@@ -81,7 +81,7 @@ Currently supported devices:
   - TP-Link TL-WR710N v1 (version for European market, [photos in my gallery](http://galeria.tech-blog.pl/TP-Link_TL-WR710N-EU/))
   - TP-Link TL-WR720N v3 (version for Chinese market)
   - TP-Link TL-WR740N v4 (and similar, like TL-WR741ND v4)
-  - Village Telco Mesh Potato 2 (based on Dragino MS14)
+  - Village Telco Mesh Potato 2 (based on Dragino MS14/N)
 
 - **Atheros AR1311 (similar to AR9331)**
   - D-Link DIR-505 H/W ver. A1 ([photos in my gallery](http://galeria.tech-blog.pl/D-Link_DIR-505/))
@@ -131,15 +131,15 @@ More information about supported devices:
 | Model | SoC | FLASH | RAM | U-Boot image | U-Boot env |
 |:--- | :--- | ---: | ---: | ---: | ---: |
 | [8devices Carambola 2](http://8devices.com/carambola-2) | AR9331 | 16 MiB | 64 MiB DDR2 | 256 KiB | R/W |
-| ALFA NETWORK AP121F | AR9331 | 16 MiB | 64 MiB DDR1 | 192 KiB, LZMA | R/W |
-| [ALFA NETWORK Hornet-UB](https://wiki.openwrt.org/toh/alfa.network/hornet-ub) | AR9331 | 8/16 MiB | 32/64 MiB DDR1 | 256 KiB | R/W |
+| ALFA Network AP121F | AR9331 | 16 MiB | 64 MiB DDR1 | 192 KiB, LZMA | R/W |
+| [ALFA Network Hornet-UB](https://wiki.openwrt.org/toh/alfa.network/hornet-ub) | AR9331 | 8/16 MiB | 32/64 MiB DDR1 | 256 KiB | R/W |
 | [Black Swift](http://www.black-swift.com) | AR9331 | 16 MiB | 64 MiB DDR2 | 128 KiB, LZMA | R/W |
 | Comfast CF-E314N | QCA9531 | 16 MiB | 64 MiB DDR2 | 64 KiB, LZMA | RO |
 | Comfast CF-E320N v2 | QCA9531 | 16 MiB | 64 MiB DDR2 | 64 KiB, LZMA | RO |
 | Comfast CF-E520N/CF-E530N | QCA9531 | 8 MiB | 32 MiB DDR2 | 64 KiB, LZMA | RO |
 | CreatComm Technology D3321 | AR9331 | 8 MiB | 32 MiB DDR1 | 256 KiB | RW |
 | [D-Link DIR-505 H/W ver. A1](http://wiki.openwrt.org/toh/d-link/dir-505) | AR1311 | 8 MiB | 64 MiB DDR2 | 64 KiB, LZMA | RO |
-| [Dragino 2 (MS14)](http://wiki.openwrt.org/toh/dragino/ms14) | AR9331 | 16 MiB | 64 MiB DDR1 | 192 KiB | R/W |
+| [Dragino MS14/N](http://wiki.openwrt.org/toh/dragino/ms14) | AR9331 | 16 MiB | 64 MiB DDR1 | 192 KiB | R/W |
 | [EnGenius ENS202EXT](https://wiki.openwrt.org/toh/engenius/engenius_ens202ext_1.0.0) | AR9341 | 16 MiB | 64 MiB DDR1 | 256 KiB | R/W |
 | [GL.iNet 64xxA](http://wiki.openwrt.org/toh/gl-inet/gl-inet) | AR9331 | 8/16 MiB | 64 MiB DDR1 | 64 KiB | RO |
 | GL.iNet GL-AR150 | AR9331 | 16 MiB | 64 MiB DDR2 | 256 KiB | R/W |
