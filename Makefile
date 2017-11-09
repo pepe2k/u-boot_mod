@@ -229,8 +229,8 @@ COMMON_ETHS27_TARGETS = \
 	tp-link_tl-mr3420_v3 \
 	tp-link_tl-mr6400_v1v2 \
 	tp-link_tl-wa801nd_v2 \
-	tp-link_tl-wa850re_v2 \
 	tp-link_tl-wa830re_v2 \
+	tp-link_tl-wa850re_v2 \
 	tp-link_tl-wdr3500_v1 \
 	tp-link_tl-wr802n_v1 \
 	tp-link_tl-wr810n_v1 \
