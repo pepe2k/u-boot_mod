@@ -36,8 +36,7 @@
  *    - bitmask for outputs initialized to high and low state at start
  * 5. CONFIG_QCA_GPIO_MASK_LED_ACT_H,
  *    CONFIG_QCA_GPIO_MASK_LED_ACT_L
- *    - bitmask for GPIO driven LEDs, used only in leds_on/leds_off functions,
- *      GPIO numbers for LEDs MUST be defined also in CONFIG_QCA_GPIO_MASK_OUT!
+ *    - bitmask for GPIO driven LEDs, used only in leds_on/leds_off functions
  *
  * TODO:
  * 1. Allow to select LS, HS, both or none UART type
@@ -48,22 +47,6 @@
  */
 
 /* Sanity check for GPIO driven LEDs */
-#if !defined(CONFIG_QCA_GPIO_MASK_OUT) &&\
-    (defined(CONFIG_QCA_GPIO_MASK_LED_ACT_H) ||\
-     defined(CONFIG_QCA_GPIO_MASK_LED_ACT_L))
-	#error "GPIOs for LEDs must be included in CONFIG_QCA_GPIO_MASK_OUT!"
-#endif
-
-#if defined(CONFIG_QCA_GPIO_MASK_LED_ACT_H) &&\
-    !((CONFIG_QCA_GPIO_MASK_OUT) & (CONFIG_QCA_GPIO_MASK_LED_ACT_H))
-	#error "GPIOs for active high LEDs must be included in CONFIG_QCA_GPIO_MASK_OUT!"
-#endif
-
-#if defined(CONFIG_QCA_GPIO_MASK_LED_ACT_L) &&\
-    !((CONFIG_QCA_GPIO_MASK_OUT) & (CONFIG_QCA_GPIO_MASK_LED_ACT_L))
-	#error "GPIOs for active low LEDs must be included in CONFIG_QCA_GPIO_MASK_OUT!"
-#endif
-
 #if defined(CONFIG_QCA_GPIO_MASK_LED_ACT_H) &&\
     defined(CONFIG_QCA_GPIO_MASK_LED_ACT_L)
 	#if ((CONFIG_QCA_GPIO_MASK_LED_ACT_H) &\
@@ -78,6 +61,73 @@
 	#if ((CONFIG_QCA_GPIO_MASK_OUT_INIT_H) &\
 	     (CONFIG_QCA_GPIO_MASK_OUT_INIT_L))
 		#error "Same GPIO/s included in CONFIG_QCA_GPIO_MASK_OUT_INIT_H and CONFIG_QCA_GPIO_MASK_OUT_INIT_L"
+	#endif
+#endif
+
+/* Include active low/high LEDs in GPIO init low/high masks */
+#if defined(CONFIG_QCA_GPIO_MASK_LED_ACT_H)
+	#if defined(CONFIG_QCA_GPIO_MASK_OUT_INIT_L)
+		#define _GPIO_MASK_OUT_INIT_L	(CONFIG_QCA_GPIO_MASK_LED_ACT_H |\
+						 CONFIG_QCA_GPIO_MASK_OUT_INIT_L)
+	#else
+		#define _GPIO_MASK_OUT_INIT_L	(CONFIG_QCA_GPIO_MASK_LED_ACT_H)
+	#endif
+#else
+	#if defined(CONFIG_QCA_GPIO_MASK_OUT_INIT_L)
+		#define _GPIO_MASK_OUT_INIT_L	(CONFIG_QCA_GPIO_MASK_OUT_INIT_L)
+	#endif
+#endif
+
+#if defined(CONFIG_QCA_GPIO_MASK_LED_ACT_L)
+	#if defined(CONFIG_QCA_GPIO_MASK_OUT_INIT_H)
+		#define _GPIO_MASK_OUT_INIT_H	(CONFIG_QCA_GPIO_MASK_LED_ACT_L |\
+						 CONFIG_QCA_GPIO_MASK_OUT_INIT_H)
+	#else
+		#define _GPIO_MASK_OUT_INIT_H	(CONFIG_QCA_GPIO_MASK_LED_ACT_L)
+	#endif
+#else
+	#if defined(CONFIG_QCA_GPIO_MASK_OUT_INIT_H)
+		#define _GPIO_MASK_OUT_INIT_H	(CONFIG_QCA_GPIO_MASK_OUT_INIT_H)
+	#endif
+#endif
+
+/* Include GPIO init low/high in GPIO output mask */
+#if defined(CONFIG_QCA_GPIO_MASK_OUT)
+	#if defined(_GPIO_MASK_OUT_INIT_H) && defined(_GPIO_MASK_OUT_INIT_L)
+		#define _GPIO_MASK_OUT	(CONFIG_QCA_GPIO_MASK_OUT |\
+					 _GPIO_MASK_OUT_INIT_H |\
+					 _GPIO_MASK_OUT_INIT_L)
+	#elif defined(_GPIO_MASK_OUT_INIT_H)
+		#define _GPIO_MASK_OUT	(CONFIG_QCA_GPIO_MASK_OUT |\
+					 _GPIO_MASK_OUT_INIT_H)
+	#elif defined(_GPIO_MASK_OUT_INIT_L)
+		#define _GPIO_MASK_OUT	(CONFIG_QCA_GPIO_MASK_OUT |\
+					 _GPIO_MASK_OUT_INIT_L)
+	#else
+		#define _GPIO_MASK_OUT	(CONFIG_QCA_GPIO_MASK_OUT)
+	#endif
+#else
+	#if defined(_GPIO_MASK_OUT_INIT_H) && defined(_GPIO_MASK_OUT_INIT_L)
+		#define _GPIO_MASK_OUT	(_GPIO_MASK_OUT_INIT_H |\
+					 _GPIO_MASK_OUT_INIT_L)
+	#elif defined(_GPIO_MASK_OUT_INIT_H)
+		#define _GPIO_MASK_OUT	(_GPIO_MASK_OUT_INIT_H)
+	#elif defined(_GPIO_MASK_OUT_INIT_L)
+		#define _GPIO_MASK_OUT	(_GPIO_MASK_OUT_INIT_L)
+	#endif
+#endif
+
+/* Include CONFIG_GPIO_RESET_BTN in GPIO inputs mask */
+#if defined(CONFIG_GPIO_RESET_BTN)
+	#if defined(CONFIG_QCA_GPIO_MASK_IN)
+		#define _GPIO_MASK_IN	((CONFIG_QCA_GPIO_MASK_IN) |\
+					 (1 << CONFIG_GPIO_RESET_BTN))
+	#else
+		#define _GPIO_MASK_IN	(1 << CONFIG_GPIO_RESET_BTN)
+	#endif
+#else
+	#if defined(CONFIG_QCA_GPIO_MASK_IN)
+		#define _GPIO_MASK_IN	(CONFIG_QCA_GPIO_MASK_IN)
 	#endif
 #endif
 
@@ -103,24 +153,24 @@ lowlevel_gpio_init:
 	/* Sanity check for JTAG pins (GPIO 0~3) */
 	#if defined(CONFIG_SKIP_LOWLEVEL_INIT) ||\
 	    defined(CONFIG_QCA_KEEP_JTAG_ENABLED)
-		#if defined(CONFIG_QCA_GPIO_MASK_IN)
-			#define _GPIO_MASK_IN	\
-				(CONFIG_QCA_GPIO_MASK_IN & ~QCA_GPIO_JTAG_MASK)
+		#if defined(_GPIO_MASK_IN)
+			#define __GPIO_MASK_IN	\
+				(_GPIO_MASK_IN & ~QCA_GPIO_JTAG_MASK)
 		#endif
 
-		#if defined(CONFIG_QCA_GPIO_MASK_OUT)
-			#define _GPIO_MASK_OUT	\
-				(CONFIG_QCA_GPIO_MASK_OUT & ~QCA_GPIO_JTAG_MASK)
+		#if defined(_GPIO_MASK_OUT)
+			#define __GPIO_MASK_OUT	\
+				(_GPIO_MASK_OUT & ~QCA_GPIO_JTAG_MASK)
 		#endif
 
-		#if defined(CONFIG_QCA_GPIO_MASK_OUT_INIT_H)
-			#define _GPIO_MASK_OUT_INIT_H	\
-				(CONFIG_QCA_GPIO_MASK_OUT_INIT_H & ~QCA_GPIO_JTAG_MASK)
+		#if defined(_GPIO_MASK_OUT_INIT_H)
+			#define __GPIO_MASK_OUT_INIT_H	\
+				(_GPIO_MASK_OUT_INIT_H & ~QCA_GPIO_JTAG_MASK)
 		#endif
 
-		#if defined(CONFIG_QCA_GPIO_MASK_OUT_INIT_L)
-			#define _GPIO_MASK_OUT_INIT_L	\
-				(CONFIG_QCA_GPIO_MASK_OUT_INIT_L & ~QCA_GPIO_JTAG_MASK)
+		#if defined(_GPIO_MASK_OUT_INIT_L)
+			#define __GPIO_MASK_OUT_INIT_L	\
+				(_GPIO_MASK_OUT_INIT_L & ~QCA_GPIO_JTAG_MASK)
 		#endif
 
 		#if defined(CONFIG_QCA_GPIO_MASK_LED_ACT_H)
@@ -143,22 +193,20 @@ lowlevel_gpio_init:
 			#error "Cannot use JTAG pin for LSUART RX!"
 		#endif
 	#else
-		#if defined(CONFIG_QCA_GPIO_MASK_IN)
-			#define _GPIO_MASK_IN	CONFIG_QCA_GPIO_MASK_IN
+		#if defined(_GPIO_MASK_IN)
+			#define __GPIO_MASK_IN	_GPIO_MASK_IN
 		#endif
 
-		#if defined(CONFIG_QCA_GPIO_MASK_OUT)
-			#define _GPIO_MASK_OUT	CONFIG_QCA_GPIO_MASK_OUT
+		#if defined(_GPIO_MASK_OUT)
+			#define __GPIO_MASK_OUT	_GPIO_MASK_OUT
 		#endif
 
-		#if defined(CONFIG_QCA_GPIO_MASK_OUT_INIT_H)
-			#define _GPIO_MASK_OUT_INIT_H	\
-				CONFIG_QCA_GPIO_MASK_OUT_INIT_H
+		#if defined(_GPIO_MASK_OUT_INIT_H)
+			#define __GPIO_MASK_OUT_INIT_H	_GPIO_MASK_OUT_INIT_H
 		#endif
 
-		#if defined(CONFIG_QCA_GPIO_MASK_OUT_INIT_L)
-			#define _GPIO_MASK_OUT_INIT_L	\
-				CONFIG_QCA_GPIO_MASK_OUT_INIT_L
+		#if defined(_GPIO_MASK_OUT_INIT_L)
+			#define __GPIO_MASK_OUT_INIT_L	_GPIO_MASK_OUT_INIT_L
 		#endif
 
 		#if defined(CONFIG_QCA_GPIO_MASK_LED_ACT_H)
@@ -219,16 +267,16 @@ lowlevel_gpio_init:
 	 * Do not allow to use LSUART TX/RX lines
 	 * as regular GPIO inputs/outputs at the same time
 	 */
-	#if defined(_GPIO_MASK_IN)
-		#if ((_GPIO_MASK_IN) & CONFIG_QCA_GPIO_MASK_LSUART_TX) ||\
-		    ((_GPIO_MASK_IN) & CONFIG_QCA_GPIO_MASK_LSUART_RX)
+	#if defined(__GPIO_MASK_IN)
+		#if (__GPIO_MASK_IN & CONFIG_QCA_GPIO_MASK_LSUART_TX) ||\
+		    (__GPIO_MASK_IN & CONFIG_QCA_GPIO_MASK_LSUART_RX)
 			#error "Cannot use LSUART lines as GPIO inputs!"
 		#endif
 	#endif
 
-	#if defined(_GPIO_MASK_OUT)
-		#if ((_GPIO_MASK_OUT) & CONFIG_QCA_GPIO_MASK_LSUART_TX) ||\
-		    ((_GPIO_MASK_OUT) & CONFIG_QCA_GPIO_MASK_LSUART_RX)
+	#if defined(__GPIO_MASK_OUT)
+		#if (__GPIO_MASK_OUT & CONFIG_QCA_GPIO_MASK_LSUART_TX) ||\
+		    (__GPIO_MASK_OUT & CONFIG_QCA_GPIO_MASK_LSUART_RX)
 			#error "Cannot use LSUART lines as GPIO outputs!"
 		#endif
 	#endif
@@ -246,13 +294,13 @@ lowlevel_gpio_init:
 	 */
 	li  t8, QCA_GPIO_OUT_REG
 	lw  t9, 0(t8)
-	#if defined(_GPIO_MASK_OUT_INIT_H)
-	or  t9, t9, (_GPIO_MASK_OUT_INIT_H | CONFIG_QCA_GPIO_MASK_LSUART_TX)
+	#if defined(__GPIO_MASK_OUT_INIT_H)
+	or  t9, t9, (__GPIO_MASK_OUT_INIT_H | CONFIG_QCA_GPIO_MASK_LSUART_TX)
 	#else
 	or  t9, t9, CONFIG_QCA_GPIO_MASK_LSUART_TX
 	#endif
-	#if defined(_GPIO_MASK_OUT_INIT_L)
-	and t9, t9, ~(_GPIO_MASK_OUT_INIT_L)
+	#if defined(__GPIO_MASK_OUT_INIT_L)
+	and t9, t9, ~__GPIO_MASK_OUT_INIT_L
 	#endif
 	sw  t9, 0(t8)
 
@@ -263,11 +311,11 @@ lowlevel_gpio_init:
 	 */
 	li  t8, QCA_GPIO_OE_REG
 	lw  t9, 0(t8)
-	#if defined(_GPIO_MASK_OUT)
+	#if defined(__GPIO_MASK_OUT)
 		#if (SOC_TYPE & QCA_QCA955X_SOC)
-	or  t9, t9, (_GPIO_MASK_OUT | CONFIG_QCA_GPIO_MASK_LSUART_TX)
+	or  t9, t9, (__GPIO_MASK_OUT | CONFIG_QCA_GPIO_MASK_LSUART_TX)
 		#else
-	and t9, t9, ~(_GPIO_MASK_OUT | CONFIG_QCA_GPIO_MASK_LSUART_TX)
+	and t9, t9, ~(__GPIO_MASK_OUT | CONFIG_QCA_GPIO_MASK_LSUART_TX)
 		#endif
 	#else
 		#if (SOC_TYPE & QCA_QCA955X_SOC)
@@ -276,11 +324,11 @@ lowlevel_gpio_init:
 	and t9, t9, ~CONFIG_QCA_GPIO_MASK_LSUART_TX
 		#endif
 	#endif
-	#if defined(_GPIO_MASK_IN)
+	#if defined(__GPIO_MASK_IN)
 		#if (SOC_TYPE & QCA_QCA955X_SOC)
-	and t9, t9, ~(_GPIO_MASK_IN | CONFIG_QCA_GPIO_MASK_LSUART_RX)
+	and t9, t9, ~(__GPIO_MASK_IN | CONFIG_QCA_GPIO_MASK_LSUART_RX)
 		#else
-	or  t9, t9, (_GPIO_MASK_IN | CONFIG_QCA_GPIO_MASK_LSUART_RX)
+	or  t9, t9, (__GPIO_MASK_IN | CONFIG_QCA_GPIO_MASK_LSUART_RX)
 		#endif
 	#else
 		#if (SOC_TYPE & QCA_QCA955X_SOC)
@@ -325,29 +373,29 @@ lowlevel_gpio_init:
 	 * - 16 ~ 19 -> GPIO_OUT_FUNCTION4 (mask: 0x0F0000)
 	 * - 20 ~ 23 -> GPIO_OUT_FUNCTION5 (mask: 0xF00000)
 	 */
-	#if defined(_GPIO_MASK_OUT) || defined(_GPIO_MASK_IN) ||\
+	#if defined(__GPIO_MASK_OUT) || defined(__GPIO_MASK_IN) ||\
 	    defined(CONFIG_QCA_GPIO_MASK_LSUART_TX)
 
 		/* GPIO_OUT_FUNCTION0 (GPIO 0~3) */
-		#if ((_GPIO_MASK_OUT) & 0x00000F) ||\
-		    ((_GPIO_MASK_IN)  & 0x00000F) ||\
+		#if (__GPIO_MASK_OUT & 0x00000F) ||\
+		    (__GPIO_MASK_IN  & 0x00000F) ||\
 		    (CONFIG_QCA_GPIO_MASK_LSUART_TX & 0x00000F)
 	li  t8, QCA_GPIO_OUT_FUNC0_REG
 	lw  t9, 0(t8)
-			#if ((_GPIO_MASK_OUT) & GPIO0) ||\
-			    ((_GPIO_MASK_IN)  & GPIO0)
+			#if (__GPIO_MASK_OUT & GPIO0) ||\
+			    (__GPIO_MASK_IN  & GPIO0)
 	and t9, t9, ~(QCA_GPIO_OUT_FUNCX_GPIO0_EN_MASK)
 			#endif
-			#if ((_GPIO_MASK_OUT) & GPIO1) ||\
-			    ((_GPIO_MASK_IN)  & GPIO1)
+			#if (__GPIO_MASK_OUT & GPIO1) ||\
+			    (__GPIO_MASK_IN  & GPIO1)
 	and t9, t9, ~(QCA_GPIO_OUT_FUNCX_GPIO1_EN_MASK)
 			#endif
-			#if ((_GPIO_MASK_OUT) & GPIO2) ||\
-			    ((_GPIO_MASK_IN)  & GPIO2)
+			#if (__GPIO_MASK_OUT & GPIO2) ||\
+			    (__GPIO_MASK_IN  & GPIO2)
 	and t9, t9, ~(QCA_GPIO_OUT_FUNCX_GPIO2_EN_MASK)
 			#endif
-			#if ((_GPIO_MASK_OUT) & GPIO3) ||\
-			    ((_GPIO_MASK_IN)  & GPIO3)
+			#if (__GPIO_MASK_OUT & GPIO3) ||\
+			    (__GPIO_MASK_IN  & GPIO3)
 	and t9, t9, ~(QCA_GPIO_OUT_FUNCX_GPIO3_EN_MASK)
 			#endif
 			#if (CONFIG_QCA_GPIO_MASK_LSUART_TX & 0x00000F)
@@ -359,25 +407,25 @@ lowlevel_gpio_init:
 		#endif
 
 		/* GPIO_OUT_FUNCTION1 (GPIO 4~7) */
-		#if ((_GPIO_MASK_OUT) & 0x0000F0) ||\
-		    ((_GPIO_MASK_IN)  & 0x0000F0) ||\
+		#if (__GPIO_MASK_OUT & 0x0000F0) ||\
+		    (__GPIO_MASK_IN  & 0x0000F0) ||\
 		    (CONFIG_QCA_GPIO_MASK_LSUART_TX & 0x0000F0)
 	li  t8, QCA_GPIO_OUT_FUNC1_REG
 	lw  t9, 0(t8)
-			#if ((_GPIO_MASK_OUT) & GPIO4) ||\
-			    ((_GPIO_MASK_IN)  & GPIO4)
+			#if (__GPIO_MASK_OUT & GPIO4) ||\
+			    (__GPIO_MASK_IN  & GPIO4)
 	and t9, t9, ~(QCA_GPIO_OUT_FUNCX_GPIO4_EN_MASK)
 			#endif
-			#if ((_GPIO_MASK_OUT) & GPIO5) ||\
-			    ((_GPIO_MASK_IN)  & GPIO5)
+			#if (__GPIO_MASK_OUT & GPIO5) ||\
+			    (__GPIO_MASK_IN  & GPIO5)
 	and t9, t9, ~(QCA_GPIO_OUT_FUNCX_GPIO5_EN_MASK)
 			#endif
-			#if ((_GPIO_MASK_OUT) & GPIO6) ||\
-			    ((_GPIO_MASK_IN)  & GPIO6)
+			#if (__GPIO_MASK_OUT & GPIO6) ||\
+			    (__GPIO_MASK_IN  & GPIO6)
 	and t9, t9, ~(QCA_GPIO_OUT_FUNCX_GPIO6_EN_MASK)
 			#endif
-			#if ((_GPIO_MASK_OUT) & GPIO7) ||\
-			    ((_GPIO_MASK_IN)  & GPIO7)
+			#if (__GPIO_MASK_OUT & GPIO7) ||\
+			    (__GPIO_MASK_IN  & GPIO7)
 	and t9, t9, ~(QCA_GPIO_OUT_FUNCX_GPIO7_EN_MASK)
 			#endif
 			#if (CONFIG_QCA_GPIO_MASK_LSUART_TX & 0x0000F0)
@@ -389,25 +437,25 @@ lowlevel_gpio_init:
 		#endif
 
 		/* GPIO_OUT_FUNCTION2 (GPIO 8~11) */
-		#if ((_GPIO_MASK_OUT) & 0x000F00) ||\
-		    ((_GPIO_MASK_IN)  & 0x000F00) ||\
+		#if (__GPIO_MASK_OUT & 0x000F00) ||\
+		    (__GPIO_MASK_IN  & 0x000F00) ||\
 		    (CONFIG_QCA_GPIO_MASK_LSUART_TX & 0x000F00)
 	li  t8, QCA_GPIO_OUT_FUNC2_REG
 	lw  t9, 0(t8)
-			#if ((_GPIO_MASK_OUT) & GPIO8) ||\
-			    ((_GPIO_MASK_IN)  & GPIO8)
+			#if (__GPIO_MASK_OUT & GPIO8) ||\
+			    (__GPIO_MASK_IN  & GPIO8)
 	and t9, t9, ~(QCA_GPIO_OUT_FUNCX_GPIO8_EN_MASK)
 			#endif
-			#if ((_GPIO_MASK_OUT) & GPIO9) ||\
-			    ((_GPIO_MASK_IN)  & GPIO9)
+			#if (__GPIO_MASK_OUT & GPIO9) ||\
+			    (__GPIO_MASK_IN  & GPIO9)
 	and t9, t9, ~(QCA_GPIO_OUT_FUNCX_GPIO9_EN_MASK)
 			#endif
-			#if ((_GPIO_MASK_OUT) & GPIO10) ||\
-			    ((_GPIO_MASK_IN)  & GPIO10)
+			#if (__GPIO_MASK_OUT & GPIO10) ||\
+			    (__GPIO_MASK_IN  & GPIO10)
 	and t9, t9, ~(QCA_GPIO_OUT_FUNCX_GPIO10_EN_MASK)
 			#endif
-			#if ((_GPIO_MASK_OUT) & GPIO11) ||\
-			    ((_GPIO_MASK_IN)  & GPIO11)
+			#if (__GPIO_MASK_OUT & GPIO11) ||\
+			    (__GPIO_MASK_IN  & GPIO11)
 	and t9, t9, ~(QCA_GPIO_OUT_FUNCX_GPIO11_EN_MASK)
 			#endif
 			#if (CONFIG_QCA_GPIO_MASK_LSUART_TX & 0x000F00)
@@ -419,25 +467,25 @@ lowlevel_gpio_init:
 		#endif
 
 		/* GPIO_OUT_FUNCTION3 (GPIO 12~15) */
-		#if ((_GPIO_MASK_OUT) & 0x00F000) ||\
-		    ((_GPIO_MASK_IN)  & 0x00F000) ||\
+		#if (__GPIO_MASK_OUT & 0x00F000) ||\
+		    (__GPIO_MASK_IN  & 0x00F000) ||\
 		    (CONFIG_QCA_GPIO_MASK_LSUART_TX & 0x00F000)
 	li  t8, QCA_GPIO_OUT_FUNC3_REG
 	lw  t9, 0(t8)
-			#if ((_GPIO_MASK_OUT) & GPIO12) ||\
-			    ((_GPIO_MASK_IN)  & GPIO12)
+			#if (__GPIO_MASK_OUT & GPIO12) ||\
+			    (__GPIO_MASK_IN  & GPIO12)
 	and t9, t9, ~(QCA_GPIO_OUT_FUNCX_GPIO12_EN_MASK)
 			#endif
-			#if ((_GPIO_MASK_OUT) & GPIO13) ||\
-			    ((_GPIO_MASK_IN)  & GPIO13)
+			#if (__GPIO_MASK_OUT & GPIO13) ||\
+			    (__GPIO_MASK_IN  & GPIO13)
 	and t9, t9, ~(QCA_GPIO_OUT_FUNCX_GPIO13_EN_MASK)
 			#endif
-			#if ((_GPIO_MASK_OUT) & GPIO14) ||\
-			    ((_GPIO_MASK_IN)  & GPIO14)
+			#if (__GPIO_MASK_OUT & GPIO14) ||\
+			    (__GPIO_MASK_IN  & GPIO14)
 	and t9, t9, ~(QCA_GPIO_OUT_FUNCX_GPIO14_EN_MASK)
 			#endif
-			#if ((_GPIO_MASK_OUT) & GPIO15) ||\
-			    ((_GPIO_MASK_IN)  & GPIO15)
+			#if (__GPIO_MASK_OUT & GPIO15) ||\
+			    (__GPIO_MASK_IN  & GPIO15)
 	and t9, t9, ~(QCA_GPIO_OUT_FUNCX_GPIO15_EN_MASK)
 			#endif
 			#if (CONFIG_QCA_GPIO_MASK_LSUART_TX & 0x00F000)
@@ -449,25 +497,25 @@ lowlevel_gpio_init:
 		#endif
 
 		/* GPIO_OUT_FUNCTION4 (GPIO 16~19) */
-		#if ((_GPIO_MASK_OUT) & 0x0F0000) ||\
-		    ((_GPIO_MASK_IN)  & 0x0F0000) ||\
+		#if (__GPIO_MASK_OUT & 0x0F0000) ||\
+		    (__GPIO_MASK_IN  & 0x0F0000) ||\
 		    (CONFIG_QCA_GPIO_MASK_LSUART_TX & 0x0F0000)
 	li  t8, QCA_GPIO_OUT_FUNC4_REG
 	lw  t9, 0(t8)
-			#if ((_GPIO_MASK_OUT) & GPIO16) ||\
-			    ((_GPIO_MASK_IN)  & GPIO16)
+			#if (__GPIO_MASK_OUT & GPIO16) ||\
+			    (__GPIO_MASK_IN  & GPIO16)
 	and t9, t9, ~(QCA_GPIO_OUT_FUNCX_GPIO16_EN_MASK)
 			#endif
-			#if ((_GPIO_MASK_OUT) & GPIO17) ||\
-			    ((_GPIO_MASK_IN)  & GPIO17)
+			#if (__GPIO_MASK_OUT & GPIO17) ||\
+			    (__GPIO_MASK_IN  & GPIO17)
 	and t9, t9, ~(QCA_GPIO_OUT_FUNCX_GPIO17_EN_MASK)
 			#endif
-			#if ((_GPIO_MASK_OUT) & GPIO18) ||\
-			    ((_GPIO_MASK_IN)  & GPIO18)
+			#if (__GPIO_MASK_OUT & GPIO18) ||\
+			    (__GPIO_MASK_IN  & GPIO18)
 	and t9, t9, ~(QCA_GPIO_OUT_FUNCX_GPIO18_EN_MASK)
 			#endif
-			#if ((_GPIO_MASK_OUT) & GPIO19) ||\
-			    ((_GPIO_MASK_IN)  & GPIO19)
+			#if (__GPIO_MASK_OUT & GPIO19) ||\
+			    (__GPIO_MASK_IN  & GPIO19)
 	and t9, t9, ~(QCA_GPIO_OUT_FUNCX_GPIO19_EN_MASK)
 			#endif
 			#if (CONFIG_QCA_GPIO_MASK_LSUART_TX & 0x0F0000)
@@ -479,25 +527,25 @@ lowlevel_gpio_init:
 		#endif
 
 		/* GPIO_OUT_FUNCTION5 (GPIO 20~23) */
-		#if ((_GPIO_MASK_OUT) & 0xF00000) ||\
-		    ((_GPIO_MASK_IN)  & 0xF00000) ||\
+		#if (__GPIO_MASK_OUT & 0xF00000) ||\
+		    (__GPIO_MASK_IN  & 0xF00000) ||\
 		    (CONFIG_QCA_GPIO_MASK_LSUART_TX & 0xF00000)
 	li  t8, QCA_GPIO_OUT_FUNC5_REG
 	lw  t9, 0(t8)
-			#if ((_GPIO_MASK_OUT) & GPIO20) ||\
-			    ((_GPIO_MASK_IN)  & GPIO20)
+			#if (__GPIO_MASK_OUT & GPIO20) ||\
+			    (__GPIO_MASK_IN  & GPIO20)
 	and t9, t9, ~(QCA_GPIO_OUT_FUNCX_GPIO20_EN_MASK)
 			#endif
-			#if ((_GPIO_MASK_OUT) & GPIO21) ||\
-			    ((_GPIO_MASK_IN)  & GPIO21)
+			#if (__GPIO_MASK_OUT & GPIO21) ||\
+			    (__GPIO_MASK_IN  & GPIO21)
 	and t9, t9, ~(QCA_GPIO_OUT_FUNCX_GPIO21_EN_MASK)
 			#endif
-			#if ((_GPIO_MASK_OUT) & GPIO22) ||\
-			    ((_GPIO_MASK_IN)  & GPIO22)
+			#if (__GPIO_MASK_OUT & GPIO22) ||\
+			    (__GPIO_MASK_IN  & GPIO22)
 	and t9, t9, ~(QCA_GPIO_OUT_FUNCX_GPIO22_EN_MASK)
 			#endif
-			#if ((_GPIO_MASK_OUT) & GPIO23) ||\
-			    ((_GPIO_MASK_IN)  & GPIO23)
+			#if (__GPIO_MASK_OUT & GPIO23) ||\
+			    (__GPIO_MASK_IN  & GPIO23)
 	and t9, t9, ~(QCA_GPIO_OUT_FUNCX_GPIO23_EN_MASK)
 			#endif
 			#if (CONFIG_QCA_GPIO_MASK_LSUART_TX & 0xF00000)
@@ -509,8 +557,8 @@ lowlevel_gpio_init:
 		#endif
 
 	#endif /*
-		* _GPIO_MASK_OUT ||
-		* _GPIO_MASK_IN  ||
+		* __GPIO_MASK_OUT ||
+		* __GPIO_MASK_IN  ||
 		* CONFIG_QCA_GPIO_MASK_LSUART_TX
 		*/
 
@@ -526,24 +574,24 @@ lowlevel_gpio_init:
 	/* Sanity check for JTAG pins (GPIO 6~8) */
 	#if defined(CONFIG_SKIP_LOWLEVEL_INIT) ||\
 	    defined(CONFIG_QCA_KEEP_JTAG_ENABLED)
-		#if defined(CONFIG_QCA_GPIO_MASK_IN)
-			#define _GPIO_MASK_IN	\
-				(CONFIG_QCA_GPIO_MASK_IN & ~QCA_GPIO_JTAG_MASK)
+		#if defined(_GPIO_MASK_IN)
+			#define __GPIO_MASK_IN	\
+				(_GPIO_MASK_IN & ~QCA_GPIO_JTAG_MASK)
 		#endif
 
-		#if defined(CONFIG_QCA_GPIO_MASK_OUT)
-			#define _GPIO_MASK_OUT	\
-				(CONFIG_QCA_GPIO_MASK_OUT & ~QCA_GPIO_JTAG_MASK)
+		#if defined(_GPIO_MASK_OUT)
+			#define __GPIO_MASK_OUT	\
+				(_GPIO_MASK_OUT & ~QCA_GPIO_JTAG_MASK)
 		#endif
 
-		#if defined(CONFIG_QCA_GPIO_MASK_OUT_INIT_H)
-			#define _GPIO_MASK_OUT_INIT_H	\
-				(CONFIG_QCA_GPIO_MASK_OUT_INIT_H & ~QCA_GPIO_JTAG_MASK)
+		#if defined(_GPIO_MASK_OUT_INIT_H)
+			#define __GPIO_MASK_OUT_INIT_H	\
+				(_GPIO_MASK_OUT_INIT_H & ~QCA_GPIO_JTAG_MASK)
 		#endif
 
-		#if defined(CONFIG_QCA_GPIO_MASK_OUT_INIT_L)
-			#define _GPIO_MASK_OUT_INIT_L	\
-				(CONFIG_QCA_GPIO_MASK_OUT_INIT_L & ~QCA_GPIO_JTAG_MASK)
+		#if defined(_GPIO_MASK_OUT_INIT_L)
+			#define __GPIO_MASK_OUT_INIT_L	\
+				(_GPIO_MASK_OUT_INIT_L & ~QCA_GPIO_JTAG_MASK)
 		#endif
 
 		#if defined(CONFIG_QCA_GPIO_MASK_LED_ACT_H)
@@ -556,22 +604,20 @@ lowlevel_gpio_init:
 				(CONFIG_QCA_GPIO_MASK_LED_ACT_L & ~QCA_GPIO_JTAG_MASK)
 		#endif
 	#else
-		#if defined(CONFIG_QCA_GPIO_MASK_IN)
-			#define _GPIO_MASK_IN	CONFIG_QCA_GPIO_MASK_IN
+		#if defined(_GPIO_MASK_IN)
+			#define __GPIO_MASK_IN	_GPIO_MASK_IN
 		#endif
 
-		#if defined(CONFIG_QCA_GPIO_MASK_OUT)
-			#define _GPIO_MASK_OUT	CONFIG_QCA_GPIO_MASK_OUT
+		#if defined(_GPIO_MASK_OUT)
+			#define __GPIO_MASK_OUT	_GPIO_MASK_OUT
 		#endif
 
-		#if defined(CONFIG_QCA_GPIO_MASK_OUT_INIT_H)
-			#define _GPIO_MASK_OUT_INIT_H	\
-				CONFIG_QCA_GPIO_MASK_OUT_INIT_H
+		#if defined(_GPIO_MASK_OUT_INIT_H)
+			#define __GPIO_MASK_OUT_INIT_H	_GPIO_MASK_OUT_INIT_H
 		#endif
 
-		#if defined(CONFIG_QCA_GPIO_MASK_OUT_INIT_L)
-			#define _GPIO_MASK_OUT_INIT_L	\
-				CONFIG_QCA_GPIO_MASK_OUT_INIT_L
+		#if defined(_GPIO_MASK_OUT_INIT_L)
+			#define __GPIO_MASK_OUT_INIT_L	_GPIO_MASK_OUT_INIT_L
 		#endif
 
 		#if defined(CONFIG_QCA_GPIO_MASK_LED_ACT_H)
@@ -590,14 +636,14 @@ lowlevel_gpio_init:
 	 * GPIO10 and GPIO9 respectively, so do not allow
 	 * to use those GPIOs as regular at the same time
 	 */
-	#if defined(_GPIO_MASK_IN)
-		#if ((_GPIO_MASK_IN) & (GPIO9 | GPIO10))
+	#if defined(__GPIO_MASK_IN)
+		#if (__GPIO_MASK_IN & (GPIO9 | GPIO10))
 			#error "Cannot use HSUART lines as GPIO inputs!"
 		#endif
 	#endif
 
-	#if defined(_GPIO_MASK_OUT)
-		#if ((_GPIO_MASK_OUT) & (GPIO9 | GPIO10))
+	#if defined(__GPIO_MASK_OUT)
+		#if (__GPIO_MASK_OUT & (GPIO9 | GPIO10))
 			#error "Cannot use HSUART lines as GPIO outputs!"
 		#endif
 	#endif
@@ -663,34 +709,34 @@ gpio_setup:
 	or  t9, t9, (QCA_GPIO_FUNC_1_JTAG_DIS_MASK |\
 		     QCA_GPIO_FUNC_1_UART_EN_MASK)
 	#endif
-	#if ((_GPIO_MASK_OUT) & (GPIO11 | GPIO12)) ||\
-	    ((_GPIO_MASK_IN)  & (GPIO11 | GPIO12))
+	#if (__GPIO_MASK_OUT & (GPIO11 | GPIO12)) ||\
+	    (__GPIO_MASK_IN  & (GPIO11 | GPIO12))
 	and t9, t9, ~(QCA_GPIO_FUNC_1_UART_RTS_CTS_EN_MASK)
 	#endif
-	#if ((_GPIO_MASK_OUT) & GPIO13) ||\
-	    ((_GPIO_MASK_IN)  & GPIO13)
+	#if (__GPIO_MASK_OUT & GPIO13) ||\
+	    (__GPIO_MASK_IN  & GPIO13)
 	and t9, t9, ~(QCA_GPIO_FUNC_1_ETH_SW_LED0_EN_MASK)
 	#endif
-	#if ((_GPIO_MASK_OUT) & GPIO14) ||\
-	    ((_GPIO_MASK_IN)  & GPIO14)
+	#if (__GPIO_MASK_OUT & GPIO14) ||\
+	    (__GPIO_MASK_IN  & GPIO14)
 	and t9, t9, ~(QCA_GPIO_FUNC_1_ETH_SW_LED1_EN_MASK)
 	#endif
-	#if ((_GPIO_MASK_OUT) & GPIO15) ||\
-	    ((_GPIO_MASK_IN)  & GPIO15)
+	#if (__GPIO_MASK_OUT & GPIO15) ||\
+	    (__GPIO_MASK_IN  & GPIO15)
 	and t9, t9, ~(QCA_GPIO_FUNC_1_ETH_SW_LED2_EN_MASK)
 	#endif
-	#if ((_GPIO_MASK_OUT) & GPIO16) ||\
-	    ((_GPIO_MASK_IN)  & GPIO16)
+	#if (__GPIO_MASK_OUT & GPIO16) ||\
+	    (__GPIO_MASK_IN  & GPIO16)
 	and t9, t9, ~(QCA_GPIO_FUNC_1_ETH_SW_LED3_EN_MASK)
 	#endif
-	#if ((_GPIO_MASK_OUT) & GPIO17) ||\
-	    ((_GPIO_MASK_IN)  & GPIO17)
+	#if (__GPIO_MASK_OUT & GPIO17) ||\
+	    (__GPIO_MASK_IN  & GPIO17)
 	and t9, t9, ~(QCA_GPIO_FUNC_1_ETH_SW_LED4_EN_MASK)
 	#endif
-	#if ((_GPIO_MASK_OUT) & GPIO9)
+	#if (__GPIO_MASK_OUT & GPIO9)
 	and t9, t9, ~(QCA_GPIO_FUNC_1_SPI_CS_EN1_MASK)
 	#endif
-	#if ((_GPIO_MASK_OUT) & GPIO10)
+	#if (__GPIO_MASK_OUT & GPIO10)
 	and t9, t9, ~(QCA_GPIO_FUNC_1_SPI_CS_EN2_MASK)
 	#endif
 	/* From datasheet: bit 15 should be written with 1 */
@@ -698,9 +744,9 @@ gpio_setup:
 	sw  t9, 0(t8)
 
 	/* Enable regular GPIO function on GPIO26 and/or GPIO27 if needed */
-	#if defined(_GPIO_MASK_OUT) || defined(_GPIO_MASK_IN)
-		#if ((_GPIO_MASK_OUT) & (GPIO26 | GPIO27)) ||\
-		    ((_GPIO_MASK_IN)  & (GPIO26 | GPIO27))
+	#if defined(__GPIO_MASK_OUT) || defined(__GPIO_MASK_IN)
+		#if (__GPIO_MASK_OUT & (GPIO26 | GPIO27)) ||\
+		    (__GPIO_MASK_IN  & (GPIO26 | GPIO27))
 	li t8, QCA_RST_BOOTSTRAP_REG
 	lw t9, 0(t8)
 	or t9, t9, QCA_RST_BOOTSTRAP_MDIO_GPIO_EN_MASK
@@ -709,17 +755,17 @@ gpio_setup:
 	#endif
 
 	/* Enable regular GPIO function on GPIO11 and/or GPIO12 if needed */
-	#if defined(_GPIO_MASK_OUT) || defined(_GPIO_MASK_IN)
-		#if ((_GPIO_MASK_OUT) & (GPIO11 | GPIO12)) ||\
-		    ((_GPIO_MASK_IN)  & (GPIO11 | GPIO12))
+	#if defined(__GPIO_MASK_OUT) || defined(__GPIO_MASK_IN)
+		#if (__GPIO_MASK_OUT & (GPIO11 | GPIO12)) ||\
+		    (__GPIO_MASK_IN  & (GPIO11 | GPIO12))
 	li t8, QCA_GPIO_FUNC_2_REG
 	lw t9, 0(t8)
-			#if ((_GPIO_MASK_OUT) & GPIO11) ||\
-			    ((_GPIO_MASK_IN)  & GPIO11)
+			#if (__GPIO_MASK_OUT & GPIO11) ||\
+			    (__GPIO_MASK_IN  & GPIO11)
 	or t9, t9, QCA_GPIO_FUNC_2_JUMPSTART_DIS_MASK
 			#endif
-			#if ((_GPIO_MASK_OUT) & GPIO12) ||\
-			    ((_GPIO_MASK_IN)  & GPIO12)
+			#if (__GPIO_MASK_OUT & GPIO12) ||\
+			    (__GPIO_MASK_IN  & GPIO12)
 	or t9, t9, QCA_GPIO_FUNC_2_WPS_DIS_MASK
 			#endif
 	sw t9, 0(t8)
@@ -729,23 +775,23 @@ gpio_setup:
 	/* Setup init states on requested GPIO lines */
 	li  t8, QCA_GPIO_OUT_REG
 	lw  t9, 0(t8)
-	#if defined(_GPIO_MASK_OUT_INIT_H)
-	or  t9, t9, _GPIO_MASK_OUT_INIT_H
+	#if defined(__GPIO_MASK_OUT_INIT_H)
+	or  t9, t9, __GPIO_MASK_OUT_INIT_H
 	#endif
-	#if defined(_GPIO_MASK_OUT_INIT_L)
-	and t9, t9, ~(_GPIO_MASK_OUT_INIT_L)
+	#if defined(__GPIO_MASK_OUT_INIT_L)
+	and t9, t9, ~__GPIO_MASK_OUT_INIT_L
 	#endif
 	sw  t9, 0(t8)
 
 	/* Setup GPIOs in OE register */
-	#if defined(_GPIO_MASK_OUT) || defined(_GPIO_MASK_IN)
+	#if defined(__GPIO_MASK_OUT) || defined(__GPIO_MASK_IN)
 	li  t8, QCA_GPIO_OE_REG
 	lw  t9, 0(t8)
-		#if defined(_GPIO_MASK_OUT)
-	or  t9, t9, _GPIO_MASK_OUT
+		#if defined(__GPIO_MASK_OUT)
+	or  t9, t9, __GPIO_MASK_OUT
 		#endif
-		#if defined(_GPIO_MASK_IN)
-	and t9, t9, ~(_GPIO_MASK_IN)
+		#if defined(__GPIO_MASK_IN)
+	and t9, t9, ~__GPIO_MASK_IN
 		#endif
 	sw  t9, 0(t8)
 	#endif
