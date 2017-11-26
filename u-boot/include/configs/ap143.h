@@ -81,11 +81,15 @@
 
 	#define CONFIG_QCA_GPIO_MASK_LED_ACT_L	GPIO13
 
-#elif defined(CONFIG_FOR_TPLINK_WR810N_V1)
+#elif defined(CONFIG_FOR_TPLINK_WR810N_V1) ||\
+      defined(CONFIG_FOR_TPLINK_WR810N_V2)
 
 	#define CONFIG_QCA_GPIO_MASK_LED_ACT_L	GPIO13
 	#define CONFIG_QCA_GPIO_MASK_IN		GPIO0 | GPIO1
-	#define CONFIG_QCA_GPIO_MASK_OUT_INIT_H	GPIO11
+
+	#if defined(CONFIG_FOR_TPLINK_WR810N_V1)
+		#define CONFIG_QCA_GPIO_MASK_OUT_INIT_H	GPIO11
+	#endif
 
 #elif defined(CONFIG_FOR_TPLINK_WR841N_V10) ||\
       defined(CONFIG_FOR_TPLINK_WR841N_V9)
@@ -171,7 +175,8 @@
 
 #elif defined(CONFIG_FOR_TPLINK_MR22U_V1)    ||\
       defined(CONFIG_FOR_TPLINK_MR6400_V1V2) ||\
-      defined(CONFIG_FOR_TPLINK_WR810N_V1)
+      defined(CONFIG_FOR_TPLINK_WR810N_V1)   ||\
+      defined(CONFIG_FOR_TPLINK_WR810N_V2)
 
 	#define CONFIG_BOOTARGS	"console=ttyS0,115200 root=31:02 "\
 				"rootfstype=squashfs init=/sbin/init "\
@@ -224,6 +229,7 @@
     defined(CONFIG_FOR_TPLINK_WA850RE_V2)   ||\
     defined(CONFIG_FOR_TPLINK_WR802N_V1)    ||\
     defined(CONFIG_FOR_TPLINK_WR810N_V1)    ||\
+    defined(CONFIG_FOR_TPLINK_WR810N_V2)    ||\
     defined(CONFIG_FOR_TPLINK_WR820N_V1_CN) ||\
     defined(CONFIG_FOR_TPLINK_WR841N_V10)   ||\
     defined(CONFIG_FOR_TPLINK_WR841N_V11)   ||\
@@ -288,6 +294,7 @@
       defined(CONFIG_FOR_TPLINK_WA850RE_V2)   ||\
       defined(CONFIG_FOR_TPLINK_WR802N_V1)    ||\
       defined(CONFIG_FOR_TPLINK_WR810N_V1)    ||\
+      defined(CONFIG_FOR_TPLINK_WR810N_V2)    ||\
       defined(CONFIG_FOR_TPLINK_WR820N_V1_CN) ||\
       defined(CONFIG_FOR_TPLINK_WR841N_V10)   ||\
       defined(CONFIG_FOR_TPLINK_WR841N_V11)   ||\
@@ -345,6 +352,7 @@
       defined(CONFIG_FOR_TPLINK_MR6400_V1V2)  ||\
       defined(CONFIG_FOR_TPLINK_WR802N_V1)    ||\
       defined(CONFIG_FOR_TPLINK_WR810N_V1)    ||\
+      defined(CONFIG_FOR_TPLINK_WR810N_V2)    ||\
       defined(CONFIG_FOR_TPLINK_WR820N_V1_CN) ||\
       defined(CONFIG_FOR_TPLINK_WR841N_V10)   ||\
       defined(CONFIG_FOR_TPLINK_WR841N_V11)   ||\
@@ -425,6 +433,7 @@
     defined(CONFIG_FOR_TPLINK_MR6400_V1V2)  ||\
     defined(CONFIG_FOR_TPLINK_WR802N_V1)    ||\
     defined(CONFIG_FOR_TPLINK_WR810N_V1)    ||\
+    defined(CONFIG_FOR_TPLINK_WR810N_V2)    ||\
     defined(CONFIG_FOR_TPLINK_WR820N_V1_CN) ||\
     defined(CONFIG_FOR_TPLINK_WR841N_V10)   ||\
     defined(CONFIG_FOR_TPLINK_WR841N_V11)   ||\
@@ -481,6 +490,7 @@
     defined(CONFIG_FOR_TPLINK_WA850RE_V2)   ||\
     defined(CONFIG_FOR_TPLINK_WR802N_V1)    ||\
     defined(CONFIG_FOR_TPLINK_WR810N_V1)    ||\
+    defined(CONFIG_FOR_TPLINK_WR810N_V2)    ||\
     defined(CONFIG_FOR_TPLINK_WR820N_V1_CN) ||\
     defined(CONFIG_FOR_TPLINK_WR841N_V10)   ||\
     defined(CONFIG_FOR_TPLINK_WR841N_V11)   ||\
