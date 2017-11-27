@@ -571,7 +571,7 @@ lowlevel_gpio_init:
  */
 #if (SOC_TYPE & QCA_AR933X_SOC)
 
-	/* Sanity check for JTAG pins (GPIO 6~8) */
+	/* Sanity check for JTAG pins (GPIO 6~8, 29) */
 	#if defined(CONFIG_SKIP_LOWLEVEL_INIT) ||\
 	    defined(CONFIG_QCA_KEEP_JTAG_ENABLED)
 		#if defined(_GPIO_MASK_IN)
