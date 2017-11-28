@@ -65,6 +65,7 @@ Currently supported devices:
   - 8devices Carambola 2 (for version with development board, [photos in my gallery](http://galeria.tech-blog.pl/8devices_Carambola_2/))
   - ALFA Network AP121F
   - ALFA Network Hornet-UB/Hornet-UB-64 (aka Hornet-UB x2)
+  - ALFA Network Tube2H
   - Black Swift
   - CreatComm Technology D3321
   - Dragino MS14/N
@@ -133,6 +134,7 @@ More information about supported devices:
 | [8devices Carambola 2](http://8devices.com/carambola-2) | AR9331 | 16 MiB | 64 MiB DDR2 | 256 KiB | R/W |
 | ALFA Network AP121F | AR9331 | 16 MiB | 64 MiB DDR1 | 192 KiB, LZMA | R/W |
 | [ALFA Network Hornet-UB](https://wiki.openwrt.org/toh/alfa.network/hornet-ub) | AR9331 | 8/16 MiB | 32/64 MiB DDR1 | 256 KiB | R/W |
+| ALFA Network Tube2H | AR9331 | 8/16 MiB | 32/64 MiB DDR1 | 256 KiB | R/W |
 | [Black Swift](http://www.black-swift.com) | AR9331 | 16 MiB | 64 MiB DDR2 | 128 KiB, LZMA | R/W |
 | Comfast CF-E314N | QCA9531 | 16 MiB | 64 MiB DDR2 | 64 KiB, LZMA | RO |
 | Comfast CF-E320N v2 | QCA9531 | 16 MiB | 64 MiB DDR2 | 64 KiB, LZMA | RO |

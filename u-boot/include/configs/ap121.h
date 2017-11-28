@@ -41,6 +41,13 @@
 	#define CONFIG_QCA_GPIO_MASK_IN		GPIO11
 	#define CONFIG_QCA_GPIO_MASK_OUT_INIT_H	GPIO26 | GPIO28
 
+#elif defined(CONFIG_FOR_ALFA_NETWORK_TUBE2H)
+
+	#define CONFIG_QCA_GPIO_MASK_LED_ACT_H	GPIO0  | GPIO1 | GPIO13
+	#define CONFIG_QCA_GPIO_MASK_LED_ACT_L	GPIO17 | GPIO27
+	#define CONFIG_QCA_GPIO_MASK_OUT_INIT_H	GPIO28
+	#define CONFIG_QCA_GPIO_MASK_OUT_INIT_L	GPIO18 | GPIO22
+
 #elif defined(CONFIG_FOR_CREATCOMM_D3321)
 
 	#define CONFIG_QCA_GPIO_MASK_LED_ACT_H	GPIO0  | GPIO13 | GPIO14 |\
@@ -152,7 +159,8 @@
 				"rootfstype=squashfs,jffs2 noinitrd "\
 				"mtdparts=spi0.0:192k(u-boot)ro,64k(u-boot-env),64k(art)ro,-(firmware)"
 
-#elif defined(CONFIG_FOR_ALFA_NETWORK_HORNET_UB)
+#elif defined(CONFIG_FOR_ALFA_NETWORK_HORNET_UB) ||\
+      defined(CONFIG_FOR_ALFA_NETWORK_TUBE2H)
 
 	#define CONFIG_BOOTARGS	"console=ttyS0,115200 root=31:02 "\
 				"rootfstype=squashfs init=/sbin/init "\
@@ -226,6 +234,7 @@
 #if defined(CONFIG_FOR_8DEVICES_CARAMBOLA2)    ||\
     defined(CONFIG_FOR_ALFA_NETWORK_AP121F)    ||\
     defined(CONFIG_FOR_ALFA_NETWORK_HORNET_UB) ||\
+    defined(CONFIG_FOR_ALFA_NETWORK_TUBE2H)    ||\
     defined(CONFIG_FOR_CREATCOMM_D3321)        ||\
     defined(CONFIG_FOR_GLINET_GL_AR150)        ||\
     defined(CONFIG_FOR_GLINET_GL_USB150)
@@ -251,7 +260,8 @@
 
 #endif
 
-#if defined(CONFIG_FOR_ALFA_NETWORK_HORNET_UB)
+#if defined(CONFIG_FOR_ALFA_NETWORK_HORNET_UB) ||\
+    defined(CONFIG_FOR_ALFA_NETWORK_TUBE2H)
 
 	#define CONFIG_BOOTCOMMAND	"bootm 0x9F050000 || bootm 0x9F650000 || bootm 0x9FE50000"
 
@@ -268,6 +278,7 @@
  */
 #if defined(CONFIG_FOR_8DEVICES_CARAMBOLA2)    ||\
     defined(CONFIG_FOR_ALFA_NETWORK_HORNET_UB) ||\
+    defined(CONFIG_FOR_ALFA_NETWORK_TUBE2H)    ||\
     defined(CONFIG_FOR_CREATCOMM_D3321)        ||\
     defined(CONFIG_FOR_GLINET_GL_AR150)        ||\
     defined(CONFIG_FOR_GLINET_GL_USB150)
@@ -326,6 +337,7 @@
  */
 #if defined(CONFIG_FOR_8DEVICES_CARAMBOLA2)    ||\
     defined(CONFIG_FOR_ALFA_NETWORK_HORNET_UB) ||\
+    defined(CONFIG_FOR_ALFA_NETWORK_TUBE2H)    ||\
     defined(CONFIG_FOR_CREATCOMM_D3321)        ||\
     defined(CONFIG_FOR_DRAGINO_MS14)           ||\
     defined(CONFIG_FOR_VILLAGE_TELCO_MP2)
@@ -378,6 +390,7 @@
 #if !defined(CONFIG_FOR_8DEVICES_CARAMBOLA2)         &&\
     !defined(CONFIG_FOR_ALFA_NETWORK_AP121F)         &&\
     !defined(CONFIG_FOR_ALFA_NETWORK_HORNET_UB)      &&\
+    !defined(CONFIG_FOR_ALFA_NETWORK_TUBE2H)         &&\
     !defined(CONFIG_FOR_CREATCOMM_D3321)             &&\
     !defined(CONFIG_FOR_DLINK_DIR505_A1)             &&\
     !defined(CONFIG_FOR_DRAGINO_MS14)                &&\
@@ -470,7 +483,8 @@
 
 	#define WEBFAILSAFE_UPLOAD_LIMITED_AREA_IN_BYTES	(320 * 1024)
 
-#elif defined(CONFIG_FOR_ALFA_NETWORK_HORNET_UB)
+#elif defined(CONFIG_FOR_ALFA_NETWORK_HORNET_UB) ||\
+      defined(CONFIG_FOR_ALFA_NETWORK_TUBE2H)
 
 	#define WEBFAILSAFE_UPLOAD_LIMITED_AREA_IN_BYTES	(448 * 1024)
 
@@ -502,6 +516,7 @@
 #if defined(CONFIG_FOR_8DEVICES_CARAMBOLA2)    ||\
     defined(CONFIG_FOR_ALFA_NETWORK_AP121F)    ||\
     defined(CONFIG_FOR_ALFA_NETWORK_HORNET_UB) ||\
+    defined(CONFIG_FOR_ALFA_NETWORK_TUBE2H)    ||\
     defined(CONFIG_FOR_CREATCOMM_D3321)        ||\
     defined(CONFIG_FOR_GLINET_GL_AR150)        ||\
     defined(CONFIG_FOR_GLINET_GL_USB150)
@@ -536,6 +551,7 @@
 #if !defined(CONFIG_FOR_8DEVICES_CARAMBOLA2)         &&\
     !defined(CONFIG_FOR_ALFA_NETWORK_AP121F)         &&\
     !defined(CONFIG_FOR_ALFA_NETWORK_HORNET_UB)      &&\
+    !defined(CONFIG_FOR_ALFA_NETWORK_TUBE2H)         &&\
     !defined(CONFIG_FOR_CREATCOMM_D3321)             &&\
     !defined(CONFIG_FOR_DLINK_DIR505_A1)             &&\
     !defined(CONFIG_FOR_DRAGINO_MS14)                &&\
