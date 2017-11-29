@@ -81,6 +81,19 @@
 	#define CONFIG_QCA_GPIO_MASK_IN		GPIO11
 	#define CONFIG_QCA_GPIO_MASK_OUT_INIT_H	CONFIG_QCA_GPIO_MASK_LED_ACT_L
 
+#elif defined(CONFIG_FOR_DLINK_DIR601_B1)
+
+	#define CONFIG_QCA_GPIO_MASK_LED_ACT_H	GPIO0 | GPIO13 | GPIO14 | GPIO15 |\
+						GPIO16 | GPIO20 | GPIO23 | GPIO27
+	#define CONFIG_QCA_GPIO_MASK_LED_ACT_L	GPIO17 | GPIO26
+	#define CONFIG_QCA_GPIO_MASK_OUT	GPIO1 |\
+						CONFIG_QCA_GPIO_MASK_LED_ACT_L |\
+						CONFIG_QCA_GPIO_MASK_LED_ACT_H
+	#define CONFIG_QCA_GPIO_MASK_IN		GPIO11
+	#define CONFIG_QCA_GPIO_MASK_OUT_INIT_H	CONFIG_QCA_GPIO_MASK_LED_ACT_L
+	#define	CONFIG_QCA_GPIO_MASK_OUT_INIT_L	GPIO1 |\
+						CONFIG_QCA_GPIO_MASK_LED_ACT_H
+
 #elif defined(CONFIG_FOR_DRAGINO_V2) ||\
       defined(CONFIG_FOR_MESH_POTATO_V2)
 
@@ -253,6 +266,12 @@
 				"rootfstype=squashfs init=/sbin/init "\
 				"mtdparts=ar7240-nor0:64k(u-boot),64k(art),64k(mac),64k(nvram),256k(language),1024k(uImage),6656k(rootfs)"
 
+#elif defined(CONFIG_FOR_DLINK_DIR601_B1)
+
+	#define CONFIG_BOOTARGS "console=ttyS0,115200 root=31:06 "\
+				"rootfstype=squashfs init=/sbin/init "\
+				"mtdparts=ar7240-nor0:64k(u-boot),64k(art),64k(mac),64k(nvram),192k(language),896k(uImage),2752k(rootfs)"
+
 #elif defined(CONFIG_FOR_DRAGINO_V2) ||\
       defined(CONFIG_FOR_MESH_POTATO_V2)
 
@@ -309,6 +328,8 @@
 	#define CFG_LOAD_ADDR	0x9F050000
 #elif defined(CONFIG_FOR_BLACK_SWIFT_BOARD)
 	#define CFG_LOAD_ADDR	0x9F030000
+#elif defined(CONFIG_FOR_DLINK_DIR601_B1)
+	#define CFG_LOAD_ADDR	0x9F070000
 #elif defined(CONFIG_FOR_DLINK_DIR505_A1)
 	#define CFG_LOAD_ADDR	0x9F080000
 #elif defined(CONFIG_FOR_DRAGINO_V2) ||\
@@ -344,7 +365,8 @@
 	#define CFG_ENV_ADDR		0x9F020000
 	#define CFG_ENV_SIZE		0x8000
 	#define CFG_ENV_SECT_SIZE	0x10000
-#elif defined(CONFIG_FOR_DLINK_DIR505_A1)
+#elif defined(CONFIG_FOR_DLINK_DIR505_A1) ||\
+      defined(CONFIG_FOR_DLINK_DIR601_B1)
 	#define CFG_ENV_ADDR		0x9F028000
 	#define CFG_ENV_SIZE		0x7C00
 	#define CFG_ENV_SECT_SIZE	0x10000
@@ -404,6 +426,11 @@
 	 * #define OFFSET_MAC_ADDRESS		0x000004
 	 * #define OFFSET_MAC_ADDRESS2		0x000016
 	 */
+#elif defined(CONFIG_FOR_DLINK_DIR601_B1)
+	#define OFFSET_MAC_DATA_BLOCK		0x020000
+	#define OFFSET_MAC_DATA_BLOCK_LENGTH	0x010000
+	#define OFFSET_MAC_ADDRESS		0x000004
+	#define OFFSET_MAC_ADDRESS2		0x000016
 #elif defined(CONFIG_FOR_GS_OOLITE_V1_DEV)
 	#define OFFSET_MAC_DATA_BLOCK		0x010000
 	#define OFFSET_MAC_DATA_BLOCK_LENGTH	0x010000
@@ -420,6 +447,7 @@
     !defined(CONFIG_FOR_BLACK_SWIFT_BOARD)      &&\
     !defined(CONFIG_FOR_CREATCOMM_D3321)        &&\
     !defined(CONFIG_FOR_DLINK_DIR505_A1)        &&\
+    !defined(CONFIG_FOR_DLINK_DIR601_B1)	&&\
     !defined(CONFIG_FOR_DRAGINO_V2)             &&\
     !defined(CONFIG_FOR_GL_AR150)               &&\
     !defined(CONFIG_FOR_GL_INET)                &&\
@@ -462,7 +490,8 @@
 #endif
 
 /* D-Link DIR-505 is limited to 64 KB only and doesn't use env */
-#if defined(CONFIG_FOR_DLINK_DIR505_A1)
+#if defined(CONFIG_FOR_DLINK_DIR505_A1) ||\
+    defined(CONFIG_FOR_DLINK_DIR601_B1)
 	#undef CONFIG_CMD_DHCP
 	#undef CONFIG_CMD_LOADB
 #endif
@@ -476,7 +505,8 @@
 
 #if defined(CONFIG_FOR_ALFA_NETWORK_AP121F)
 	#define WEBFAILSAFE_UPLOAD_ART_ADDRESS	(CFG_FLASH_BASE + 0x40000)
-#elif defined(CONFIG_FOR_DLINK_DIR505_A1)
+#elif defined(CONFIG_FOR_DLINK_DIR505_A1) ||\
+      defined(CONFIG_FOR_DLINK_DIR601_B1)
 	#define WEBFAILSAFE_UPLOAD_ART_ADDRESS	(CFG_FLASH_BASE + 0x10000)
 #endif
 
@@ -489,7 +519,8 @@
       defined(CONFIG_FOR_DRAGINO_V2)          ||\
       defined(CONFIG_FOR_MESH_POTATO_V2)
 	#define WEBFAILSAFE_UPLOAD_LIMITED_AREA_IN_BYTES	(320 * 1024)
-#elif defined(CONFIG_FOR_ALFA_NETWORK_HORNET_UB)
+#elif defined(CONFIG_FOR_ALFA_NETWORK_HORNET_UB) ||\
+      defined(CONFIG_FOR_DLINK_DIR601_B1)
 	#define WEBFAILSAFE_UPLOAD_LIMITED_AREA_IN_BYTES	(448 * 1024)
 #elif defined(CONFIG_FOR_BLACK_SWIFT_BOARD)
 	#define WEBFAILSAFE_UPLOAD_LIMITED_AREA_IN_BYTES	(256 * 1024)
@@ -526,6 +557,11 @@
 	#define CONFIG_QCA_PLL_IN_FLASH_BLOCK_OFFSET	0x20000
 	#define CONFIG_QCA_PLL_IN_FLASH_BLOCK_SIZE	0x10000
 
+#elif defined(CONFIG_FOR_DLINK_DIR601_B1)
+
+	#define CONFIG_QCA_PLL_IN_FLASH_BLOCK_OFFSET	0x20030
+	#define CONFIG_QCA_PLL_IN_FLASH_BLOCK_SIZE	0x10000
+
 #elif defined(CONFIG_FOR_DRAGINO_V2) ||\
       defined(CONFIG_FOR_MESH_POTATO_V2)
 
@@ -550,6 +586,7 @@
     !defined(CONFIG_FOR_BLACK_SWIFT_BOARD)      &&\
     !defined(CONFIG_FOR_CREATCOMM_D3321)        &&\
     !defined(CONFIG_FOR_DLINK_DIR505_A1)        &&\
+    !defined(CONFIG_FOR_DLINK_DIR601_B1)	&&\
     !defined(CONFIG_FOR_DRAGINO_V2)             &&\
     !defined(CONFIG_FOR_GL_AR150)               &&\
     !defined(CONFIG_FOR_GL_USB150)              &&\
