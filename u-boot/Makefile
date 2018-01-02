@@ -406,6 +406,13 @@ alfa-network_hornet-ub: ar933x_common
 	@$(call define_add,CONFIG_FOR_ALFA_NETWORK_HORNET_UB,1)
 	@$(MKCONFIG) -a ap121 mips mips ap121 ar7240 ar7240
 
+alfa-network_n5q: ar934x_common
+	@$(call config_init,ALFA Network N5Q,n5q,16,11,1,QCA_AR9344_SOC)
+	@$(call define_add,CONFIG_FOR_ALFA_NETWORK_N5Q,1)
+	@$(call define_add,CFG_ATHRS27_PHY,1)
+	@$(call define_add,CFG_AG7240_NMACS,2)
+	@$(MKCONFIG) -a db12x mips mips db12x ar7240 ar7240
+
 alfa-network_r36a: qca953x_common
 	@$(call config_init,ALFA Network R36A,r36a,16,2,1,QCA_QCA9531_SOC)
 	@$(call define_add,CONFIG_FOR_ALFA_NETWORK_R36A,1)

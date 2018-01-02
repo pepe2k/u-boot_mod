@@ -99,6 +99,7 @@ Currently supported devices:
   - TP-Link TL-WR1041N v2
 
 - **Atheros AR9344**:
+  - ALFA Network N5Q
   - GL.iNet GL-AR300
   - TP-Link TL-WDR3500 v1
   - TP-Link TL-WDR3600 v1
@@ -137,6 +138,7 @@ More information about supported devices:
 | [8devices Carambola 2](http://8devices.com/carambola-2) | AR9331 | 16 MiB | 64 MiB DDR2 | 256 KiB | R/W |
 | ALFA Network AP121F | AR9331 | 16 MiB | 64 MiB DDR1 | 192 KiB, LZMA | R/W |
 | [ALFA Network Hornet-UB](https://wiki.openwrt.org/toh/alfa.network/hornet-ub) | AR9331 | 8/16 MiB | 32/64 MiB DDR1 | 256 KiB | R/W |
+| ALFA Network N5Q | AR9344 | 16 MiB | 64 MiB DDR2 | 384 KiB, LZMA | R/W |
 | ALFA Network R36A | QCA9531 | 16 MiB | 64 MiB DDR2 | 384 KiB, LZMA | R/W |
 | ALFA Network Tube2H | AR9331 | 8/16 MiB | 32/64 MiB DDR1 | 256 KiB | R/W |
 | [Black Swift](http://www.black-swift.com) | AR9331 | 16 MiB | 64 MiB DDR2 | 128 KiB, LZMA | R/W |

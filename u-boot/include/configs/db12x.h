@@ -21,7 +21,14 @@
  * GPIO configuration
  * ==================
  */
-#if defined(CONFIG_FOR_ENGENIUS_ENS202EXT)
+#if defined(CONFIG_FOR_ALFA_NETWORK_N5Q)
+
+	#define CONFIG_QCA_GPIO_MASK_LED_ACT_L	GPIO0 | GPIO1  | GPIO2  |\
+						GPIO3 | GPIO12 | GPIO18 |\
+						GPIO19
+	#define CONFIG_QCA_GPIO_MASK_OUT_INIT_L	GPIO16 | GPIO17
+
+#elif defined(CONFIG_FOR_ENGENIUS_ENS202EXT)
 
 	#define CONFIG_QCA_GPIO_MASK_LED_ACT_L	GPIO0  | GPIO14 | GPIO16 |\
 						GPIO17 | GPIO18
@@ -85,7 +92,13 @@
  * Default bootargs
  * ================
  */
-#if defined(CONFIG_FOR_ENGENIUS_ENS202EXT)
+#if defined(CONFIG_FOR_ALFA_NETWORK_N5Q)
+
+	#define CONFIG_BOOTARGS	"console=ttyS0,115200 root=31:03 "\
+				"rootfstype=jffs2,squashfs init=/sbin/init "\
+				"mtdparts=ath-nor0:448k(u-boot),64k(art),1280k(kernel),14528k(rootfs),64k(config)"
+
+#elif defined(CONFIG_FOR_ENGENIUS_ENS202EXT)
 
 	#define CONFIG_BOOTARGS	"console=ttyS0,115200 root=31:04 "\
 				"rootfstype=squashfs init=/etc/preinit "\
@@ -125,7 +138,11 @@
  * Load address and boot command
  * =============================
  */
-#if defined(CONFIG_FOR_ENGENIUS_ENS202EXT)
+#if defined(CONFIG_FOR_ALFA_NETWORK_N5Q)
+
+	#define CFG_LOAD_ADDR		0x9F080000
+
+#elif defined(CONFIG_FOR_ENGENIUS_ENS202EXT)
 
 	#define CFG_LOAD_ADDR		0x9F0A0000
 
@@ -150,7 +167,12 @@
  * Environment configuration
  * =========================
  */
-#if defined(CONFIG_FOR_ENGENIUS_ENS202EXT)
+#if defined(CONFIG_FOR_ALFA_NETWORK_N5Q)
+
+	#define CFG_ENV_ADDR		0x9F060000
+	#define CFG_ENV_SIZE		0x10000
+
+#elif defined(CONFIG_FOR_ENGENIUS_ENS202EXT)
 
 	#define CFG_ENV_ADDR		0x9F040000
 	#define CFG_ENV_SIZE		0x10000
@@ -190,8 +212,14 @@
  * MAC address/es, model and WPS pin offsets in FLASH
  * ==================================================
  */
-#if defined(CONFIG_FOR_GLINET_GL_AR300) ||\
-    defined(CONFIG_FOR_YUNCORE_CPE870)
+#if defined(CONFIG_FOR_ALFA_NETWORK_N5Q)
+
+	#define OFFSET_MAC_DATA_BLOCK		0x70000
+	#define OFFSET_MAC_DATA_BLOCK_LENGTH	0x10000
+	#define OFFSET_MAC_ADDRESS		0x00000
+
+#elif defined(CONFIG_FOR_GLINET_GL_AR300) ||\
+      defined(CONFIG_FOR_YUNCORE_CPE870)
 
 	#define OFFSET_MAC_DATA_BLOCK		0xFF0000
 	#define OFFSET_MAC_DATA_BLOCK_LENGTH	0x010000
@@ -244,8 +272,18 @@
 
 #endif
 
+#if defined(CONFIG_FOR_ALFA_NETWORK_N5Q)
+
+	#define WEBFAILSAFE_UPLOAD_ART_ADDRESS	(CFG_FLASH_BASE + 0x70000)
+
+#endif
+
 /* Firmware size limit */
-#if defined(CONFIG_FOR_ENGENIUS_ENS202EXT)
+#if defined(CONFIG_FOR_ALFA_NETWORK_N5Q)
+
+	#define WEBFAILSAFE_UPLOAD_LIMITED_AREA_IN_BYTES	(512 * 1024)
+
+#elif defined(CONFIG_FOR_ENGENIUS_ENS202EXT)
 
 	#define WEBFAILSAFE_UPLOAD_LIMITED_AREA_IN_BYTES	(2752 * 1024)
 
@@ -270,7 +308,12 @@
  */
 #define CONFIG_QCA_PLL	QCA_PLL_PRESET_550_400_200
 
-#if defined(CONFIG_FOR_GLINET_GL_AR300)
+#if defined(CONFIG_FOR_ALFA_NETWORK_N5Q)
+
+	#define CONFIG_QCA_PLL_IN_FLASH_BLOCK_OFFSET	0x70000
+	#define CONFIG_QCA_PLL_IN_FLASH_BLOCK_SIZE	0x10000
+
+#elif defined(CONFIG_FOR_GLINET_GL_AR300)
 
 	#define CONFIG_QCA_PLL_IN_FLASH_BLOCK_OFFSET	0x40000
 	#define CONFIG_QCA_PLL_IN_FLASH_BLOCK_SIZE	0x10000
@@ -295,7 +338,8 @@
  * For upgrade scripts in environment
  * ==================================
  */
-#if !defined(CONFIG_FOR_ENGENIUS_ENS202EXT) &&\
+#if !defined(CONFIG_FOR_ALFA_NETWORK_N5Q)   &&\
+    !defined(CONFIG_FOR_ENGENIUS_ENS202EXT) &&\
     !defined(CONFIG_FOR_GLINET_GL_AR300)    &&\
     !defined(CONFIG_FOR_YUNCORE_CPE870)
 
