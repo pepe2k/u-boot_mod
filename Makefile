@@ -271,6 +271,7 @@ dragino_ms14:
 
 engenius_ens202ext \
 gl-inet_gl-ar300 \
+gl-inet_gl-ar300m-lite \
 gl-inet_gl-ar750 \
 p2w_cpe505n \
 p2w_r602n \

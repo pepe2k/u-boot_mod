@@ -38,6 +38,12 @@
 
 	#define CONFIG_QCA_GPIO_MASK_LED_ACT_L	GPIO11
 
+#elif defined(CONFIG_FOR_GLINET_GL_AR300M_LITE)
+
+	#define CONFIG_QCA_GPIO_MASK_LED_ACT_L	GPIO13 | GPIO14
+	#define CONFIG_QCA_GPIO_MASK_IN		GPIO0 | GPIO1 | GPIO16 | GPIO17
+	#define CONFIG_QCA_GPIO_MASK_OUT_INIT_L	GPIO12
+
 #elif defined(CONFIG_FOR_GLINET_GL_AR750)
 
 	#define CONFIG_QCA_GPIO_MASK_LED_ACT_L	GPIO13 | GPIO14
@@ -170,6 +176,12 @@
 				"rootfstype=jffs2 init=/sbin/init "\
 				"mtdparts=ath-nor0:64k(u-boot),64k(art),1536k(uImage),6464k(rootfs),64k(mib0)"
 
+#elif defined(CONFIG_FOR_GLINET_GL_AR300M_LITE)
+
+	#define CONFIG_BOOTARGS	"console=ttyS0,115200 root=31:02 "\
+				"rootfstype=squashfs init=/sbin/init "\
+				"mtdparts=spi0.0:256k(u-boot)ro,64k(u-boot-env),16000k(firmware),64k(art)ro"
+
 #elif defined(CONFIG_FOR_GLINET_GL_AR750)
 
 	#define CONFIG_BOOTARGS	"console=ttyS0,115200 root=31:03 "\
@@ -252,18 +264,19 @@
 
 	#define CFG_LOAD_ADDR	0x9F020000
 
-#elif defined(CONFIG_FOR_GLINET_GL_AR750)
-
-	#define CFG_LOAD_ADDR	0x9F060000
-
-#elif defined(CONFIG_FOR_P2W_CPE505N)    ||\
-      defined(CONFIG_FOR_P2W_R602N)      ||\
-      defined(CONFIG_FOR_WALLYS_DR531)   ||\
-      defined(CONFIG_FOR_YUNCORE_AP90Q)  ||\
-      defined(CONFIG_FOR_YUNCORE_CPE830) ||\
+#elif defined(CONFIG_FOR_GLINET_GL_AR300M_LITE) ||\
+      defined(CONFIG_FOR_P2W_CPE505N)           ||\
+      defined(CONFIG_FOR_P2W_R602N)             ||\
+      defined(CONFIG_FOR_WALLYS_DR531)          ||\
+      defined(CONFIG_FOR_YUNCORE_AP90Q)         ||\
+      defined(CONFIG_FOR_YUNCORE_CPE830)        ||\
       defined(CONFIG_FOR_ZBTLINK_ZBT_WE1526)
 
 	#define CFG_LOAD_ADDR	0x9F050000
+
+#elif defined(CONFIG_FOR_GLINET_GL_AR750)
+
+	#define CFG_LOAD_ADDR	0x9F060000
 
 #endif
 
@@ -295,7 +308,8 @@
 	#define CFG_ENV_SIZE		0x7C00
 	#define CFG_ENV_SECT_SIZE	0x10000
 
-#elif defined(CONFIG_FOR_GLINET_GL_AR750)
+#elif defined(CONFIG_FOR_GLINET_GL_AR300M_LITE) ||\
+      defined(CONFIG_FOR_GLINET_GL_AR750)
 
 	#define CFG_ENV_ADDR		0x9F040000
 	#define CFG_ENV_SIZE		0x10000
@@ -360,21 +374,22 @@
 	#define OFFSET_MAC_DATA_BLOCK_LENGTH	0x10000
 	#define OFFSET_MAC_ADDRESS		0x00000
 
-#elif defined(CONFIG_FOR_GLINET_GL_AR750)
-
-	#define OFFSET_MAC_DATA_BLOCK		0x50000
-	#define OFFSET_MAC_DATA_BLOCK_LENGTH	0x10000
-	#define OFFSET_MAC_ADDRESS		0x00000
-
-#elif defined(CONFIG_FOR_P2W_CPE505N)    ||\
-      defined(CONFIG_FOR_P2W_R602N)      ||\
-      defined(CONFIG_FOR_YUNCORE_AP90Q)  ||\
-      defined(CONFIG_FOR_YUNCORE_CPE830) ||\
+#elif defined(CONFIG_FOR_GLINET_GL_AR300M_LITE) ||\
+      defined(CONFIG_FOR_P2W_CPE505N)           ||\
+      defined(CONFIG_FOR_P2W_R602N)             ||\
+      defined(CONFIG_FOR_YUNCORE_AP90Q)         ||\
+      defined(CONFIG_FOR_YUNCORE_CPE830)        ||\
       defined(CONFIG_FOR_ZBTLINK_ZBT_WE1526)
 
 	#define OFFSET_MAC_DATA_BLOCK		0xFF0000
 	#define OFFSET_MAC_DATA_BLOCK_LENGTH	0x010000
 	#define OFFSET_MAC_ADDRESS		0x000000
+
+#elif defined(CONFIG_FOR_GLINET_GL_AR750)
+
+	#define OFFSET_MAC_DATA_BLOCK		0x50000
+	#define OFFSET_MAC_DATA_BLOCK_LENGTH	0x10000
+	#define OFFSET_MAC_ADDRESS		0x00000
 
 #elif defined(CONFIG_FOR_TPLINK_MR22U_V1)     ||\
       defined(CONFIG_FOR_TPLINK_MR3420_V3)    ||\
@@ -475,12 +490,13 @@
 
 	#define WEBFAILSAFE_UPLOAD_LIMITED_AREA_IN_BYTES	(192 * 1024)
 
-#elif defined(CONFIG_FOR_GLINET_GL_AR750) ||\
-      defined(CONFIG_FOR_P2W_CPE505N)     ||\
-      defined(CONFIG_FOR_P2W_R602N)       ||\
-      defined(CONFIG_FOR_WALLYS_DR531)    ||\
-      defined(CONFIG_FOR_YUNCORE_AP90Q)   ||\
-      defined(CONFIG_FOR_YUNCORE_CPE830)  ||\
+#elif defined(CONFIG_FOR_GLINET_GL_AR300M_LITE) ||\
+      defined(CONFIG_FOR_GLINET_GL_AR750)       ||\
+      defined(CONFIG_FOR_P2W_CPE505N)           ||\
+      defined(CONFIG_FOR_P2W_R602N)             ||\
+      defined(CONFIG_FOR_WALLYS_DR531)          ||\
+      defined(CONFIG_FOR_YUNCORE_AP90Q)         ||\
+      defined(CONFIG_FOR_YUNCORE_CPE830)        ||\
       defined(CONFIG_FOR_ZBTLINK_ZBT_WE1526)
 
 	#define WEBFAILSAFE_UPLOAD_LIMITED_AREA_IN_BYTES	(384 * 1024)
@@ -535,6 +551,11 @@
 	#define CONFIG_QCA_PLL_IN_FLASH_BLOCK_OFFSET	0x10000
 	#define CONFIG_QCA_PLL_IN_FLASH_BLOCK_SIZE	0x10000
 
+#elif defined(CONFIG_FOR_GLINET_GL_AR300M_LITE)
+
+	#define CONFIG_QCA_PLL_IN_FLASH_BLOCK_OFFSET	0xFF0000
+	#define CONFIG_QCA_PLL_IN_FLASH_BLOCK_SIZE	0x010000
+
 #elif defined(CONFIG_FOR_GLINET_GL_AR750)
 
 	#define CONFIG_QCA_PLL_IN_FLASH_BLOCK_OFFSET	0x50000
@@ -561,16 +582,17 @@
  * For upgrade scripts in environment
  * ==================================
  */
-#if !defined(CONFIG_FOR_COMFAST_CF_E314N)    &&\
-    !defined(CONFIG_FOR_COMFAST_CF_E320N_V2) &&\
-    !defined(CONFIG_FOR_COMFAST_CF_E520N)    &&\
-    !defined(CONFIG_FOR_COMFAST_CF_E530N)    &&\
-    !defined(CONFIG_FOR_GLINET_GL_AR750)     &&\
-    !defined(CONFIG_FOR_P2W_CPE505N)         &&\
-    !defined(CONFIG_FOR_P2W_R602N)           &&\
-    !defined(CONFIG_FOR_WALLYS_DR531)        &&\
-    !defined(CONFIG_FOR_YUNCORE_AP90Q)       &&\
-    !defined(CONFIG_FOR_YUNCORE_CPE830)      &&\
+#if !defined(CONFIG_FOR_COMFAST_CF_E314N)      &&\
+    !defined(CONFIG_FOR_COMFAST_CF_E320N_V2)   &&\
+    !defined(CONFIG_FOR_COMFAST_CF_E520N)      &&\
+    !defined(CONFIG_FOR_COMFAST_CF_E530N)      &&\
+    !defined(CONFIG_FOR_GLINET_GL_AR300M_LITE) &&\
+    !defined(CONFIG_FOR_GLINET_GL_AR750)       &&\
+    !defined(CONFIG_FOR_P2W_CPE505N)           &&\
+    !defined(CONFIG_FOR_P2W_R602N)             &&\
+    !defined(CONFIG_FOR_WALLYS_DR531)          &&\
+    !defined(CONFIG_FOR_YUNCORE_AP90Q)         &&\
+    !defined(CONFIG_FOR_YUNCORE_CPE830)        &&\
     !defined(CONFIG_FOR_ZBTLINK_ZBT_WE1526)
 
 	#define CONFIG_UPG_UBOOT_SIZE_BACKUP_HEX	0x20000
