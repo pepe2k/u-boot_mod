@@ -486,6 +486,14 @@ gl-inet_gl-ar300: ar934x_common
 	@$(call define_add,CFG_AG7240_NMACS,2)
 	@$(MKCONFIG) -a db12x mips mips db12x ar7240 ar7240
 
+gl-inet_gl-ar750: qca953x_common
+	@$(call config_init,GL.iNet GL-AR750,gl-ar750,16,3,1,QCA_QCA9531_SOC)
+	@$(call define_add,CONFIG_FOR_GLINET_GL_AR750,1)
+	@$(call define_add,CFG_ATHRS27_PHY,1)
+	@$(call define_add,CFG_ATH_GMAC_NMACS,2)
+	@$(call define_add,CONFIG_PCI,1)
+	@$(MKCONFIG) -a ap143 mips mips ap143 ar7240 ar7240
+
 gl-inet_gl-usb150: ar933x_common
 	@$(call config_init,GL.iNet GL-USB150,gl-usb150,16,11,,QCA_AR9331_SOC)
 	@$(call define_add,CONFIG_FOR_GLINET_GL_USB150,1)
