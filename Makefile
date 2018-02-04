@@ -281,6 +281,8 @@ p2w_cpe505n \
 p2w_r602n \
 yuncore_ap90q \
 yuncore_cpe830 \
+whqx_e600g \
+whqx_e600gac \
 zbtlink_zbt-we1526:
 	@$(call build,256,1,ETH_CONFIG=_s27)
 
