@@ -125,7 +125,7 @@ Currently supported devices:
   - TP-Link TL-WR842N/D v3
   - TP-Link TL-WR902AC v1
   - Wallys DR531
-  - WHQX E600G/AC
+  - WHQX E600G/AC v2
   - YunCore AP90Q
   - YunCore CPE830
   - Zbtlink ZBT-WE1526
@@ -189,7 +189,7 @@ More information about supported devices:
 | TP-Link TL-WR902AC v1 | QCA9531 | 8 MiB | 64 MiB DDR2 | 128 KiB, LZMA | RO |
 | Village Telco Mesh Potato 2 | AR9331 | 16 MiB | 64 MiB DDR1 | 192 KiB | R/W |
 | Wallys DR531 | QCA9531 | 8 MiB | 64 MiB DDR2 | 192 KiB | R/W |
-| WHQX E600G/AC | QCA9531 | 8/16 MiB | 64/128 MiB DDR2 | 256 KiB | R/W |
+| WHQX E600G/AC v2 | QCA9531 | 8/16 MiB | 64/128 MiB DDR2 | 256 KiB | R/W |
 | YunCore AP90Q | QCA9531 | 16 MiB | 128 MiB DDR2 | 256 KiB | R/W |
 | YunCore CPE830 | QCA9531 | 16 MiB | 64 MiB DDR2 | 256 KiB | R/W |
 | YunCore CPE870 | AR9341 | 8 MiB | 64 MiB DDR2 | 64 KiB, LZMA | R/W |
