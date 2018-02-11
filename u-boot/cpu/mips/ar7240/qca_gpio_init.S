@@ -144,11 +144,13 @@ lowlevel_gpio_init:
  * 1. AR934x
  * 2. QCA953x
  * 3. QCA955x
+ * 4. QCA956x
  * =========================
  */
 #if (SOC_TYPE & QCA_AR934X_SOC)  ||\
     (SOC_TYPE & QCA_QCA953X_SOC) ||\
-    (SOC_TYPE & QCA_QCA955X_SOC)
+    (SOC_TYPE & QCA_QCA955X_SOC) ||\
+    (SOC_TYPE & QCA_QCA956X_SOC)
 
 	/* Sanity check for JTAG pins (GPIO 0~3) */
 	#if defined(CONFIG_SKIP_LOWLEVEL_INIT) ||\
@@ -562,7 +564,7 @@ lowlevel_gpio_init:
 		* CONFIG_QCA_GPIO_MASK_LSUART_TX
 		*/
 
-#endif /* QCA_AR934X_SOC || QCA_QCA953X_SOC || QCA_QCA955X_SOC */
+#endif /* QCA_AR934X_SOC || QCA_QCA953X_SOC || QCA_QCA955X_SOC || QCA_QCA956X_SOC */
 
 /*
  * ===============================
