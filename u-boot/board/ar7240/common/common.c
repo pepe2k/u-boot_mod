@@ -218,6 +218,9 @@ void print_board_info(void)
 	else
 		puts("\n");
 
+	/* UART real baudrate */
+	printf("%" ALIGN_SIZE "s %u bps\n", "UART:", gd->baudrate);
+
 	/* System clocks */
 	printf("%" ALIGN_SIZE "s CPU/RAM/AHB/SPI/REF\n", "CLOCKS:");
 
