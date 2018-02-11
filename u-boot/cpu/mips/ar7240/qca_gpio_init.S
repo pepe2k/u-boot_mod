@@ -37,6 +37,11 @@
  * 5. CONFIG_QCA_GPIO_MASK_LED_ACT_H,
  *    CONFIG_QCA_GPIO_MASK_LED_ACT_L
  *    - bitmask for GPIO driven LEDs, used only in leds_on/leds_off functions
+ * 6. CONFIG_QCA_GPIO_MDC,
+ *    CONFIG_QCA_GPIO_MDIO
+ *    - GPIO number for PHY MDC and MDIO input and outputs.
+ *    CONFIG_QCA_MDC_MDIO_AS_GPIO
+ *    - configure MDC and MDIO as GPIO, for using with miiphybb
  *
  * TODO:
  * 1. Allow to select LS, HS, both or none UART type
@@ -194,6 +199,16 @@ lowlevel_gpio_init:
 		    (CONFIG_QCA_GPIO_LSUART_RX & QCA_GPIO_JTAG_MASK)
 			#error "Cannot use JTAG pin for LSUART RX!"
 		#endif
+
+		#if defined(CONFIG_QCA_GPIO_MDC) &&\
+		    (CONFIG_QCA_GPIO_MDC & QCA_GPIO_JTAG_MASK)
+			#error "Cannot use JTAG pin for MDC!"
+		#endif
+
+		#if defined(CONFIG_QCA_GPIO_MDIO) &&\
+		    (CONFIG_QCA_GPIO_MDIO & QCA_GPIO_JTAG_MASK)
+			#error "Cannot use JTAG pin for MDIO!"
+		#endif
 	#else
 		#if defined(_GPIO_MASK_IN)
 			#define __GPIO_MASK_IN	_GPIO_MASK_IN
@@ -265,6 +280,50 @@ lowlevel_gpio_init:
 		#error "LSUART TX and RX GPIO numbers cannot be the same!"
 	#endif
 
+	/* Sanity MDC/MDIO checks */
+	#if (defined(CONFIG_QCA_GPIO_MDC) && !defined(CONFIG_QCA_GPIO_MDIO)) ||\
+		(!defined(CONFIG_QCA_GPIO_MDC) && defined(CONFIG_QCA_GPIO_MDIO))
+		#error "None or both CONFIG_QCA_GPIO_MDC and CONFIG_QCA_GPIO_MDIO must be defined!"
+	#endif
+
+	#ifdef CONFIG_QCA_GPIO_MDC
+
+		#define CONFIG_QCA_GPIO_MASK_MDC	\
+			(1 << CONFIG_QCA_GPIO_MDC)
+
+		#define CONFIG_QCA_GPIO_MASK_MDIO	\
+			(1 << CONFIG_QCA_GPIO_MDIO)
+
+		#define CONFIG_QCA_GPIO_MDC_FUNCX_SHIFT	\
+			(8 * (CONFIG_QCA_GPIO_MDC -\
+			      ((CONFIG_QCA_GPIO_MDC / 4) * 4)))
+
+		#define CONFIG_QCA_GPIO_MDIO_FUNCX_SHIFT	\
+			(8 * (CONFIG_QCA_GPIO_MDIO -\
+			      ((CONFIG_QCA_GPIO_MDIO / 4) * 4)))
+
+		/* Use MDC/MDIO as GPIO */
+		#if CONFIG_QCA_MDC_MDIO_AS_GPIO
+			#define CONFIG_QCA_GPIO_MDC_FUNCX_VAL	QCA_GPIO_OUT_MUX_GPIO_VAL
+			#define CONFIG_QCA_GPIO_MDIO_FUNCX_VAL	QCA_GPIO_OUT_MUX_GPIO_VAL
+		#else
+			#define CONFIG_QCA_GPIO_MDC_FUNCX_VAL	QCA_GPIO_OUT_MUX_GE1_MII_MDC_VAL
+			#define CONFIG_QCA_GPIO_MDIO_FUNCX_VAL	QCA_GPIO_OUT_MUX_GE1_MII_MDO_VAL
+		#endif
+
+		#if (CONFIG_QCA_GPIO_MDC >= QCA_GPIO_COUNT) ||\
+		    (CONFIG_QCA_GPIO_MDIO >= QCA_GPIO_COUNT)
+			#error "MDC/MDIO GPIO numbers are incorrect!"
+		#endif
+
+		#if (CONFIG_QCA_GPIO_MDC == CONFIG_QCA_GPIO_MDIO)
+			#error "MDC and MDIO GPIO numbers cannot be the same!"
+		#endif
+	#else
+		#define CONFIG_QCA_GPIO_MASK_MDC 0
+		#define CONFIG_QCA_GPIO_MASK_MDIO 0
+	#endif
+
 	/*
 	 * Do not allow to use LSUART TX/RX lines
 	 * as regular GPIO inputs/outputs at the same time
@@ -315,15 +374,15 @@ lowlevel_gpio_init:
 	lw  t9, 0(t8)
 	#if defined(__GPIO_MASK_OUT)
 		#if (SOC_TYPE & QCA_QCA955X_SOC)
-	or  t9, t9, (__GPIO_MASK_OUT | CONFIG_QCA_GPIO_MASK_LSUART_TX)
+	or  t9, t9, (__GPIO_MASK_OUT | CONFIG_QCA_GPIO_MASK_LSUART_TX | CONFIG_QCA_GPIO_MASK_MDC | CONFIG_QCA_GPIO_MASK_MDIO)
 		#else
-	and t9, t9, ~(__GPIO_MASK_OUT | CONFIG_QCA_GPIO_MASK_LSUART_TX)
+	and t9, t9, ~(__GPIO_MASK_OUT | CONFIG_QCA_GPIO_MASK_LSUART_TX | CONFIG_QCA_GPIO_MASK_MDC | CONFIG_QCA_GPIO_MASK_MDIO)
 		#endif
 	#else
 		#if (SOC_TYPE & QCA_QCA955X_SOC)
-	or  t9, t9, CONFIG_QCA_GPIO_MASK_LSUART_TX
+	or  t9, t9, (CONFIG_QCA_GPIO_MASK_LSUART_TX | CONFIG_QCA_GPIO_MASK_MDC | CONFIG_QCA_GPIO_MASK_MDIO)
 		#else
-	and t9, t9, ~CONFIG_QCA_GPIO_MASK_LSUART_TX
+	and t9, t9, ~(CONFIG_QCA_GPIO_MASK_LSUART_TX | CONFIG_QCA_GPIO_MASK_MDC | CONFIG_QCA_GPIO_MASK_MDIO)
 		#endif
 	#endif
 	#if defined(__GPIO_MASK_IN)
@@ -349,6 +408,14 @@ lowlevel_gpio_init:
 		     QCA_GPIO_IN_EN0_LSUART_RXD_SHIFT)
 	sw  t9, 0(t8)
 
+	#ifdef CONFIG_QCA_GPIO_MDC
+	li  t8, QCA_GPIO_IN_EN3_REG
+	lw  t9, 0(t8)
+	and t9, t9, ~(QCA_GPIO_IN_EN3_GE1_MII_MDI_MASK)
+	or  t9, t9, (CONFIG_QCA_GPIO_MDIO <<\
+		     QCA_GPIO_IN_EN3_GE1_MII_MDI_SHIFT)
+	sw  t9, 0(t8)
+	#endif
 	/*
 	 * TODO: what with default LSUART TX line?
 	 *
@@ -376,12 +443,16 @@ lowlevel_gpio_init:
 	 * - 20 ~ 23 -> GPIO_OUT_FUNCTION5 (mask: 0xF00000)
 	 */
 	#if defined(__GPIO_MASK_OUT) || defined(__GPIO_MASK_IN) ||\
-	    defined(CONFIG_QCA_GPIO_MASK_LSUART_TX)
+	    defined(CONFIG_QCA_GPIO_MASK_LSUART_TX) ||\
+	    defined(CONFIG_QCA_GPIO_MASK_MDC) ||\
+	    defined(CONFIG_QCA_GPIO_MASK_MDIO)
 
 		/* GPIO_OUT_FUNCTION0 (GPIO 0~3) */
 		#if (__GPIO_MASK_OUT & 0x00000F) ||\
 		    (__GPIO_MASK_IN  & 0x00000F) ||\
-		    (CONFIG_QCA_GPIO_MASK_LSUART_TX & 0x00000F)
+		    (CONFIG_QCA_GPIO_MASK_LSUART_TX & 0x00000F) ||\
+		    (CONFIG_QCA_GPIO_MASK_MDC  && 0x00000F) ||\
+		    (CONFIG_QCA_GPIO_MASK_MDIO && 0x00000F)
 	li  t8, QCA_GPIO_OUT_FUNC0_REG
 	lw  t9, 0(t8)
 			#if (__GPIO_MASK_OUT & GPIO0) ||\
@@ -405,13 +476,25 @@ lowlevel_gpio_init:
 	or  t9, t9, (QCA_GPIO_OUT_MUX_LSUART_TXD_VAL <<\
 		     CONFIG_QCA_GPIO_LSUART_TX_FUNCX_SHIFT)
 			#endif
+			#if (CONFIG_QCA_GPIO_MASK_MDC & 0x00000F)
+	and t9, t9, ~(0xFF << CONFIG_QCA_GPIO_MDC_FUNCX_SHIFT)
+	or  t9, t9, (CONFIG_QCA_GPIO_MDC_FUNCX_VAL <<\
+		     CONFIG_QCA_GPIO_MDC_FUNCX_SHIFT)
+			#endif
+			#if (CONFIG_QCA_GPIO_MASK_MDIO & 0x00000F)
+	and t9, t9, ~(0xFF << CONFIG_QCA_GPIO_MDIO_FUNCX_SHIFT)
+	or  t9, t9, (CONFIG_QCA_GPIO_MDIO_FUNCX_VAL <<\
+		     CONFIG_QCA_GPIO_MDIO_FUNCX_SHIFT)
+			#endif
 	sw  t9, 0(t8)
 		#endif
 
 		/* GPIO_OUT_FUNCTION1 (GPIO 4~7) */
 		#if (__GPIO_MASK_OUT & 0x0000F0) ||\
 		    (__GPIO_MASK_IN  & 0x0000F0) ||\
-		    (CONFIG_QCA_GPIO_MASK_LSUART_TX & 0x0000F0)
+		    (CONFIG_QCA_GPIO_MASK_LSUART_TX & 0x0000F0) ||\
+		    (CONFIG_QCA_GPIO_MASK_MDC  && 0x0000F0) ||\
+		    (CONFIG_QCA_GPIO_MASK_MDIO && 0x0000F0)
 	li  t8, QCA_GPIO_OUT_FUNC1_REG
 	lw  t9, 0(t8)
 			#if (__GPIO_MASK_OUT & GPIO4) ||\
@@ -435,13 +518,25 @@ lowlevel_gpio_init:
 	or  t9, t9, (QCA_GPIO_OUT_MUX_LSUART_TXD_VAL <<\
 		     CONFIG_QCA_GPIO_LSUART_TX_FUNCX_SHIFT)
 			#endif
+			#if (CONFIG_QCA_GPIO_MASK_MDC & 0x0000F0)
+	and t9, t9, ~(0xFF << CONFIG_QCA_GPIO_MDC_FUNCX_SHIFT)
+	or  t9, t9, (CONFIG_QCA_GPIO_MDC_FUNCX_VAL <<\
+		     CONFIG_QCA_GPIO_MDC_FUNCX_SHIFT)
+			#endif
+			#if (CONFIG_QCA_GPIO_MASK_MDIO & 0x0000F0)
+	and t9, t9, ~(0xFF << CONFIG_QCA_GPIO_MDIO_FUNCX_SHIFT)
+	or  t9, t9, (CONFIG_QCA_GPIO_MDIO_FUNCX_VAL <<\
+		     CONFIG_QCA_GPIO_MDIO_FUNCX_SHIFT)
+			#endif
 	sw  t9, 0(t8)
 		#endif
 
 		/* GPIO_OUT_FUNCTION2 (GPIO 8~11) */
 		#if (__GPIO_MASK_OUT & 0x000F00) ||\
 		    (__GPIO_MASK_IN  & 0x000F00) ||\
-		    (CONFIG_QCA_GPIO_MASK_LSUART_TX & 0x000F00)
+		    (CONFIG_QCA_GPIO_MASK_LSUART_TX & 0x000F00) ||\
+		    (CONFIG_QCA_GPIO_MASK_MDC  && 0x000F00) ||\
+		    (CONFIG_QCA_GPIO_MASK_MDIO && 0x000F00)
 	li  t8, QCA_GPIO_OUT_FUNC2_REG
 	lw  t9, 0(t8)
 			#if (__GPIO_MASK_OUT & GPIO8) ||\
@@ -465,13 +560,25 @@ lowlevel_gpio_init:
 	or  t9, t9, (QCA_GPIO_OUT_MUX_LSUART_TXD_VAL <<\
 		     CONFIG_QCA_GPIO_LSUART_TX_FUNCX_SHIFT)
 			#endif
+			#if (CONFIG_QCA_GPIO_MASK_MDC & 0x000F00)
+	and t9, t9, ~(0xFF << CONFIG_QCA_GPIO_MDC_FUNCX_SHIFT)
+	or  t9, t9, (CONFIG_QCA_GPIO_MDC_FUNCX_VAL <<\
+		     CONFIG_QCA_GPIO_MDC_FUNCX_SHIFT)
+			#endif
+			#if (CONFIG_QCA_GPIO_MASK_MDIO & 0x000F00)
+	and t9, t9, ~(0xFF << CONFIG_QCA_GPIO_MDIO_FUNCX_SHIFT)
+	or  t9, t9, (CONFIG_QCA_GPIO_MDIO_FUNCX_VAL <<\
+		     CONFIG_QCA_GPIO_MDIO_FUNCX_SHIFT)
+			#endif
 	sw  t9, 0(t8)
 		#endif
 
 		/* GPIO_OUT_FUNCTION3 (GPIO 12~15) */
 		#if (__GPIO_MASK_OUT & 0x00F000) ||\
 		    (__GPIO_MASK_IN  & 0x00F000) ||\
-		    (CONFIG_QCA_GPIO_MASK_LSUART_TX & 0x00F000)
+		    (CONFIG_QCA_GPIO_MASK_LSUART_TX & 0x00F000) ||\
+		    (CONFIG_QCA_GPIO_MASK_MDC  && 0x00F000) ||\
+		    (CONFIG_QCA_GPIO_MASK_MDIO && 0x00F000)
 	li  t8, QCA_GPIO_OUT_FUNC3_REG
 	lw  t9, 0(t8)
 			#if (__GPIO_MASK_OUT & GPIO12) ||\
@@ -495,13 +602,25 @@ lowlevel_gpio_init:
 	or  t9, t9, (QCA_GPIO_OUT_MUX_LSUART_TXD_VAL <<\
 		     CONFIG_QCA_GPIO_LSUART_TX_FUNCX_SHIFT)
 			#endif
+			#if (CONFIG_QCA_GPIO_MASK_MDC & 0x00F000)
+	and t9, t9, ~(0xFF << CONFIG_QCA_GPIO_MDC_FUNCX_SHIFT)
+	or  t9, t9, (CONFIG_QCA_GPIO_MDC_FUNCX_VAL <<\
+		     CONFIG_QCA_GPIO_MDC_FUNCX_SHIFT)
+			#endif
+			#if (CONFIG_QCA_GPIO_MASK_MDIO & 0x00F000)
+	and t9, t9, ~(0xFF << CONFIG_QCA_GPIO_MDIO_FUNCX_SHIFT)
+	or  t9, t9, (CONFIG_QCA_GPIO_MDIO_FUNCX_VAL <<\
+		     CONFIG_QCA_GPIO_MDIO_FUNCX_SHIFT)
+			#endif
 	sw  t9, 0(t8)
 		#endif
 
 		/* GPIO_OUT_FUNCTION4 (GPIO 16~19) */
 		#if (__GPIO_MASK_OUT & 0x0F0000) ||\
 		    (__GPIO_MASK_IN  & 0x0F0000) ||\
-		    (CONFIG_QCA_GPIO_MASK_LSUART_TX & 0x0F0000)
+		    (CONFIG_QCA_GPIO_MASK_LSUART_TX & 0x0F0000) ||\
+		    (CONFIG_QCA_GPIO_MASK_MDC  && 0x0F0000) ||\
+		    (CONFIG_QCA_GPIO_MASK_MDIO && 0x0F0000)
 	li  t8, QCA_GPIO_OUT_FUNC4_REG
 	lw  t9, 0(t8)
 			#if (__GPIO_MASK_OUT & GPIO16) ||\
@@ -525,13 +644,25 @@ lowlevel_gpio_init:
 	or  t9, t9, (QCA_GPIO_OUT_MUX_LSUART_TXD_VAL <<\
 		     CONFIG_QCA_GPIO_LSUART_TX_FUNCX_SHIFT)
 			#endif
+			#if (CONFIG_QCA_GPIO_MASK_MDC & 0x0F0000)
+	and t9, t9, ~(0xFF << CONFIG_QCA_GPIO_MDC_FUNCX_SHIFT)
+	or  t9, t9, (CONFIG_QCA_GPIO_MDC_FUNCX_VAL <<\
+		     CONFIG_QCA_GPIO_MDC_FUNCX_SHIFT)
+			#endif
+			#if (CONFIG_QCA_GPIO_MASK_MDIO & 0x0F0000)
+	and t9, t9, ~(0xFF << CONFIG_QCA_GPIO_MDIO_FUNCX_SHIFT)
+	or  t9, t9, (CONFIG_QCA_GPIO_MDIO_FUNCX_VAL <<\
+		     CONFIG_QCA_GPIO_MDIO_FUNCX_SHIFT)
+			#endif
 	sw  t9, 0(t8)
 		#endif
 
 		/* GPIO_OUT_FUNCTION5 (GPIO 20~23) */
 		#if (__GPIO_MASK_OUT & 0xF00000) ||\
 		    (__GPIO_MASK_IN  & 0xF00000) ||\
-		    (CONFIG_QCA_GPIO_MASK_LSUART_TX & 0xF00000)
+		    (CONFIG_QCA_GPIO_MASK_LSUART_TX & 0xF00000) ||\
+		    (CONFIG_QCA_GPIO_MASK_MDC  && 0xF00000) ||\
+		    (CONFIG_QCA_GPIO_MASK_MDIO && 0xF00000)
 	li  t8, QCA_GPIO_OUT_FUNC5_REG
 	lw  t9, 0(t8)
 			#if (__GPIO_MASK_OUT & GPIO20) ||\
@@ -554,6 +685,16 @@ lowlevel_gpio_init:
 	and t9, t9, ~(0xFF << CONFIG_QCA_GPIO_LSUART_TX_FUNCX_SHIFT)
 	or  t9, t9, (QCA_GPIO_OUT_MUX_LSUART_TXD_VAL <<\
 		     CONFIG_QCA_GPIO_LSUART_TX_FUNCX_SHIFT)
+			#endif
+			#if (CONFIG_QCA_GPIO_MASK_MDC & 0xF00000)
+	and t9, t9, ~(0xFF << CONFIG_QCA_GPIO_MDC_FUNCX_SHIFT)
+	or  t9, t9, (CONFIG_QCA_GPIO_MDC_FUNCX_VAL <<\
+		     CONFIG_QCA_GPIO_MDC_FUNCX_SHIFT)
+			#endif
+			#if (CONFIG_QCA_GPIO_MASK_MDIO & 0xF00000)
+	and t9, t9, ~(0xFF << CONFIG_QCA_GPIO_MDIO_FUNCX_SHIFT)
+	or  t9, t9, (CONFIG_QCA_GPIO_MDIO_FUNCX_VAL <<\
+		     CONFIG_QCA_GPIO_MDIO_FUNCX_SHIFT)
 			#endif
 	sw  t9, 0(t8)
 		#endif
