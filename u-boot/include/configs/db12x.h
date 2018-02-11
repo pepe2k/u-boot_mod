@@ -85,6 +85,12 @@
 						GPIO3 | GPIO13 | GPIO19 |\
 						GPIO20
 
+#elif defined(CONFIG_FOR_ZTE_W812N_V2)
+
+	#define CONFIG_QCA_GPIO_MASK_LED_ACT_L	GPIO11 | GPIO13 | GPIO14 |\
+						GPIO15 
+	#define CONFIG_QCA_GPIO_MASK_IN		GPIO12
+	
 #endif
 
 /*
@@ -104,7 +110,8 @@
 				"rootfstype=squashfs init=/etc/preinit "\
 				"mtdparts=spi0.0:256k(u-boot)ro,64k(u-boot-env),320k(custom),1536k(kernel),12096k(rootfs),2048k(failsafe),64k(art)ro"
 
-#elif defined(CONFIG_FOR_GLINET_GL_AR300)
+#elif defined(CONFIG_FOR_GLINET_GL_AR300) ||\
+      defined(CONFIG_FOR_ZTE_W812N_V2)
 
 	#define CONFIG_BOOTARGS	"console=ttyATH0,115200 root=31:02 "\
 				"rootfstype=squashfs init=/sbin/init "\
@@ -146,7 +153,8 @@
 
 	#define CFG_LOAD_ADDR		0x9F0A0000
 
-#elif defined(CONFIG_FOR_GLINET_GL_AR300)
+#elif defined(CONFIG_FOR_GLINET_GL_AR300) ||\
+      defined(CONFIG_FOR_ZTE_W812N_V2)
 
 	#define CFG_LOAD_ADDR		0x9F050000
 
@@ -178,7 +186,8 @@
 	#define CFG_ENV_SIZE		0x10000
 	#define CFG_ENV_SECT_SIZE	0x10000
 
-#elif defined(CONFIG_FOR_GLINET_GL_AR300)
+#elif defined(CONFIG_FOR_GLINET_GL_AR300) ||\
+      defined(CONFIG_FOR_ZTE_W812N_V2)
 
 	#define CFG_ENV_ADDR		0x9F040000
 	#define CFG_ENV_SIZE		0xFC00
@@ -219,7 +228,8 @@
 	#define OFFSET_MAC_ADDRESS		0x00000
 
 #elif defined(CONFIG_FOR_GLINET_GL_AR300) ||\
-      defined(CONFIG_FOR_YUNCORE_CPE870)
+      defined(CONFIG_FOR_YUNCORE_CPE870) ||\
+      defined(CONFIG_FOR_ZTE_W812N_V2)
 
 	#define OFFSET_MAC_DATA_BLOCK		0xFF0000
 	#define OFFSET_MAC_DATA_BLOCK_LENGTH	0x010000
@@ -287,7 +297,8 @@
 
 	#define WEBFAILSAFE_UPLOAD_LIMITED_AREA_IN_BYTES	(2752 * 1024)
 
-#elif defined(CONFIG_FOR_GLINET_GL_AR300)
+#elif defined(CONFIG_FOR_GLINET_GL_AR300) ||\
+      defined(CONFIG_FOR_ZTE_W812N_V2)
 
 	#define WEBFAILSAFE_UPLOAD_LIMITED_AREA_IN_BYTES	(384 * 1024)
 
@@ -313,7 +324,8 @@
 	#define CONFIG_QCA_PLL_IN_FLASH_BLOCK_OFFSET	0x70000
 	#define CONFIG_QCA_PLL_IN_FLASH_BLOCK_SIZE	0x10000
 
-#elif defined(CONFIG_FOR_GLINET_GL_AR300)
+#elif defined(CONFIG_FOR_GLINET_GL_AR300) ||\
+      defined(CONFIG_FOR_ZTE_W812N_V2)
 
 	#define CONFIG_QCA_PLL_IN_FLASH_BLOCK_OFFSET	0x40000
 	#define CONFIG_QCA_PLL_IN_FLASH_BLOCK_SIZE	0x10000
@@ -341,6 +353,7 @@
 #if !defined(CONFIG_FOR_ALFA_NETWORK_N5Q)   &&\
     !defined(CONFIG_FOR_ENGENIUS_ENS202EXT) &&\
     !defined(CONFIG_FOR_GLINET_GL_AR300)    &&\
+    !defined(CONFIG_FOR_ZTE_W812N_V2)    &&\
     !defined(CONFIG_FOR_YUNCORE_CPE870)
 
 	#define CONFIG_UPG_UBOOT_SIZE_BACKUP_HEX	0x20000
