@@ -104,6 +104,7 @@ Currently supported devices:
   - TP-Link TL-WDR3500 v1
   - TP-Link TL-WDR3600 v1
   - TP-Link TL-WDR43x0 v1
+  - ZTE W812N V2
 
 - **Qualcomm Atheros QCA953x**:
   - ALFA Network R36A
@@ -194,6 +195,7 @@ More information about supported devices:
 | YunCore CPE830 | QCA9531 | 16 MiB | 64 MiB DDR2 | 256 KiB | R/W |
 | YunCore CPE870 | AR9341 | 8 MiB | 64 MiB DDR2 | 64 KiB, LZMA | R/W |
 | Zbtlink ZBT-WE1526 | QCA9531 | 16 MiB | 128 MiB DDR2 | 256 KiB | R/W |
+| ZTE W812N V2 | AR9344 | 16 MiB | 128 MiB DDR2 | 256 KiB | R/W |
 
 *(LZMA) - U-Boot binary image is compressed with LZMA.*
 *(R/W) - environment exists in separate FLASH block which allows you to save it and keep after power down.*
