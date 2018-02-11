@@ -91,7 +91,7 @@ include $(TOPDIR)/config.mk
 #
 # Use native tools and options
 #
-CPPFLAGS	= -idirafter ../include -DTEXT_BASE=$(TEXT_BASE) -DUSE_HOSTCC
+CPPFLAGS	= -I../include -DTEXT_BASE=$(TEXT_BASE) -DUSE_HOSTCC
 CFLAGS		= $(HOST_CFLAGS) $(CPPFLAGS) -O2
 AFLAGS		= -D__ASSEMBLY__ $(CPPFLAGS)
 CC			= $(HOSTCC)
