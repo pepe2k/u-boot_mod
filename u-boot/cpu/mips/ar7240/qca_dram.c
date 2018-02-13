@@ -20,6 +20,7 @@
 #include <asm/addrspace.h>
 #include <soc/qca_soc_common.h>
 #include <soc/qca_dram.h>
+#include <soc/qca95xx_pll_init.h>
 
 #define QCA_DDR_SIZE_INCREMENT	(8 * 1024 * 1024)
 
@@ -850,9 +851,9 @@ void qca_dram_init(void)
 		qca_soc_reg_write(QCA_DDR_RD_DATA_THIS_CYCLE_REG, 0xFFFF);
 	}
 
-	/* If DDR_CLK < 2 * AHB_CLK, set DDR FSM wait control to 0xA24 */
+	/* If DDR_CLK < 2 * AHB_CLK, set DDR FSM wait control to QCA_DDR_FSM_WAIT_CTRL_VAL (0xA24) */
 	if (ddr_clk < (2 * ahb_clk))
-		qca_soc_reg_write(QCA_DDR_FSM_WAIT_CTRL_REG, 0xA24);
+		qca_soc_reg_write(QCA_DDR_FSM_WAIT_CTRL_REG, QCA_DDR_FSM_WAIT_CTRL_VAL);
 
 	/* If CPU clock < AHB clock, set SRAM REQ ACK */
 	if (cpu_clk < ahb_clk)
