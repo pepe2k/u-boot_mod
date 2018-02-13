@@ -20,7 +20,12 @@
 #include <asm/addrspace.h>
 #include <soc/qca_soc_common.h>
 #include <soc/qca_dram.h>
-#include <soc/qca95xx_pll_init.h>
+
+#if (SOC_TYPE & QCA_QCA956X_SOC)
+	#include <soc/qca956x_pll_init.h>
+#else
+	#include <soc/qca95xx_pll_init.h>
+#endif
 
 #define QCA_DDR_SIZE_INCREMENT	(8 * 1024 * 1024)
 
@@ -790,8 +795,11 @@ static inline void qca_dram_set_en_refresh(void)
 	}
 }
 
+#if !(SOC_TYPE & QCA_QCA956X_SOC)
 /*
  * Initial DRAM configuration
+ *
+ * Not working on QCA956x
  */
 void qca_dram_init(void)
 {
@@ -874,6 +882,20 @@ void qca_dram_init(void)
 	reg = qca_soc_reg_read(QCA_PLL_CPU_PLL_DITHER_FRAC_REG);
 	reg = (reg & QCA_PLL_CPU_PLL_DITHER_FRAC_NFRAC_MIN_MASK)
 	      >> QCA_PLL_CPU_PLL_DITHER_FRAC_NFRAC_MIN_SHIFT;
+
+	if (reg)
+		tmp = 1;
+#elif (SOC_TYPE & QCA_QCA956X_SOC)
+	reg = qca_soc_reg_read(QCA_PLL_CPU_PLL_DITHER_REG);
+	reg = (reg & QCA_PLL_CPU_PLL_DITHER_NFRAC_MIN_L_MASK)
+	      >> QCA_PLL_CPU_PLL_DITHER_NFRAC_MIN_L_SHIFT;
+
+	if (reg)
+		tmp = 1;
+
+	reg = qca_soc_reg_read(QCA_PLL_DDR_PLL_DITHER_REG);
+	reg = (reg & QCA_PLL_DDR_PLL_DITHER_NFRAC_MIN_L_MASK)
+	      >> QCA_PLL_DDR_PLL_DITHER_NFRAC_MIN_L_SHIFT;
 
 	if (reg)
 		tmp = 1;
@@ -985,3 +1007,4 @@ void qca_dram_init(void)
 	 */
 	qca_ddr_tap_tune(ddr_width);
 }
+#endif
