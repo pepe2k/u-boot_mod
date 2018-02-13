@@ -13,6 +13,8 @@
 #include <soc/qca_soc_common.h>
 #if (SOC_TYPE & QCA_AR933X_SOC)
 	#include <soc/ar933x_pll_init.h>
+#elif (SOC_TYPE & QCA_QCA956X_SOC)
+	#include <soc/qca956x_pll_init.h>
 #else
 	#include <soc/qca95xx_pll_init.h>
 #endif
