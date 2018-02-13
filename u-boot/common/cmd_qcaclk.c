@@ -30,7 +30,7 @@ static void print_reg_values(const clk_cfg_flash *cfg)
 		>> QCA_PLL_CPU_PLL_DITHER_FRAC_NFRAC_MIN_SHIFT,
 		(QCA_PLL_CPU_PLL_DITHER_FRAC_NFRAC_MIN_MASK
 		 >> QCA_PLL_CPU_PLL_DITHER_FRAC_NFRAC_MIN_SHIFT) + 1);
-#else
+#elif !(SOC_TYPE & QCA_QCA956X_SOC)
 	printf("        SPI_CTRL: 0x%08lX\n", cfg->spi_ctrl);
 	printf("     CPU_PLL_CFG: 0x%08lX\n", cfg->regs.cpu_pll_cfg);
 	printf("     DDR_PLL_CFG: 0x%08lX\n", cfg->regs.ddr_pll_cfg);

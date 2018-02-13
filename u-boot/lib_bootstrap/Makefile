@@ -25,7 +25,7 @@ include $(TOPDIR)/config.mk
 
 LIB	= libbootstrap.a
 
-OBJS	= bootstrap_board.o LzmaDecode.o string.o LzmaWrapper.o
+OBJS	= bootstrap_board.o LzmaDecode.o string.o LzmaWrapper.o ../lib_mips/time.o
 
 CFLAGS += -DCONFIG_LZMA=1
 

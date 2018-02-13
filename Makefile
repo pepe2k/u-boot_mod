@@ -309,6 +309,8 @@ wallys_dr531:
 yuncore_cpe870:
 	@$(call build,64,1,ETH_CONFIG=_s27)
 
+tp-link_eap245_v1:
+	@$(call build,123,1,ETH_CONFIG=_ar8033)
 # =============
 # CLEAN TARGETS
 # =============

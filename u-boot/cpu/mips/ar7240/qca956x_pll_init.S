@@ -13,6 +13,7 @@
 #include <asm/regdef.h>
 #include <asm/mipsregs.h>
 #include <asm/addrspace.h>
+#include <soc/qca_soc_common.h>
 #include <atheros.h>
 
 /*
@@ -85,7 +86,7 @@ lowlevel_init:
 	li	t4,	QCA_PLL_CPU_PLL_DITHER_REG_VAL_XTAL25
 	li	t3,	QCA_PLL_DDR_PLL_DITHER_REG_VAL_XTAL25
 
-	li	t7,	PLL_CONFIG_VAL_F
+	li	t7,	CONFIG_QCA_PLL_IN_FLASH_MAGIC_OFFSET
 	lw	t8,	0(t7)
 	li	t7,	PLL_MAGIC
 	beq	t7,	t8,	read_from_flash
@@ -93,7 +94,7 @@ lowlevel_init:
 	j	pll_bypass_set
 	nop
 read_from_flash:
-	li	t7,	PLL_CONFIG_VAL_F + 4
+	li	t7,	CONFIG_QCA_PLL_IN_FLASH_MAGIC_OFFSET + 4
 	lw	t5,	0(t7)
 	lw	t4,	4(t7)
 	lw	t6,	8(t7)

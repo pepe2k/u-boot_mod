@@ -449,7 +449,7 @@ static const clk_profile clk_profiles[] = {
 			_ar933x_cpu_pll_dither_frac_reg_val(0)
 		},
 	},
-	#else
+	#elif !(SOC_TYPE & QCA_QCA956X_SOC)
 	{
 		/* Tested! */
 		100, 100, 100, 25,

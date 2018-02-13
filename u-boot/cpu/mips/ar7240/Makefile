@@ -10,7 +10,6 @@ OBJS	+= qca_common.o
 OBJS	+= qca_clocks.o
 OBJS	+= qca_sf.o
 OBJS	+= qca_dram.o
-OBJS	+= qca_pci.o
 OBJS	+= qca_usb.o
 SOBJS	+= qca_gpio_init.o
 
@@ -29,6 +28,13 @@ endif
 
 ifeq ($(BOARD), ap143)
 	SOBJS	+= qca95xx_pll_init.o
+endif
+
+ifeq ($(BOARD), ap152)
+OBJS	+= qca_dram956x.o qca_pci.o
+SOBJS	+= qca956x_tap.o qca956x_pll_init.o
+else
+OBJS	+= qca_pci.o
 endif
 
 all:	.depend $(START) $(LIB)

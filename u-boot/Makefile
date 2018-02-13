@@ -388,6 +388,10 @@ qca953x_common: unconfig config_common
 	@$(call define_add,CONFIG_ATHEROS,1)
 	@$(call define_add,CONFIG_MACH_QCA953x,1)
 
+qca956x_common: unconfig config_common
+	@$(call define_add,CONFIG_ATHEROS,1)
+	@$(call define_add,CONFIG_MACH_QCA956x,1)
+
 lsdk_kernel:
 	@$(call define_add,CONFIG_LSDK_KERNEL,1)
 
@@ -852,6 +856,16 @@ zbtlink_zbt-we1526: qca953x_common
 	@$(call define_add,CFG_ATHRS27_PHY,1)
 	@$(call define_add,CFG_ATH_GMAC_NMACS,2)
 	@$(MKCONFIG) -a ap143 mips mips ap143 ar7240 ar7240
+
+tp-link_eap245_v1: qca956x_common
+	@$(call config_init,TP-Link EAP245 v1,eap245v1,16,2,1,QCA_QCA9563_SOC)
+	@$(call define_add,CONFIG_FOR_TPLINK_EAP245_V1,1)
+	@$(call define_add,CONFIG_QCA_PLL,QCA_PLL_PRESET_775_650_258)
+	@$(call define_add,CONFIG_PCI,1)
+	@$(call define_add,CONFIG_ATHR_8033_PHY,1)
+	@$(call define_add,CONFIG_ATHRS_GMAC_SGMII,1)
+	@$(call define_add,CFG_ATH_GMAC_NMACS,1)
+	@$(MKCONFIG) -a ap152 mips mips ap152 ar7240 ar7240
 
 # =============
 # CLEAN TARGETS

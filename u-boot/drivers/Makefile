@@ -29,6 +29,9 @@ OBJS	= netconsole.o
 
 all:	$(LIB)
 
+clean:
+	@-rm -f $(OBJS) $(OBJS:.o=.d)  $(SOBJS:.o=.d)
+
 $(LIB): $(OBJS)
 	$(AR) crv $@ $(OBJS)
 
