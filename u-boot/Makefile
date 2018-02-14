@@ -814,7 +814,7 @@ zbtlink_zbt-we1526: qca953x_common
 zte_w812n_v2: ar934x_common
 	@$(call config_init,ZTE W812N v2,zte-w812n-v2,16,12,1,QCA_AR9344_SOC)
 	@$(call define_add,CONFIG_FOR_ZTE_W812N_V2,1)
-	@$(call define_add,CFG_ATHR_8033_PHY,1)
+	@$(call define_add,CONFIG_ATHR_8033_PHY,1)
 	@$(call define_add,CFG_AG7240_NMACS,1)
 	@$(call define_add,CONFIG_PCI,1)
 	@$(MKCONFIG) -a db12x mips mips db12x ar7240 ar7240
