@@ -12,7 +12,6 @@
 #include <command.h>
 #include <asm/mipsregs.h>
 #include <asm/addrspace.h>
-#include <ar7240_soc.h>
 
 /* TODO: remove extern and include header file*/
 extern void qca_sys_clocks(u32 *cpu_clk, u32 *ddr_clk, u32 *ahb_clk,

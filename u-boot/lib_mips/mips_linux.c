@@ -26,7 +26,9 @@
 #include <image.h>
 #include <asm/byteorder.h>
 #include <asm/addrspace.h>
+#if defined(CONFIG_FOR_DRAGINO_MS14) || defined(CONFIG_FOR_VILLAGE_TELCO_MP2)
 #include <ar7240_soc.h>
+#endif
 
 /* #define DEBUG */
 
