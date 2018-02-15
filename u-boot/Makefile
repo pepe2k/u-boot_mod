@@ -372,6 +372,7 @@ unconfig:
 config_common:
 	@ >include/config.h
 	@$(call include_add,soc/soc_list.h)
+	@$(call include_add,soc/qca_pll_list.h)
 	@$(call define_add,CONFIG_BUILD_DATE_UTC,$(shell date -u +"%Y-%m-%d"))
 
 ar933x_common: unconfig config_common
