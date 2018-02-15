@@ -22,7 +22,8 @@
  * Returns 1 if PCIE0 is in EP mode
  */
 #if (SOC_TYPE & QCA_AR934X_SOC) |\
-    (SOC_TYPE & QCA_QCA955X_SOC)
+    (SOC_TYPE & QCA_QCA955X_SOC) |\
+    (SOC_TYPE & QCA_QCA956X_SOC)
 u32 qca_pcie0_in_ep_mode(void)
 {
 	if (!(qca_soc_reg_read(QCA_RST_BOOTSTRAP_REG)
@@ -115,6 +116,11 @@ static void qca_pcie_pll_init(void)
 	}
 #endif
 
+#if (SOC_TYPE & QCA_QCA956X_SOC)
+	qca_soc_reg_read_set(QCA_PLL_SRIF_PCIE_PHY_REG_1_REG,
+	                     QCA_PLL_SRIF_PCIE_PHY_REG_1_S_RESET << QCA_PLL_SRIF_PCIE_PHY_REG_1_S_SHIFT);
+#endif
+
 	/* Power down and bypass PLL, setup ref_div */
 	reg = QCA_PLL_PCIE_PLL_CFG_PLLPWD_MASK |
 	      QCA_PLL_PCIE_PLL_CFG_BYPASS_MASK |
@@ -135,9 +141,16 @@ static void qca_pcie_pll_init(void)
 		    << QCA_PLL_PCIE_PLL_DITHER_MIN_NFRAC_MIN_SHIFT;
 	nfrac_min = nfrac_max & QCA_PLL_PCIE_PLL_DITHER_MIN_NFRAC_MIN_MASK;
 
+#if (SOC_TYPE & QCA_QCA956X_SOC)
+	/* QC/A SDK does not set QCA_PLL_PCIE_PLL_DITHER_MAX_DITHER_EN_MASK on QCA956x */
+	reg = QCA_PLL_PCIE_PLL_DITHER_MAX_USE_MAX_MASK |
+	      (nint << QCA_PLL_PCIE_PLL_DITHER_MAX_NINT_MAX_SHIFT) | nfrac_max;
+#else
 	reg = QCA_PLL_PCIE_PLL_DITHER_MAX_DITHER_EN_MASK |
 	      QCA_PLL_PCIE_PLL_DITHER_MAX_USE_MAX_MASK |
 	      (nint << QCA_PLL_PCIE_PLL_DITHER_MAX_NINT_MAX_SHIFT) | nfrac_max;
+#endif
+
 	qca_soc_reg_write(QCA_PLL_PCIE_PLL_DITHER_MAX_REG, reg);
 
 	reg = (nint << QCA_PLL_PCIE_PLL_DITHER_MIN_NINT_MIN_SHIFT) | nfrac_min;
@@ -162,7 +175,8 @@ static void qca_pcie_pll_init(void)
 
 #if (SOC_TYPE & QCA_AR934X_SOC)  |\
     (SOC_TYPE & QCA_QCA953X_SOC) |\
-    (SOC_TYPE & QCA_QCA955X_SOC)
+    (SOC_TYPE & QCA_QCA955X_SOC) |\
+    (SOC_TYPE & QCA_QCA956X_SOC)
 /*
  * Takes out PCIE0 RC from reset
  */
@@ -174,6 +188,7 @@ static void qca_pcie0_rst_di(void)
 			       QCA_RST_RESET_PCIE_PHY_RST_MASK);
 	milisecdelay(10);
 
+#if !(SOC_TYPE & QCA_QCA956X_SOC)
 	/* Enable LTSSM */
 	qca_soc_reg_read_set(QCA_PCIE_RC0_CTRL_APP_REG,
 			     QCA_PCIE_RCX_CTRL_APP_LTSSM_EN_MASK);
@@ -181,6 +196,7 @@ static void qca_pcie0_rst_di(void)
 	/* Take EP out of reset (this sets PERSTn high) */
 	qca_soc_reg_write(QCA_PCIE_RC0_CTRL_RST_REG,
 			  QCA_PCIE_RCX_CTRL_RST_EP_RST_L_MASK);
+#endif
 	milisecdelay(100);
 }
 
@@ -195,9 +211,11 @@ static void qca_pcie0_rst_en(void)
 			     QCA_RST_RESET_PCIE_PHY_RST_MASK);
 	milisecdelay(10);
 
+#if !(SOC_TYPE & QCA_QCA956X_SOC)
 	/* Put EP in reset (this sets PERSTn low) */
 	qca_soc_reg_write(QCA_PCIE_RC0_CTRL_RST_REG, 0x0);
 	milisecdelay(10);
+#endif
 }
 #endif
 
@@ -258,9 +276,18 @@ void pci_init(void)
 	/* Init PCIE PLL (common for both RC) */
 	qca_pcie_pll_init();
 
+#if (SOC_TYPE & QCA_QCA956X_SOC)
+	/* From QC/A SDK. TODO: What is 0x73 ? */
+	qca_soc_reg_read_clear(QCA_GPIO_OE_REG, GPIO0);
+	qca_soc_reg_read_set(QCA_GPIO_OUT_FUNC0_REG, 0x73 << QCA_GPIO_OUT_FUNCX_GPIO0_EN_SHIFT);
+	milisecdelay(10);
+#endif
+
 	/* Reset PCIE */
 #if (SOC_TYPE & QCA_AR934X_SOC) |\
-    (SOC_TYPE & QCA_QCA953X_SOC)
+    (SOC_TYPE & QCA_QCA953X_SOC) |\
+    (SOC_TYPE & QCA_QCA956X_SOC)
+	/* QCA956x always need a PCIE0 reset even not in EP Mode */
 	qca_pcie0_rst_en();
 	qca_pcie0_rst_di();
 #elif (SOC_TYPE & QCA_QCA955X_SOC)
