@@ -27,9 +27,8 @@ static u32 mac_is_not_valid = 0;
  */
 void qca_soc_name_rev(char *buf)
 {
-	u32 id;
-	u32 major;
-	u32 rev = 0;
+	u32 id, major, rev;
+	const char *name = NULL;
 
 	if (buf == NULL)
 		return;
@@ -41,41 +40,35 @@ void qca_soc_name_rev(char *buf)
 	rev = id & QCA_RST_REVISION_ID_REV_MASK;
 
 	switch (major) {
-#if (SOC_TYPE & QCA_AR933X_SOC)
-	case QCA_RST_REVISION_ID_MAJOR_AR9330_VAL:
-		sprintf(buf, "AR9330 rev. %d", rev);
-		break;
-	case QCA_RST_REVISION_ID_MAJOR_AR9331_VAL:
-		sprintf(buf, "AR9331 rev. %d", rev);
-		break;
+#if (SOC_TYPE & 0)
+	case QCA_RST_REVISION_ID_MAJOR_AR71XX_VAL: name="AR71xx"; break;
+	case QCA_RST_REVISION_ID_MAJOR_AR913X_VAL: name="AR913x"; break;
+	case QCA_RST_REVISION_ID_MAJOR_AR7240_VAL: name="AR7240"; break;
+	case QCA_RST_REVISION_ID_MAJOR_AR7241_VAL: name="AR7241"; break;
+	case QCA_RST_REVISION_ID_MAJOR_AR7242_VAL: name="AR7242"; break;
+	case QCA_RST_REVISION_ID_MAJOR_TP9343_VAL: name="TP9343"; break;
+#elif (SOC_TYPE & QCA_AR933X_SOC)
+	case QCA_RST_REVISION_ID_MAJOR_AR9330_VAL: name="AR9330"; break;
+	case QCA_RST_REVISION_ID_MAJOR_AR9331_VAL: name="AR9331"; break;
+#elif (SOC_TYPE & QCA_AR934X_SOC)
+	case QCA_RST_REVISION_ID_MAJOR_AR9341_VAL: name="AR9341"; break;
+	case QCA_RST_REVISION_ID_MAJOR_AR9342_VAL: name="AR9342"; break;
+	case QCA_RST_REVISION_ID_MAJOR_AR9344_VAL: name="AR9344"; break;
+#elif (SOC_TYPE & QCA_QCA953X_SOC)
+	case QCA_RST_REVISION_ID_MAJOR_QCA9533_VAL:    name="QCA953x ver. 1"; break;
+	case QCA_RST_REVISION_ID_MAJOR_QCA9533_V2_VAL: name="QCA953x ver. 2"; break;
+#elif (SOC_TYPE & QCA_QCA955X_SOC)
+	case QCA_RST_REVISION_ID_MAJOR_QCA9556_VAL: name="QCA9556"; break;
+	case QCA_RST_REVISION_ID_MAJOR_QCA9558_VAL: name="QCA9558"; break;
+#elif (SOC_TYPE & QCA_QCA956X_SOC)
+	case QCA_RST_REVISION_ID_MAJOR_QCA956X_VAL: name="QCA956x"; break;
 #endif
-#if (SOC_TYPE & QCA_AR934X_SOC)
-	case QCA_RST_REVISION_ID_MAJOR_AR9341_VAL:
-		sprintf(buf, "AR9341 rev. %d", rev);
-		break;
-	case QCA_RST_REVISION_ID_MAJOR_AR9342_VAL:
-		sprintf(buf, "AR9342 rev. %d", rev);
-		break;
-	case QCA_RST_REVISION_ID_MAJOR_AR9344_VAL:
-		sprintf(buf, "AR9344 rev. %d", rev);
-		break;
-#endif
-#if (SOC_TYPE & QCA_QCA953X_SOC)
-	case QCA_RST_REVISION_ID_MAJOR_QCA953X_VAL:
-		sprintf(buf, "QCA953x ver. 1 rev. %d", rev);
-		break;
-	case QCA_RST_REVISION_ID_MAJOR_QCA953X_V2_VAL:
-		sprintf(buf, "QCA953x ver. 2 rev. %d", rev);
-		break;
-#endif
-#if (SOC_TYPE & QCA_QCA955X_SOC)
-	case QCA_RST_REVISION_ID_MAJOR_QCA9558_VAL:
-		sprintf(buf, "QCA9558 rev. %d", rev);
-		break;
-#endif
-	default:
-		sprintf(buf, "Unknown");
-		break;
+       }
+
+	if (name) {
+		sprintf(buf, "%s rev. %d", name, rev);
+	} else {
+		sprintf(buf, "Unknown (%04x)", major | rev);
 	}
 }
 
