@@ -281,6 +281,7 @@ p2w_cpe505n \
 p2w_r602n \
 yuncore_ap90q \
 yuncore_cpe830 \
+yuncore_t830 \
 whqx_e600g_v2 \
 whqx_e600gac_v2 \
 zbtlink_zbt-we1526:

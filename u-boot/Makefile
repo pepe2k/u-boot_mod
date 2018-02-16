@@ -803,6 +803,13 @@ yuncore_cpe870: ar934x_common
 	@$(call define_add,CFG_AG7240_NMACS,2)
 	@$(MKCONFIG) -a db12x mips mips db12x ar7240 ar7240
 
+yuncore_t830: qca953x_common
+	@$(call config_init,YunCore T830,t830,16,17,1,QCA_QCA9531_SOC)
+	@$(call define_add,CONFIG_FOR_YUNCORE_T830,1)
+	@$(call define_add,CFG_ATHRS27_PHY,1)
+	@$(call define_add,CFG_ATH_GMAC_NMACS,2)
+	@$(MKCONFIG) -a ap143 mips mips ap143 ar7240 ar7240
+
 zbtlink_zbt-we1526: qca953x_common
 	@$(call config_init,Zbtlink ZBT-WE1526,zbt-we1526,16,17,1,QCA_QCA9531_SOC)
 	@$(call define_add,CONFIG_FOR_ZBTLINK_ZBT_WE1526,1)

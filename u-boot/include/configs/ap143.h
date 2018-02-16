@@ -168,6 +168,12 @@
 						GPIO3 | GPIO4 | GPIO12 |\
 						GPIO16
 
+#elif defined(CONFIG_FOR_YUNCORE_T830)
+
+	#define CONFIG_QCA_GPIO_MASK_LED_ACT_L	GPIO4  | GPIO11 | GPIO12 |\
+						GPIO13 | GPIO14 | GPIO15 |\
+						GPIO16
+
 #elif defined(CONFIG_FOR_ZBTLINK_ZBT_WE1526)
 
 	#define CONFIG_QCA_GPIO_MASK_LED_ACT_L	GPIO4  | GPIO11 | GPIO12 |\
@@ -262,8 +268,9 @@
 				"rootfstype=jffs2 init=/sbin/init "\
 				"mtdparts=ath-nor0:256k(u-boot),64k(u-boot-env),6336k(rootfs),1408k(uImage),64k(mib0),64k(ART)"
 
-#elif defined(CONFIG_FOR_WHQX_E600G_V2) ||\
-      defined(CONFIG_FOR_WHQX_E600GAC_V2)
+#elif defined(CONFIG_FOR_WHQX_E600G_V2)   ||\
+      defined(CONFIG_FOR_WHQX_E600GAC_V2) ||\
+      defined(CONFIG_FOR_YUNCORE_T830)
 
 	#define CONFIG_BOOTARGS	"console=ttyS0,115200 root=31:02 "\
 				"rootfstype=jffs2 init=/sbin/init "\
@@ -306,6 +313,7 @@
       defined(CONFIG_FOR_WALLYS_DR531)          ||\
       defined(CONFIG_FOR_YUNCORE_AP90Q)         ||\
       defined(CONFIG_FOR_YUNCORE_CPE830)        ||\
+      defined(CONFIG_FOR_YUNCORE_T830)          ||\
       defined(CONFIG_FOR_ZBTLINK_ZBT_WE1526)
 
 	#define CFG_LOAD_ADDR	0x9F050000
@@ -322,6 +330,7 @@
     defined(CONFIG_FOR_P2W_R602N)      ||\
     defined(CONFIG_FOR_YUNCORE_AP90Q)  ||\
     defined(CONFIG_FOR_YUNCORE_CPE830) ||\
+    defined(CONFIG_FOR_YUNCORE_T830)   ||\
     defined(CONFIG_FOR_ZBTLINK_ZBT_WE1526)
 
 	#define CONFIG_BOOTCOMMAND	"bootm 0x9F050000 || bootm 0x9FE80000"
@@ -364,6 +373,7 @@
       defined(CONFIG_FOR_P2W_R602N)      ||\
       defined(CONFIG_FOR_YUNCORE_AP90Q)  ||\
       defined(CONFIG_FOR_YUNCORE_CPE830) ||\
+      defined(CONFIG_FOR_YUNCORE_T830)   ||\
       defined(CONFIG_FOR_ZBTLINK_ZBT_WE1526)
 
 	#define CFG_ENV_ADDR		0x9F040000
@@ -430,6 +440,7 @@
       defined(CONFIG_FOR_P2W_R602N)             ||\
       defined(CONFIG_FOR_YUNCORE_AP90Q)         ||\
       defined(CONFIG_FOR_YUNCORE_CPE830)        ||\
+      defined(CONFIG_FOR_YUNCORE_T830)          ||\
       defined(CONFIG_FOR_ZBTLINK_ZBT_WE1526)
 
 	#define OFFSET_MAC_DATA_BLOCK		0xFF0000
@@ -568,6 +579,7 @@
       defined(CONFIG_FOR_WALLYS_DR531)          ||\
       defined(CONFIG_FOR_YUNCORE_AP90Q)         ||\
       defined(CONFIG_FOR_YUNCORE_CPE830)        ||\
+      defined(CONFIG_FOR_YUNCORE_T830)          ||\
       defined(CONFIG_FOR_ZBTLINK_ZBT_WE1526)
 
 	#define WEBFAILSAFE_UPLOAD_LIMITED_AREA_IN_BYTES	(384 * 1024)
@@ -646,6 +658,7 @@
       defined(CONFIG_FOR_P2W_R602N)      ||\
       defined(CONFIG_FOR_YUNCORE_AP90Q)  ||\
       defined(CONFIG_FOR_YUNCORE_CPE830) ||\
+      defined(CONFIG_FOR_YUNCORE_T830)   ||\
       defined(CONFIG_FOR_ZBTLINK_ZBT_WE1526)
 
 	#define CONFIG_QCA_PLL_IN_FLASH_BLOCK_OFFSET	0x40000
@@ -677,6 +690,7 @@
     !defined(CONFIG_FOR_WHQX_E600GAC_V2)       &&\
     !defined(CONFIG_FOR_YUNCORE_AP90Q)         &&\
     !defined(CONFIG_FOR_YUNCORE_CPE830)        &&\
+    !defined(CONFIG_FOR_YUNCORE_T830)          &&\
     !defined(CONFIG_FOR_ZBTLINK_ZBT_WE1526)
 
 	#define CONFIG_UPG_UBOOT_SIZE_BACKUP_HEX	0x20000
@@ -687,6 +701,7 @@
     defined(CONFIG_FOR_P2W_R602N)      ||\
     defined(CONFIG_FOR_YUNCORE_AP90Q)  ||\
     defined(CONFIG_FOR_YUNCORE_CPE830) ||\
+    defined(CONFIG_FOR_YUNCORE_T830)   ||\
     defined(CONFIG_FOR_ZBTLINK_ZBT_WE1526)
 
 	#define CONFIG_UPG_SCRIPTS_FW_ADDR_HEX	0x9F050000
