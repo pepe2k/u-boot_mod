@@ -199,6 +199,9 @@ void board_init_f(ulong bootflag)
 	}
 
 #if defined(COMPRESSED_UBOOT)
+#if defined(BOARD_DEBUG)
+	printf("Bootflag value: %08lX\n", bootflag);
+#endif
 	gd->ram_size = bootflag;
 #endif
 

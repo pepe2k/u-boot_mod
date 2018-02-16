@@ -221,7 +221,7 @@ void bootstrap_board_init_r(gd_t *id, ulong dest_addr)
 	image_header_t header;
 	image_header_t *hdr = &header;
 	unsigned int destLen;
-	int (*fn)(int);
+	void (*fn)(ulong);
 
 	/* Initialize malloc() area */
 	mem_malloc_init(dest_addr);
@@ -251,7 +251,7 @@ void bootstrap_board_init_r(gd_t *id, ulong dest_addr)
 
 	fn = (void *)ntohl(hdr->ih_load);
 
-	(*fn)(gd->ram_size);
+	(*fn)(id->ram_size);
 
 	hang();
 }
