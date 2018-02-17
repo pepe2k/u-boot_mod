@@ -45,7 +45,7 @@ typedef struct
 	char		bp_sname[64];	/* Server host name			*/
 	char		bp_file[128];	/* Boot file name			*/
 	char		bp_vend[OPT_SIZE];	/* Vendor information			*/
-}	Bootp_t;
+} __attribute__((__packed__))	Bootp_t;
 
 #define BOOTP_HDR_SIZE	sizeof (Bootp_t)
 #define BOOTP_SIZE	(ETHER_HDR_SIZE + IP_HDR_SIZE + BOOTP_HDR_SIZE)
