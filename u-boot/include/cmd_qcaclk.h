@@ -10,6 +10,7 @@
 #ifndef _CMD_QCACLK_H_
 #define _CMD_QCACLK_H_
 
+#include <config.h>
 #include <soc/qca_soc_common.h>
 #if (SOC_TYPE & QCA_AR933X_SOC)
 	#include <soc/ar933x_pll_init.h>
@@ -34,6 +35,18 @@ typedef struct {
 	u32 cpu_pll_cfg;
 	u32 cpu_clk_ctrl;
 	u32 cpu_pll_dit;
+} pll_regs;
+	#elif (SOC_TYPE & QCA_QCA956X_SOC)
+typedef struct {
+	u32 cpu_pll_cfg1;
+	u32 ddr_pll_cfg1;
+	u32 cpu_pll_cfg;
+	u32 ddr_pll_cfg;
+	u32 cpu_ddr_clk_ctrl;
+	u32 cpu_pll_dit;
+	u32 ddr_pll_dit;
+	u32 cpu_pll_dit2;
+	u32 ddr_pll_dit2;
 } pll_regs;
 	#else
 typedef struct {
@@ -2270,6 +2283,329 @@ static const clk_profile clk_profiles[] = {
 			_qca95xx_ddr_pll_dither_reg_val(256)
 		},
 	},
+	#elif (SOC_TYPE & QCA_QCA956X_SOC)
+	{
+		750, 393, 196, 0,
+		_qca956x_spi_ctrl_addr_reg_val(14, 1, 0, 2),
+		{
+			_qca956x_cpu_pll_cfg1_reg_val(30, 0, 0),
+			_qca956x_ddr_pll_cfg1_reg_val(31, 0, 0),
+
+			_qca956x_cpu_pll_cfg_reg_val(1, 0, 0, 1),
+			_qca956x_ddr_pll_cfg_reg_val(1, 0, 1, 1),
+
+			_qca956x_cpu_ddr_clk_ctrl_reg_val(1, 1, 2, 0, 0, 1),
+
+			_qca956x_cpu_pll_dither_reg_val(0, 0, 0, 0, 0),
+			_qca956x_ddr_pll_dither_reg_val(0, 12, 3604, 0, 0),
+
+			0,
+			0,
+
+		},
+		{	0},
+	},
+	{
+		750, 400, 250, 0,
+		_qca956x_spi_ctrl_addr_reg_val(14, 1, 0, 2),
+		{
+			_qca956x_cpu_pll_cfg1_reg_val(30, 0, 0),
+			_qca956x_ddr_pll_cfg1_reg_val(32, 0, 0),
+
+			_qca956x_cpu_pll_cfg_reg_val(1, 0, 0, 1),
+			_qca956x_ddr_pll_cfg_reg_val(1, 0, 1, 1),
+
+			_qca956x_cpu_ddr_clk_ctrl_reg_val(1, 1, 3, 0, 0, 0),
+
+			_qca956x_cpu_pll_dither_reg_val(0, 0, 0, 0, 0),
+			_qca956x_ddr_pll_dither_reg_val(0, 0, 0, 0, 0),
+
+			0,
+			0,
+
+		},
+		{	0},
+	}, {
+		750, 667, 250, 0,
+		_qca956x_spi_ctrl_addr_reg_val(14, 1, 0, 2),
+		{
+			_qca956x_cpu_pll_cfg1_reg_val(30, 0, 0),
+			_qca956x_ddr_pll_cfg1_reg_val(26, 0, 0),
+
+			_qca956x_cpu_pll_cfg_reg_val(1, 0, 0, 1),
+			_qca956x_ddr_pll_cfg_reg_val(1, 0, 0, 1),
+
+			_qca956x_cpu_ddr_clk_ctrl_reg_val(1, 1, 3, 0, 0, 0),
+
+			_qca956x_cpu_pll_dither_reg_val(0, 0, 0, 0, 0),
+			_qca956x_ddr_pll_dither_reg_val(0, 14, 5570, 0, 0),
+
+			0,
+			0,
+
+		},
+		{	0},
+	}, {
+		775, 650, 258, 0,
+		_qca956x_spi_ctrl_addr_reg_val(14, 1, 0, 2),
+		{
+			_qca956x_cpu_pll_cfg1_reg_val(31, 0, 0),
+			_qca956x_ddr_pll_cfg1_reg_val(26, 0, 0),
+
+			_qca956x_cpu_pll_cfg_reg_val(1, 0, 0, 1),
+			_qca956x_ddr_pll_cfg_reg_val(1, 0, 0, 1),
+
+			_qca956x_cpu_ddr_clk_ctrl_reg_val(1, 1, 3, 0, 0, 0),
+
+			_qca956x_cpu_pll_dither_reg_val(0, 0, 0, 0, 0),
+			_qca956x_ddr_pll_dither_reg_val(0, 0, 0, 0, 0),
+
+			0,
+			0,
+
+		},
+		{	0},
+	}, {
+		800, 333, 266, 0,
+		_qca956x_spi_ctrl_addr_reg_val(14, 1, 0, 2),
+		{
+			_qca956x_cpu_pll_cfg1_reg_val(32, 0, 0),
+			_qca956x_ddr_pll_cfg1_reg_val(26, 0, 0),
+
+			_qca956x_cpu_pll_cfg_reg_val(1, 0, 0, 1),
+			_qca956x_ddr_pll_cfg_reg_val(1, 0, 1, 1),
+
+			_qca956x_cpu_ddr_clk_ctrl_reg_val(1, 1, 3, 0, 0, 0),
+
+			_qca956x_cpu_pll_dither_reg_val(0, 0, 0, 0, 0),
+			_qca956x_ddr_pll_dither_reg_val(0, 22, 5242, 0, 0),
+
+			0,
+			0,
+
+		},
+		{	0},
+	}, {
+		800, 400, 266, 0,
+		_qca956x_spi_ctrl_addr_reg_val(14, 1, 0, 2),
+		{
+			_qca956x_cpu_pll_cfg1_reg_val(32, 0, 0),
+			_qca956x_ddr_pll_cfg1_reg_val(32, 0, 0),
+
+			_qca956x_cpu_pll_cfg_reg_val(1, 0, 0, 1),
+			_qca956x_ddr_pll_cfg_reg_val(1, 0, 1, 1),
+
+			_qca956x_cpu_ddr_clk_ctrl_reg_val(1, 1, 3, 0, 0, 0),
+
+			_qca956x_cpu_pll_dither_reg_val(0, 0, 0, 0, 0),
+			_qca956x_ddr_pll_dither_reg_val(0, 0, 0, 0, 0),
+
+			0,
+			0,
+
+		},
+		{	0},
+	}, {
+		800, 450, 266, 0,
+		_qca956x_spi_ctrl_addr_reg_val(14, 1, 0, 2),
+		{
+			_qca956x_cpu_pll_cfg1_reg_val(32, 0, 0),
+			_qca956x_ddr_pll_cfg1_reg_val(36, 0, 0),
+
+			_qca956x_cpu_pll_cfg_reg_val(1, 0, 0, 1),
+			_qca956x_ddr_pll_cfg_reg_val(1, 0, 1, 1),
+
+			_qca956x_cpu_ddr_clk_ctrl_reg_val(1, 1, 3, 0, 0, 0),
+
+			_qca956x_cpu_pll_dither_reg_val(0, 0, 0, 0, 0),
+			_qca956x_ddr_pll_dither_reg_val(0, 0, 0, 0, 0),
+
+			0,
+			0,
+
+		},
+		{	0},
+	}, {
+		800, 533, 266, 0,
+		_qca956x_spi_ctrl_addr_reg_val(14, 1, 0, 2),
+		{
+			_qca956x_cpu_pll_cfg1_reg_val(32, 0, 0),
+			_qca956x_ddr_pll_cfg1_reg_val(42, 0, 0),
+
+			_qca956x_cpu_pll_cfg_reg_val(1, 0, 0, 1),
+			_qca956x_ddr_pll_cfg_reg_val(1, 0, 1, 1),
+
+			_qca956x_cpu_ddr_clk_ctrl_reg_val(1, 1, 3, 0, 0, 0),
+
+			_qca956x_cpu_pll_dither_reg_val(0, 0, 0, 0, 0),
+			_qca956x_ddr_pll_dither_reg_val(0, 22, 5242, 0, 0),
+
+			0,
+			0,
+
+		},
+		{	0},
+	}, {
+		800, 600, 266, 0,
+		_qca956x_spi_ctrl_addr_reg_val(14, 1, 0, 2),
+		{
+			_qca956x_cpu_pll_cfg1_reg_val(32, 0, 0),
+			_qca956x_ddr_pll_cfg1_reg_val(24, 0, 0),
+
+			_qca956x_cpu_pll_cfg_reg_val(1, 0, 0, 1),
+			_qca956x_ddr_pll_cfg_reg_val(1, 0, 0, 1),
+
+			_qca956x_cpu_ddr_clk_ctrl_reg_val(1, 1, 3, 0, 0, 0),
+
+			_qca956x_cpu_pll_dither_reg_val(0, 0, 0, 0, 0),
+			_qca956x_ddr_pll_dither_reg_val(0, 0, 0, 0, 0),
+
+			0,
+			0,
+
+		},
+		{	0},
+	}, {
+		800, 600, 300, 0,
+		_qca956x_spi_ctrl_addr_reg_val(14, 1, 0, 2),
+		{
+			_qca956x_cpu_pll_cfg1_reg_val(32, 0, 0),
+			_qca956x_ddr_pll_cfg1_reg_val(24, 0, 0),
+
+			_qca956x_cpu_pll_cfg_reg_val(1, 0, 0, 1),
+			_qca956x_ddr_pll_cfg_reg_val(1, 0, 0, 1),
+
+			_qca956x_cpu_ddr_clk_ctrl_reg_val(1, 1, 2, 0, 0, 1),
+
+			_qca956x_cpu_pll_dither_reg_val(0, 0, 0, 0, 0),
+			_qca956x_ddr_pll_dither_reg_val(0, 0, 0, 0, 0),
+
+			0,
+			0,
+
+		},
+		{	0},
+	}, {
+		800, 666, 266, 0,
+		_qca956x_spi_ctrl_addr_reg_val(14, 1, 0, 2),
+		{
+			_qca956x_cpu_pll_cfg1_reg_val(32, 0, 0),
+			_qca956x_ddr_pll_cfg1_reg_val(26, 0, 0),
+
+			_qca956x_cpu_pll_cfg_reg_val(1, 0, 0, 1),
+			_qca956x_ddr_pll_cfg_reg_val(1, 0, 0, 1),
+
+			_qca956x_cpu_ddr_clk_ctrl_reg_val(1, 1, 3, 0, 0, 0),
+
+			_qca956x_cpu_pll_dither_reg_val(0, 0, 0, 0, 0),
+			_qca956x_ddr_pll_dither_reg_val(0, 22, 5242, 0, 0),
+
+			0,
+			0,
+
+		},
+		{	0},
+	}, {
+		800, 667, 266, 0,
+		_qca956x_spi_ctrl_addr_reg_val(14, 1, 0, 2),
+		{
+			_qca956x_cpu_pll_cfg1_reg_val(32, 0, 0),
+			_qca956x_ddr_pll_cfg1_reg_val(26, 0, 0),
+
+			_qca956x_cpu_pll_cfg_reg_val(1, 0, 0, 1),
+			_qca956x_ddr_pll_cfg_reg_val(1, 0, 0, 1),
+
+			_qca956x_cpu_ddr_clk_ctrl_reg_val(1, 1, 3, 0, 0, 0),
+
+			_qca956x_cpu_pll_dither_reg_val(0, 0, 0, 0, 0),
+			_qca956x_ddr_pll_dither_reg_val(0, 14, 5570, 0, 0),
+
+			0,
+			0,
+
+		},
+		{	0},
+	}, {
+		800, 700, 266, 0,
+		_qca956x_spi_ctrl_addr_reg_val(14, 1, 0, 2),
+		{
+			_qca956x_cpu_pll_cfg1_reg_val(32, 0, 0),
+			_qca956x_ddr_pll_cfg1_reg_val(28, 0, 0),
+
+			_qca956x_cpu_pll_cfg_reg_val(1, 0, 0, 1),
+			_qca956x_ddr_pll_cfg_reg_val(1, 0, 0, 1),
+
+			_qca956x_cpu_ddr_clk_ctrl_reg_val(1, 1, 3, 0, 0, 0),
+
+			_qca956x_cpu_pll_dither_reg_val(0, 0, 0, 0, 0),
+			_qca956x_ddr_pll_dither_reg_val(0, 0, 0, 0, 0),
+
+			0,
+			0,
+
+		},
+		{	0},
+	}, {
+		810, 400, 270, 0,
+		_qca956x_spi_ctrl_addr_reg_val(14, 1, 0, 2),
+		{
+			_qca956x_cpu_pll_cfg1_reg_val(32, 0, 0),
+			_qca956x_ddr_pll_cfg1_reg_val(32, 0, 0),
+
+			_qca956x_cpu_pll_cfg_reg_val(1, 0, 0, 1),
+			_qca956x_ddr_pll_cfg_reg_val(1, 0, 1, 1),
+
+			_qca956x_cpu_ddr_clk_ctrl_reg_val(1, 1, 3, 0, 0, 0),
+
+			_qca956x_cpu_pll_dither_reg_val(0, 20, 3276, 0, 0),
+			_qca956x_ddr_pll_dither_reg_val(0, 0, 0, 0, 0),
+
+			0,
+			0,
+
+		},
+		{	0},
+	}, {
+		810, 666, 270, 0,
+		_qca956x_spi_ctrl_addr_reg_val(14, 1, 0, 2),
+		{
+			_qca956x_cpu_pll_cfg1_reg_val(32, 0, 0),
+			_qca956x_ddr_pll_cfg1_reg_val(26, 0, 0),
+
+			_qca956x_cpu_pll_cfg_reg_val(1, 0, 0, 1),
+			_qca956x_ddr_pll_cfg_reg_val(1, 0, 0, 1),
+
+			_qca956x_cpu_ddr_clk_ctrl_reg_val(1, 1, 3, 0, 0, 0),
+
+			_qca956x_cpu_pll_dither_reg_val(0, 20, 3276, 0, 0),
+			_qca956x_ddr_pll_dither_reg_val(0, 22, 5242, 0, 0),
+
+			0,
+			0,
+
+		},
+		{	0},
+	}, {
+		810, 700, 270, 0,
+		_qca956x_spi_ctrl_addr_reg_val(14, 1, 0, 2),
+		{
+			_qca956x_cpu_pll_cfg1_reg_val(32, 0, 0),
+			_qca956x_ddr_pll_cfg1_reg_val(28, 0, 0),
+
+			_qca956x_cpu_pll_cfg_reg_val(1, 0, 0, 1),
+			_qca956x_ddr_pll_cfg_reg_val(1, 0, 0, 1),
+
+			_qca956x_cpu_ddr_clk_ctrl_reg_val(1, 1, 3, 0, 0, 0),
+
+			_qca956x_cpu_pll_dither_reg_val(0, 20, 3276, 0, 0),
+			_qca956x_ddr_pll_dither_reg_val(0, 0, 0, 0, 0),
+
+			0,
+			0,
+
+		},
+		{	0},
+	}
 	#endif /* SOC_TYPE & QCA_AR933X_SOC */
 };
 

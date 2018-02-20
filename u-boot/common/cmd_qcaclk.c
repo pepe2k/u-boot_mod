@@ -30,7 +30,18 @@ static void print_reg_values(const clk_cfg_flash *cfg)
 		>> QCA_PLL_CPU_PLL_DITHER_FRAC_NFRAC_MIN_SHIFT,
 		(QCA_PLL_CPU_PLL_DITHER_FRAC_NFRAC_MIN_MASK
 		 >> QCA_PLL_CPU_PLL_DITHER_FRAC_NFRAC_MIN_SHIFT) + 1);
-#elif !(SOC_TYPE & QCA_QCA956X_SOC)
+#elif (SOC_TYPE & QCA_QCA956X_SOC)
+	printf("        SPI_CTRL: 0x%08lX\n", cfg->spi_ctrl);
+	printf("    CPU_PLL_CFG1: 0x%08lX\n", cfg->regs.cpu_pll_cfg1);
+	printf("    DDR_PLL_CFG1: 0x%08lX\n", cfg->regs.ddr_pll_cfg1);
+	printf("     CPU_PLL_CFG: 0x%08lX\n", cfg->regs.cpu_pll_cfg);
+	printf("     DDR_PLL_CFG: 0x%08lX\n", cfg->regs.ddr_pll_cfg);
+	printf("CPU_DDR_CLK_CTRL: 0x%08lX\n", cfg->regs.cpu_ddr_clk_ctrl);
+	printf("  CPU_PLL_DITHER: 0x%08lX\n", cfg->regs.cpu_pll_dit);
+	printf("  DDR_PLL_DITHER: 0x%08lX\n", cfg->regs.ddr_pll_dit);
+	printf(" CPU_PLL_DITHER2: 0x%08lX\n", cfg->regs.cpu_pll_dit2);
+	printf(" CPU_PLL_DITHER2: 0x%08lX\n", cfg->regs.cpu_pll_dit2);
+#else
 	printf("        SPI_CTRL: 0x%08lX\n", cfg->spi_ctrl);
 	printf("     CPU_PLL_CFG: 0x%08lX\n", cfg->regs.cpu_pll_cfg);
 	printf("     DDR_PLL_CFG: 0x%08lX\n", cfg->regs.ddr_pll_cfg);
@@ -60,6 +71,8 @@ static u32 compare_pll_regs(const pll_regs *from_flash,
 		from_flash->cpu_pll_dit == to_compare->cpu_pll_dit &&
 		from_flash->cpu_clk_ctrl == to_compare->cpu_clk_ctrl)
 		return 1;
+#elif (SOC_TYPE & QCA_QCA956X_SOC)
+	return memcmp(from_flash, to_compare, sizeof(pll_regs)) == 0;
 #else
 	if (from_flash->cpu_pll_cfg == to_compare->cpu_pll_cfg &&
 		from_flash->ddr_pll_cfg == to_compare->ddr_pll_cfg &&
