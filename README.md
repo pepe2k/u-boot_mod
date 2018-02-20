@@ -73,6 +73,7 @@ Currently supported devices:
   - GL.iNet GL-AR150
   - GL.iNet GL-USB150
   - GS-Oolite/Elink EL-M150 module with dev board ([photos in my gallery](http://galeria.tech-blog.pl/Elink_EL-M150_Development-Board/))
+  - Hak5 WiFi Pineapple NANO
   - TP-Link TL-MR10U v1 ([photos in my gallery](http://galeria.tech-blog.pl/TP-Link_TL-MR10U/))
   - TP-Link TL-MR13U v1
   - TP-Link TL-MR3020 v1 ([photos in my gallery](http://galeria.tech-blog.pl/TPLINK_TL-MR3020/))
@@ -158,6 +159,7 @@ More information about supported devices:
 | GL.iNet GL-AR750 | QCA9531 | 16 MiB | 128 MiB DDR2 | 256 KiB | R/W |
 | GL.iNet GL-USB150 | AR9331 | 16 MiB | 64 MiB DDR2 | 256 KiB | R/W |
 | GS-Oolite/Elink EL-M150 module | AR9331 | 4/8/16 MiB | 64 MiB DDR2 | 64 KiB, LZMA | RO |
+| Hak5 WiFi Pineapple NANO | AR9331 | 16 MiB | 64 MiB DDR2 | 128 KiB | R/W |
 | P&W CPE505N | QCA9531 | 16 MiB | 64 MiB DDR2 | 256 KiB | R/W |
 | P&W R602N | QCA9531 | 16 MiB | 64 MiB DDR2 | 256 KiB | R/W |
 | [TP-Link TL-MR10U v1](http://wiki.openwrt.org/toh/tp-link/tl-mr10u) | AR9331 | 4 MiB | 32 MiB DDR1 | 64 KiB, LZMA | RO |

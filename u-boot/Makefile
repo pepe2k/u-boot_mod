@@ -521,6 +521,11 @@ gl-inet_gl-usb150: ar933x_common
 	@$(call define_add,CONFIG_FOR_GLINET_GL_USB150,1)
 	@$(MKCONFIG) -a ap121 mips mips ap121 ar7240 ar7240
 
+hak5_wifi-pineapple-nano: ar933x_common
+	@$(call config_init,Hak5 WiFi Pineapple NANO,wifi-pineapple-nano,16,12,1,QCA_AR9331_SOC)
+	@$(call define_add,CONFIG_FOR_HAK5_WIFI_PINEAPPLE_NANO,1)
+	@$(MKCONFIG) -a ap121 mips mips ap121 ar7240 ar7240
+
 p2w_cpe505n: qca953x_common
 	@$(call config_init,P&W CPE505N,cpe505n,16,17,1,QCA_QCA9531_SOC)
 	@$(call define_add,CONFIG_FOR_P2W_CPE505N,1)

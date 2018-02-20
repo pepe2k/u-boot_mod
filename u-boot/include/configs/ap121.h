@@ -86,6 +86,12 @@
 	#define CONFIG_QCA_GPIO_MASK_LED_ACT_L	GPIO13 | GPIO15 | GPIO17 |\
 						GPIO27
 
+#elif defined(CONFIG_FOR_HAK5_WIFI_PINEAPPLE_NANO)
+
+	#define CONFIG_QCA_GPIO_MASK_LED_ACT_L	GPIO18
+	#define CONFIG_QCA_GPIO_MASK_IN		GPIO19 | GPIO20
+	#define CONFIG_QCA_GPIO_MASK_OUT_INIT_L	GPIO23
+
 #elif defined(CONFIG_FOR_TPLINK_MR10U_V1)
 
 	#define CONFIG_QCA_GPIO_MASK_LED_ACT_L	GPIO27
@@ -185,14 +191,15 @@
 				"rootfstype=squashfs init=/sbin/init "\
 				"mtdparts=ar7240-nor0:192k(u-boot),64k(u-boot-env),16064k(firmware),64k(art)"
 
-#elif defined(CONFIG_FOR_GLINET_6416)        ||\
-      defined(CONFIG_FOR_TPLINK_MR10U_V1)    ||\
-      defined(CONFIG_FOR_TPLINK_MR13U_V1)    ||\
-      defined(CONFIG_FOR_TPLINK_MR3020_V1)   ||\
-      defined(CONFIG_FOR_TPLINK_MR3040_V1V2) ||\
-      defined(CONFIG_FOR_TPLINK_MR3220_V2)   ||\
-      defined(CONFIG_FOR_TPLINK_WR703N_V1)   ||\
-      defined(CONFIG_FOR_TPLINK_WR720N_V3)   ||\
+#elif defined(CONFIG_FOR_GLINET_6416)              ||\
+      defined(CONFIG_FOR_HAK5_WIFI_PINEAPPLE_NANO) ||\
+      defined(CONFIG_FOR_TPLINK_MR10U_V1)          ||\
+      defined(CONFIG_FOR_TPLINK_MR13U_V1)          ||\
+      defined(CONFIG_FOR_TPLINK_MR3020_V1)         ||\
+      defined(CONFIG_FOR_TPLINK_MR3040_V1V2)       ||\
+      defined(CONFIG_FOR_TPLINK_MR3220_V2)         ||\
+      defined(CONFIG_FOR_TPLINK_WR703N_V1)         ||\
+      defined(CONFIG_FOR_TPLINK_WR720N_V3)         ||\
       defined(CONFIG_FOR_TPLINK_WR740N_V4)
 
 	#define CONFIG_BOOTARGS	"console=ttyS0,115200 root=31:02 "\
@@ -379,6 +386,12 @@
 	#define OFFSET_MAC_DATA_BLOCK_LENGTH	0x010000
 	#define OFFSET_MAC_ADDRESS		0x00FC00
 
+#elif defined(CONFIG_FOR_HAK5_WIFI_PINEAPPLE_NANO)
+
+	#define OFFSET_MAC_DATA_BLOCK		0xFF0000
+	#define OFFSET_MAC_DATA_BLOCK_LENGTH	0x010000
+	#define OFFSET_MAC_ADDRESS		0x000006
+
 #else
 
 	#define OFFSET_MAC_DATA_BLOCK		0x010000
@@ -398,6 +411,7 @@
     !defined(CONFIG_FOR_GLINET_GL_AR150)             &&\
     !defined(CONFIG_FOR_GLINET_GL_USB150)            &&\
     !defined(CONFIG_FOR_GS_OOLITE_V1_DEV)            &&\
+    !defined(CONFIG_FOR_HAK5_WIFI_PINEAPPLE_NANO)    &&\
     !defined(CONFIG_FOR_UNWIRED_DEVICES_UNWIRED_ONE) &&\
     !defined(CONFIG_FOR_VILLAGE_TELCO_MP2)
 
@@ -557,6 +571,7 @@
     !defined(CONFIG_FOR_DRAGINO_MS14)                &&\
     !defined(CONFIG_FOR_GLINET_GL_AR150)             &&\
     !defined(CONFIG_FOR_GLINET_GL_USB150)            &&\
+    !defined(CONFIG_FOR_HAK5_WIFI_PINEAPPLE_NANO)    &&\
     !defined(CONFIG_FOR_UNWIRED_DEVICES_UNWIRED_ONE) &&\
     !defined(CONFIG_FOR_VILLAGE_TELCO_MP2)
 
