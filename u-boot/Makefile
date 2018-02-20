@@ -526,6 +526,11 @@ hak5_lan-turtle: ar933x_common
 	@$(call define_add,CONFIG_FOR_HAK5_LAN_TURTLE,1)
 	@$(MKCONFIG) -a ap121 mips mips ap121 ar7240 ar7240
 
+hak5_packet-squirrel: ar933x_common
+	@$(call config_init,Hak5 Packet Squirrel,packet-squirrel,16,11,1,QCA_AR9331_SOC)
+	@$(call define_add,CONFIG_FOR_HAK5_PACKET_SQUIRREL,1)
+	@$(MKCONFIG) -a ap121 mips mips ap121 ar7240 ar7240
+
 hak5_wifi-pineapple-nano: ar933x_common
 	@$(call config_init,Hak5 WiFi Pineapple NANO,wifi-pineapple-nano,16,12,1,QCA_AR9331_SOC)
 	@$(call define_add,CONFIG_FOR_HAK5_WIFI_PINEAPPLE_NANO,1)

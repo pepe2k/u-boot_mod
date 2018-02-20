@@ -90,6 +90,12 @@
 
 	#define CONFIG_QCA_GPIO_MASK_LED_ACT_L	GPIO13
 
+#elif defined(CONFIG_FOR_HAK5_PACKET_SQUIRREL)
+
+	#define CONFIG_QCA_GPIO_MASK_LED_ACT_L	GPIO19 | GPIO22 | GPIO23
+	#define CONFIG_QCA_GPIO_MASK_IN		GPIO18 | GPIO20 | GPIO21 |\
+						GPIO24
+
 #elif defined(CONFIG_FOR_HAK5_WIFI_PINEAPPLE_NANO)
 
 	#define CONFIG_QCA_GPIO_MASK_LED_ACT_L	GPIO18
@@ -197,6 +203,7 @@
 
 #elif defined(CONFIG_FOR_GLINET_6416)              ||\
       defined(CONFIG_FOR_HAK5_LAN_TURTLE)          ||\
+      defined(CONFIG_FOR_HAK5_PACKET_SQUIRREL)     ||\
       defined(CONFIG_FOR_HAK5_WIFI_PINEAPPLE_NANO) ||\
       defined(CONFIG_FOR_TPLINK_MR10U_V1)          ||\
       defined(CONFIG_FOR_TPLINK_MR13U_V1)          ||\
@@ -417,6 +424,7 @@
     !defined(CONFIG_FOR_GLINET_GL_USB150)            &&\
     !defined(CONFIG_FOR_GS_OOLITE_V1_DEV)            &&\
     !defined(CONFIG_FOR_HAK5_LAN_TURTLE)             &&\
+    !defined(CONFIG_FOR_HAK5_PACKET_SQUIRREL)        &&\
     !defined(CONFIG_FOR_HAK5_WIFI_PINEAPPLE_NANO)    &&\
     !defined(CONFIG_FOR_UNWIRED_DEVICES_UNWIRED_ONE) &&\
     !defined(CONFIG_FOR_VILLAGE_TELCO_MP2)

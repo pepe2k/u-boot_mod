@@ -211,6 +211,7 @@ COMMON_AR933X_TARGETS = \
 	gainstrong_oolite_v1_dev \
 	gl-inet_6416 \
 	hak5_lan-turtle \
+	hak5_packet-squirrel \
 	hak5_wifi-pineapple-nano \
 	tp-link_tl-mr10u_v1 \
 	tp-link_tl-mr13u_v1 \
