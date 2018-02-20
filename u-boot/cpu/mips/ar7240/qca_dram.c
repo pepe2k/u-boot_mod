@@ -91,7 +91,9 @@ u32 qca_dram_type(void)
  *
  * Therefore, use a custom DRAM type detection here (ignore LSB bit)
  */
-#if defined(CONFIG_FOR_DRAGINO_MS14) || defined(CONFIG_FOR_VILLAGE_TELCO_MP2)
+#if defined(CONFIG_FOR_DRAGINO_MS14)    ||\
+    defined(CONFIG_FOR_HAK5_LAN_TURTLE) ||\
+    defined(CONFIG_FOR_VILLAGE_TELCO_MP2)
 	dram_type = dram_type >> 1;
 
 	if (dram_type)
