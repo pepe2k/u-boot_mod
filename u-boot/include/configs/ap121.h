@@ -64,6 +64,11 @@
 	#define CONFIG_QCA_GPIO_MASK_LED_ACT_H	GPIO0 | GPIO28
 	#define CONFIG_QCA_GPIO_MASK_LED_ACT_L	GPIO13 | GPIO17
 
+#elif defined(CONFIG_FOR_GAINSTRONG_OOLITE_V1_DEV)
+
+	#define CONFIG_QCA_GPIO_MASK_LED_ACT_L	GPIO13 | GPIO15 | GPIO17 |\
+						GPIO27
+
 #elif defined(CONFIG_FOR_GLINET_6416)
 
 	#define CONFIG_QCA_GPIO_MASK_LED_ACT_H	GPIO0 | GPIO13
@@ -80,11 +85,6 @@
 	#define CONFIG_QCA_GPIO_MASK_LED_ACT_H	GPIO0
 	#define CONFIG_QCA_GPIO_MASK_OUT_INIT_H	GPIO13
 	#define CONFIG_QCA_GPIO_MASK_OUT_INIT_L	GPIO7
-
-#elif defined(CONFIG_FOR_GS_OOLITE_V1_DEV)
-
-	#define CONFIG_QCA_GPIO_MASK_LED_ACT_L	GPIO13 | GPIO15 | GPIO17 |\
-						GPIO27
 
 #elif defined(CONFIG_FOR_HAK5_LAN_TURTLE)
 
@@ -201,6 +201,12 @@
 				"rootfstype=squashfs init=/sbin/init "\
 				"mtdparts=ar7240-nor0:192k(u-boot),64k(u-boot-env),16064k(firmware),64k(art)"
 
+#elif defined(CONFIG_FOR_GAINSTRONG_OOLITE_V1_DEV)
+
+	#define CONFIG_BOOTARGS	"console=ttyS0,115200 root=31:02 "\
+				"rootfstype=squashfs init=/sbin/init "\
+				"mtdparts=ar7240-nor0:128k(u-boot),1024k(kernel),2816k(rootfs),64k(config),64k(art)"
+
 #elif defined(CONFIG_FOR_GLINET_6416)              ||\
       defined(CONFIG_FOR_HAK5_LAN_TURTLE)          ||\
       defined(CONFIG_FOR_HAK5_PACKET_SQUIRREL)     ||\
@@ -224,12 +230,6 @@
 	#define CONFIG_BOOTARGS	"console=ttyATH0,115200 board=domino root=31:03 "\
 				"rootfstype=squashfs,jffs2 noinitrd "\
 				"mtdparts=spi0.0:256k(u-boot)ro,64k(u-boot-env)ro,1280k(kernel),14656k(rootfs),64k(nvram),64k(art)ro,15936k@0x50000(firmware)"
-
-#elif defined(CONFIG_FOR_GS_OOLITE_V1_DEV)
-
-	#define CONFIG_BOOTARGS	"console=ttyS0,115200 root=31:02 "\
-				"rootfstype=squashfs init=/sbin/init "\
-				"mtdparts=ar7240-nor0:128k(u-boot),1024k(kernel),2816k(rootfs),64k(config),64k(art)"
 
 #elif defined(CONFIG_FOR_TPLINK_WR710N_V1)
 
@@ -384,6 +384,12 @@
 	 * #define OFFSET_MAC_ADDRESS2		0x000016
 	 */
 
+#elif defined(CONFIG_FOR_GAINSTRONG_OOLITE_V1_DEV)
+
+	#define OFFSET_MAC_DATA_BLOCK		0x010000
+	#define OFFSET_MAC_DATA_BLOCK_LENGTH	0x010000
+	#define OFFSET_MAC_ADDRESS		0x00FC00
+
 #elif defined(CONFIG_FOR_GLINET_GL_AR150)  ||\
       defined(CONFIG_FOR_GLINET_GL_USB150) ||\
       defined(CONFIG_FOR_UNWIRED_DEVICES_UNWIRED_ONE)
@@ -391,12 +397,6 @@
 	#define OFFSET_MAC_DATA_BLOCK		0xFF0000
 	#define OFFSET_MAC_DATA_BLOCK_LENGTH	0x010000
 	#define OFFSET_MAC_ADDRESS		0x000000
-
-#elif defined(CONFIG_FOR_GS_OOLITE_V1_DEV)
-
-	#define OFFSET_MAC_DATA_BLOCK		0x010000
-	#define OFFSET_MAC_DATA_BLOCK_LENGTH	0x010000
-	#define OFFSET_MAC_ADDRESS		0x00FC00
 
 #elif defined(CONFIG_FOR_HAK5_WIFI_PINEAPPLE_NANO)
 
@@ -419,10 +419,10 @@
     !defined(CONFIG_FOR_CREATCOMM_D3321)             &&\
     !defined(CONFIG_FOR_DLINK_DIR505_A1)             &&\
     !defined(CONFIG_FOR_DRAGINO_MS14)                &&\
+    !defined(CONFIG_FOR_GAINSTRONG_OOLITE_V1_DEV)    &&\
     !defined(CONFIG_FOR_GLINET_6416)                 &&\
     !defined(CONFIG_FOR_GLINET_GL_AR150)             &&\
     !defined(CONFIG_FOR_GLINET_GL_USB150)            &&\
-    !defined(CONFIG_FOR_GS_OOLITE_V1_DEV)            &&\
     !defined(CONFIG_FOR_HAK5_LAN_TURTLE)             &&\
     !defined(CONFIG_FOR_HAK5_PACKET_SQUIRREL)        &&\
     !defined(CONFIG_FOR_HAK5_WIFI_PINEAPPLE_NANO)    &&\

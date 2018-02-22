@@ -46,6 +46,10 @@
 
 	#define CONFIG_QCA_GPIO_MASK_LED_ACT_L	GPIO11
 
+#elif defined(CONFIG_FOR_GAINSTRONG_OOLITE_V5_2_DEV)
+
+	#define CONFIG_QCA_GPIO_MASK_LED_ACT_H	GPIO13
+
 #elif defined(CONFIG_FOR_GLINET_GL_AR300M_LITE)
 
 	#define CONFIG_QCA_GPIO_MASK_LED_ACT_L	GPIO13 | GPIO14
@@ -207,6 +211,13 @@
 				"rootfstype=jffs2 init=/sbin/init "\
 				"mtdparts=ath-nor0:64k(u-boot),64k(art),1536k(uImage),6464k(rootfs),64k(mib0)"
 
+#elif defined(CONFIG_FOR_GAINSTRONG_OOLITE_V5_2) ||\
+      defined(CONFIG_FOR_GAINSTRONG_OOLITE_V5_2_DEV)
+
+	#define CONFIG_BOOTARGS	"console=ttyS0,115200 root=31:01 "\
+				"rootfstype=squashfs init=/sbin/init "\
+				"mtdparts=ath-nor0:128k(u-boot),16192k@0x20000(firmware),64k@0xff0000(art)"
+
 #elif defined(CONFIG_FOR_GLINET_GL_AR300M_LITE)
 
 	#define CONFIG_BOOTARGS	"console=ttyS0,115200 root=31:02 "\
@@ -287,22 +298,24 @@
 
 	#define CFG_LOAD_ADDR	0x9F080000
 
-#elif defined(CONFIG_FOR_COMFAST_CF_E314N)    ||\
-      defined(CONFIG_FOR_COMFAST_CF_E320N_V2) ||\
-      defined(CONFIG_FOR_COMFAST_CF_E520N)    ||\
-      defined(CONFIG_FOR_COMFAST_CF_E530N)    ||\
-      defined(CONFIG_FOR_TPLINK_MR22U_V1)     ||\
-      defined(CONFIG_FOR_TPLINK_MR3420_V3)    ||\
-      defined(CONFIG_FOR_TPLINK_MR6400_V1V2)  ||\
-      defined(CONFIG_FOR_TPLINK_WA850RE_V2)   ||\
-      defined(CONFIG_FOR_TPLINK_WR802N_V1)    ||\
-      defined(CONFIG_FOR_TPLINK_WR810N_V1)    ||\
-      defined(CONFIG_FOR_TPLINK_WR810N_V2)    ||\
-      defined(CONFIG_FOR_TPLINK_WR820N_V1_CN) ||\
-      defined(CONFIG_FOR_TPLINK_WR841N_V10)   ||\
-      defined(CONFIG_FOR_TPLINK_WR841N_V11)   ||\
-      defined(CONFIG_FOR_TPLINK_WR841N_V9)    ||\
-      defined(CONFIG_FOR_TPLINK_WR842N_V3)    ||\
+#elif defined(CONFIG_FOR_COMFAST_CF_E314N)           ||\
+      defined(CONFIG_FOR_COMFAST_CF_E320N_V2)        ||\
+      defined(CONFIG_FOR_COMFAST_CF_E520N)           ||\
+      defined(CONFIG_FOR_COMFAST_CF_E530N)           ||\
+      defined(CONFIG_FOR_GAINSTRONG_OOLITE_V5_2)     ||\
+      defined(CONFIG_FOR_GAINSTRONG_OOLITE_V5_2_DEV) ||\
+      defined(CONFIG_FOR_TPLINK_MR22U_V1)            ||\
+      defined(CONFIG_FOR_TPLINK_MR3420_V3)           ||\
+      defined(CONFIG_FOR_TPLINK_MR6400_V1V2)         ||\
+      defined(CONFIG_FOR_TPLINK_WA850RE_V2)          ||\
+      defined(CONFIG_FOR_TPLINK_WR802N_V1)           ||\
+      defined(CONFIG_FOR_TPLINK_WR810N_V1)           ||\
+      defined(CONFIG_FOR_TPLINK_WR810N_V2)           ||\
+      defined(CONFIG_FOR_TPLINK_WR820N_V1_CN)        ||\
+      defined(CONFIG_FOR_TPLINK_WR841N_V10)          ||\
+      defined(CONFIG_FOR_TPLINK_WR841N_V11)          ||\
+      defined(CONFIG_FOR_TPLINK_WR841N_V9)           ||\
+      defined(CONFIG_FOR_TPLINK_WR842N_V3)           ||\
       defined(CONFIG_FOR_TPLINK_WR902AC_V1)
 
 	#define CFG_LOAD_ADDR	0x9F020000
@@ -360,6 +373,26 @@
 	#define CFG_ENV_SIZE		0x7C00
 	#define CFG_ENV_SECT_SIZE	0x10000
 
+#elif defined(CONFIG_FOR_GAINSTRONG_OOLITE_V5_2)     ||\
+      defined(CONFIG_FOR_GAINSTRONG_OOLITE_V5_2_DEV) ||\
+      defined(CONFIG_FOR_TPLINK_MR22U_V1)            ||\
+      defined(CONFIG_FOR_TPLINK_MR3420_V3)           ||\
+      defined(CONFIG_FOR_TPLINK_MR6400_V1V2)         ||\
+      defined(CONFIG_FOR_TPLINK_WA850RE_V2)          ||\
+      defined(CONFIG_FOR_TPLINK_WR802N_V1)           ||\
+      defined(CONFIG_FOR_TPLINK_WR810N_V1)           ||\
+      defined(CONFIG_FOR_TPLINK_WR810N_V2)           ||\
+      defined(CONFIG_FOR_TPLINK_WR820N_V1_CN)        ||\
+      defined(CONFIG_FOR_TPLINK_WR841N_V10)          ||\
+      defined(CONFIG_FOR_TPLINK_WR841N_V11)          ||\
+      defined(CONFIG_FOR_TPLINK_WR841N_V9)           ||\
+      defined(CONFIG_FOR_TPLINK_WR842N_V3)           ||\
+      defined(CONFIG_FOR_TPLINK_WR902AC_V1)
+
+	#define CFG_ENV_ADDR		0x9F01EC00
+	#define CFG_ENV_SIZE		0x1000
+	#define CFG_ENV_SECT_SIZE	0x10000
+
 #elif defined(CONFIG_FOR_GLINET_GL_AR300M_LITE) ||\
       defined(CONFIG_FOR_GLINET_GL_AR750)       ||\
       defined(CONFIG_FOR_WHQX_E600G_V2)         ||\
@@ -378,24 +411,6 @@
 
 	#define CFG_ENV_ADDR		0x9F040000
 	#define CFG_ENV_SIZE		0xFC00
-	#define CFG_ENV_SECT_SIZE	0x10000
-
-#elif defined(CONFIG_FOR_TPLINK_MR22U_V1)     ||\
-      defined(CONFIG_FOR_TPLINK_MR3420_V3)    ||\
-      defined(CONFIG_FOR_TPLINK_MR6400_V1V2)  ||\
-      defined(CONFIG_FOR_TPLINK_WA850RE_V2)   ||\
-      defined(CONFIG_FOR_TPLINK_WR802N_V1)    ||\
-      defined(CONFIG_FOR_TPLINK_WR810N_V1)    ||\
-      defined(CONFIG_FOR_TPLINK_WR810N_V2)    ||\
-      defined(CONFIG_FOR_TPLINK_WR820N_V1_CN) ||\
-      defined(CONFIG_FOR_TPLINK_WR841N_V10)   ||\
-      defined(CONFIG_FOR_TPLINK_WR841N_V11)   ||\
-      defined(CONFIG_FOR_TPLINK_WR841N_V9)    ||\
-      defined(CONFIG_FOR_TPLINK_WR842N_V3)    ||\
-      defined(CONFIG_FOR_TPLINK_WR902AC_V1)
-
-	#define CFG_ENV_ADDR		0x9F01EC00
-	#define CFG_ENV_SIZE		0x1000
 	#define CFG_ENV_SECT_SIZE	0x10000
 
 #elif defined(CONFIG_FOR_WALLYS_DR531)
@@ -435,12 +450,14 @@
 	#define OFFSET_MAC_DATA_BLOCK_LENGTH	0x10000
 	#define OFFSET_MAC_ADDRESS		0x00000
 
-#elif defined(CONFIG_FOR_GLINET_GL_AR300M_LITE) ||\
-      defined(CONFIG_FOR_P2W_CPE505N)           ||\
-      defined(CONFIG_FOR_P2W_R602N)             ||\
-      defined(CONFIG_FOR_YUNCORE_AP90Q)         ||\
-      defined(CONFIG_FOR_YUNCORE_CPE830)        ||\
-      defined(CONFIG_FOR_YUNCORE_T830)          ||\
+#elif defined(CONFIG_FOR_GAINSTRONG_OOLITE_V5_2)     ||\
+      defined(CONFIG_FOR_GAINSTRONG_OOLITE_V5_2_DEV) ||\
+      defined(CONFIG_FOR_GLINET_GL_AR300M_LITE)      ||\
+      defined(CONFIG_FOR_P2W_CPE505N)                ||\
+      defined(CONFIG_FOR_P2W_R602N)                  ||\
+      defined(CONFIG_FOR_YUNCORE_AP90Q)              ||\
+      defined(CONFIG_FOR_YUNCORE_CPE830)             ||\
+      defined(CONFIG_FOR_YUNCORE_T830)               ||\
       defined(CONFIG_FOR_ZBTLINK_ZBT_WE1526)
 
 	#define OFFSET_MAC_DATA_BLOCK		0xFF0000
@@ -554,20 +571,22 @@
 
 	#define WEBFAILSAFE_UPLOAD_LIMITED_AREA_IN_BYTES	(512 * 1024)
 
-#elif defined(CONFIG_FOR_COMFAST_CF_E314N)    ||\
-      defined(CONFIG_FOR_COMFAST_CF_E320N_V2) ||\
-      defined(CONFIG_FOR_COMFAST_CF_E520N)    ||\
-      defined(CONFIG_FOR_COMFAST_CF_E530N)    ||\
-      defined(CONFIG_FOR_TPLINK_MR22U_V1)     ||\
-      defined(CONFIG_FOR_TPLINK_MR3420_V3)    ||\
-      defined(CONFIG_FOR_TPLINK_MR6400_V1V2)  ||\
-      defined(CONFIG_FOR_TPLINK_WR802N_V1)    ||\
-      defined(CONFIG_FOR_TPLINK_WR810N_V1)    ||\
-      defined(CONFIG_FOR_TPLINK_WR810N_V2)    ||\
-      defined(CONFIG_FOR_TPLINK_WR820N_V1_CN) ||\
-      defined(CONFIG_FOR_TPLINK_WR841N_V10)   ||\
-      defined(CONFIG_FOR_TPLINK_WR841N_V11)   ||\
-      defined(CONFIG_FOR_TPLINK_WR841N_V9)    ||\
+#elif defined(CONFIG_FOR_COMFAST_CF_E314N)           ||\
+      defined(CONFIG_FOR_COMFAST_CF_E320N_V2)        ||\
+      defined(CONFIG_FOR_COMFAST_CF_E520N)           ||\
+      defined(CONFIG_FOR_COMFAST_CF_E530N)           ||\
+      defined(CONFIG_FOR_GAINSTRONG_OOLITE_V5_2)     ||\
+      defined(CONFIG_FOR_GAINSTRONG_OOLITE_V5_2_DEV) ||\
+      defined(CONFIG_FOR_TPLINK_MR22U_V1)            ||\
+      defined(CONFIG_FOR_TPLINK_MR3420_V3)           ||\
+      defined(CONFIG_FOR_TPLINK_MR6400_V1V2)         ||\
+      defined(CONFIG_FOR_TPLINK_WR802N_V1)           ||\
+      defined(CONFIG_FOR_TPLINK_WR810N_V1)           ||\
+      defined(CONFIG_FOR_TPLINK_WR810N_V2)           ||\
+      defined(CONFIG_FOR_TPLINK_WR820N_V1_CN)        ||\
+      defined(CONFIG_FOR_TPLINK_WR841N_V10)          ||\
+      defined(CONFIG_FOR_TPLINK_WR841N_V11)          ||\
+      defined(CONFIG_FOR_TPLINK_WR841N_V9)           ||\
       defined(CONFIG_FOR_TPLINK_WR842N_V3)
 
 	#define WEBFAILSAFE_UPLOAD_LIMITED_AREA_IN_BYTES	(192 * 1024)
@@ -621,22 +640,24 @@
 	#define CONFIG_QCA_PLL_IN_FLASH_BLOCK_OFFSET	0x70000
 	#define CONFIG_QCA_PLL_IN_FLASH_BLOCK_SIZE	0x10000
 
-#elif defined(CONFIG_FOR_COMFAST_CF_E314N)    ||\
-      defined(CONFIG_FOR_COMFAST_CF_E320N_V2) ||\
-      defined(CONFIG_FOR_COMFAST_CF_E520N)    ||\
-      defined(CONFIG_FOR_COMFAST_CF_E530N)    ||\
-      defined(CONFIG_FOR_TPLINK_MR22U_V1)     ||\
-      defined(CONFIG_FOR_TPLINK_MR3420_V3)    ||\
-      defined(CONFIG_FOR_TPLINK_MR6400_V1V2)  ||\
-      defined(CONFIG_FOR_TPLINK_WA850RE_V2)   ||\
-      defined(CONFIG_FOR_TPLINK_WR802N_V1)    ||\
-      defined(CONFIG_FOR_TPLINK_WR810N_V1)    ||\
-      defined(CONFIG_FOR_TPLINK_WR810N_V2)    ||\
-      defined(CONFIG_FOR_TPLINK_WR820N_V1_CN) ||\
-      defined(CONFIG_FOR_TPLINK_WR841N_V10)   ||\
-      defined(CONFIG_FOR_TPLINK_WR841N_V11)   ||\
-      defined(CONFIG_FOR_TPLINK_WR841N_V9)    ||\
-      defined(CONFIG_FOR_TPLINK_WR842N_V3)    ||\
+#elif defined(CONFIG_FOR_GAINSTRONG_OOLITE_V5_2)     ||\
+      defined(CONFIG_FOR_GAINSTRONG_OOLITE_V5_2_DEV) ||\
+      defined(CONFIG_FOR_COMFAST_CF_E314N)           ||\
+      defined(CONFIG_FOR_COMFAST_CF_E320N_V2)        ||\
+      defined(CONFIG_FOR_COMFAST_CF_E520N)           ||\
+      defined(CONFIG_FOR_COMFAST_CF_E530N)           ||\
+      defined(CONFIG_FOR_TPLINK_MR22U_V1)            ||\
+      defined(CONFIG_FOR_TPLINK_MR3420_V3)           ||\
+      defined(CONFIG_FOR_TPLINK_MR6400_V1V2)         ||\
+      defined(CONFIG_FOR_TPLINK_WA850RE_V2)          ||\
+      defined(CONFIG_FOR_TPLINK_WR802N_V1)           ||\
+      defined(CONFIG_FOR_TPLINK_WR810N_V1)           ||\
+      defined(CONFIG_FOR_TPLINK_WR810N_V2)           ||\
+      defined(CONFIG_FOR_TPLINK_WR820N_V1_CN)        ||\
+      defined(CONFIG_FOR_TPLINK_WR841N_V10)          ||\
+      defined(CONFIG_FOR_TPLINK_WR841N_V11)          ||\
+      defined(CONFIG_FOR_TPLINK_WR841N_V9)           ||\
+      defined(CONFIG_FOR_TPLINK_WR842N_V3)           ||\
       defined(CONFIG_FOR_TPLINK_WR902AC_V1)
 
 	#define CONFIG_QCA_PLL_IN_FLASH_BLOCK_OFFSET	0x10000

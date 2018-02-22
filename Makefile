@@ -227,6 +227,8 @@ $(COMMON_AR933X_TARGETS):
 	@$(call build,123,1)
 
 COMMON_ETHS27_TARGETS = \
+	gainstrong_oolite_v5.2 \
+	gainstrong_oolite_v5.2_dev \
 	tp-link_tl-mr22u_v1 \
 	tp-link_tl-mr3420_v2 \
 	tp-link_tl-mr3420_v3 \

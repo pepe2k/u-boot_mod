@@ -482,9 +482,25 @@ engenius_ens202ext: ar934x_common
 	@$(MKCONFIG) -a db12x mips mips db12x ar7240 ar7240
 
 gainstrong_oolite_v1_dev: ar933x_common
-	@$(call config_init,Gainstrong Oolite v1 (dev board),oolite-v1,16,11,,QCA_AR9331_SOC)
-	@$(call define_add,CONFIG_FOR_GS_OOLITE_V1_DEV,1)
+	@$(call config_init,GainStrong Oolite v1-Dev,oolite-v1-dev,16,11,,QCA_AR9331_SOC)
+	@$(call define_add,CONFIG_FOR_GAINSTRONG_OOLITE_V1_DEV,1)
 	@$(MKCONFIG) -a ap121 mips mips ap121 ar7240 ar7240
+
+gainstrong_oolite_v5.2: qca953x_common
+	@$(call config_init,GainStrong Oolite v5.2,oolite-v5.2,16,,,QCA_QCA9531_SOC)
+	@$(call define_add,CONFIG_FOR_GAINSTRONG_OOLITE_V5_2,1)
+	@$(call define_add,CFG_ATHRS27_PHY,1)
+	@$(call define_add,CFG_ATH_GMAC_NMACS,2)
+	@$(call define_add,CONFIG_PCI,1)
+	@$(MKCONFIG) -a ap143 mips mips ap143 ar7240 ar7240
+
+gainstrong_oolite_v5.2_dev: qca953x_common
+	@$(call config_init,GainStrong Oolite v5.2-Dev,oolite-v5.2-dev,16,17,1,QCA_QCA9531_SOC)
+	@$(call define_add,CONFIG_FOR_GAINSTRONG_OOLITE_V5_2_DEV,1)
+	@$(call define_add,CFG_ATHRS27_PHY,1)
+	@$(call define_add,CFG_ATH_GMAC_NMACS,2)
+	@$(call define_add,CONFIG_PCI,1)
+	@$(MKCONFIG) -a ap143 mips mips ap143 ar7240 ar7240
 
 gl-inet_6416: ar933x_common
 	@$(call config_init,GL.iNet 6416,glinet-6416,8,11,,QCA_AR9331_SOC)

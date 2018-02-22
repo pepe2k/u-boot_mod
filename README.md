@@ -69,10 +69,10 @@ Currently supported devices:
   - Black Swift
   - CreatComm Technology D3321
   - Dragino MS14/N
+  - GainStrong Oolite v1/Elink EL-M150 module with dev board ([photos in my gallery](http://galeria.tech-blog.pl/Elink_EL-M150_Development-Board/))
   - GL.iNet 64xxA ([photos in my gallery](http://galeria.tech-blog.pl/GLiNet/))
   - GL.iNet GL-AR150
   - GL.iNet GL-USB150
-  - GS-Oolite/Elink EL-M150 module with dev board ([photos in my gallery](http://galeria.tech-blog.pl/Elink_EL-M150_Development-Board/))
   - Hak5 LAN Turtle
   - Hak5 Packet Squirrel
   - Hak5 WiFi Pineapple NANO
@@ -113,6 +113,7 @@ Currently supported devices:
   - Comfast CF-E314N
   - Comfast CF-E320N v2
   - Comfast CF-E520N/CF-E530N
+  - GainStrong Oolite v5.2 (module and dev board)
   - GL.iNet GL-AR300M Lite
   - GL.iNet GL-AR750
   - P&W CPE505N
@@ -154,13 +155,14 @@ More information about supported devices:
 | [D-Link DIR-505 H/W ver. A1](http://wiki.openwrt.org/toh/d-link/dir-505) | AR1311 | 8 MiB | 64 MiB DDR2 | 64 KiB, LZMA | RO |
 | [Dragino MS14/N](http://wiki.openwrt.org/toh/dragino/ms14) | AR9331 | 16 MiB | 64 MiB DDR1 | 192 KiB | R/W |
 | [EnGenius ENS202EXT](https://wiki.openwrt.org/toh/engenius/engenius_ens202ext_1.0.0) | AR9341 | 16 MiB | 64 MiB DDR1 | 256 KiB | R/W |
+| GainStrong Oolite v1/Elink EL-M150 module | AR9331 | 4/8/16 MiB | 64 MiB DDR2 | 64 KiB, LZMA | RO |
+| GainStrong Oolite v5.2 | QCA9531 | 16 MiB | 64/128 MiB DDR2 | 256 KiB, LZMA | RO |
 | [GL.iNet 64xxA](http://wiki.openwrt.org/toh/gl-inet/gl-inet) | AR9331 | 8/16 MiB | 64 MiB DDR1 | 64 KiB | RO |
 | GL.iNet GL-AR150 | AR9331 | 16 MiB | 64 MiB DDR2 | 256 KiB | R/W |
 | GL.iNet GL-AR300 | AR9344 | 16 MiB | 128 MiB DDR2 | 256 KiB | R/W |
 | GL.iNet GL-AR300M Lite | QCA9531 | 16 MiB | 128 MiB DDR2 | 256 KiB | R/W |
 | GL.iNet GL-AR750 | QCA9531 | 16 MiB | 128 MiB DDR2 | 256 KiB | R/W |
 | GL.iNet GL-USB150 | AR9331 | 16 MiB | 64 MiB DDR2 | 256 KiB | R/W |
-| GS-Oolite/Elink EL-M150 module | AR9331 | 4/8/16 MiB | 64 MiB DDR2 | 64 KiB, LZMA | RO |
 | Hak5 LAN Turtle | AR9331 | 16 MiB | 64 MiB DDR2 | 128 KiB | R/W |
 | Hak5 Packet Squirrel | AR9331 | 16 MiB | 64 MiB DDR2 | 128 KiB | R/W |
 | Hak5 WiFi Pineapple NANO | AR9331 | 16 MiB | 64 MiB DDR2 | 128 KiB | R/W |
