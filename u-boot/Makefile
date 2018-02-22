@@ -157,9 +157,12 @@ define config_init
     $(call echo_yellow,  GPIO reset button:\tnot specified) \
   )
 
-  $(if $(filter $(5),1),
-    $(call echo_yellow,  Button active low:\tyes), \
-    $(call echo_yellow,  Button active low:\tno) \
+  $(if $(5),
+    $(if $(filter $(5),1),
+      $(call echo_yellow,  Button active low:\tyes), \
+      $(call echo_yellow,  Button active low:\tno) \
+    ), \
+    $(call echo_yellow,  Button active low:\tn/a) \
   )
 
   $(if $(filter $(COMPRESSED_UBOOT),1), \

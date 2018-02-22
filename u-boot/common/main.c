@@ -162,7 +162,8 @@ void main_loop(void)
 	char *bootcmd;
 	int rc = 0;
 
-#if defined(CONFIG_BTN_RECOVERY_SCRIPT)
+#if defined(CONFIG_BTN_RECOVERY_SCRIPT) &&\
+    defined(CONFIG_GPIO_RESET_BTN)
 	int stop_boot;
 	char *c;
 #endif
@@ -193,7 +194,8 @@ void main_loop(void)
 #endif
 
 /* Recovery mode before normal boot */
-#if defined(CONFIG_BTN_RECOVERY_SCRIPT)
+#if defined(CONFIG_BTN_RECOVERY_SCRIPT) &&\
+    defined(CONFIG_GPIO_RESET_BTN)
 	if (reset_button_status()) {
 		#if defined(CONFIG_SILENT_CONSOLE)
 		if (gd->flags & GD_FLG_SILENT) {
@@ -256,7 +258,7 @@ void main_loop(void)
 			 printf_err("recovery script is missing in env!\n\n");
 		}
 	}
-#endif /* CONFIG_RECOVERY_MODE */
+#endif /* CONFIG_BTN_RECOVERY_SCRIPT && CONFIG_GPIO_RESET_BTN */
 
 #if defined(CONFIG_BOOTDELAY) &&\
 	   (CONFIG_BOOTDELAY >= 0)

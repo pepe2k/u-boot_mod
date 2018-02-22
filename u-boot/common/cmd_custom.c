@@ -248,7 +248,8 @@ U_BOOT_CMD(defenv, 1, 0, do_default_env, "reset environment variables to their d
  * button && echo pressed!
  * button || echo not pressed!
  */
-#if defined(CONFIG_CMD_BUTTON)
+#if defined(CONFIG_CMD_BUTTON) &&\
+    defined(CONFIG_GPIO_RESET_BTN)
 int do_button(cmd_tbl_t * cmdtp, int flag, int argc, char *argv[])
 {
 #if defined(CFG_HUSH_PARSER)
@@ -267,7 +268,7 @@ int do_button(cmd_tbl_t * cmdtp, int flag, int argc, char *argv[])
 
 U_BOOT_CMD(button, 1, 1, do_button,
 	"get reset button status\n", NULL);
-#endif /* CONFIG_CMD_BUTTON */
+#endif /* CONFIG_CMD_BUTTON && CONFIG_GPIO_RESET_BTN */
 
 /*
  * Allows to delay execution

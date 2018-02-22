@@ -112,7 +112,8 @@
 /*
  * Recovery
  */
-#if defined(CONFIG_BTN_RECOVERY_SCRIPT)
+#if defined(CONFIG_BTN_RECOVERY_SCRIPT) &&\
+    defined(CONFIG_GPIO_RESET_BTN)
 
 	#if !defined(CONFIG_CMD_BUTTON) ||\
 	    !defined(CONFIG_CMD_SLEEP)  ||\
@@ -120,10 +121,6 @@
 	    !defined(CONFIG_CMD_ITEST)  ||\
 	    !defined(CONFIG_CMD_SETEXPR)
 		#error "Commands setexpr, itest, sleep, button and led{on, off} are required for recovery"
-	#endif
-
-	#if !defined(CONFIG_GPIO_RESET_BTN)
-		#error "Reset button definition is required for recovery"
 	#endif
 
 	#if defined(CONFIG_CMD_HTTPD)
@@ -186,6 +183,6 @@
 			"setenv cnt;" \
 		"fi\0"
 
-#endif /* CONFIG_BTN_RECOVERY_SCRIPT */
+#endif /* CONFIG_BTN_RECOVERY_SCRIPT && CONFIG_GPIO_RESET_BTN */
 
 #endif /* _ENV_SCRIPTS_H_ */

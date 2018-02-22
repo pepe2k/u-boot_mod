@@ -272,7 +272,7 @@ void macaddr_init(u8 *mac_addr)
  */
 int reset_button_status(void)
 {
-#ifdef CONFIG_GPIO_RESET_BTN
+#if defined(CONFIG_GPIO_RESET_BTN)
 	u32 gpio;
 
 	gpio = qca_soc_reg_read(QCA_GPIO_IN_REG);
