@@ -68,3 +68,4 @@ U_BOOT_CMD(go, CFG_MAXARGS, 1, do_go, "start application at address 'addr'\n",
 extern int do_reset(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[]);
 
 U_BOOT_CMD(reset, 1, 0, do_reset, "perform RESET of the CPU\n", NULL);
+U_BOOT_CMD(reboot, 1, 0, do_reset, "perform RESET of the CPU\n", NULL);
