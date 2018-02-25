@@ -20,11 +20,13 @@
  * MA 02111-1307 USA
  */
 
+#include <config.h>
 #include <common.h>
 #include <malloc.h>
 #include <net.h>
 #include <command.h>
 #include <asm/io.h>
+#include <asm/addrspace.h>
 #include <asm/types.h>
 
 #ifdef CONFIG_ATH_NAND_BR
@@ -33,6 +35,7 @@
 
 #include <atheros.h>
 #include <soc/qca_soc_common.h>
+
 #include "qca-eth-956x.h"
 #include "qca-eth-956x_phy.h"
 #define SGMII_LINK_WAR_MAX_TRY 10
@@ -40,6 +43,9 @@
 #if defined(CONFIG_CMD_MII)
 #include <miiphy.h>
 #endif
+
+DECLARE_GLOBAL_DATA_PTR;
+
 #define ath_gmac_unit2mac(_unit)     ath_gmac_macs[(_unit)]
 #define ath_gmac_name2mac(name)	   is_drqfn() ? ath_gmac_unit2mac(1):strcmp(name,"eth0") ? ath_gmac_unit2mac(1) : ath_gmac_unit2mac(0)
 
@@ -112,8 +118,6 @@ ath_gmac_send(struct eth_device *dev, volatile void *packet, int length)
 		if (!ath_gmac_tx_owned_by_dma(f))
 			break;
 	}
-	if (i == MAX_WAIT)
-		printf("Tx Timed out\n");
 
 	f->pkt_start_addr = 0;
 	f->pkt_size = 0;
@@ -129,40 +133,40 @@ static int ath_gmac_recv(struct eth_device *dev)
 	int length;
 	ath_gmac_desc_t *f;
 	ath_gmac_mac_t *mac;
-    	volatile int dmaed_pkt=0;
+	volatile int dmaed_pkt=0;
 	int count = 0;
 
 	mac = (ath_gmac_mac_t *)dev->priv;
 
 	for (;;) {
-	     f = mac->fifo_rx[mac->next_rx];
-        if (ath_gmac_rx_owned_by_dma(f)) { 
-	 /* check if the current Descriptor is_empty is 1,But the DMAed count is not-zero 
-	    then move to desciprot where the packet is available */ 
-	   dmaed_pkt = (ath_gmac_reg_rd(mac, 0x194) >> 16);
-            if (!dmaed_pkt) {
-	        break ;
-              } else {  
-                if (f->is_empty == 1) {
-                    while ( count < NO_OF_RX_FIFOS ) {
-                        if (++mac->next_rx >= NO_OF_RX_FIFOS) {
-                            mac->next_rx = 0;
-                        }
-                        f = mac->fifo_rx[mac->next_rx];
-                        /*
-                         * Break on valid data in the desc by checking
-                         *  empty bit.
-                         */
-                        if (!f->is_empty){
-                            count = 0;
-                            break;
-                        }
-                        count++;
-                    }
-               }
-            } 
-	} 
- 
+		f = mac->fifo_rx[mac->next_rx];
+		if (ath_gmac_rx_owned_by_dma(f)) {
+			/* check if the current Descriptor is_empty is 1,But the DMAed count is not-zero
+			   then move to desciprot where the packet is available */
+			dmaed_pkt = (ath_gmac_reg_rd(mac, 0x194) >> 16);
+			if (!dmaed_pkt) {
+				break ;
+			} else {
+				if (f->is_empty == 1) {
+					while (count < NO_OF_RX_FIFOS) {
+						if (++mac->next_rx >= NO_OF_RX_FIFOS) {
+							mac->next_rx = 0;
+						}
+						f = mac->fifo_rx[mac->next_rx];
+						/*
+						 * Break on valid data in the desc by checking
+						 * empty bit.
+						 */
+						if (!f->is_empty) {
+							count = 0;
+							break;
+						}
+						count++;
+					}
+				}
+			}
+		}
+
 		length = f->pkt_size;
 
 		NetReceive(NetRxPackets[mac->next_rx] , length - 4);
@@ -197,8 +201,6 @@ void ath_gmac_mii_setup(ath_gmac_mac_t *mac)
 	}
 
 	if (is_s27() && (mac->mac_unit == 0)) {
-		printf("Dragonfly----> S27 PHY *\n");
-	
 		ath_reg_wr(ETH_XMII_ADDRESS, ETH_XMII_TX_INVERT_SET(1) |
 						ETH_XMII_RX_DELAY_SET(2) |
 						ETH_XMII_TX_DELAY_SET(1) |
@@ -220,19 +222,17 @@ void ath_gmac_mii_setup(ath_gmac_mac_t *mac)
 	}
 
 	if ( CFG_ATH_GMAC_NMACS == 1){
-		printf("Dragonfly  ----> S17 PHY *\n");
 		mgmt_cfg_val = 7;
 
 		ath_reg_wr(ATH_ETH_CFG, ETH_CFG_ETH_RXDV_DELAY_SET(3) |
 					ETH_CFG_ETH_RXD_DELAY_SET(3)|
 					ETH_CFG_RGMII_GE0_SET(1) |
-					ETH_CFG_GE0_SGMII_SET(1) );
+					ETH_CFG_GE0_SGMII_SET(1));
 
 		ath_reg_wr(ETH_XMII_ADDRESS, ETH_XMII_TX_INVERT_SET(1) |
-                			     ETH_XMII_RX_DELAY_SET(2)  |
-                			     ETH_XMII_TX_DELAY_SET(1)  |
-					     ETH_XMII_GIGE_SET(1));
-
+						ETH_XMII_RX_DELAY_SET(2) |
+						ETH_XMII_TX_DELAY_SET(1) |
+						ETH_XMII_GIGE_SET(1));
 		udelay(1000);
 		ath_gmac_reg_wr(mac, ATH_MAC_MII_MGMT_CFG, mgmt_cfg_val | (1 << 31));
 		ath_gmac_reg_wr(mac, ATH_MAC_MII_MGMT_CFG, mgmt_cfg_val);
@@ -317,7 +317,7 @@ athrs_sgmii_res_cal(void)
 }
 
 
-static void athr_gmac_sgmii_setup()
+static void athr_gmac_sgmii_setup(void)
 {
 	int status = 0, count = 0;
 
@@ -382,14 +382,11 @@ static void athr_gmac_sgmii_setup()
 		udelay(100);
 		ath_reg_rmw_clear(MR_AN_CONTROL_ADDRESS, MR_AN_CONTROL_PHY_RESET_SET(1));
 		if (count++ == SGMII_LINK_WAR_MAX_TRY) {
-			printf ("Max resets limit reached exiting...\n");
+			//printf ("Max resets limit reached exiting...\n");
 			break;
 	    	}
 		status = (ath_reg_rd(SGMII_DEBUG_ADDRESS) & 0xff);
 	}
-
-	printf("%s SGMII done\n",__func__);
-
 }
 
 static void ath_gmac_hw_start(ath_gmac_mac_t *mac)
@@ -442,10 +439,8 @@ static void ath_gmac_hw_start(ath_gmac_mac_t *mac)
 
 	ath_gmac_reg_wr(mac, ATH_MAC_FIFO_CFG_3, 0x1f00140);
 
-	printf(": cfg1 %#x cfg2 %#x\n", ath_gmac_reg_rd(mac, ATH_MAC_CFG1),
-			ath_gmac_reg_rd(mac, ATH_MAC_CFG2));
-
-
+	/*printf(": cfg1 %#x cfg2 %#x\n", ath_gmac_reg_rd(mac, ATH_MAC_CFG1),
+			ath_gmac_reg_rd(mac, ATH_MAC_CFG2));*/
 }
 
 static int ath_gmac_check_link(ath_gmac_mac_t *mac)
@@ -500,7 +495,6 @@ static int ath_gmac_check_link(ath_gmac_mac_t *mac)
 			break;
 
 		default:
-			printf("Invalid speed detected\n");
 			return 0;
 	}
 
@@ -509,8 +503,6 @@ static int ath_gmac_check_link(ath_gmac_mac_t *mac)
 
 	mac->duplex = duplex;
 	mac->speed = speed;
-
-	printf("dup %d speed %d\n", duplex, speed);
 
 	ath_gmac_set_mac_duplex(mac,duplex);
 
@@ -532,7 +524,7 @@ static int ath_gmac_clean_rx(struct eth_device *dev, bd_t * bd)
 
 	mac->next_rx = 0;
 
-        ath_gmac_reg_wr(mac, ATH_MAC_FIFO_CFG_0, 0x1f00); 
+        ath_gmac_reg_wr(mac, ATH_MAC_FIFO_CFG_0, 0x1f00);
         ath_gmac_reg_wr(mac, ATH_MAC_CFG1, (ATH_MAC_CFG1_RX_EN | ATH_MAC_CFG1_TX_EN));
 
 	for (i = 0; i < NO_OF_RX_FIFOS; i++) {
@@ -561,7 +553,6 @@ static int ath_gmac_alloc_fifo(int ndesc, ath_gmac_desc_t ** fifo)
 	size += CFG_CACHELINE_SIZE - 1;
 
 	if ((p = malloc(size)) == NULL) {
-		printf("Cant allocate fifos\n");
 		return -1;
 	}
 
@@ -606,119 +597,6 @@ static void ath_gmac_halt(struct eth_device *dev)
         ath_gmac_reg_wr(mac,ATH_MAC_FIFO_CFG_0,0x1f1f);
 	ath_gmac_reg_wr(mac,ATH_DMA_RX_CTRL, 0);
 	while (ath_gmac_reg_rd(mac, ATH_DMA_RX_CTRL));
-}
-
-#ifdef CONFIG_ATH_NAND_BR
-
-unsigned char *
-ath_eth_mac_addr(unsigned char *sectorBuff)
-{
-	ulong   off, size;
-	nand_info_t *nand;
-	unsigned char ret;
-
-	/*
-	 * caldata partition is of 128k
-	 */
-	nand = &nand_info[nand_curr_device];
-	size = ATH_ETH_MAC_READ_SIZE; /* To read 4k setting size as 4k */
-
-	/*
-	 * Get the Offset of Caldata partition
-	 */
-	off = ath_nand_get_cal_offset(getenv("bootargs"));
-	if(off == ATH_CAL_OFF_INVAL) {
-		printf("Invalid CAL offset \n");
-		return NULL;
-	}
-	/*
-	 * Get the values from flash, and program into the MAC address
-	 * registers
-	 */
-	ret = nand_read(nand, (loff_t)off, &size, (u_char *)sectorBuff);
-	printf(" %d bytes %s: %s\n", size,
-			"read", ret ? "ERROR" : "OK");
-	if(ret != 0 ) {
-		return NULL;
-	}
-
-	return sectorBuff;
-}
-
-#else  /* CONFIG_ATH_NAND_BR */
-
-unsigned char *
-ath_gmac_mac_addr_loc(void)
-{
-	extern flash_info_t flash_info[];
-
-#ifdef BOARDCAL
-	/*
-	 ** BOARDCAL environmental variable has the address of the cal sector
-	 */
-
-	return ((unsigned char *)BOARDCAL);
-
-#else
-	/* MAC address is store in the 2nd 4k of last sector */
-	return ((unsigned char *)
-			(KSEG1ADDR(ATH_SPI_BASE) + (4 * 1024) +
-			 flash_info[0].size - (64 * 1024) /* sector_size */ ));
-#endif
-}
-
-#endif  /* CONFIG_ATH_NAND_BR */
-
-static void ath_gmac_get_ethaddr(struct eth_device *dev)
-{
-	unsigned char *eeprom;
-	unsigned char *mac = dev->enetaddr;
-	unsigned char i = 0;
-#ifndef CONFIG_ATH_EMULATION
-
-#ifdef CONFIG_ATH_NAND_BR
-	unsigned char sectorBuff[ATH_ETH_MAC_READ_SIZE];
-
-	eeprom = ath_eth_mac_addr(sectorBuff);
-	if(eeprom == NULL) {
-		/* mac address will be set to default mac address */
-		mac[0] = 0xff;
-	}
-	else {
-#else  /* CONFIG_ATH_NAND_BR */
-		eeprom = ath_gmac_mac_addr_loc();
-#endif  /* CONFIG_ATH_NAND_BR */
-
-		if (strcmp(dev->name, "eth0") == 0) {
-			memcpy(mac, eeprom, 6);
-		} else if (strcmp(dev->name, "eth1") == 0) {
-			eeprom += 6;
-			i = 1;
-			memcpy(mac, eeprom, 6);
-		} else {
-			printf("%s: unknown ethernet device %s\n", __func__, dev->name);
-			return;
-		}
-#ifdef CONFIG_ATH_NAND_BR
-	}
-#endif  /* CONFIG_ATH_NAND_BR */
-	/* Use fixed address if the above address is invalid */
-	//if (mac[0] != 0x00 || (mac[0] == 0xff && mac[5] == 0xff))
-	if (1)
-#else
-	if (1)
-#endif
-	{
-			mac[0] = 0x00;
-			mac[1] = 0x03;
-			mac[2] = 0x7f;
-			mac[3] = 0x09;
-			mac[4] = 0x0b;
-			mac[5] = 0xad + i;
-			printf("No valid address in Flash. Using fixed address\n");
-		} else {
-			printf("Fetching MAC Address from 0x%p\n", __func__, eeprom);
-		}
 }
 
 void
@@ -766,20 +644,25 @@ ath_reg_wr(GPIO_OUT_FUNCTION0_ADDRESS, rddata);
 
 }
 #endif /* CONFIG_ATHRS17_PHY */
-
-	printf ("%s ::done\n",__func__);
 }
 
+/*
+ * Get MAC address stored in flash
+ */
+static void ath_gmac_get_ethaddr(struct eth_device *dev)
+{
+	unsigned char *mac = dev->enetaddr;
+	bd_t *bd = gd->bd;
+
+	memcpy(mac, (void *)bd->bi_enetaddr, 6);
+}
 
 int ath_gmac_enet_initialize(bd_t * bis)
 {
 	struct eth_device *dev[CFG_ATH_GMAC_NMACS];
 	u32 mask, mac_h, mac_l;
 	int i;
-	u32 val;
 	
-	printf("%s...\n", __func__);
-
 	if ( CFG_ATH_GMAC_NMACS == 1){
 		athrs_sgmii_res_cal();
 	}
@@ -859,8 +742,6 @@ int ath_gmac_enet_initialize(bd_t * bis)
 
 			mask = mask | ATH_RESET_GE0_MDIO | ATH_RESET_GE1_MDIO;
 
-			printf("%s: reset mask:%x \n", __func__, mask);
-
 			ath_reg_rmw_set(QCA_RST_RESET_REG, mask);
 			udelay(1000 * 100);
 
@@ -890,7 +771,6 @@ int ath_gmac_enet_initialize(bd_t * bis)
 
 		if (ath_gmac_macs[i]->mac_unit == 0) { /* WAN Phy */
 #ifdef  CONFIG_ATHRS17_PHY
-			printf("Dragonfly  ----> S17 PHY *\n");
 			athrs17_reg_init();
 #endif
 
@@ -901,9 +781,7 @@ int ath_gmac_enet_initialize(bd_t * bis)
 #ifdef CFG_ATHRS27_PHY
                 	athrs27_reg_init();
 #endif
-//add by phw
 #ifdef CONFIG_ATHR_8033_PHY
-			printf("AR8033 PHY init \n");
 			athr_ar8033_reg_init(0);
 #endif
 
@@ -930,17 +808,8 @@ int ath_gmac_enet_initialize(bd_t * bis)
 		ath_gmac_hw_start(ath_gmac_macs[i]);
 		ath_gmac_setup_fifos(ath_gmac_macs[i]);
 
-
-
 		udelay(100 * 1000);
 
-		{
-			unsigned char *mac = dev[i]->enetaddr;
-
-			printf("%s: %02x:%02x:%02x:%02x:%02x:%02x\n", dev[i]->name,
-					mac[0] & 0xff, mac[1] & 0xff, mac[2] & 0xff,
-					mac[3] & 0xff, mac[4] & 0xff, mac[5] & 0xff);
-		}
 		mac_l = (dev[i]->enetaddr[4] << 8) | (dev[i]->enetaddr[5]);
 		mac_h = (dev[i]->enetaddr[0] << 24) | (dev[i]->enetaddr[1] << 16) |
 			(dev[i]->enetaddr[2] << 8) | (dev[i]->enetaddr[3] << 0);
@@ -950,7 +819,6 @@ int ath_gmac_enet_initialize(bd_t * bis)
 
 
 	ath_gmac_phy_setup(ath_gmac_macs[i]->mac_unit);
-		printf("%s up\n",dev[i]->name);
 	}
 
 
@@ -967,8 +835,6 @@ ath_gmac_miiphy_read(char *devname, uint32_t phy_addr, uint8_t reg, uint16_t *da
 	uint16_t      ii = 0xFFFF;
 
 
-
-
 	/*
 	 * Check for previous transactions are complete. Added to avoid
 	 * race condition while running at higher frequencies.
@@ -978,9 +844,6 @@ ath_gmac_miiphy_read(char *devname, uint32_t phy_addr, uint8_t reg, uint16_t *da
 		udelay(5);
 		rddata = ath_gmac_reg_rd(mac, ATH_MII_MGMT_IND) & 0x1;
 	}while(rddata && --ii);
-
-	if (ii == 0)
-		printf("ERROR:%s:%d transaction failed\n",__func__,__LINE__);
 
 
 	ath_gmac_reg_wr(mac, ATH_MII_MGMT_CMD, 0x0);
@@ -993,14 +856,12 @@ ath_gmac_miiphy_read(char *devname, uint32_t phy_addr, uint8_t reg, uint16_t *da
 		rddata = ath_gmac_reg_rd(mac, ATH_MII_MGMT_IND) & 0x1;
 	}while(rddata && --ii);
 
-	if(ii==0)
-		printf("Error!!! Leave ath_gmac_miiphy_read without polling correct status!\n");
-
 	val = ath_gmac_reg_rd(mac, ATH_MII_MGMT_STATUS);
 	ath_gmac_reg_wr(mac, ATH_MII_MGMT_CMD, 0x0);
 
-        if (data != NULL)
-	    *data = val; 
+	if (data != NULL)
+            *data = val;
+
 	return val;
 }
 
@@ -1022,9 +883,6 @@ ath_gmac_miiphy_write(char *devname, uint32_t phy_addr, uint8_t reg, uint16_t da
 		rddata = ath_gmac_reg_rd(mac, ATH_MII_MGMT_IND) & 0x1;
 	} while (rddata && --ii);
 
-	if (ii == 0)
-		printf("ERROR:%s:%d transaction failed\n",__func__,__LINE__);
-
 	ath_gmac_reg_wr(mac, ATH_MII_MGMT_ADDRESS, addr);
 	ath_gmac_reg_wr(mac, ATH_MII_MGMT_CTRL, data);
 
@@ -1032,8 +890,6 @@ ath_gmac_miiphy_write(char *devname, uint32_t phy_addr, uint8_t reg, uint16_t da
 		rddata = ath_gmac_reg_rd(mac, ATH_MII_MGMT_IND) & 0x1;
 	} while (rddata && --ii);
 
-	if (ii == 0)
-		printf("Error!!! Leave ath_gmac_miiphy_write without polling correct status!\n");
 	return 0; 
 }
 #endif		/* defined(CONFIG_CMD_MII) */
