@@ -79,7 +79,9 @@ typedef struct {
 	u32 spi_ctrl;
 
 	pll_regs xtal_25mhz;
+#if !(SOC_TYPE & QCA_QCA956X_SOC)
 	pll_regs xtal_40mhz;
+#endif
 } clk_profile;
 
 static const clk_profile clk_profiles[] = {
@@ -2303,7 +2305,6 @@ static const clk_profile clk_profiles[] = {
 			0,
 
 		},
-		{	0},
 	},
 	{
 		750, 400, 250, 0,
@@ -2324,7 +2325,6 @@ static const clk_profile clk_profiles[] = {
 			0,
 
 		},
-		{	0},
 	}, {
 		750, 667, 250, 0,
 		_qca956x_spi_ctrl_addr_reg_val(14, 1, 0, 2),
@@ -2344,8 +2344,8 @@ static const clk_profile clk_profiles[] = {
 			0,
 
 		},
-		{	0},
 	}, {
+		/* Tested */
 		775, 650, 258, 0,
 		_qca956x_spi_ctrl_addr_reg_val(14, 1, 0, 2),
 		{
@@ -2364,7 +2364,6 @@ static const clk_profile clk_profiles[] = {
 			0,
 
 		},
-		{	0},
 	}, {
 		800, 333, 266, 0,
 		_qca956x_spi_ctrl_addr_reg_val(14, 1, 0, 2),
@@ -2384,7 +2383,6 @@ static const clk_profile clk_profiles[] = {
 			0,
 
 		},
-		{	0},
 	}, {
 		800, 400, 266, 0,
 		_qca956x_spi_ctrl_addr_reg_val(14, 1, 0, 2),
@@ -2404,7 +2402,6 @@ static const clk_profile clk_profiles[] = {
 			0,
 
 		},
-		{	0},
 	}, {
 		800, 450, 266, 0,
 		_qca956x_spi_ctrl_addr_reg_val(14, 1, 0, 2),
@@ -2424,7 +2421,6 @@ static const clk_profile clk_profiles[] = {
 			0,
 
 		},
-		{	0},
 	}, {
 		800, 533, 266, 0,
 		_qca956x_spi_ctrl_addr_reg_val(14, 1, 0, 2),
@@ -2444,7 +2440,6 @@ static const clk_profile clk_profiles[] = {
 			0,
 
 		},
-		{	0},
 	}, {
 		800, 600, 266, 0,
 		_qca956x_spi_ctrl_addr_reg_val(14, 1, 0, 2),
@@ -2464,7 +2459,6 @@ static const clk_profile clk_profiles[] = {
 			0,
 
 		},
-		{	0},
 	}, {
 		800, 600, 300, 0,
 		_qca956x_spi_ctrl_addr_reg_val(14, 1, 0, 2),
@@ -2484,7 +2478,6 @@ static const clk_profile clk_profiles[] = {
 			0,
 
 		},
-		{	0},
 	}, {
 		800, 666, 266, 0,
 		_qca956x_spi_ctrl_addr_reg_val(14, 1, 0, 2),
@@ -2504,7 +2497,6 @@ static const clk_profile clk_profiles[] = {
 			0,
 
 		},
-		{	0},
 	}, {
 		800, 667, 266, 0,
 		_qca956x_spi_ctrl_addr_reg_val(14, 1, 0, 2),
@@ -2524,7 +2516,6 @@ static const clk_profile clk_profiles[] = {
 			0,
 
 		},
-		{	0},
 	}, {
 		800, 700, 266, 0,
 		_qca956x_spi_ctrl_addr_reg_val(14, 1, 0, 2),
@@ -2544,7 +2535,6 @@ static const clk_profile clk_profiles[] = {
 			0,
 
 		},
-		{	0},
 	}, {
 		810, 400, 270, 0,
 		_qca956x_spi_ctrl_addr_reg_val(14, 1, 0, 2),
@@ -2564,7 +2554,6 @@ static const clk_profile clk_profiles[] = {
 			0,
 
 		},
-		{	0},
 	}, {
 		810, 666, 270, 0,
 		_qca956x_spi_ctrl_addr_reg_val(14, 1, 0, 2),
@@ -2584,7 +2573,6 @@ static const clk_profile clk_profiles[] = {
 			0,
 
 		},
-		{	0},
 	}, {
 		810, 700, 270, 0,
 		_qca956x_spi_ctrl_addr_reg_val(14, 1, 0, 2),
@@ -2604,7 +2592,6 @@ static const clk_profile clk_profiles[] = {
 			0,
 
 		},
-		{	0},
 	}
 	#endif /* SOC_TYPE & QCA_AR933X_SOC */
 };

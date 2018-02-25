@@ -132,12 +132,15 @@ int do_set_clk(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 			printf("%5d", i + 1);
 
 			if (reg == QCA_PLL_IN_FLASH_MAGIC) {
+#if (SOC_TYPE & QCA_QCA956X_SOC)
+				pll_registers = &(clk_profiles[i].xtal_25mhz);
+#else
 				if (ref_clk == 25) {
 					pll_registers = &(clk_profiles[i].xtal_25mhz);
 				} else {
 					pll_registers = &(clk_profiles[i].xtal_40mhz);
 				}
-
+#endif
 				if (from_flash.spi_ctrl == clk_profiles[i].spi_ctrl &&
 					compare_pll_regs(&(from_flash.regs), pll_registers)) {
 					puts(" [*] |");
@@ -194,12 +197,15 @@ int do_set_clk(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 		/* Copy target values */
 		to_flash.spi_ctrl = clk_profiles[i].spi_ctrl;
 
+#if (SOC_TYPE & QCA_QCA956X_SOC)
+		to_flash.regs = clk_profiles[i].xtal_25mhz;
+#else
 		if (ref_clk == 25) {
 			to_flash.regs = clk_profiles[i].xtal_25mhz;
 		} else {
 			to_flash.regs = clk_profiles[i].xtal_40mhz;
 		}
-
+#endif
 		printf("- CPU: %3d MHz\n", clk_profiles[i].cpu_clk);
 		printf("- RAM: %3d MHz\n", clk_profiles[i].ddr_clk);
 		printf("- AHB: %3d MHz\n", clk_profiles[i].ahb_clk);
