@@ -135,6 +135,9 @@ Currently supported devices:
   - YunCore T830
   - Zbtlink ZBT-WE1526
 
+- **Qualcomm Atheros QCA956x**:
+  - TP-Link EAP245 v1
+
 I tested this modification on most of these devices, with OpenWrt and OFW firmware. If you are not sure about the version of your device, please contact with me **before** you try to make an upgrade. Changing bootloader to a wrong version will probably damage your router and you will need special hardware to fix it, so please, **be very careful**.
 
 More information about supported devices:
@@ -168,6 +171,7 @@ More information about supported devices:
 | Hak5 WiFi Pineapple NANO | AR9331 | 16 MiB | 64 MiB DDR2 | 128 KiB | R/W |
 | P&W CPE505N | QCA9531 | 16 MiB | 64 MiB DDR2 | 256 KiB | R/W |
 | P&W R602N | QCA9531 | 16 MiB | 64 MiB DDR2 | 256 KiB | R/W |
+| TP-Link EAP245 v1 | QCA9563 | 16 MiB | 128 MiB DDR2 | 128 KiB, LZMA | RW |
 | [TP-Link TL-MR10U v1](http://wiki.openwrt.org/toh/tp-link/tl-mr10u) | AR9331 | 4 MiB | 32 MiB DDR1 | 64 KiB, LZMA | RO |
 | [TP-Link TL-MR13U v1](http://wiki.openwrt.org/toh/tp-link/tl-mr13u) | AR9331 | 4 MiB | 32 MiB DDR1 | 64 KiB, LZMA | RO |
 | [TP-Link TL-MR22U v1](https://wiki.openwrt.org/toh/tp-link/tp-link_tl-mr22u_v1) | QCA9531 | 8 MiB | 32 MiB DDR1 | 64 KiB, LZMA | RO |
@@ -399,12 +403,12 @@ Currently supported FLASH types:
 
 **16 MiB**:
 
-- Winbond W25Q128 (16 MB, JEDEC ID: EF 4018)*
-- Winbond W25Q128FW (16 MB, JEDEC ID: EF 6018, 1,8 V)*
-- Macronix MX25L128 (16 MB, JEDEC ID: C2 2018, C2 2618)
-- Spansion S25FL127S (16 MB, JEDEC ID: 01 2018)*
-- Micron N25Q128 (16 MB, JEDEC ID: 20 BA18)
-- GigaDevice GD25Q128 (16 MiB, JEDEC ID: C8 4018)
+- Winbond W25Q128 (16 MiB, JEDEC ID: EF 4018)*
+- Winbond W25Q128FW (16 MiB, JEDEC ID: EF 6018, 1,8 V)*
+- Macronix MX25L128 (16 MiB, JEDEC ID: C2 2018, C2 2618)
+- Spansion S25FL127S (16 MiB, JEDEC ID: 01 2018)*
+- Micron N25Q128 (16 MiB, JEDEC ID: 20 BA18)
+- GigaDevice GD25Q128 (16 MiB, JEDEC ID: C8 4018)*
 
 (*) tested
 
