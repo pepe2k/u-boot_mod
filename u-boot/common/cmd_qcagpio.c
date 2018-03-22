@@ -262,7 +262,33 @@ static void gpio_list_cfg(void)
     defined(CONFIG_QCA_GPIO_MASK_OUT_INIT_L) ||\
     defined(CONFIG_QCA_GPIO_MASK_LED_ACT_H)  ||\
     defined(CONFIG_QCA_GPIO_MASK_LED_ACT_L)
-	u32 mask_h = 0, mask_l = 0;
+
+	#if defined(CONFIG_QCA_GPIO_MASK_LED_ACT_H)
+		u32 mask_led_h = CONFIG_QCA_GPIO_MASK_LED_ACT_H;
+	#else
+		u32 mask_led_h = 0;
+	#endif
+
+	#if defined(CONFIG_QCA_GPIO_MASK_LED_ACT_L)
+		u32 mask_led_l = CONFIG_QCA_GPIO_MASK_LED_ACT_L;
+	#else
+		u32 mask_led_l = 0;
+	#endif
+
+	#if defined(CONFIG_QCA_GPIO_MASK_OUT_INIT_H)
+		u32 mask_out_h = CONFIG_QCA_GPIO_MASK_OUT_INIT_H;
+	#else
+		u32 mask_out_h = 0;
+	#endif
+
+	#if defined(CONFIG_QCA_GPIO_MASK_OUT_INIT_L)
+		u32 mask_out_l = CONFIG_QCA_GPIO_MASK_OUT_INIT_L;
+	#else
+		u32 mask_out_l = 0;
+	#endif
+
+	mask_out_l |= mask_led_h;
+	mask_out_h |= mask_led_l;
 #endif
 
 	puts("\n");
@@ -327,20 +353,13 @@ static void gpio_list_cfg(void)
 
 		/* GPIO default value */
 #if defined(CONFIG_QCA_GPIO_MASK_OUT_INIT_H) ||\
-    defined(CONFIG_QCA_GPIO_MASK_OUT_INIT_L)
-
-	#if defined(CONFIG_QCA_GPIO_MASK_OUT_INIT_H)
-		mask_h = CONFIG_QCA_GPIO_MASK_OUT_INIT_H;
-	#endif
-
-	#if defined(CONFIG_QCA_GPIO_MASK_OUT_INIT_L)
-		mask_l = CONFIG_QCA_GPIO_MASK_OUT_INIT_L;
-	#endif
-
+    defined(CONFIG_QCA_GPIO_MASK_OUT_INIT_L) ||\
+    defined(CONFIG_QCA_GPIO_MASK_LED_ACT_H)  ||\
+    defined(CONFIG_QCA_GPIO_MASK_LED_ACT_L)
 		if (output) {
-			if (gpio_mask & mask_h)
+			if (gpio_mask & mask_out_h)
 				printf("%-3s", "hi");
-			else if (gpio_mask & mask_l)
+			else if (gpio_mask & mask_out_l)
 				printf("%-3s", "lo");
 			else
 				printf("%-3s", "-");
@@ -354,18 +373,10 @@ static void gpio_list_cfg(void)
 		/* GPIO in LED mask */
 #if defined(CONFIG_QCA_GPIO_MASK_LED_ACT_H) ||\
     defined(CONFIG_QCA_GPIO_MASK_LED_ACT_L)
-	#if defined(CONFIG_QCA_GPIO_MASK_LED_ACT_H)
-		mask_h = CONFIG_QCA_GPIO_MASK_LED_ACT_H;
-	#endif
-
-	#if defined(CONFIG_QCA_GPIO_MASK_LED_ACT_L)
-		mask_l = CONFIG_QCA_GPIO_MASK_LED_ACT_L;
-	#endif
-
 		if (output) {
-			if (gpio_mask & mask_h)
+			if (gpio_mask & mask_led_h)
 				printf("%-3s", "hi");
-			else if (gpio_mask & mask_l)
+			else if (gpio_mask & mask_led_l)
 				printf("%-3s", "lo");
 			else
 				printf("%-3s", "-");

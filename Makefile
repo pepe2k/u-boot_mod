@@ -210,6 +210,9 @@ endef
 COMMON_AR933X_TARGETS = \
 	gainstrong_oolite_v1_dev \
 	gl-inet_6416 \
+	hak5_lan-turtle \
+	hak5_packet-squirrel \
+	hak5_wifi-pineapple-nano \
 	tp-link_tl-mr10u_v1 \
 	tp-link_tl-mr13u_v1 \
 	tp-link_tl-mr3020_v1 \
@@ -224,16 +227,19 @@ $(COMMON_AR933X_TARGETS):
 	@$(call build,123,1)
 
 COMMON_ETHS27_TARGETS = \
+	gainstrong_oolite_v5.2 \
+	gainstrong_oolite_v5.2_dev \
 	tp-link_tl-mr22u_v1 \
 	tp-link_tl-mr3420_v2 \
 	tp-link_tl-mr3420_v3 \
 	tp-link_tl-mr6400_v1v2 \
 	tp-link_tl-wa801nd_v2 \
-	tp-link_tl-wa850re_v2 \
 	tp-link_tl-wa830re_v2 \
+	tp-link_tl-wa850re_v2 \
 	tp-link_tl-wdr3500_v1 \
 	tp-link_tl-wr802n_v1 \
 	tp-link_tl-wr810n_v1 \
+	tp-link_tl-wr810n_v2 \
 	tp-link_tl-wr820n_v1_CN \
 	tp-link_tl-wr841n_v10 \
 	tp-link_tl-wr841n_v11 \
@@ -247,6 +253,7 @@ $(COMMON_ETHS27_TARGETS):
 
 8devices_carambola2 \
 alfa-network_hornet-ub \
+alfa-network_tube2h \
 creatcomm-technology_d3321 \
 gl-inet_gl-ar150 \
 gl-inet_gl-usb150:
@@ -255,23 +262,33 @@ gl-inet_gl-usb150:
 alfa-network_ap121f:
 	@$(call build,192,1)
 
+alfa-network_n5q \
+alfa-network_r36a:
+	@$(call build,384,1,ETH_CONFIG=_s27)
+
 comfast_cf-e314n \
 comfast_cf-e320n_v2 \
 comfast_cf-e520n \
 comfast_cf-e530n:
 	@$(call build,64,1,ETH_CONFIG=_s27)
 
-d-link_dir-505:
+d-link_dir-505_a1:
 	@$(call build,64,1)
 
-dragino_v2_ms14:
+dragino_ms14:
 	@$(call build,192,1,DEVICE_VENDOR=dragino)
 
 engenius_ens202ext \
+gl-inet_gl-ar300 \
+gl-inet_gl-ar300m-lite \
+gl-inet_gl-ar750 \
 p2w_cpe505n \
 p2w_r602n \
 yuncore_ap90q \
 yuncore_cpe830 \
+yuncore_t830 \
+whqx_e600g_v2 \
+whqx_e600gac_v2 \
 zbtlink_zbt-we1526:
 	@$(call build,256,1,ETH_CONFIG=_s27)
 

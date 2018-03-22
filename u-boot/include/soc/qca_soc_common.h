@@ -549,7 +549,11 @@
 #if (SOC_TYPE & QCA_AR933X_SOC)
 	#define QCA_GPIO_COUNT	30
 #elif (SOC_TYPE & QCA_AR934X_SOC)
-	#define QCA_GPIO_COUNT	23
+	#if (SOC_TYPE & QCA_AR9342_SOC)
+		#define QCA_GPIO_COUNT	18
+	#else
+		#define QCA_GPIO_COUNT	23
+	#endif
 #elif (SOC_TYPE & QCA_QCA953X_SOC)
 	#define QCA_GPIO_COUNT	18
 #elif (SOC_TYPE & QCA_QCA955X_SOC)
@@ -560,7 +564,7 @@
 
 /* JTAG GPIO pin mask */
 #if (SOC_TYPE & QCA_AR933X_SOC)
-	#define QCA_GPIO_JTAG_MASK	0x001C0		/* GPIO6~8 */
+	#define QCA_GPIO_JTAG_MASK	0x200001C0	/* GPIO6~8, GPIO29 */
 #elif (SOC_TYPE & QCA_QCA956X_SOC)
 	#define QCA_GPIO_JTAG_MASK	0x3C000		/* GPIO14~17 */
 #else
