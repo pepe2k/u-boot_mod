@@ -6,7 +6,9 @@ niubi_pocket-router
 A toolchain is included in toolchain branch, to use it:
 
 git clone https://github.com/Niubi-git/u-boot_mod
+
 git checkout toolchain
+
 make niubi_pocket-router
 
 ORIGINAL README:
