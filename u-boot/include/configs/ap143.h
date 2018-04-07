@@ -63,6 +63,15 @@
 	#define CONFIG_QCA_GPIO_MASK_OUT_INIT_H	GPIO2
 	#define CONFIG_QCA_GPIO_MASK_OUT_INIT_L	GPIO12
 
+#elif defined(CONFIG_FOR_NIUBI_POCKET_ROUTER)
+
+	#define CONFIG_QCA_GPIO_SYSLED	  GPIO13
+	#define CONFIG_QCA_GPIO_MASK_LED_ACT_L	GPIO0  |\
+						 GPIO11 | GPIO13
+	#define CONFIG_QCA_GPIO_MASK_OUT	CONFIG_QCA_GPIO_MASK_LED_ACT_L
+	#define CONFIG_QCA_GPIO_MASK_IN		GPIO12  | GPIO16
+	#define CONFIG_QCA_GPIO_MASK_OUT_INIT_H	CONFIG_QCA_GPIO_MASK_LED_ACT_L
+
 #elif defined(CONFIG_FOR_P2W_CPE505N)
 
 	#define CONFIG_QCA_GPIO_MASK_LED_ACT_L	GPIO4  | GPIO11 | GPIO12 |\
@@ -230,7 +239,8 @@
 				"rootfstype=squashfs init=/sbin/init "\
 				"mtdparts=spi0.0:256k(u-boot)ro,64k(u-boot-env),64k(art)ro,16000k(firmware)"
 
-#elif defined(CONFIG_FOR_P2W_CPE505N)    ||\
+#elif defined(CONFIG_FOR_NIUBI_POCKET_ROUTER) ||\
+      defined(CONFIG_FOR_P2W_CPE505N)    ||\
       defined(CONFIG_FOR_P2W_R602N)      ||\
       defined(CONFIG_FOR_YUNCORE_AP90Q)  ||\
       defined(CONFIG_FOR_YUNCORE_CPE830) ||\
@@ -320,7 +330,8 @@
 
 	#define CFG_LOAD_ADDR	0x9F020000
 
-#elif defined(CONFIG_FOR_GLINET_GL_AR300M_LITE) ||\
+#elif defined(CONFIG_FOR_GLINET_GL_AR300M_LITE)	||\
+      defined(CONFIG_FOR_NIUBI_POCKET_ROUTER)   ||\
       defined(CONFIG_FOR_P2W_CPE505N)           ||\
       defined(CONFIG_FOR_P2W_R602N)             ||\
       defined(CONFIG_FOR_WALLYS_DR531)          ||\
@@ -328,7 +339,6 @@
       defined(CONFIG_FOR_YUNCORE_CPE830)        ||\
       defined(CONFIG_FOR_YUNCORE_T830)          ||\
       defined(CONFIG_FOR_ZBTLINK_ZBT_WE1526)
-
 	#define CFG_LOAD_ADDR	0x9F050000
 
 #elif defined(CONFIG_FOR_GLINET_GL_AR750) ||\
@@ -339,7 +349,8 @@
 
 #endif
 
-#if defined(CONFIG_FOR_P2W_CPE505N)    ||\
+#if defined(CONFIG_FOR_NIUBI_POCKET_ROUTER) ||\
+    defined(CONFIG_FOR_P2W_CPE505N)    ||\
     defined(CONFIG_FOR_P2W_R602N)      ||\
     defined(CONFIG_FOR_YUNCORE_AP90Q)  ||\
     defined(CONFIG_FOR_YUNCORE_CPE830) ||\
@@ -402,7 +413,8 @@
 	#define CFG_ENV_SIZE		0x10000
 	#define CFG_ENV_SECT_SIZE	0x10000
 
-#elif defined(CONFIG_FOR_P2W_CPE505N)    ||\
+#elif defined(CONFIG_FOR_NIUBI_POCKET_ROUTER) ||\
+      defined(CONFIG_FOR_P2W_CPE505N)    ||\
       defined(CONFIG_FOR_P2W_R602N)      ||\
       defined(CONFIG_FOR_YUNCORE_AP90Q)  ||\
       defined(CONFIG_FOR_YUNCORE_CPE830) ||\
@@ -454,6 +466,7 @@
       defined(CONFIG_FOR_GAINSTRONG_OOLITE_V5_2_DEV) ||\
       defined(CONFIG_FOR_GLINET_GL_AR300M_LITE)      ||\
       defined(CONFIG_FOR_P2W_CPE505N)                ||\
+      defined(CONFIG_FOR_NIUBI_POCKET_ROUTER)        ||\
       defined(CONFIG_FOR_P2W_R602N)                  ||\
       defined(CONFIG_FOR_YUNCORE_AP90Q)              ||\
       defined(CONFIG_FOR_YUNCORE_CPE830)             ||\
@@ -537,6 +550,11 @@
 
 #endif
 
+#if defined(CONFIG_FOR_NIUBI_POCKET_ROUTER)
+	#undef CONFIG_BOOTDELAY
+	#define CONFIG_BOOTDELAY 5
+#endif
+
 /*
  * ===========================
  * HTTP recovery configuration
@@ -592,7 +610,8 @@
 	#define WEBFAILSAFE_UPLOAD_LIMITED_AREA_IN_BYTES	(192 * 1024)
 
 #elif defined(CONFIG_FOR_GLINET_GL_AR300M_LITE) ||\
-      defined(CONFIG_FOR_GLINET_GL_AR750)       ||\
+      defined(CONFIG_FOR_GLINET_GL_AR750) 	||\
+      defined(CONFIG_FOR_NIUBI_POCKET_ROUTER)   ||\
       defined(CONFIG_FOR_P2W_CPE505N)           ||\
       defined(CONFIG_FOR_P2W_R602N)             ||\
       defined(CONFIG_FOR_WALLYS_DR531)          ||\
@@ -675,7 +694,8 @@
 	#define CONFIG_QCA_PLL_IN_FLASH_BLOCK_OFFSET	0x50000
 	#define CONFIG_QCA_PLL_IN_FLASH_BLOCK_SIZE	0x10000
 
-#elif defined(CONFIG_FOR_P2W_CPE505N)    ||\
+#elif defined(CONFIG_FOR_NIUBI_POCKET_ROUTER)	||\
+      defined(CONFIG_FOR_P2W_CPE505N)    ||\
       defined(CONFIG_FOR_P2W_R602N)      ||\
       defined(CONFIG_FOR_YUNCORE_AP90Q)  ||\
       defined(CONFIG_FOR_YUNCORE_CPE830) ||\
@@ -704,6 +724,7 @@
     !defined(CONFIG_FOR_COMFAST_CF_E530N)      &&\
     !defined(CONFIG_FOR_GLINET_GL_AR300M_LITE) &&\
     !defined(CONFIG_FOR_GLINET_GL_AR750)       &&\
+    !defined(CONFIG_FOR_NIUBI_POCKET_ROUTER)   &&\
     !defined(CONFIG_FOR_P2W_CPE505N)           &&\
     !defined(CONFIG_FOR_P2W_R602N)             &&\
     !defined(CONFIG_FOR_WALLYS_DR531)          &&\
@@ -718,13 +739,13 @@
 
 #endif
 
-#if defined(CONFIG_FOR_P2W_CPE505N)    ||\
+#if defined(CONFIG_FOR_NIUBI_POCKET_ROUTER) ||\
+    defined(CONFIG_FOR_P2W_CPE505N)    ||\
     defined(CONFIG_FOR_P2W_R602N)      ||\
     defined(CONFIG_FOR_YUNCORE_AP90Q)  ||\
     defined(CONFIG_FOR_YUNCORE_CPE830) ||\
     defined(CONFIG_FOR_YUNCORE_T830)   ||\
     defined(CONFIG_FOR_ZBTLINK_ZBT_WE1526)
-
 	#define CONFIG_UPG_SCRIPTS_FW_ADDR_HEX	0x9F050000
 
 #endif

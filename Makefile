@@ -297,6 +297,9 @@ tp-link_tl-wdr43x0_v1 \
 tp-link_tl-wr1041n_v2:
 	@$(call build,123,1,ETH_CONFIG=_s17)
 
+niubi_pocket-router:
+	@$(call build,256,1,ETH_CONFIG=_s27 DEVICE_VENDOR=NiuBi)
+
 unwireddevices_unwired-one:
 	@$(call build,128,1,DEVICE_VENDOR=SE)
 
