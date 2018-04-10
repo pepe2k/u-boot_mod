@@ -15,18 +15,57 @@
 #include <asm/addrspace.h>
 #include <soc/qca_soc_common.h>
 
+/* Use simple division with low footprint to prevent linking against
+ * __udivdi3 from libgcc. Adapted from Linux Kernel, ignore overflows.
+ */
+static u32 div64_32_32(u64 n, u32 base)
+{
+	u64 rem = n;
+	u64 b = base;
+	u64 res = 0, d = 1;
+
+#if 0	/* Save few bytes by not checking overflow
+		 * result is corrupted if greater than 2**32
+		 */
+	u32 high = rem >> 32;
+
+	/* Reduce the thing a bit first */
+	if (high >= base) {
+		high /= base;
+		res = (uint64_t) high << 32;
+		rem -= (uint64_t) (high*base) << 32;
+	}
+#endif
+
+	while ((s64)b > 0 && b < rem) {
+		b = b+b;
+		d = d+d;
+	}
+
+	do {
+		if (rem >= b) {
+			rem -= b;
+			res += d;
+		}
+		b >>= 1;
+		d >>= 1;
+	} while (d);
+
+	return res;
+	}
+
 /*
  * Calculates and returns PLL value
- * TODO: check for overflow!
  */
-static u32 qca_get_pll(u32 ref_clk,
-					   u32 refdiv,
-					   u32 nfrac,
-					   u32 nfracdiv,
-					   u32 nint,
-					   u32 outdiv)
+static u32 qca_get_pll(u32 ref_clk,		/* 26 bits */
+					   u32 refdiv,		/*  5 bits */
+					   u32 nfrac,		/* 18 bits */
+					   u32 nfracdiv,	/* 19 bits */
+					   u32 nint,		/*  9 bits */
+					   u32 outdiv)		/*  3 bits */
 {
-	u64 pll_mul, pll_div;
+	u64 pll_mul;
+	u32 pll_div;
 
 	pll_mul = ref_clk;
 	pll_div = refdiv;
@@ -41,9 +80,9 @@ static u32 qca_get_pll(u32 ref_clk,
 		pll_mul = pll_mul * nint;
 	}
 
-	pll_div = pll_div << outdiv;
+	pll_mul >>= outdiv;
 
-	return (u32)(pll_mul / pll_div);
+	return div64_32_32(pll_mul, pll_div);
 }
 
 /*
