@@ -577,7 +577,6 @@
       defined(CONFIG_FOR_COMFAST_CF_E530N)           ||\
       defined(CONFIG_FOR_GAINSTRONG_OOLITE_V5_2)     ||\
       defined(CONFIG_FOR_GAINSTRONG_OOLITE_V5_2_DEV) ||\
-      defined(CONFIG_FOR_TPLINK_MR22U_V1)            ||\
       defined(CONFIG_FOR_TPLINK_MR3420_V3)           ||\
       defined(CONFIG_FOR_TPLINK_MR6400_V1V2)         ||\
       defined(CONFIG_FOR_TPLINK_WR802N_V1)           ||\
@@ -590,6 +589,10 @@
       defined(CONFIG_FOR_TPLINK_WR842N_V3)
 
 	#define WEBFAILSAFE_UPLOAD_LIMITED_AREA_IN_BYTES	(192 * 1024)
+
+#elif defined(CONFIG_FOR_TPLINK_MR22U_V1)
+
+	#define WEBFAILSAFE_UPLOAD_LIMITED_AREA_IN_BYTES	(256 * 1024)
 
 #elif defined(CONFIG_FOR_GLINET_GL_AR300M_LITE) ||\
       defined(CONFIG_FOR_GLINET_GL_AR750)       ||\
