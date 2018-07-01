@@ -153,11 +153,11 @@
 			"echo;" \
 			"while button && itest $cnt < 0xA; do " \
 				"ledon;" \
-				"sleep 300;" \
+				"sleep 250;" \
 				"echo . \'\\\\c\';" \
-				"sleep 300;" \
+				"sleep 250;" \
 				"ledoff;" \
-				"sleep 600;" \
+				"sleep 500;" \
 				"setexpr cnt $cnt + 1;" \
 			"done;" \
 			"echo 0x$cnt seconds;" \
