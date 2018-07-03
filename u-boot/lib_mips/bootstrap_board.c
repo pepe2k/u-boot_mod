@@ -119,6 +119,7 @@ typedef int(init_fnc_t)(void);
 init_fnc_t *init_sequence[] = { init_func_ram,
 								NULL, };
 
+__attribute__ ((used))
 void bootstrap_board_init_f(ulong bootflag)
 {
 	gd_t gd_data, *id;
@@ -213,6 +214,7 @@ void bootstrap_board_init_f(ulong bootflag)
  *
  ************************************************************************
  */
+__attribute__ ((used))
 void bootstrap_board_init_r(gd_t *id, ulong dest_addr)
 {
 	int i;

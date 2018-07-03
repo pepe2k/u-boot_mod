@@ -1,8 +1,6 @@
 #
 # Copyright (C) 2016 Piotr Dymacz <piotr@dymacz.pl>
-#
-# (C) Copyright 2000-2006 Wolfgang Denk,
-# DENX Software Engineering, wd@denx.de.
+# Copyright (C) 2000-2006 Wolfgang Denk, DENX Software Engineering, wd@denx.de.
 #
 # SPDX-License-Identifier: GPL-2.0
 #
@@ -48,20 +46,20 @@ endif
 #
 
 ifdef O
-ifeq ("$(origin O)", "command line")
-BUILD_DIR := $(O)
-endif
+  ifeq ("$(origin O)", "command line")
+    BUILD_DIR := $(O)
+  endif
 endif
 
 ifneq ($(BUILD_DIR),)
-saved-output := $(BUILD_DIR)
+  saved-output := $(BUILD_DIR)
 
-# Attempt to create a output directory.
-$(shell [ -d ${BUILD_DIR}/include ] || mkdir -p ${BUILD_DIR}/include)
+  # Attempt to create a output directory.
+  $(shell [ -d ${BUILD_DIR}/include ] || mkdir -p ${BUILD_DIR}/include)
 
-# Verify if it was successful.
-BUILD_DIR := $(shell cd $(BUILD_DIR) && /bin/pwd)
-$(if $(BUILD_DIR),,$(error output directory "$(saved-output)" does not exist))
+  # Verify if it was successful.
+  BUILD_DIR := $(shell cd $(BUILD_DIR) && /bin/pwd)
+  $(if $(BUILD_DIR),,$(error output directory "$(saved-output)" does not exist))
 endif # ifneq ($(BUILD_DIR),)
 
 OBJTREE		:= $(if $(BUILD_DIR),$(BUILD_DIR),$(CURDIR))
@@ -74,19 +72,19 @@ MKCONFIG	:= $(SRCTREE)/mkconfig
 export MKCONFIG
 
 ifneq ($(OBJTREE),$(SRCTREE))
-REMOTE_BUILD	:= 1
-export REMOTE_BUILD
+  REMOTE_BUILD	:= 1
+  export REMOTE_BUILD
 endif
 
 # $(obj) and (src) are defined in config.mk but here in main Makefile
 # we also need them before config.mk is included which is the case for
 # some targets like unconfig, clean, clobber, distclean, etc.
 ifneq ($(OBJTREE),$(SRCTREE))
-obj := $(OBJTREE)/
-src := $(SRCTREE)/
+  obj := $(OBJTREE)/
+  src := $(SRCTREE)/
 else
-obj :=
-src :=
+  obj :=
+  src :=
 endif
 export obj src
 
@@ -287,37 +285,39 @@ include $(TOPDIR)/config.mk
 # ===============================================================
 # U-Boot objects....order is important (i.e. start must be first)
 
-OBJS = $(obj)cpu/$(CPU)/start.o
+LIBS  = lib_generic
+LIBS += common
 
-LIBS  = lib_generic/libgeneric.a
-LIBS += common/libcommon.a
-
-LIBS += lib_$(ARCH)/lib$(ARCH).a
-LIBS += drivers/libdrivers.a
-LIBS += net/libnet.a
-LIBS += rtc/librtc.a
+LIBS += lib_$(ARCH)
+LIBS += drivers
+LIBS += net
+LIBS += rtc
 LIBS += $(BOARDLIBS)
 
-LIBS := $(addprefix $(obj),$(LIBS))
-
-LIBS_SHARED  = board/$(BOARDDIR)/lib$(BOARD).a
-LIBS_SHARED += httpd/libhttpd.a
+LIBS += board/$(BOARDDIR)
+LIBS += httpd
 ifdef SOC
-  LIBS_SHARED += cpu/$(CPU)/$(SOC)/lib$(SOC).a
+  LIBS_SHARED += cpu/$(CPU)/$(SOC)
 endif
-LIBS_SHARED += cpu/$(CPU)/lib$(CPU).a
+LIBS += cpu/$(CPU)
 
-LIBS_SHARED := $(addprefix $(obj),$(LIBS_SHARED))
-
-LIBS_BOOTSTRAP =
 ifdef COMPRESSED_UBOOT
-  OBJS_BOOTSTRAP = $(obj)cpu/$(CPU)/start_bootstrap.o
-  LIBS_BOOTSTRAP += lib_bootstrap/libbootstrap.a
+  LIBS_BOOTSTRAP += lib_$(ARCH)
+  LIBS_BOOTSTRAP += board/$(BOARDDIR)
+  LIBS_BOOTSTRAP += cpu/$(CPU)
+  LIBS_BOOTSTRAP += lib_generic
 endif
 
+LIBS := $(addsuffix /.built-in.lst,$(LIBS))
+LIBS_SHARED := $(addsuffix /.built-in.lst,$(LIBS_SHARED))
+LIBS_BOOTSTRAP := $(addsuffix /.bootstrap-built-in.lst,$(LIBS_BOOTSTRAP))
+
+LIBS := $(addprefix $(obj),$(LIBS))
+LIBS_SHARED := $(addprefix $(obj),$(LIBS_SHARED))
 LIBS_BOOTSTRAP := $(addprefix $(obj),$(LIBS_BOOTSTRAP))
 
-.PHONY: $(LIBS) $(LIBS_BOOTSTRAP) $(LIBS_SHARED)
+
+.PHONY: $(LIBS) $(LIBS_SHARED) $(LIBS_BOOTSTRAP)
 
 # Add GCC lib
 PLATFORM_LIBS += -L $(shell dirname `$(CC) $(CFLAGS) -print-libgcc-file-name`) -lgcc
@@ -330,8 +330,7 @@ SUBDIRS = tools
 
 # ===============================================================
 
-ALL = $(obj)u-boot.srec $(obj)u-boot.bin $(obj)System.map
-
+ALL = $(obj)u-boot.bin
 ifdef COMPRESSED_UBOOT
 all: $(ALL) $(obj)tuboot.bin
 else
@@ -356,18 +355,16 @@ $(obj)u-boot.img: $(obj)u-boot.bin
 $(obj)u-boot.dis: $(obj)u-boot
 	$(OBJDUMP) -d $< > $@
 
-$(obj)u-boot: version $(SUBDIRS) $(OBJS) $(LIBS) $(LIBS_SHARED) $(LDSCRIPT)
-	$(LD) $(LDFLAGS) $(OBJS) \
-	      --start-group $(LIBS) $(LIBS_SHARED) \
-	      --end-group $(PLATFORM_LIBS) \
-	      -Map $(obj)u-boot.map -o $(obj)u-boot \
-	      $(shell $(OBJDUMP) -t $(LIBS) $(LIBS_SHARED) | sed -ne "s,.*.\(_u_boot_list_2_cmd_2[^.]*\).*,-u \1,p")
+$(obj)u-boot: version $(SUBDIRS) $(LIBS) $(LIBS_SHARED) $(LDSCRIPT)
+	$(CC) $(CFLAGS) $(LDFLAGS_UBOOT) -o $(obj)u-boot \
+		$(shell cat ${LIBS} ${LIBS_SHARED}) $(PLATFORM_LIBS) \
+		$(shell cat ${LIBS} ${LIBS_SHARED} | xargs objdump -h | sed -n -e "s,.*.\(_u_boot_list_2_cmd_2[^.]*\).*,-u \1,p")
 
 # Explicit envcrc dependency
 $(obj)common/libcommon.a: tools
 
 $(LIBS) $(LIBS_SHARED) $(LIBS_BOOTSTRAP):
-	$(MAKE) -C $(dir $(subst $(obj),,$@))
+	$(MAKE) -C $(dir $(subst $(obj),,$@)) $@
 
 $(SUBDIRS):
 	$(MAKE) -C $@ all
@@ -398,13 +395,11 @@ $(obj)u-boot.lzimg: lzma_host $(obj)u-boot.bin $(obj)System.map
 	           -n '$(call ih_name)' -d $(obj)u-boot.bin.lzma $@
 
 $(obj)bootstrap.bin: $(obj)bootstrap
-	$(OBJCOPY) ${OBJCFLAGS} -O binary $< $@
+	$(OBJCOPY) $(OBJCFLAGS) -O binary $< $@
 
-$(obj)bootstrap: version $(SUBDIRS) $(OBJS_BOOTSTRAP) $(LIBS_BOOTSTRAP) $(LIBS_SHARED) $(LDSCRIPT_BOOTSTRAP)
-	$(LD) $(LDFLAGS_BOOTSTRAP) $(OBJS_BOOTSTRAP) \
-	      --start-group $(LIBS_BOOTSTRAP) $(LIBS_SHARED) \
-	      --end-group $(PLATFORM_LIBS) \
-	      -Map $(obj)bootstrap.map -o $(obj)bootstrap
+$(obj)bootstrap: version $(SUBDIRS) $(LIBS_BOOTSTRAP) $(LIBS_SHARED) $(LDSCRIPT_BOOTSTRAP)
+	$(CC) $(CFLAGS) $(LDFLAGS_BOOTSTRAP) -o $(obj)bootstrap \
+		$(shell cat ${LIBS_BOOTSTRAP} ${LIBS_SHARED}) $(PLATFORM_LIBS)
 
 lzma_host:
 	$(MAKE) -C $(BUILD_TOPDIR)/host_util/lzma -f makefile.gcc all
@@ -936,7 +931,6 @@ clean:
 	@rm -f $(obj)lib_bootstrap/*.o
 	@rm -f $(obj)lib_bootstrap/*.a
 	@rm -f $(obj)bootstrap $(obj)bootstrap.bin $(obj)tuboot.bin $(obj)u-boot.lzimg $(obj)u-boot.bin.lzma $(obj)bootstrap.map
-
 
 lzma_host_clean:
 	@$(call echo_green,Removing lzma host utility...)

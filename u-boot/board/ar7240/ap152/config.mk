@@ -10,3 +10,5 @@ else
 		TEXT_BASE = 0x9F000000
 	endif
 endif
+
+PLATFORM_CFLAGS += -mtune=74kc
