@@ -19,13 +19,14 @@ static int do_help(cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[])
 #endif
 }
 
-U_BOOT_CMD(
+U_BOOT_CMD_COMPLETE(
 	help,	CONFIG_SYS_MAXARGS,	1,	do_help,
 	"print command description/usage",
 	"\n"
 	"	- print brief description of all commands\n"
 	"help command ...\n"
-	"	- print detailed usage of 'command'"
+	"	- print detailed usage of 'command'",
+	cmd_complete
 );
 
 /* This does not use the U_BOOT_CMD macro as ? can't be used in symbol names */
@@ -33,6 +34,9 @@ ll_entry_declare(cmd_tbl_t, question_mark, cmd) = {
 	"?",	CONFIG_SYS_MAXARGS,	1,	do_help,
 	"alias for 'help'",
 #ifdef  CONFIG_SYS_LONGHELP
-	""
-#endif /* CONFIG_SYS_LONGHELP */
+	"",
+#endif
+#ifdef CONFIG_AUTO_COMPLETE
+	cmd_complete
+#endif
 };

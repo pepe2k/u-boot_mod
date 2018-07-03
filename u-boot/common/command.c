@@ -241,6 +241,10 @@ static int complete_cmdv(int argc, char * const argv[], char last_char, int maxv
 #endif
 }
 
+int cmd_complete(int argc, char * const argv[], char last_char, int maxv, char *cmdv[]) {
+	return complete_cmdv(argc - 1, argv + 1, last_char, maxv, cmdv);
+}
+
 static int make_argv(char *s, int argvsz, char *argv[])
 {
 	int argc = 0;
