@@ -88,7 +88,7 @@ endif
 # User configurable FLAGS
 CPPFLAGS	:=
 AFLAGS		:=
-CFLAGS		:= -Os -ggdb3 -Wall -Wextra -Wno-unused-parameter -Wstrict-prototypes -ffunction-sections -flto=1 -flto-partition=1to1
+CFLAGS		:= -Os -ggdb3 -Wall -Wextra -Wno-unused-parameter -Wstrict-prototypes $(cc-option,-Wshift-overflow=2) -ffunction-sections -flto=1 -flto-partition=1to1
 LDFLAGS		:= -Wl,--gc-sections
 ARFLAGS		:=
 OBJCFLAGS	:=
