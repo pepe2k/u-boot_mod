@@ -11,7 +11,7 @@
 
 void print_cmd_help(cmd_tbl_t *cmdtp)
 {
-#ifdef CFG_LONGHELP
+#ifdef CONFIG_SYS_LONGHELP
 	if (cmdtp->help != NULL) {
 		printf("Usage:\n%s %s\n", cmdtp->name, cmdtp->help);
 	} else {
@@ -79,12 +79,12 @@ int do_echo(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 	return 0;
 }
 
-U_BOOT_CMD(echo, CFG_MAXARGS, 1, do_echo,
+U_BOOT_CMD(echo, CONFIG_SYS_MAXARGS, 1, do_echo,
 	"echo args to console\n", "[args..]\n"
 	"\t- echo args to console; \\c suppresses newline\n");
 #endif /* CONFIG_CMD_ECHO */
 
-#ifdef CFG_HUSH_PARSER
+#ifdef CONFIG_HUSH_PARSER
 int do_test(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 {
 	char **ap;
@@ -210,7 +210,7 @@ int do_test(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 	return expr;
 }
 
-U_BOOT_CMD(test, CFG_MAXARGS, 1, do_test,
+U_BOOT_CMD(test, CONFIG_SYS_MAXARGS, 1, do_test,
 	"minimal test like /bin/sh\n", "[args..]\n"
 	"\t- test functionality\n");
 
@@ -226,7 +226,7 @@ int do_exit(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 
 U_BOOT_CMD(exit, 2, 1, do_exit,
 	"exit script\n", "\n\t- exit functionality\n");
-#endif /* CFG_HUSH_PARSER */
+#endif /* CONFIG_HUSH_PARSER */
 
 /*
  * Use puts() instead of printf() to avoid printf buffer overflow
@@ -299,7 +299,7 @@ int do_help(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 	/* Command help (long version) */
 	for (i = 1; i < argc; ++i) {
 		if ((cmdtp = find_cmd(argv[i])) != NULL) {
-#ifdef	CFG_LONGHELP
+#ifdef	CONFIG_SYS_LONGHELP
 			/* Found - print (long) help info */
 			puts(cmdtp->name);
 			putc(' ');
@@ -315,7 +315,7 @@ int do_help(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 #else
 			if (cmdtp->usage)
 				puts(cmdtp->usage);
-#endif /* CFG_LONGHELP */
+#endif /* CONFIG_SYS_LONGHELP */
 		} else {
 			printf("Unknown command '%s' - try 'help' without arguments\n\n", argv[i]);
 			rcode = 1;
@@ -325,16 +325,16 @@ int do_help(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 	return rcode;
 }
 
-U_BOOT_CMD(help, CFG_MAXARGS, 1, do_help,
+U_BOOT_CMD(help, CONFIG_SYS_MAXARGS, 1, do_help,
 	"print embedded help\n", "[command ...]\n"
 	"\t- show help information for 'command' or short usage of all commands\n");
 
 /* This do not ust the U_BOOT_CMD macro as ? can't be used in symbol names */
-#ifdef CFG_LONGHELP
-cmd_tbl_t __u_boot_cmd_question_mark Struct_Section = {"?", CFG_MAXARGS, 1, do_help, "alias for 'help'\n", NULL};
+#ifdef CONFIG_SYS_LONGHELP
+cmd_tbl_t __u_boot_cmd_question_mark Struct_Section = {"?", CONFIG_SYS_MAXARGS, 1, do_help, "alias for 'help'\n", NULL};
 #else
-cmd_tbl_t __u_boot_cmd_question_mark Struct_Section = {"?", CFG_MAXARGS, 1, do_help, "alias for 'help'\n"};
-#endif /* CFG_LONGHELP */
+cmd_tbl_t __u_boot_cmd_question_mark Struct_Section = {"?", CONFIG_SYS_MAXARGS, 1, do_help, "alias for 'help'\n"};
+#endif /* CONFIG_SYS_LONGHELP */
 
 /*
  * Find command table entry for a command

@@ -93,7 +93,7 @@ static int console_setfile(int file, device_t * dev){
 void serial_printf(const char *fmt, ...){
 	va_list args;
 	//uint i;
-	char printbuffer[CFG_PBSIZE];
+	char printbuffer[CONFIG_SYS_PBSIZE];
 
 	va_start(args, fmt);
 
@@ -138,7 +138,7 @@ void fputs(int file, const char *s){
 void fprintf(int file, const char *fmt, ...){
 	va_list args;
 	//uint i;
-	char printbuffer[CFG_PBSIZE];
+	char printbuffer[CONFIG_SYS_PBSIZE];
 
 	va_start(args, fmt);
 
@@ -209,7 +209,7 @@ void puts(const char *s){
 
 void printf(const char *fmt, ...){
 	va_list args;
-	char printbuffer[CFG_PBSIZE];
+	char printbuffer[CONFIG_SYS_PBSIZE];
 
 	va_start(args, fmt);
 
@@ -226,7 +226,7 @@ void printf(const char *fmt, ...){
 void printf_err(const char *fmt, ...)
 {
 	va_list args;
-	char printbuffer[CFG_PBSIZE];
+	char printbuffer[CONFIG_SYS_PBSIZE];
 
 	va_start(args, fmt);
 
@@ -242,7 +242,7 @@ void printf_wrn(const char *fmt, ...)
 {
 	va_list args;
 
-	char printbuffer[CFG_PBSIZE];
+	char printbuffer[CONFIG_SYS_PBSIZE];
 
 	va_start(args, fmt);
 

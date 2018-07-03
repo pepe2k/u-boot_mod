@@ -410,9 +410,9 @@ int do_setenv(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[]){
 
 #if defined(CONFIG_CMD_ASKENV)
 int do_askenv( cmd_tbl_t *cmdtp, int flag, int argc, char *argv[]){
-	extern char console_buffer[CFG_CBSIZE];
-	char message[CFG_CBSIZE];
-	int size = CFG_CBSIZE - 1;
+	extern char console_buffer[CONFIG_SYS_CBSIZE];
+	char message[CONFIG_SYS_CBSIZE];
+	int size = CONFIG_SYS_CBSIZE - 1;
 	int len;
 	char *local_args[4];
 
@@ -458,8 +458,8 @@ int do_askenv( cmd_tbl_t *cmdtp, int flag, int argc, char *argv[]){
 		break;
 	}
 
-	if(size >= CFG_CBSIZE){
-		size = CFG_CBSIZE - 1;
+	if(size >= CONFIG_SYS_CBSIZE){
+		size = CONFIG_SYS_CBSIZE - 1;
 	}
 
 	if(size <= 0){
@@ -576,9 +576,9 @@ static int envmatch(uchar *s1, int i2){
 }
 
 /**************************************************/
-U_BOOT_CMD(printenv, CFG_MAXARGS, 1, do_printenv, "print environment variables\n", "[name]\n\t- print values of all environment variables or of one with name 'name'\n");
+U_BOOT_CMD(printenv, CONFIG_SYS_MAXARGS, 1, do_printenv, "print environment variables\n", "[name]\n\t- print values of all environment variables or of one with name 'name'\n");
 
-U_BOOT_CMD(setenv, CFG_MAXARGS, 0, do_setenv, "set environment variables\n",
+U_BOOT_CMD(setenv, CONFIG_SYS_MAXARGS, 0, do_setenv, "set environment variables\n",
 	"name value ...\n"
 	"\t- set environment variable 'name' to 'value ...'\n"
 	"setenv name\n"
@@ -593,7 +593,7 @@ U_BOOT_CMD(saveenv, 1, 0, do_saveenv, "save environment variables to FLASH\n", N
 
 #if defined(CONFIG_CMD_ASKENV)
 U_BOOT_CMD(
-		askenv, CFG_MAXARGS, 1, do_askenv,
+		askenv, CONFIG_SYS_MAXARGS, 1, do_askenv,
 		"get environment variables from stdin\n",
 		"name [message] [size]\n"
 		"    - get environment variable 'name' from stdin (max 'size' chars)\n"
@@ -609,5 +609,5 @@ U_BOOT_CMD(
 
 #if defined(CONFIG_CMD_RUN)
 int do_run(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[]);
-U_BOOT_CMD(run, CFG_MAXARGS, 1, do_run, "run commands in an environment variable\n", "var [...]\n\t- run the commands in the environment variable(s) 'var'\n");
+U_BOOT_CMD(run, CONFIG_SYS_MAXARGS, 1, do_run, "run commands in an environment variable\n", "var [...]\n\t- run the commands in the environment variable(s) 'var'\n");
 #endif /* CONFIG_CMD_RUN */

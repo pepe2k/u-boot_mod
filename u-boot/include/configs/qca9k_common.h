@@ -30,14 +30,14 @@
 #endif
 
 /* CLI parser, prompt */
-#define CFG_HUSH_PARSER		1
-#define CFG_LONGHELP		1
-#define CFG_PROMPT		"u-boot> "
-#define CFG_PROMPT_HUSH_PS2	"> "
+#define CONFIG_HUSH_PARSER		1
+#define CONFIG_SYS_LONGHELP		1
+#define CONFIG_SYS_PROMPT		"u-boot> "
+#define CONFIG_SYS_PROMPT_HUSH_PS2	"> "
 
-#define CFG_CBSIZE		1024
-#define CFG_PBSIZE		(CFG_CBSIZE + sizeof(CFG_PROMPT) + 16)
-#define CFG_MAXARGS		16
+#define CONFIG_SYS_CBSIZE		1024
+#define CONFIG_SYS_PBSIZE		(CONFIG_SYS_CBSIZE + sizeof(CONFIG_SYS_PROMPT) + 16)
+#define CONFIG_SYS_MAXARGS		16
 #define CFG_MALLOC_LEN		(512 * 1024)
 #define CFG_BOOTPARAMS_LEN	(512 * 1024)
 

@@ -24,7 +24,7 @@
 #include <common.h>
 #include <command.h>
 
-#if defined(CFG_HUSH_PARSER)
+#if defined(CONFIG_HUSH_PARSER)
 #include <hush.h>
 #endif
 
@@ -41,7 +41,7 @@ DECLARE_GLOBAL_DATA_PTR;
 static char *delete_char(char *buffer, char *p, int *colp, int *np, int plen);
 static int parse_line(char *, char *[]);
 
-char console_buffer[CFG_CBSIZE];	/* console I/O buffer  */
+char console_buffer[CONFIG_SYS_CBSIZE];	/* console I/O buffer  */
 static char erase_seq[] = "\b \b";	/* erase sequence      */
 static char tab_seq[] = "        ";	/* used to expand TABs */
 
@@ -168,8 +168,8 @@ void main_loop(void)
 	char *c;
 #endif
 
-#ifndef CFG_HUSH_PARSER
-	static char lastcommand[CFG_CBSIZE] = { 0, };
+#ifndef CONFIG_HUSH_PARSER
+	static char lastcommand[CONFIG_SYS_CBSIZE] = { 0, };
 	int flag, len;
 #endif
 
@@ -179,7 +179,7 @@ void main_loop(void)
 	char *s;
 #endif
 
-#if defined(CFG_HUSH_PARSER)
+#if defined(CONFIG_HUSH_PARSER)
 	u_boot_hush_start();
 #endif
 
@@ -268,7 +268,7 @@ void main_loop(void)
 
 	if (bootdelay >= 0 && bootcmd && !abortboot(bootdelay)) {
 		/* Try to boot */
-	#ifndef CFG_HUSH_PARSER
+	#ifndef CONFIG_HUSH_PARSER
 		rc = run_command(bootcmd, 0);
 	#else
 		rc = parse_string_outer(bootcmd, FLAG_PARSE_SEMICOLON |
@@ -278,7 +278,7 @@ void main_loop(void)
 #else
 	if (bootcmd) {
 		/* Try to boot */
-	#ifndef CFG_HUSH_PARSER
+	#ifndef CONFIG_HUSH_PARSER
 		rc = run_command(bootcmd, 0);
 	#else
 		rc = parse_string_outer(bootcmd, FLAG_PARSE_SEMICOLON |
@@ -287,7 +287,7 @@ void main_loop(void)
 	}
 #endif /* CONFIG_BOOTDELAY && CONFIG_BOOTDELAY >= 0 */
 
-#ifndef CFG_HUSH_PARSER
+#ifndef CONFIG_HUSH_PARSER
 	if (rc < 0) {
 #else
 	if (rc != 0) {
@@ -304,7 +304,7 @@ void main_loop(void)
 	}
 
 	/* Main loop for monitor command processing */
-#if defined(CFG_HUSH_PARSER)
+#if defined(CONFIG_HUSH_PARSER)
 	parse_file_outer();
 
 	/* This point is never reached */
@@ -312,7 +312,7 @@ void main_loop(void)
 		;
 #else
 	for (;;) {
-		len = readline(CFG_PROMPT);
+		len = readline(CONFIG_SYS_PROMPT);
 
 		/* Assume no special flags for now */
 		flag = 0;
@@ -331,7 +331,7 @@ void main_loop(void)
 		if (rc <= 0)
 			lastcommand[0] = 0;
 	}
-#endif /* CFG_HUSH_PARSER */
+#endif /* CONFIG_HUSH_PARSER */
 }
 
 /*
@@ -402,7 +402,7 @@ int readline(const char * const prompt)
 			continue;
 		/* Must be a normal character then */
 		default:
-			if (n < CFG_CBSIZE - 2) {
+			if (n < CONFIG_SYS_CBSIZE - 2) {
 				if (c == '\t') {
 					/* Expand TABs */
 					puts(tab_seq + (col & 07));
@@ -463,7 +463,7 @@ int parse_line(char *line, char *argv[])
 {
 	int nargs = 0;
 
-	while (nargs < CFG_MAXARGS) {
+	while (nargs < CONFIG_SYS_MAXARGS) {
 		/* Skip any white space */
 		while ((*line == ' ') || (*line == '\t'))
 			++line;
@@ -491,7 +491,7 @@ int parse_line(char *line, char *argv[])
 		*line++ = '\0';
 	}
 
-	printf_err("too many args (max. %d)\n", CFG_MAXARGS);
+	printf_err("too many args (max. %d)\n", CONFIG_SYS_MAXARGS);
 
 	return nargs;
 }
@@ -500,7 +500,7 @@ static void process_macros(const char *input, char *output)
 {
 	const char *varname_start = NULL;
 	int inputcnt = strlen(input);
-	int outputcnt = CFG_CBSIZE;
+	int outputcnt = CONFIG_SYS_CBSIZE;
 	char c, prev;
 	int state = 0;	/* 0 = waiting for '$'
 			   1 = waiting for '(' or '{'
@@ -562,7 +562,7 @@ static void process_macros(const char *input, char *output)
 		case 2:
 			if (c == ')' || c == '}') {
 				int envcnt = input - varname_start - 1;	/* Varname # of chars */
-				char envname[CFG_CBSIZE], *envval;
+				char envname[CONFIG_SYS_CBSIZE], *envval;
 				int i;
 
 				/* Get the varname */
@@ -612,7 +612,7 @@ static void process_macros(const char *input, char *output)
  *	0  - command executed but not repeatable, interrupted commands are
  *	     always considered not repeatable
  *	-1 - not executed (unrecognized, bootd recursion or too many args)
- *           (If cmd is NULL or "" or longer than CFG_CBSIZE-1 it is
+ *           (If cmd is NULL or "" or longer than CONFIG_SYS_CBSIZE-1 it is
  *           considered unrecognized)
  *
  * WARNING:
@@ -625,11 +625,11 @@ static void process_macros(const char *input, char *output)
 
 int run_command(const char *cmd, int flag){
 	cmd_tbl_t *cmdtp;
-	char *argv[CFG_MAXARGS + 1];	/* NULL terminated                    */
-	char cmdbuf[CFG_CBSIZE];	/* Working copy of cmd                */
+	char *argv[CONFIG_SYS_MAXARGS + 1];	/* NULL terminated                    */
+	char cmdbuf[CONFIG_SYS_CBSIZE];	/* Working copy of cmd                */
 	char *token;			/* Start of token in cmdbuf           */
 	char *sep; 			/* End of token (separator) in cmdbuf */
-	char finaltoken[CFG_CBSIZE];
+	char finaltoken[CONFIG_SYS_CBSIZE];
 	char *str = cmdbuf;
 	int argc, inquotes;
 	int repeatable = 1;
@@ -642,7 +642,7 @@ int run_command(const char *cmd, int flag){
 	if (!cmd || !*cmd)
 		return -1;
 
-	if (strlen(cmd) >= CFG_CBSIZE) {
+	if (strlen(cmd) >= CONFIG_SYS_CBSIZE) {
 		printf_err("command too long!\n");
 		return -1;
 	}
@@ -737,7 +737,7 @@ int do_run(cmd_tbl_t * cmdtp, int flag, int argc, char *argv[])
 			return 1;
 		}
 
-	#ifndef CFG_HUSH_PARSER
+	#ifndef CONFIG_HUSH_PARSER
 		if (run_command(arg, flag) == -1)
 			return 1;
 	#else

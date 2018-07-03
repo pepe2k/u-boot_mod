@@ -251,7 +251,7 @@ U_BOOT_CMD(defenv, 1, 0, do_default_env, "reset environment variables to their d
     defined(CONFIG_GPIO_RESET_BTN)
 int do_button(cmd_tbl_t * cmdtp, int flag, int argc, char *argv[])
 {
-#if defined(CFG_HUSH_PARSER)
+#if defined(CONFIG_HUSH_PARSER)
 	return !reset_button_status();
 #else
 	int btn = reset_button_status();

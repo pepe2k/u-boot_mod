@@ -60,7 +60,7 @@ int do_go(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[]){
 	return(rcode);
 }
 
-U_BOOT_CMD(go, CFG_MAXARGS, 1, do_go, "start application at address 'addr'\n",
+U_BOOT_CMD(go, CONFIG_SYS_MAXARGS, 1, do_go, "start application at address 'addr'\n",
 		"addr [arg ...]\n"
 		"\t- start application at address 'addr'\n"
 		"\t  passing 'arg' as arguments\n");

@@ -1449,7 +1449,7 @@ The following options need to be configured:
 
 		Enable auto completion of commands using TAB.
 
-		CFG_HUSH_PARSER
+		CONFIG_HUSH_PARSER
 
 		Define this variable to enable the "hush" shell (from
 		Busybox) as command line interpreter, thus enabling
@@ -1461,7 +1461,7 @@ The following options need to be configured:
 		with a somewhat smaller memory footprint.
 
 
-		CFG_PROMPT_HUSH_PS2
+		CONFIG_SYS_PROMPT_HUSH_PS2
 
 		This defines the secondary prompt string, which is
 		printed when the command interpreter needs more input
@@ -1673,17 +1673,17 @@ Modem Support:
 Configuration Settings:
 -----------------------
 
-- CFG_LONGHELP: Defined when you want long help messages included;
+- CONFIG_SYS_LONGHELP: Defined when you want long help messages included;
 		undefine this when you're short of memory.
 
-- CFG_PROMPT:	This is what U-Boot prints on the console to
+- CONFIG_SYS_PROMPT:	This is what U-Boot prints on the console to
 		prompt for user input.
 
-- CFG_CBSIZE:	Buffer size for input from the Console
+- CONFIG_SYS_CBSIZE:	Buffer size for input from the Console
 
-- CFG_PBSIZE:	Buffer size for Console output
+- CONFIG_SYS_PBSIZE:	Buffer size for Console output
 
-- CFG_MAXARGS:	max. Number of arguments accepted for monitor commands
+- CONFIG_SYS_MAXARGS:	max. Number of arguments accepted for monitor commands
 
 - CFG_BARGSIZE: Buffer size for Boot Arguments which are passed to
 		the application (usually a Linux kernel) when it is

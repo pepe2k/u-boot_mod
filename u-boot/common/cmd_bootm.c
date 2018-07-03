@@ -18,7 +18,7 @@
 #include <asm/byteorder.h>
 #include <tinf.h>
 
-#ifdef CFG_HUSH_PARSER
+#ifdef CONFIG_HUSH_PARSER
 #include <hush.h>
 #endif
 
@@ -552,7 +552,7 @@ U_BOOT_CMD(bootm, 2, 1, do_bootm,
 #if defined(CONFIG_CMD_BOOTD)
 int do_bootd(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 {
-#ifndef CFG_HUSH_PARSER
+#ifndef CONFIG_HUSH_PARSER
 	if (run_command(getenv("bootcmd"), flag) < 0)
 		return 1;
 #else

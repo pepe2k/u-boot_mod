@@ -361,7 +361,7 @@ void board_init_r(gd_t *id, ulong dest_addr)
 			cmdtp->usage = (char *)addr;
 		}
 
-#if defined(CFG_LONGHELP)
+#if defined(CONFIG_SYS_LONGHELP)
 		if (cmdtp->help) {
 			addr = (ulong)(cmdtp->help) + gd->reloc_off;
 			cmdtp->help = (char *)addr;

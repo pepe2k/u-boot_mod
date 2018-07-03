@@ -96,7 +96,7 @@
 /*cmd_boot.c*/
 extern int do_bootd(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[]); /* do_bootd */
 
-#ifdef CFG_HUSH_PARSER
+#ifdef CONFIG_HUSH_PARSER
 #define SPECIAL_VAR_SYMBOL 03
 
 DECLARE_GLOBAL_DATA_PTR;
@@ -358,9 +358,9 @@ static int static_peek(struct in_str *i) {
 }
 
 static void get_user_input(struct in_str *i) {
-	extern char console_buffer[CFG_CBSIZE];
+	extern char console_buffer[CONFIG_SYS_CBSIZE];
 	int n;
-	static char the_command[CFG_CBSIZE];
+	static char the_command[CONFIG_SYS_CBSIZE];
 
 #ifdef CONFIG_BOOT_RETRY_TIME
 #  ifdef CONFIG_RESET_TO_RETRY
@@ -372,9 +372,9 @@ static void get_user_input(struct in_str *i) {
 #endif
 	i->__promptme = 1;
 	if (i->promptmode == 1) {
-		n = readline(CFG_PROMPT);
+		n = readline(CONFIG_SYS_PROMPT);
 	} else {
-		n = readline(CFG_PROMPT_HUSH_PS2);
+		n = readline(CONFIG_SYS_PROMPT_HUSH_PS2);
 	}
 #ifdef CONFIG_BOOT_RETRY_TIME
 	if (n == -2) {
@@ -411,7 +411,7 @@ static void get_user_input(struct in_str *i) {
 		i->p = the_command;
 	} else {
 		if (console_buffer[0] != '\n') {
-			if (strlen(the_command) + strlen(console_buffer) < CFG_CBSIZE) {
+			if (strlen(the_command) + strlen(console_buffer) < CONFIG_SYS_CBSIZE) {
 				n = strlen(the_command);
 				the_command[n - 1] = ' ';
 				strcpy(&the_command[n], console_buffer);
@@ -1571,5 +1571,5 @@ int do_true(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 
 U_BOOT_CMD(true, 1, 1, do_true, "return true\n", NULL);
 
-#endif /* CFG_HUSH_PARSER */
+#endif /* CONFIG_HUSH_PARSER */
 /****************************************************************************/
