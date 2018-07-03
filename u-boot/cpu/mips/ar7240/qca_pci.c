@@ -118,7 +118,7 @@ static void qca_pcie_pll_init(void)
 
 #if (SOC_TYPE & QCA_QCA956X_SOC)
 	qca_soc_reg_read_set(QCA_PLL_SRIF_PCIE_PHY_REG_1_REG,
-	                     QCA_PLL_SRIF_PCIE_PHY_REG_1_S_RESET << QCA_PLL_SRIF_PCIE_PHY_REG_1_S_SHIFT);
+	                     (u32)QCA_PLL_SRIF_PCIE_PHY_REG_1_S_RESET << QCA_PLL_SRIF_PCIE_PHY_REG_1_S_SHIFT);
 #endif
 
 	/* Power down and bypass PLL, setup ref_div */
@@ -133,11 +133,11 @@ static void qca_pcie_pll_init(void)
 	 * Use dithering/SSC (spread spectrum clocking)
 	 * as in QC/A SDK (for minimize/reduce EMI)
 	 */
-	nfrac_max = CONFIG_QCA_PCIE_PLL_NFRAC_MAX_VAL
+	nfrac_max = (u32)CONFIG_QCA_PCIE_PLL_NFRAC_MAX_VAL
 		    << QCA_PLL_PCIE_PLL_DITHER_MAX_NFRAC_MAX_SHIFT;
 	nfrac_max = nfrac_max & QCA_PLL_PCIE_PLL_DITHER_MAX_NFRAC_MAX_MASK;
 
-	nfrac_min = CONFIG_QCA_PCIE_PLL_NFRAC_MIN_VAL
+	nfrac_min = (u32)CONFIG_QCA_PCIE_PLL_NFRAC_MIN_VAL
 		    << QCA_PLL_PCIE_PLL_DITHER_MIN_NFRAC_MIN_SHIFT;
 	nfrac_min = nfrac_max & QCA_PLL_PCIE_PLL_DITHER_MIN_NFRAC_MIN_MASK;
 
@@ -279,7 +279,7 @@ void pci_init(void)
 #if (SOC_TYPE & QCA_QCA956X_SOC)
 	/* From QC/A SDK. TODO: What is 0x73 ? */
 	qca_soc_reg_read_clear(QCA_GPIO_OE_REG, GPIO0);
-	qca_soc_reg_read_set(QCA_GPIO_OUT_FUNC0_REG, 0x73 << QCA_GPIO_OUT_FUNCX_GPIO0_EN_SHIFT);
+	qca_soc_reg_read_set(QCA_GPIO_OUT_FUNC0_REG, 0x73UL << QCA_GPIO_OUT_FUNCX_GPIO0_EN_SHIFT);
 	milisecdelay(10);
 #endif
 

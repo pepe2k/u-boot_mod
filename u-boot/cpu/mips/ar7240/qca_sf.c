@@ -59,7 +59,7 @@ static u32 qca_sf_sfdp_bfpt_dword(u32 ptp_offset, u32 dword_num)
 {
 	u32 data_out;
 
-	data_out = (SPI_FLASH_CMD_SFDP << 24);
+	data_out = ((u32)SPI_FLASH_CMD_SFDP << 24);
 	data_out = data_out | (ptp_offset + ((dword_num - 1) * 4));
 
 	qca_sf_shift_out(data_out, 32, 0);
@@ -150,7 +150,7 @@ void qca_sf_write_page(u32 bank, u32 address, u32 length, u8 *data)
 
 	qca_sf_bank_to_cs_mask(bank);
 
-	data_out = SPI_FLASH_CMD_PP << 24;
+	data_out = (u32)SPI_FLASH_CMD_PP << 24;
 	data_out = data_out | (address & 0x00FFFFFF);
 
 	qca_sf_spi_en();
@@ -190,7 +190,7 @@ u32 qca_sf_sfdp_info(u32 bank,
 	qca_sf_spi_en();
 
 	/* Shift out SFDP command with 0x0 address */
-	qca_sf_shift_out(SPI_FLASH_CMD_SFDP << 24, 32, 0);
+	qca_sf_shift_out((u32)SPI_FLASH_CMD_SFDP << 24, 32, 0);
 
 	/* 1 dummy byte and 4 bytes for SFDP signature */
 	qca_sf_shift_out(0x0, 40, 0);
@@ -228,7 +228,7 @@ u32 qca_sf_sfdp_info(u32 bank,
 	data_in = qca_sf_sfdp_bfpt_dword(ptp_offset, 2);
 
 	/* We do not support >= 4 Gbits chips */
-	if ((data_in & (1 << 31)) || data_in == 0)
+	if ((data_in & BIT(31)) || data_in == 0)
 		return 1;
 
 	/* TODO: it seems that density is 0-based, like max. available address? */
@@ -254,7 +254,7 @@ u32 qca_sf_sfdp_info(u32 bank,
 		return 1;
 
 	if (sect_size != NULL)
-		*sect_size = 1 << ss;
+		*sect_size = 1UL << ss;
 
 	if (erase_cmd != NULL)
 		*erase_cmd = ec;
@@ -272,7 +272,7 @@ u32 qca_sf_jedec_id(u32 bank)
 	qca_sf_bank_to_cs_mask(bank);
 
 	qca_sf_spi_en();
-	qca_sf_shift_out(SPI_FLASH_CMD_JEDEC << 24, 32, 1);
+	qca_sf_shift_out((u32)SPI_FLASH_CMD_JEDEC << 24, 32, 1);
 	data_in = qca_sf_shift_in();
 	qca_sf_spi_di();
 

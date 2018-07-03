@@ -85,7 +85,7 @@ typedef struct {
 #define AG7240_MAC_FIFO_CFG_4      0x58
 
 #define AG7240_MAC_FIFO_CFG_5      0x5c
-#define AG7240_BYTE_PER_CLK_EN     (1 << 19)
+#define AG7240_BYTE_PER_CLK_EN     BIT(19)
 
 #define AG7240_MAC_FIFO_RAM_0      0x60
 #define AG7240_MAC_FIFO_RAM_1      0x64
@@ -99,21 +99,21 @@ typedef struct {
 /*
  * fields
  */
-#define AG7240_MAC_CFG1_SOFT_RST       (1 << 31)
-#define AG7240_MAC_CFG1_RX_RST         (1 << 19)
-#define AG7240_MAC_CFG1_TX_RST         (1 << 18)
-#define AG7240_MAC_CFG1_LOOPBACK       (1 << 8)
-#define AG7240_MAC_CFG1_RX_EN          (1 << 2)
-#define AG7240_MAC_CFG1_TX_EN          (1 << 0)
+#define AG7240_MAC_CFG1_SOFT_RST       BIT(31)
+#define AG7240_MAC_CFG1_RX_RST         BIT(19)
+#define AG7240_MAC_CFG1_TX_RST         BIT(18)
+#define AG7240_MAC_CFG1_LOOPBACK       BIT(8)
+#define AG7240_MAC_CFG1_RX_EN          BIT(2)
+#define AG7240_MAC_CFG1_TX_EN          BIT(0)
 
-#define AG7240_MAC_CFG2_FDX            (1 << 0)
-#define AG7240_MAC_CFG2_PAD_CRC_EN     (1 << 2)
-#define AG7240_MAC_CFG2_LEN_CHECK      (1 << 4)
-#define AG7240_MAC_CFG2_HUGE_FRAME_EN  (1 << 5)
-#define AG7240_MAC_CFG2_IF_1000        (1 << 9)
-#define AG7240_MAC_CFG2_IF_10_100      (1 << 8)
+#define AG7240_MAC_CFG2_FDX            BIT(0)
+#define AG7240_MAC_CFG2_PAD_CRC_EN     BIT(2)
+#define AG7240_MAC_CFG2_LEN_CHECK      BIT(4)
+#define AG7240_MAC_CFG2_HUGE_FRAME_EN  BIT(5)
+#define AG7240_MAC_CFG2_IF_1000        BIT(9)
+#define AG7240_MAC_CFG2_IF_10_100      BIT(8)
 
-#define AG7240_MAC_IFCTL_SPEED         (1 << 16)
+#define AG7240_MAC_IFCTL_SPEED         BIT(16)
 
 /*
  * DMA (tx/rx) register defines
@@ -130,28 +130,28 @@ typedef struct {
 /*
  * tx/rx ctrl and status bits
  */
-#define AG7240_TXE                      (1 << 0)
+#define AG7240_TXE                      BIT(0)
 #define AG7240_TX_STATUS_PKTCNT_SHIFT   16
 #define AG7240_TX_STATUS_PKT_SENT       0x1
 #define AG7240_TX_STATUS_URN            0x2
 #define AG7240_TX_STATUS_BUS_ERROR      0x8
 
-#define AG7240_RXE                      (1 << 0)
+#define AG7240_RXE                      BIT(0)
 
 #define AG7240_RX_STATUS_PKTCNT_MASK    0xff0000
-#define AG7240_RX_STATUS_PKT_RCVD       (1 << 0)
-#define AG7240_RX_STATUS_OVF            (1 << 2)
-#define AG7240_RX_STATUS_BUS_ERROR      (1 << 3)
+#define AG7240_RX_STATUS_PKT_RCVD       BIT(0)
+#define AG7240_RX_STATUS_OVF            BIT(2)
+#define AG7240_RX_STATUS_BUS_ERROR      BIT(3)
 
 /*
  * Int and int mask
  */
-#define AG7240_INTR_TX                  (1 << 0)
-#define AG7240_INTR_TX_URN              (1 << 1)
-#define AG7240_INTR_TX_BUS_ERROR        (1 << 3)
-#define AG7240_INTR_RX                  (1 << 4)
-#define AG7240_INTR_RX_OVF              (1 << 6)
-#define AG7240_INTR_RX_BUS_ERROR        (1 << 7)
+#define AG7240_INTR_TX                  BIT(0)
+#define AG7240_INTR_TX_URN              BIT(1)
+#define AG7240_INTR_TX_BUS_ERROR        BIT(3)
+#define AG7240_INTR_RX                  BIT(4)
+#define AG7240_INTR_RX_OVF              BIT(6)
+#define AG7240_INTR_RX_BUS_ERROR        BIT(7)
 
 /*
  * MII registers
@@ -169,8 +169,8 @@ typedef struct {
 #define AG7240_MII_MGMT_STATUS          0x30
 
 #define AG7240_MII_MGMT_IND             0x34
-#define AG7240_MGMT_IND_BUSY            (1 << 0)
-#define AG7240_MGMT_IND_INVALID         (1 << 2)
+#define AG7240_MGMT_IND_BUSY            BIT(0)
+#define AG7240_MGMT_IND_INVALID         BIT(2)
 
 #define AG7240_GE_MAC_ADDR1             0x40
 #define AG7240_GE_MAC_ADDR2             0x44
@@ -179,15 +179,15 @@ typedef struct {
  * Ethernet config registers
  */
 #define AG7240_ETH_CFG                  0x18070000
-#define AG7240_ETH_CFG_RGMII_GE0        (1<<0)
-#define AG7240_ETH_CFG_MII_GE0          (1<<1)
-#define AG7240_ETH_CFG_GMII_GE0         (1<<2)
-#define AG7240_ETH_CFG_MII_GE0_MASTER   (1<<3)
-#define AG7240_ETH_CFG_MII_GE0_SLAVE    (1<<4)
-#define AG7240_ETH_CFG_GE0_ERR_EN       (1<<5)
-#define AG7240_ETH_CFG_SW_ONLY_MODE     (1<<6)
-#define AG7240_ETH_CFG_SW_PHY_SWAP      (1<<7)
-#define AG7240_ETH_CFG_SW_PHY_ADDR_SWAP (1<<8)
+#define AG7240_ETH_CFG_RGMII_GE0        BIT(0)
+#define AG7240_ETH_CFG_MII_GE0          BIT(1)
+#define AG7240_ETH_CFG_GMII_GE0         BIT(2)
+#define AG7240_ETH_CFG_MII_GE0_MASTER   BIT(3)
+#define AG7240_ETH_CFG_MII_GE0_SLAVE    BIT(4)
+#define AG7240_ETH_CFG_GE0_ERR_EN       BIT(5)
+#define AG7240_ETH_CFG_SW_ONLY_MODE     BIT(6)
+#define AG7240_ETH_CFG_SW_PHY_SWAP      BIT(7)
+#define AG7240_ETH_CFG_SW_PHY_ADDR_SWAP BIT(8)
 #define AG7240_ETH_SWITCH_CLK_SPARE     0x18050024
 
 

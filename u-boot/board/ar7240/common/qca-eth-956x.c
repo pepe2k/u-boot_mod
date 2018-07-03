@@ -201,20 +201,20 @@ void ath_gmac_mii_setup(ath_gmac_mac_t *mac)
 	}
 
 	if (is_s27() && (mac->mac_unit == 0)) {
-		ath_reg_wr(ETH_XMII_ADDRESS, ETH_XMII_TX_INVERT_SET(1) |
-						ETH_XMII_RX_DELAY_SET(2) |
-						ETH_XMII_TX_DELAY_SET(1) |
-						ETH_XMII_GIGE_SET(1));
+		ath_reg_wr(ETH_XMII_ADDRESS, ETH_XMII_TX_INVERT_SET(1UL) |
+						ETH_XMII_RX_DELAY_SET(2UL) |
+						ETH_XMII_TX_DELAY_SET(1UL) |
+						ETH_XMII_GIGE_SET(1UL));
 
        	mgmt_cfg_val = 7;
 		udelay(1000);
-		ath_gmac_reg_wr(mac, ATH_MAC_MII_MGMT_CFG, mgmt_cfg_val | (1 << 31));
+		ath_gmac_reg_wr(mac, ATH_MAC_MII_MGMT_CFG, mgmt_cfg_val | BIT(31));
 		udelay(1000);
 		ath_gmac_reg_wr(mac, ATH_MAC_MII_MGMT_CFG, mgmt_cfg_val);
 
 		//GMAC1 need to set for MDC/MDIO Works
 		udelay(1000);
-		ath_gmac_reg_wr(ath_gmac_macs[1], ATH_MAC_MII_MGMT_CFG, mgmt_cfg_val | (1 << 31));
+		ath_gmac_reg_wr(ath_gmac_macs[1], ATH_MAC_MII_MGMT_CFG, mgmt_cfg_val | BIT(31));
 		udelay(1000);
 		ath_gmac_reg_wr(ath_gmac_macs[1], ATH_MAC_MII_MGMT_CFG, mgmt_cfg_val);
 		
@@ -224,17 +224,17 @@ void ath_gmac_mii_setup(ath_gmac_mac_t *mac)
 	if ( CFG_ATH_GMAC_NMACS == 1){
 		mgmt_cfg_val = 7;
 
-		ath_reg_wr(ATH_ETH_CFG, ETH_CFG_ETH_RXDV_DELAY_SET(3) |
-					ETH_CFG_ETH_RXD_DELAY_SET(3)|
-					ETH_CFG_RGMII_GE0_SET(1) |
-					ETH_CFG_GE0_SGMII_SET(1));
+		ath_reg_wr(ATH_ETH_CFG, ETH_CFG_ETH_RXDV_DELAY_SET(3UL) |
+					ETH_CFG_ETH_RXD_DELAY_SET(3UL)|
+					ETH_CFG_RGMII_GE0_SET(1UL) |
+					ETH_CFG_GE0_SGMII_SET(1UL));
 
-		ath_reg_wr(ETH_XMII_ADDRESS, ETH_XMII_TX_INVERT_SET(1) |
-						ETH_XMII_RX_DELAY_SET(2) |
-						ETH_XMII_TX_DELAY_SET(1) |
-						ETH_XMII_GIGE_SET(1));
+		ath_reg_wr(ETH_XMII_ADDRESS, ETH_XMII_TX_INVERT_SET(1UL) |
+						ETH_XMII_RX_DELAY_SET(2UL) |
+						ETH_XMII_TX_DELAY_SET(1UL) |
+						ETH_XMII_GIGE_SET(1UL));
 		udelay(1000);
-		ath_gmac_reg_wr(mac, ATH_MAC_MII_MGMT_CFG, mgmt_cfg_val | (1 << 31));
+		ath_gmac_reg_wr(mac, ATH_MAC_MII_MGMT_CFG, mgmt_cfg_val | BIT(31));
 		ath_gmac_reg_wr(mac, ATH_MAC_MII_MGMT_CFG, mgmt_cfg_val);
 		return;		
 	}
@@ -462,7 +462,7 @@ static int ath_gmac_check_link(ath_gmac_mac_t *mac)
 	{
 		case _1000BASET:
 			ath_gmac_set_mac_if(mac, 1);
-			ath_gmac_reg_rmw_set(mac, ATH_MAC_FIFO_CFG_5, (1 << 19));
+			ath_gmac_reg_rmw_set(mac, ATH_MAC_FIFO_CFG_5, BIT(19));
 
 			if (is_ar8033()) {
 				ath_reg_wr(ETH_SGMII_ADDRESS, ETH_SGMII_GIGE_SET(1) |
@@ -474,7 +474,7 @@ static int ath_gmac_check_link(ath_gmac_mac_t *mac)
 		case _100BASET:
 			ath_gmac_set_mac_if(mac, 0);
 			ath_gmac_set_mac_speed(mac, 1);
-			ath_gmac_reg_rmw_clear(mac, ATH_MAC_FIFO_CFG_5, (1 << 19));
+			ath_gmac_reg_rmw_clear(mac, ATH_MAC_FIFO_CFG_5, BIT(19));
 
                         if (is_ar8033()) {
                         	ath_reg_wr(ETH_SGMII_ADDRESS, ETH_SGMII_PHASE0_COUNT_SET(1) |
@@ -486,7 +486,7 @@ static int ath_gmac_check_link(ath_gmac_mac_t *mac)
 		case _10BASET:
 			ath_gmac_set_mac_if(mac, 0);
 			ath_gmac_set_mac_speed(mac, 0);
-			ath_gmac_reg_rmw_clear(mac, ATH_MAC_FIFO_CFG_5, (1 << 19));
+			ath_gmac_reg_rmw_clear(mac, ATH_MAC_FIFO_CFG_5, BIT(19));
 
             if (is_ar8033()) { 
                 ath_reg_wr(ETH_SGMII_ADDRESS, ETH_SGMII_PHASE0_COUNT_SET(19) | 
@@ -627,14 +627,14 @@ ath_reg_wr(GPIO_OUT_FUNCTION1_ADDRESS, rddata);
  * GPIO 4 as MDO
  */
 rddata = ath_reg_rd(GPIO_OE_ADDRESS);
-rddata &= ~(1<<4);
+rddata &= ~BIT(4);
 ath_reg_wr(GPIO_OE_ADDRESS, rddata);
 
 /*
  * GPIO 3 as MDC
  */
 rddata = ath_reg_rd(GPIO_OE_ADDRESS);
-rddata &= ~(1<<3);
+rddata &= ~BIT(3);
 ath_reg_wr(GPIO_OE_ADDRESS, rddata);
 
 rddata = ath_reg_rd(GPIO_OUT_FUNCTION0_ADDRESS) &
@@ -722,14 +722,14 @@ int ath_gmac_enet_initialize(bd_t * bis)
 #if defined(CONFIG_ATHRS17_PHY)
 	if ( CFG_ATH_GMAC_NMACS == 1) {
 		//   S17 SWITCH RESET
-		val = ath_reg_rd(GPIO_OE_ADDRESS) & ~(1 << 11);
+		val = ath_reg_rd(GPIO_OE_ADDRESS) & ~BIT(11);
 		ath_reg_wr(GPIO_OE_ADDRESS, val);
 		udelay(1000 * 100);
-		ath_reg_rmw_set(GPIO_OUT_ADDRESS, ( 1 << 11));
+		ath_reg_rmw_set(GPIO_OUT_ADDRESS, BIT(11));
 		udelay(1000 * 100);
-		ath_reg_rmw_clear(GPIO_OUT_ADDRESS, ( 1 << 11));
+		ath_reg_rmw_clear(GPIO_OUT_ADDRESS, BIT(11));
 		udelay(1000 * 100);
-		ath_reg_rmw_set(GPIO_OUT_ADDRESS, ( 1 << 11));
+		ath_reg_rmw_set(GPIO_OUT_ADDRESS, BIT(11));
 	}
 #endif
 	for (i = 0;i < CFG_ATH_GMAC_NMACS;i++) {

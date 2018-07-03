@@ -70,7 +70,7 @@
 #define ATHER_SERDES_BEACON					0x0100
 
 /* S17 CSR Registers */
-#define S17_ENABLE_CPU_BROADCAST			(1 << 26)
+#define S17_ENABLE_CPU_BROADCAST			BIT(26)
 #define S17_PHY_LINK_CHANGE_REG				0x4
 #define S17_PHY_LINK_UP						0x400
 #define S17_PHY_LINK_DOWN					0x800

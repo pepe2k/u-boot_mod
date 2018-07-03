@@ -284,7 +284,7 @@ void rgmii_calib(ath_gmac_mac_t * mac)
 
 	for (i = 0; i < NUM_DESCRIPTORS; i++) {
 		*(node_rx_desc_ptr + (i * 0x3)) = ((unsigned int)node_rx_buf_addr & 0x0fffffff);
-		*(node_rx_desc_ptr + (i * 0x3) + 0x1) = (node_rx_buf_len & 0xfff) | (1 << 31);
+		*(node_rx_desc_ptr + (i * 0x3) + 0x1) = (node_rx_buf_len & 0xfff) | BIT(31);
 		if (i == (NUM_DESCRIPTORS - 1))
 			*(node_rx_desc_ptr + (i * 0x3) + 0x2) = ((unsigned int)node_rx_desc_ptr & 0x0fffffff);
 		else
@@ -374,18 +374,18 @@ void rgmii_calib(ath_gmac_mac_t * mac)
 		ath_gmac_reg_wr(mac, ATH_DMA_TX_CTRL, 0x1);	// enable dma tx
 
         rd_register = node_tx_desc_ptr + (NUM_DESCRIPTORS - 1) * 0x3 + 0x1; 
-        rddata = (*(rd_register) & (1 << 31));
-		while (rddata != (1 << 31))
-			rddata = (*(rd_register) & (1 << 31));
+        rddata = (*(rd_register) & BIT(31));
+		while (rddata != BIT(31))
+			rddata = (*(rd_register) & BIT(31));
 #if DEBUG
 		printf("TEST: Tx Done \n");
 #endif
 
 		to = 0;
         rd_register = node_rx_desc_ptr + (NUM_DESCS - 1) * 0x3 + 0x1;
-		rddata = (*(rd_register) & (1 << 31));
+		rddata = (*(rd_register) & BIT(31));
 		while (rddata != 0x0) {
-			rddata = (*(rd_register) & (1 << 31));
+			rddata = (*(rd_register) & BIT(31));
 			to++;
 			if (to > 100000) {
 #if DEBUG
@@ -455,7 +455,7 @@ void rgmii_calib(ath_gmac_mac_t * mac)
 
 		for (i = 0; i < NUM_DESCRIPTORS; i++) {
 			*(node_tx_desc_ptr + (i * 0x3) + 0x1) = (node_tx_buf_len & 0x7fffffff);
-			*(node_rx_desc_ptr + (i * 0x3) + 0x1) = (node_rx_buf_len & 0xfff) | (1 << 31);
+			*(node_rx_desc_ptr + (i * 0x3) + 0x1) = (node_rx_buf_len & 0xfff) | BIT(31);
 		}
 
 		// populate results and find the optimum value of programming
@@ -512,18 +512,18 @@ void rgmii_calib(ath_gmac_mac_t * mac)
 		ath_gmac_reg_wr(mac, ATH_DMA_RX_CTRL, 0x1);	// enable dma rx
 		ath_gmac_reg_wr(mac, ATH_DMA_TX_CTRL, 0x1);	// enable dma tx
         rd_register = node_tx_desc_ptr + (NUM_DESCRIPTORS - 1) * 0x3 + 0x1;
-		rddata = (*(rd_register) & (1 << 31));
-		while (rddata != (1 << 31))
-			rddata = (*(rd_register) & (1 << 31));
+		rddata = (*(rd_register) & BIT(31));
+		while (rddata != BIT(31))
+			rddata = (*(rd_register) & BIT(31));
 #if DEBUG
 		printf("TEST: Tx Done \n");
 #endif
 
 		to = 0;
         rd_register = node_rx_desc_ptr + (NUM_DESCS - 1) * 0x3 + 0x1;
-		rddata = (*(rd_register) & (1 << 31));
+		rddata = (*(rd_register) & BIT(31));
 		while (rddata != 0x0) {
-			rddata = (*(rd_register) & (1 << 31));
+			rddata = (*(rd_register) & BIT(31));
 			to++;
 			if (to > 100000) {
 #if DEBUG
@@ -595,7 +595,7 @@ void rgmii_calib(ath_gmac_mac_t * mac)
 
 		for (i = 0; i < NUM_DESCRIPTORS; i++) {
 			*(node_tx_desc_ptr + (i * 0x3) + 0x1) = (node_tx_buf_len & 0x7fffffff);
-			*(node_rx_desc_ptr + (i * 0x3) + 0x1) = (node_rx_buf_len & 0xfff) | (1 << 31);
+			*(node_rx_desc_ptr + (i * 0x3) + 0x1) = (node_rx_buf_len & 0xfff) | BIT(31);
 		}
 
 		// populate results and find the optimum value of programming
@@ -619,7 +619,7 @@ void rgmii_calib(ath_gmac_mac_t * mac)
 	printf("TEST: FINAL ETH_CFG VAL after RX Calibration - 0x%08x\n", eth_cfg_val);
 #endif
 	ath_reg_wr(ETH_CFG_ADDRESS, eth_cfg_val);
-	ath_gmac_reg_wr(mac,ATH_MAC_CFG1,1<<31);
+	ath_gmac_reg_wr(mac,ATH_MAC_CFG1, BIT(31));
 
 }
 

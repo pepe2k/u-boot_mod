@@ -280,7 +280,7 @@ static inline void qca_ddr_tap_patt(void)
 		pat = 0;
 
 		for (j = 0; j < 8; j++) {
-			if (i & (1 << j)) {
+			if (i & (1UL << j)) {
 				if (j % 2)
 					pat |= 0xFFFF0000;
 				else
@@ -426,7 +426,7 @@ static void qca_ddr_tap_tune(u32 ddr_width)
 
 	/* How many test loops per tested tap value */
 	qca_soc_reg_write(QCA_DDR_PERF_COMP_ADDR_1_REG,
-			  (DQS_DELAY_TAP_TEST_LOOPS
+			  ((u32)DQS_DELAY_TAP_TEST_LOOPS
 			   << QCA_DDR_PERF_COMP_ADDR_1_TEST_CNT_SHIFT));
 
 	/*
@@ -501,26 +501,26 @@ static void qca_ddr_tap_tune(u32 ddr_width)
  * of all memory controller related registers.
  *
  */
-#define DDRx_tMRD_ns	10
-#define DDRx_tRAS_ns	40
-#define DDRx_tRCD_ns	15
-#define DDRx_tRP_ns	15
-#define DDRx_tRRD_ns	10
-#define DDRx_tWR_ns	15
-#define DDRx_tWTR_ns	10
+#define DDRx_tMRD_ns	10UL
+#define DDRx_tRAS_ns	40UL
+#define DDRx_tRCD_ns	15UL
+#define DDRx_tRP_ns	15UL
+#define DDRx_tRRD_ns	10UL
+#define DDRx_tWR_ns	15UL
+#define DDRx_tWTR_ns	10UL
 
-#define DDR1_tRFC_ns	75
-#define DDR2_tRFC_ns	120
+#define DDR1_tRFC_ns	75UL
+#define DDR2_tRFC_ns	120UL
 
-#define DDR2_tFAW_ns	50
-#define DDR2_tWL_ns	5
+#define DDR2_tFAW_ns	50UL
+#define DDR2_tWL_ns	5UL
 
-#define DDR_addit_lat	0
-#define DDR_burst_len	8
+#define DDR_addit_lat	0UL
+#define DDR_burst_len	8UL
 
 /* All above values are safe for clocks not lower than below values */
-#define DDR1_timing_clk_max	400
-#define DDR2_timing_clk_max	533
+#define DDR1_timing_clk_max	400UL
+#define DDR2_timing_clk_max	533UL
 
 /* Maximum timing values, based on register fields sizes */
 #define MAX_tFAW	BITS(0, 6)
@@ -787,11 +787,11 @@ static inline void qca_dram_set_en_refresh(void)
 	if (qca_xtal_is_40mhz()) {
 		qca_soc_reg_write(QCA_DDR_REFRESH_REG,
 				  QCA_DDR_REFRESH_EN_MASK
-				  | (312 << QCA_DDR_REFRESH_PERIOD_SHIFT));
+				  | (312UL << QCA_DDR_REFRESH_PERIOD_SHIFT));
 	} else {
 		qca_soc_reg_write(QCA_DDR_REFRESH_REG,
 				  QCA_DDR_REFRESH_EN_MASK
-				  | (195 << QCA_DDR_REFRESH_PERIOD_SHIFT));
+				  | (195UL << QCA_DDR_REFRESH_PERIOD_SHIFT));
 	}
 }
 
@@ -917,14 +917,14 @@ void qca_dram_init(void)
 
 	if (!tmp && (cpu_clk == ddr_clk)) {
 #if (SOC_TYPE & QCA_AR933X_SOC)
-		qca_soc_reg_read_set(QCA_DDR_TAP_CTRL_3_REG, (1 << 8));
+		qca_soc_reg_read_set(QCA_DDR_TAP_CTRL_3_REG, BIT(8));
 #else
 		qca_soc_reg_read_set(QCA_DDR_CTRL_CFG_REG,
 				     QCA_DDR_CTRL_CFG_CPU_DDR_SYNC_MASK);
 #endif
 	} else {
 #if (SOC_TYPE & QCA_AR933X_SOC)
-		qca_soc_reg_read_clear(QCA_DDR_TAP_CTRL_3_REG, (1 << 8));
+		qca_soc_reg_read_clear(QCA_DDR_TAP_CTRL_3_REG, BIT(8));
 #else
 		qca_soc_reg_read_clear(QCA_DDR_CTRL_CFG_REG,
 				       QCA_DDR_CTRL_CFG_CPU_DDR_SYNC_MASK);

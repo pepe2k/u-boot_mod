@@ -127,7 +127,7 @@ void ag7240_mii_setup(ag7240_mac_t *mac)
 		mgmt_cfg_val = 2;
 		ar7240_reg_wr(0xb8050024, 0x271); // 25MHz ref clock
 		//ar7240_reg_wr(0xb8050024, 0x570);	// 40MHz ref clock
-		ag7240_reg_wr(ag7240_macs[1], AG7240_MAC_MII_MGMT_CFG, mgmt_cfg_val | (1 << 31));
+		ag7240_reg_wr(ag7240_macs[1], AG7240_MAC_MII_MGMT_CFG, mgmt_cfg_val | BIT(31));
 		ag7240_reg_wr(ag7240_macs[1], AG7240_MAC_MII_MGMT_CFG, mgmt_cfg_val);
 		return;
 	}
@@ -140,8 +140,8 @@ void ag7240_mii_setup(ag7240_mac_t *mac)
 		if(mac->mac_unit == 0)
 		ar7240_reg_wr(AG7240_ETH_CFG, AG7240_ETH_CFG_RGMII_GE0);
 
-		ar7240_reg_rmw_clear(AG7240_ETH_SWITCH_CLK_SPARE, (1 << 6));
-		ag7240_reg_wr(mac, AG7240_MAC_MII_MGMT_CFG, mgmt_cfg_val | (1 << 31));
+		ar7240_reg_rmw_clear(AG7240_ETH_SWITCH_CLK_SPARE, BIT(6));
+		ag7240_reg_wr(mac, AG7240_MAC_MII_MGMT_CFG, mgmt_cfg_val | BIT(31));
 		ag7240_reg_wr(mac, AG7240_MAC_MII_MGMT_CFG, mgmt_cfg_val);
 
 		return;
@@ -155,7 +155,7 @@ void ag7240_mii_setup(ag7240_mac_t *mac)
 		if(mac->mac_unit == 0)
 		ar7240_reg_wr(AG7240_ETH_CFG, AG7240_ETH_CFG_RGMII_GE0);
 
-		ag7240_reg_wr(mac, AG7240_MAC_MII_MGMT_CFG, mgmt_cfg_val | (1 << 31));
+		ag7240_reg_wr(mac, AG7240_MAC_MII_MGMT_CFG, mgmt_cfg_val | BIT(31));
 		ag7240_reg_wr(mac, AG7240_MAC_MII_MGMT_CFG, mgmt_cfg_val);
 
 		return;
@@ -165,7 +165,7 @@ void ag7240_mii_setup(ag7240_mac_t *mac)
 	if ((ar7240_reg_rd(AR7240_REV_ID) & AR7240_REV_ID_MASK) == AR7240_REV_1_2) {
 		mgmt_cfg_val = 0x2;
 		if (mac->mac_unit == 0) {
-			ag7240_reg_wr(mac, AG7240_MAC_MII_MGMT_CFG, mgmt_cfg_val | (1 << 31));
+			ag7240_reg_wr(mac, AG7240_MAC_MII_MGMT_CFG, mgmt_cfg_val | BIT(31));
 			ag7240_reg_wr(mac, AG7240_MAC_MII_MGMT_CFG, mgmt_cfg_val);
 		}
 	} else {
@@ -196,13 +196,13 @@ void ag7240_mii_setup(ag7240_mac_t *mac)
 			if (mac->mac_unit == 0 && is_ar7242()) {
 				mgmt_cfg_val = 0x6;
 				ar7240_reg_rmw_set(AG7240_ETH_CFG, AG7240_ETH_CFG_RGMII_GE0);
-				ag7240_reg_wr(mac, AG7240_MAC_MII_MGMT_CFG, mgmt_cfg_val | (1 << 31));
+				ag7240_reg_wr(mac, AG7240_MAC_MII_MGMT_CFG, mgmt_cfg_val | BIT(31));
 				ag7240_reg_wr(mac, AG7240_MAC_MII_MGMT_CFG, mgmt_cfg_val);
 			}
 
 			/* Virian */
 			mgmt_cfg_val = 0x4;
-			ag7240_reg_wr(ag7240_macs[1], AG7240_MAC_MII_MGMT_CFG, mgmt_cfg_val | (1 << 31));
+			ag7240_reg_wr(ag7240_macs[1], AG7240_MAC_MII_MGMT_CFG, mgmt_cfg_val | BIT(31));
 			ag7240_reg_wr(ag7240_macs[1], AG7240_MAC_MII_MGMT_CFG, mgmt_cfg_val);
 			printf("Virian MDC CFG Value ==> %x\n", mgmt_cfg_val);
 		} else if (is_ar933x()) {
@@ -212,7 +212,7 @@ void ag7240_mii_setup(ag7240_mac_t *mac)
 			if (mac->mac_unit == 1) {
 				check_cnt = 0;
 				while (check_cnt++ < 10) {
-					ag7240_reg_wr(mac, AG7240_MAC_MII_MGMT_CFG, mgmt_cfg_val | (1 << 31));
+					ag7240_reg_wr(mac, AG7240_MAC_MII_MGMT_CFG, mgmt_cfg_val | BIT(31));
 					ag7240_reg_wr(mac, AG7240_MAC_MII_MGMT_CFG, mgmt_cfg_val);
 #ifdef CFG_ATHRS26_PHY
 					if (athrs26_mdc_check() == 0) {
@@ -229,7 +229,7 @@ void ag7240_mii_setup(ag7240_mac_t *mac)
 				check_cnt = 0;
 
 				while (check_cnt++ < 10) {
-					ag7240_reg_wr(mac, AG7240_MAC_MII_MGMT_CFG, mgmt_cfg_val | (1 << 31));
+					ag7240_reg_wr(mac, AG7240_MAC_MII_MGMT_CFG, mgmt_cfg_val | BIT(31));
 					ag7240_reg_wr(mac, AG7240_MAC_MII_MGMT_CFG, mgmt_cfg_val);
 #ifdef CFG_ATHRS26_PHY
 					if (athrs26_mdc_check() == 0) {
@@ -303,7 +303,7 @@ static int ag7240_check_link(ag7240_mac_t *mac)
 	switch (speed) {
 	case _1000BASET:
 		ag7240_set_mac_if(mac, 1);
-		ag7240_reg_rmw_set(mac, AG7240_MAC_FIFO_CFG_5, (1 << 19));
+		ag7240_reg_rmw_set(mac, AG7240_MAC_FIFO_CFG_5, BIT(19));
 		if (is_ar7242() && (mac->mac_unit == 0)) {
 			ar7240_reg_wr(AR7242_ETH_XMII_CONFIG, 0x1c000000);
 		}
@@ -321,7 +321,7 @@ static int ag7240_check_link(ag7240_mac_t *mac)
 	case _100BASET:
 		ag7240_set_mac_if(mac, 0);
 		ag7240_set_mac_speed(mac, 1);
-		ag7240_reg_rmw_clear(mac, AG7240_MAC_FIFO_CFG_5, (1 << 19));
+		ag7240_reg_rmw_clear(mac, AG7240_MAC_FIFO_CFG_5, BIT(19));
 
 		if ((is_ar7242() || is_wasp()) && (mac->mac_unit == 0)) {
 			ar7240_reg_wr(AR7242_ETH_XMII_CONFIG, 0x0101);
@@ -331,7 +331,7 @@ static int ag7240_check_link(ag7240_mac_t *mac)
 	case _10BASET:
 		ag7240_set_mac_if(mac, 0);
 		ag7240_set_mac_speed(mac, 0);
-		ag7240_reg_rmw_clear(mac, AG7240_MAC_FIFO_CFG_5, (1 << 19));
+		ag7240_reg_rmw_clear(mac, AG7240_MAC_FIFO_CFG_5, BIT(19));
 		if ((is_ar7242() || is_wasp()) && (mac->mac_unit == 0)){
 			ar7240_reg_wr(AR7242_ETH_XMII_CONFIG, 0x1616);
 		}

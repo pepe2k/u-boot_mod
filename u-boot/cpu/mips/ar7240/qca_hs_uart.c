@@ -27,7 +27,7 @@ static u32 qca_hsuart_get_baud(u32 ref_clk, u32 uart_scale, u32 uart_step)
 	u64 baudrate;
 	u32 div;
 
-	div = (uart_scale + 1) * (2 << 16);
+	div = (uart_scale + 1) * (2UL << 16);
 
 	baudrate = (ref_clk * uart_step) + (div / 2);
 	baudrate = baudrate / div;
@@ -58,7 +58,7 @@ static void qca_hsuart_get_scale_step(u32 baudrate,
 
 	for (tscale = 0; tscale < QCA_HSUART_CLK_SCALE_MAX_VAL; tscale++) {
 		tstep = baudrate * (tscale + 1);
-		tstep = tstep * (2 << 16);
+		tstep = tstep * (2UL << 16);
 		tstep = tstep / ref_clk;
 
 		if (tstep > QCA_HSUART_CLK_STEP_MAX_VAL)
@@ -118,13 +118,13 @@ int serial_init(void)
 	 * - set RX ready oride
 	 * - set TX ready oride
 	 */
-	uart_cs = (0 << QCA_HSUART_CS_DMA_EN_SHIFT) |
-		(0 << QCA_HSUART_CS_HOST_INT_EN_SHIFT) |
-		(1 << QCA_HSUART_CS_RX_READY_ORIDE_SHIFT) |
-		(1 << QCA_HSUART_CS_TX_READY_ORIDE_SHIFT) |
-		(QCA_HSUART_CS_PAR_MODE_NO_VAL << QCA_HSUART_CS_PAR_MODE_SHIFT) |
-		(QCA_HSUART_CS_IFACE_MODE_DCE_VAL << QCA_HSUART_CS_IFACE_MODE_SHIFT) |
-		(QCA_HSUART_CS_FLOW_MODE_NO_VAL << QCA_HSUART_CS_FLOW_MODE_SHIFT);
+	uart_cs = (0UL << QCA_HSUART_CS_DMA_EN_SHIFT) |
+		(0UL << QCA_HSUART_CS_HOST_INT_EN_SHIFT) |
+		(1UL << QCA_HSUART_CS_RX_READY_ORIDE_SHIFT) |
+		(1UL << QCA_HSUART_CS_TX_READY_ORIDE_SHIFT) |
+		((u32) QCA_HSUART_CS_PAR_MODE_NO_VAL << QCA_HSUART_CS_PAR_MODE_SHIFT) |
+		((u32) QCA_HSUART_CS_IFACE_MODE_DCE_VAL << QCA_HSUART_CS_IFACE_MODE_SHIFT) |
+		((u32) QCA_HSUART_CS_FLOW_MODE_NO_VAL << QCA_HSUART_CS_FLOW_MODE_SHIFT);
 
 	qca_soc_reg_write(QCA_HSUART_CS_REG, uart_cs);
 
@@ -147,7 +147,7 @@ void serial_putc(const char c)
 			  >> QCA_HSUART_DATA_TX_CSR_SHIFT)  == 0);
 
 	/* Put data in buffer and set CSR bit */
-	uart_data  = (u32)c | (1 << QCA_HSUART_DATA_TX_CSR_SHIFT);
+	uart_data  = (u32)c | BIT(QCA_HSUART_DATA_TX_CSR_SHIFT);
 
 	qca_soc_reg_write(QCA_HSUART_DATA_REG, uart_data);
 }
@@ -162,7 +162,7 @@ int serial_getc(void)
 	uart_data = qca_soc_reg_read(QCA_HSUART_DATA_REG);
 
 	qca_soc_reg_write(QCA_HSUART_DATA_REG,
-					  (1 << QCA_HSUART_DATA_RX_CSR_SHIFT));
+					  BIT(QCA_HSUART_DATA_RX_CSR_SHIFT));
 
 	return (uart_data & QCA_HSUART_DATA_TX_RX_DATA_MASK);
 }

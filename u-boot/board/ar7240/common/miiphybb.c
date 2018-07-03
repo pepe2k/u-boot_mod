@@ -14,12 +14,12 @@
 #include <asm/addrspace.h>
 #include <soc/qca_soc_common.h>
 
-#define MII_INIT	do{qca_soc_reg_read_clear(QCA_GPIO_OE_REG,1<<CONFIG_QCA_GPIO_MDC);}while(0)
-#define MDIO_ACTIVE	do{qca_soc_reg_read_clear(QCA_GPIO_OE_REG,1<<CONFIG_QCA_GPIO_MDIO);}while(0)
-#define MDIO_TRISTATE	do{qca_soc_reg_read_set(QCA_GPIO_OE_REG,1<<CONFIG_QCA_GPIO_MDIO);}while(0)
-#define MDIO_READ	(!!(qca_soc_reg_read(QCA_GPIO_IN_REG)&(1<<CONFIG_QCA_GPIO_MDIO)))
-#define MDIO(v)		do{if(v) qca_soc_reg_read_set(QCA_GPIO_OUT_REG,1<<CONFIG_QCA_GPIO_MDIO); else qca_soc_reg_read_clear(QCA_GPIO_OUT_REG,1<<CONFIG_QCA_GPIO_MDIO);}while(0)
-#define MDC(v)		do{if(v) qca_soc_reg_read_set(QCA_GPIO_OUT_REG,1<<CONFIG_QCA_GPIO_MDC); else qca_soc_reg_read_clear(QCA_GPIO_OUT_REG,1<<CONFIG_QCA_GPIO_MDC);}while(0)
+#define MII_INIT	do{qca_soc_reg_read_clear(QCA_GPIO_OE_REG,BIT(CONFIG_QCA_GPIO_MDC));}while(0)
+#define MDIO_ACTIVE	do{qca_soc_reg_read_clear(QCA_GPIO_OE_REG,BIT(CONFIG_QCA_GPIO_MDIO));}while(0)
+#define MDIO_TRISTATE	do{qca_soc_reg_read_set(QCA_GPIO_OE_REG,BIT(CONFIG_QCA_GPIO_MDIO));}while(0)
+#define MDIO_READ	(!!(qca_soc_reg_read(QCA_GPIO_IN_REG)&(BIT(CONFIG_QCA_GPIO_MDIO))))
+#define MDIO(v)		do{if(v) qca_soc_reg_read_set(QCA_GPIO_OUT_REG,BIT(CONFIG_QCA_GPIO_MDIO)); else qca_soc_reg_read_clear(QCA_GPIO_OUT_REG,BIT(CONFIG_QCA_GPIO_MDIO));}while(0)
+#define MDC(v)		do{if(v) qca_soc_reg_read_set(QCA_GPIO_OUT_REG,BIT(CONFIG_QCA_GPIO_MDC)); else qca_soc_reg_read_clear(QCA_GPIO_OUT_REG,BIT(CONFIG_QCA_GPIO_MDC));}while(0)
 #define MIIDELAY	udelay(50);
 
 enum {

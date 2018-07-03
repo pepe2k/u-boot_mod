@@ -182,13 +182,13 @@ void ath_gmac_mii_setup(ath_gmac_mac_t *mac)
 					ETH_CFG_ETH_RXD_DELAY_SET(3)|
 					ETH_CFG_RGMII_GE0_SET(1));
 
-		ath_reg_wr(ETH_XMII_ADDRESS, ETH_XMII_TX_INVERT_SET(1) |
+		ath_reg_wr(ETH_XMII_ADDRESS, ETH_XMII_TX_INVERT_SET(1UL) |
 						ETH_XMII_RX_DELAY_SET(2) |
 						ETH_XMII_TX_DELAY_SET(1) |
 						ETH_XMII_GIGE_SET(1));
         	mgmt_cfg_val = 2;
 		udelay(1000);
-		ath_gmac_reg_wr(mac, ATH_MAC_MII_MGMT_CFG, mgmt_cfg_val | (1 << 31));
+		ath_gmac_reg_wr(mac, ATH_MAC_MII_MGMT_CFG, mgmt_cfg_val | BIT(31));
 		ath_gmac_reg_wr(mac, ATH_MAC_MII_MGMT_CFG, mgmt_cfg_val);
 		return;
 	}
@@ -200,12 +200,12 @@ void ath_gmac_mii_setup(ath_gmac_mac_t *mac)
 #endif
 					ETH_CFG_ETH_RXD_DELAY_SET(3)|
 					ETH_CFG_RGMII_GE0_SET(1));
-		ath_reg_wr(ETH_XMII_ADDRESS, ETH_XMII_TX_INVERT_SET(1) |
+		ath_reg_wr(ETH_XMII_ADDRESS, ETH_XMII_TX_INVERT_SET(1UL) |
 						ETH_XMII_RX_DELAY_SET(2) |
 						ETH_XMII_TX_DELAY_SET(1) |
 						ETH_XMII_GIGE_SET(1));
 		udelay(1000);
-		ath_gmac_reg_wr(mac, ATH_MAC_MII_MGMT_CFG, mgmt_cfg_val | (1 << 31));
+		ath_gmac_reg_wr(mac, ATH_MAC_MII_MGMT_CFG, mgmt_cfg_val | BIT(31));
 		ath_gmac_reg_wr(mac, ATH_MAC_MII_MGMT_CFG, mgmt_cfg_val);
 
 		return;
@@ -218,7 +218,7 @@ void ath_gmac_mii_setup(ath_gmac_mac_t *mac)
 #endif
                                         ETH_CFG_MII_GE0_SLAVE_SET(1));
 		udelay(1000);
-		ath_gmac_reg_wr(mac, ATH_MAC_MII_MGMT_CFG, mgmt_cfg_val | (1 << 31));
+		ath_gmac_reg_wr(mac, ATH_MAC_MII_MGMT_CFG, mgmt_cfg_val | BIT(31));
 		ath_gmac_reg_wr(mac, ATH_MAC_MII_MGMT_CFG, mgmt_cfg_val);
 
 	}
@@ -279,19 +279,19 @@ static int ath_gmac_check_link(ath_gmac_mac_t *mac)
 	{
 		case _1000BASET:
 			ath_gmac_set_mac_if(mac, 1);
-			ath_gmac_reg_rmw_set(mac, ATH_MAC_FIFO_CFG_5, (1 << 19));
+			ath_gmac_reg_rmw_set(mac, ATH_MAC_FIFO_CFG_5, BIT(19));
 			break;
 
 		case _100BASET:
 			ath_gmac_set_mac_if(mac, 0);
 			ath_gmac_set_mac_speed(mac, 1);
-			ath_gmac_reg_rmw_clear(mac, ATH_MAC_FIFO_CFG_5, (1 << 19));
+			ath_gmac_reg_rmw_clear(mac, ATH_MAC_FIFO_CFG_5, BIT(19));
 			break;
 
 		case _10BASET:
 			ath_gmac_set_mac_if(mac, 0);
 			ath_gmac_set_mac_speed(mac, 0);
-			ath_gmac_reg_rmw_clear(mac, ATH_MAC_FIFO_CFG_5, (1 << 19));
+			ath_gmac_reg_rmw_clear(mac, ATH_MAC_FIFO_CFG_5, BIT(19));
 			break;
 
 		default:
@@ -419,9 +419,9 @@ athr_mgmt_init(void)
 	rddata |= GPIO_IN_ENABLE3_MII_GE1_MDI_SET(19);
 	ath_reg_wr(GPIO_IN_ENABLE3_ADDRESS, rddata);
 
-	ath_reg_rmw_clear(GPIO_OE_ADDRESS, (1 << 19));
+	ath_reg_rmw_clear(GPIO_OE_ADDRESS, BIT(19));
 
-	ath_reg_rmw_clear(GPIO_OE_ADDRESS, (1 << 17));
+	ath_reg_rmw_clear(GPIO_OE_ADDRESS, BIT(17));
 
 
 	rddata = ath_reg_rd(GPIO_OUT_FUNCTION4_ADDRESS) &

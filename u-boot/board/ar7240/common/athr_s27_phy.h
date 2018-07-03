@@ -138,8 +138,8 @@
 #define S27_GLOBAL_INTR_MASK_REG             0x14
 
 
-#define S27_ENABLE_CPU_BROADCAST             (1 << 26)
-#define S27_ENABLE_CPU_BCAST_FWD             (1 << 25)
+#define S27_ENABLE_CPU_BROADCAST             BIT(26)
+#define S27_ENABLE_CPU_BCAST_FWD             BIT(25)
 
 #define PHY_LINK_CHANGE_REG 		     0x4
 #define PHY_LINK_UP 		             0x400
@@ -156,12 +156,12 @@
 #define ATHR_QOS_PORT_3			0x410
 #define ATHR_QOS_PORT_4			0x510
 
-#define ATHR_ENABLE_TOS                 (1 << 16)
+#define ATHR_ENABLE_TOS                 BIT(16)
 
 #define ATHR_QOS_MODE_REGISTER          0x030
-#define ATHR_QOS_FIXED_PRIORITY        ((0 << 31) | (0 << 28))
-#define ATHR_QOS_WEIGHTED              ((1 << 31) | (0 << 28)) /* Fixed weight 8,4,2,1 */
-#define ATHR_QOS_MIXED                 ((1 << 31) | (1 << 28)) /* Q3 for managment; Q2,Q1,Q0 - 4,2,1 */
+#define ATHR_QOS_FIXED_PRIORITY        0
+#define ATHR_QOS_WEIGHTED              BIT(31) /* Fixed weight 8,4,2,1 */
+#define ATHR_QOS_MIXED                 (BIT(31) | BIT(28)) /* Q3 for managment; Q2,Q1,Q0 - 4,2,1 */
 
 #ifndef BOOL
 #define BOOL    int

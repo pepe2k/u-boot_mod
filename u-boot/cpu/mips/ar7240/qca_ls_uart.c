@@ -60,7 +60,7 @@ int serial_init(void)
 	 * - parity: no
 	 */
 	qca_soc_reg_write(QCA_LSUART_LCR_REG,
-					  QCA_LSUART_LCR_CLS_8BIT_VAL << QCA_LSUART_LCR_CLS_SHIFT);
+					  (u32)QCA_LSUART_LCR_CLS_8BIT_VAL << QCA_LSUART_LCR_CLS_SHIFT);
 
 	return 0;
 }

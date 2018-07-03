@@ -54,7 +54,7 @@ static ulong evalexp(char *s, int w)
 	}
 
 	if (w < 4)
-		return l & ((1 << (w * 8)) - 1);
+		return l & ((1UL << (w * 8)) - 1);
 	else
 		return l;
 }

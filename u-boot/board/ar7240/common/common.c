@@ -273,7 +273,7 @@ int reset_button_status(void)
 
 	gpio = qca_soc_reg_read(QCA_GPIO_IN_REG);
 
-	if (gpio & (1 << CONFIG_GPIO_RESET_BTN)) {
+	if (gpio & (1UL << CONFIG_GPIO_RESET_BTN)) {
 	#if defined(CONFIG_GPIO_RESET_BTN_ACTIVE_LOW)
 		return 0;
 	#else

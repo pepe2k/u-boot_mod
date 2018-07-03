@@ -244,7 +244,7 @@ void athrs26_reg_init_lan(void){
 	/*
 	 * CPU port Enable
 	 */
-	athrs26_reg_write(CPU_PORT_REGISTER, (1 << 8));
+	athrs26_reg_write(CPU_PORT_REGISTER, BIT(8));
 
 	/*
 	 * status[1:0]=2'h2;   - (0x10 - 1000 Mbps , 0x0 - 10 Mbps)
@@ -782,11 +782,11 @@ unsigned int s26_rd_phy(unsigned int phy_addr, unsigned int reg_addr){
 
 	// MDIO_CMD is set for read
 	rddata = athrs26_reg_read(0x98);
-	rddata = (rddata & 0x0) | (reg_addr << 16) | (phy_addr << 21) | (1 << 27) | (1 << 30) | (1 << 31);
+	rddata = (rddata & 0x0) | (reg_addr << 16) | (phy_addr << 21) | BIT(27) | BIT(30) | BIT(31);
 	athrs26_reg_write(0x98, rddata);
 
 	rddata = athrs26_reg_read(0x98);
-	rddata = rddata & (1 << 31);
+	rddata = rddata & BIT(31);
 
 	// Check MDIO_BUSY status
 	while(rddata){
@@ -799,7 +799,7 @@ unsigned int s26_rd_phy(unsigned int phy_addr, unsigned int reg_addr){
 		}
 
 		rddata = athrs26_reg_read(0x98);
-		rddata = rddata & (1 << 31);
+		rddata = rddata & BIT(31);
 	}
 
 	// Read the data from phy
@@ -814,11 +814,11 @@ void s26_wr_phy(unsigned int phy_addr, unsigned int reg_addr, unsigned int write
 
 	// MDIO_CMD is set for read
 	rddata = athrs26_reg_read(0x98);
-	rddata = (rddata & 0x0) | (write_data & 0xffff) | (reg_addr << 16) | (phy_addr << 21) | (0 << 27) | (1 << 30) | (1 << 31);
+	rddata = (rddata & 0x0) | (write_data & 0xffff) | (reg_addr << 16) | (phy_addr << 21) | (0 << 27) | BIT(30) | BIT(31);
 	athrs26_reg_write(0x98, rddata);
 
 	rddata = athrs26_reg_read(0x98);
-	rddata = rddata & (1 << 31);
+	rddata = rddata & BIT(31);
 
 	// Check MDIO_BUSY status
 	while(rddata){
@@ -831,7 +831,7 @@ void s26_wr_phy(unsigned int phy_addr, unsigned int reg_addr, unsigned int write
 		}
 
 		rddata = athrs26_reg_read(0x98);
-		rddata = rddata & (1 << 31);
+		rddata = rddata & BIT(31);
 	}
 
 }

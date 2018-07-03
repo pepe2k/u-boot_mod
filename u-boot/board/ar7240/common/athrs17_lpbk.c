@@ -203,7 +203,7 @@ void init_s17(void)
         phyAddr = phyUnit;
         // To enable loopback on a phy
         // rddata = s17_phy_read(phyAddr, 0x0);
-        // s17_phy_write(phyAddr, 0x0, (rddata | (1 << 14)));
+        // s17_phy_write(phyAddr, 0x0, (rddata | BIT(14)));
         /* For 100M waveform */
         phy_reg_write(0, phyAddr, 0x1d, 0x18);
         phy_reg_write(0, phyAddr, 0x1e, 0x02ea);

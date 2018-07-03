@@ -128,19 +128,19 @@ typedef enum {
 	RES_IN = 12,
 	RES_SNTX = 13
 } reserved_style;
-#define FLAG_END   (1<<RES_NONE)
-#define FLAG_IF    (1<<RES_IF)
-#define FLAG_THEN  (1<<RES_THEN)
-#define FLAG_ELIF  (1<<RES_ELIF)
-#define FLAG_ELSE  (1<<RES_ELSE)
-#define FLAG_FI    (1<<RES_FI)
-#define FLAG_FOR   (1<<RES_FOR)
-#define FLAG_WHILE (1<<RES_WHILE)
-#define FLAG_UNTIL (1<<RES_UNTIL)
-#define FLAG_DO    (1<<RES_DO)
-#define FLAG_DONE  (1<<RES_DONE)
-#define FLAG_IN    (1<<RES_IN)
-#define FLAG_START (1<<RES_XXXX)
+#define FLAG_END   (1UL<<RES_NONE)
+#define FLAG_IF    (1UL<<RES_IF)
+#define FLAG_THEN  (1UL<<RES_THEN)
+#define FLAG_ELIF  (1UL<<RES_ELIF)
+#define FLAG_ELSE  (1UL<<RES_ELSE)
+#define FLAG_FI    (1UL<<RES_FI)
+#define FLAG_FOR   (1UL<<RES_FOR)
+#define FLAG_WHILE (1UL<<RES_WHILE)
+#define FLAG_UNTIL (1UL<<RES_UNTIL)
+#define FLAG_DO    (1UL<<RES_DO)
+#define FLAG_DONE  (1UL<<RES_DONE)
+#define FLAG_IN    (1UL<<RES_IN)
+#define FLAG_START (1UL<<RES_XXXX)
 
 /* This holds pointers to the various results of parsing */
 struct p_context {

@@ -154,7 +154,7 @@ static u32 gpio_in_func_to_gpio(u8 func)
 	shift = 8 * (gpio_in_funcs[func].offset % 4);
 
 	val = qca_soc_reg_read(reg);
-	val &= (0xff << shift);
+	val &= (0xffUL << shift);
 	val = val >> shift;
 
 	return val;
@@ -168,7 +168,7 @@ static u8 gpio_get_out_func(u32 gpio_num)
 	shift = 8 * (gpio_num % 4);
 
 	val = qca_soc_reg_read(reg);
-	val &= (0xff << shift);
+	val &= (0xffUL << shift);
 	val = val >> shift;
 
 	return (u8)val;
@@ -190,7 +190,7 @@ static void gpio_set_in_out_func(u32 gpio_num, u8 func, u32 output)
 	}
 
 	val = qca_soc_reg_read(reg);
-	val &= ~(0xff << shift);
+	val &= ~(0xffUL << shift);
 
 	if (output)
 		val |= (func << shift);
@@ -315,7 +315,7 @@ static void gpio_list_cfg(void)
 #endif
 
 	for (gpio_num = 0; gpio_num < QCA_GPIO_COUNT; gpio_num++) {
-		gpio_mask = (1 << gpio_num);
+		gpio_mask = BIT(gpio_num);
 
 		/* GPIO number */
 		printf("%4d", gpio_num);
@@ -389,7 +389,7 @@ static void gpio_list_cfg(void)
 
 		/* GPIO configured as RST button */
 #if defined(CONFIG_GPIO_RESET_BTN)
-		if (!output && (gpio_mask & (1 << CONFIG_GPIO_RESET_BTN)))
+		if (!output && (gpio_mask & BIT(CONFIG_GPIO_RESET_BTN)))
 	#if defined(CONFIG_GPIO_RESET_BTN_ACTIVE_LOW)
 			printf("%-3s", "lo");
 	#else
@@ -477,7 +477,7 @@ static void gpio_list_funcs(void)
 		found = 0;
 		if (gpio_funcs_1[i].gpio_mask) {
 			for (n = 0; n < _GPIO_NUM_MAX; n++) {
-				if (gpio_funcs_1[i].gpio_mask & (1 << n)) {
+				if (gpio_funcs_1[i].gpio_mask & BIT(n)) {
 					if (found)
 						puts(", ");
 
@@ -511,7 +511,7 @@ static void gpio_list_funcs(void)
 		found = 0;
 		if (gpio_funcs_2[i].gpio_mask) {
 			for (n = 0; n < _GPIO_NUM_MAX; n++) {
-				if (gpio_funcs_2[i].gpio_mask & (1 << n)) {
+				if (gpio_funcs_2[i].gpio_mask & BIT(n)) {
 					if (found)
 						puts(", ");
 
@@ -680,7 +680,7 @@ usage:
 		return 1;
 	}
 
-	gpio_mask = (1 << gpio_num);
+	gpio_mask = BIT(gpio_num);
 
 	switch (*argv[1]) {
 	case 's':

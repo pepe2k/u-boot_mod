@@ -151,7 +151,7 @@ void qca_sys_clocks(u32 *cpu_clk,
 					>> QCA_PLL_CPU_PLL_DITHER_FRAC_NFRAC_MIN_SHIFT;
 		}
 
-		nfracdiv = 1 << 10;
+		nfracdiv = BIT(10);
 
 		reg_val = qca_soc_reg_read(QCA_PLL_CPU_PLL_CFG_REG);
 
@@ -215,7 +215,7 @@ void qca_sys_clocks(u32 *cpu_clk,
 					>> QCA_PLL_CPU_PLL_DITHER_NFRAC_MIN_H_SHIFT;
 		nfrac = (nfrac_h * (QCA_PLL_CPU_PLL_DITHER_NFRAC_MIN_L_MASK + 1)) | nfrac_l;
 	}
-	nfracdiv = 1 << 18;
+	nfracdiv = BIT(18);
 
 	reg_val = qca_soc_reg_read(QCA_PLL_CPU_PLL_CFG_REG);
 		refdiv = (reg_val & QCA_PLL_CPU_PLL_CFG_REFDIV_MASK)
@@ -247,7 +247,7 @@ void qca_sys_clocks(u32 *cpu_clk,
 					>> QCA_PLL_DDR_PLL_DITHER_NFRAC_MIN_H_SHIFT;
 		nfrac = (nfrac_h * (QCA_PLL_DDR_PLL_DITHER_NFRAC_MIN_L_MASK + 1)) | nfrac_l;
 	}
-	nfracdiv = 1 << 18;
+	nfracdiv = BIT(18);
 
 	reg_val = qca_soc_reg_read(QCA_PLL_DDR_PLL_CFG_REG);
 		refdiv = (reg_val & QCA_PLL_DDR_PLL_CFG_REFDIV_MASK)
@@ -303,7 +303,7 @@ void qca_sys_clocks(u32 *cpu_clk,
 		nfrac = (reg_val & QCA_PLL_SRIF_DPLL1_NFRAC_MASK)
 				>> QCA_PLL_SRIF_DPLL1_NFRAC_SHIFT;
 
-		nfracdiv = 1 << 18;
+		nfracdiv = BIT(18);
 
 		nint = (reg_val & QCA_PLL_SRIF_DPLL1_NINT_MASK)
 			   >> QCA_PLL_SRIF_DPLL1_NINT_SHIFT;
@@ -323,7 +323,7 @@ void qca_sys_clocks(u32 *cpu_clk,
 					>> QCA_PLL_CPU_PLL_DITHER_NFRAC_MIN_SHIFT;
 		}
 
-		nfracdiv = 1 << 6;
+		nfracdiv = BIT(6);
 
 		reg_val = qca_soc_reg_read(QCA_PLL_CPU_PLL_CFG_REG);
 
@@ -354,7 +354,7 @@ void qca_sys_clocks(u32 *cpu_clk,
 		nfrac = (reg_val & QCA_PLL_SRIF_DPLL1_NFRAC_MASK)
 				>> QCA_PLL_SRIF_DPLL1_NFRAC_SHIFT;
 
-		nfracdiv = 1 << 18;
+		nfracdiv = BIT(18);
 
 		nint = (reg_val & QCA_PLL_SRIF_DPLL1_NINT_MASK)
 			   >> QCA_PLL_SRIF_DPLL1_NINT_SHIFT;
@@ -374,7 +374,7 @@ void qca_sys_clocks(u32 *cpu_clk,
 					>> QCA_PLL_DDR_PLL_DITHER_NFRAC_MIN_SHIFT;
 		}
 
-		nfracdiv = 1 << 10;
+		nfracdiv = BIT(10);
 
 		reg_val = qca_soc_reg_read(QCA_PLL_DDR_PLL_CFG_REG);
 

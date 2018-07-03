@@ -544,8 +544,6 @@ typedef enum {
 #define ar7240_write_pci_window(_no)             \
   ar7240_reg_wr(AR7240_PCI_WINDOW##_no##_OFFSET, AR7240_PCI_WINDOW##_no##_VAL);
 
-#define BIT(_x) (1 << (_x))
-
 #define ar7240_reg_rmw_set(_reg, _mask)  do {                        \
     ar7240_reg_wr((_reg), (ar7240_reg_rd((_reg)) | (_mask)));      \
     ar7240_reg_rd((_reg));                                           \
@@ -556,7 +554,7 @@ typedef enum {
     ar7240_reg_rd((_reg));                                           \
 }while(0);
 
-#define ar7240_get_bit(_reg, _bit)  (ar7240_reg_rd((_reg)) & (1 << (_bit)))
+#define ar7240_get_bit(_reg, _bit)  (ar7240_reg_rd((_reg)) & (1UL << (_bit)))
 
 #define ar7240_flush_ge(_unit) do {                             \
     u32     reg = (_unit) ? AR7240_DDR_GE1_FLUSH : AR7240_DDR_GE0_FLUSH;   \
