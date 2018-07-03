@@ -26,8 +26,6 @@ ifeq ($(BOARD), ap143)
 endif
 
 ifeq ($(BOARD), ap152)
-	OBJS-y += qca_dram956x.o
-	OBJS-y += qca956x_tap.o
 	OBJS-y += qca956x_pll_init.o
 else
 

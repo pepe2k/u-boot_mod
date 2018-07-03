@@ -23,6 +23,8 @@
 
 #if (SOC_TYPE & QCA_QCA956X_SOC)
 	#include <soc/qca956x_pll_init.h>
+	#define PMU1_ADDRESS	0x18116cc0
+	#define PMU2_ADDRESS	0x18116cc4
 #else
 	#include <soc/qca95xx_pll_init.h>
 #endif
@@ -552,13 +554,26 @@ static inline void qca_dram_set_ddr_cfg(u32 mem_cas,
 	/* Always use page close policy */
 	reg = reg | QCA_DDR_CFG_PAGE_CLOSE_MASK;
 
+#if (SOC_TYPE & QCA_QCA956X_SOC)
+	/* 2 * MEM_CAS is not working on QCA956x */
+	if(mem_cas == 3)
+		tmp = 0x7UL << QCA_DDR_CFG_CAS_3LSB_SHIFT;
+	else if(mem_cas == 4)
+		tmp = 0x11UL << QCA_DDR_CFG_CAS_3LSB_SHIFT;
+	else if(mem_cas == 5)
+		tmp = 0x14UL << QCA_DDR_CFG_CAS_3LSB_SHIFT;
+	else
+		tmp = 0x16UL << QCA_DDR_CFG_CAS_3LSB_SHIFT;
+#else
 	/* CAS should be (2 * MEM_CAS) or (2 * MEM_CAS) + 1/2/3 */
 	tmp = 2 * mem_cas;
 	tmp = (tmp << QCA_DDR_CFG_CAS_3LSB_SHIFT) & QCA_DDR_CFG_CAS_3LSB_MASK;
 	if (mem_cas > 3) {
 		tmp = tmp | QCA_DDR_CFG_CAS_MSB_MASK;
 	}
+#endif
 
+	reg = reg & ~QCA_DDR_CFG_CAS_MSB_MASK;
 	reg = reg & ~QCA_DDR_CFG_CAS_3LSB_MASK;
 	reg = reg | tmp;
 
@@ -795,7 +810,6 @@ static inline void qca_dram_set_en_refresh(void)
 	}
 }
 
-#if !(SOC_TYPE & QCA_QCA956X_SOC)
 /*
  * Initial DRAM configuration
  *
@@ -966,7 +980,11 @@ void qca_dram_init(void)
 
 	if (mem_type == RAM_MEMORY_TYPE_DDR2) {
 		/* Setup target EMR2 and EMR3 */
+#if (SOC_TYPE & QCA_QCA956X_SOC)
+		qca_dram_set_emr2(_ddr_sdram_emr2_val(0, 0, 1));
+#else
 		qca_dram_set_emr2(_ddr_sdram_emr2_val(0, 0, 0));
+#endif
 		qca_dram_set_emr3(0);
 	}
 
@@ -1001,10 +1019,22 @@ void qca_dram_init(void)
 	/* Enable DDR refresh and setup refresh period */
 	qca_dram_set_en_refresh();
 
+#if (SOC_TYPE & QCA_QCA956X_SOC)
+	qca_ddr_tap_save(0x10, 32);
+
+	qca_soc_reg_write(PMU1_ADDRESS, 0x633c8176);
+	// Set DDR2 Voltage to 1.8 volts
+	qca_soc_reg_write(PMU2_ADDRESS, (0x40UL << 22) | BIT(21));
+
+	/*
+         * Based on SGMII validation for stucks, packet errors were  observed and it was
+         * mostly due to noise pickup on SGMII lines. Switching regulator register is to
+         * be programmed with proper setting to avoid such stucks.
+	 */
+#endif
 	/*
 	 * At this point memory should be fully configured,
 	 * so we can perform delay tap controller tune.
 	 */
 	qca_ddr_tap_tune(ddr_width);
 }
-#endif
