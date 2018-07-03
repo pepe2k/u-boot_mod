@@ -312,18 +312,23 @@ yuncore_cpe870:
 
 tp-link_eap245_v1:
 	@$(call build,123,1,ETH_CONFIG=_ar8033)
+
+lzma_host:
+	$(SUB_MAKE_CMD) -C $(SOURCE_DIR) $(BUILD_DIR)/lzma
+
 # =============
 # CLEAN TARGETS
 # =============
 
 lzma_host_clean:
 	@cd $(SOURCE_DIR) && $(SUB_MAKE_CMD) $@
+	@rm -f $(BUILD_DIR)/lzma
 
 clean:
 	@cd $(SOURCE_DIR) && $(SUB_MAKE_CMD) distclean
 	@rm -f $(BUILD_DIR)/httpd/fsdata.c
 
-clean_all: clean
+clean_all: clean lzma_host_clean
 	@$(call echo_green,Removing all binary images...)
 	@rm -f $(BIN_DIR)/*.bin
 	@rm -f $(BIN_DIR)/*.md5
