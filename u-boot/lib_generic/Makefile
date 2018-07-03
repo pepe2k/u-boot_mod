@@ -7,15 +7,13 @@
 include $(TOPDIR)/config.mk
 
 BOOTSTRAPOBJ-y += string.o
-BOOTSTRAPOBJ-y += LzmaDecode.o
-BOOTSTRAPOBJ-y += LzmaWrapper.o
+BOOTSTRAPOBJ-y += unlzma_tiny.o
 
 OBJS-y += crc32.o
 OBJS-y += ctype.o
 OBJS-y += display_options.o
 OBJS-y += string.o
-OBJS-y += LzmaDecode.o
-OBJS-y += LzmaWrapper.o
+OBJS-y += unlzma_tiny.o
 OBJS-y += vsprintf.o
 
 CPPFLAGS += -DCONFIG_LZMA=1

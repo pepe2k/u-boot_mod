@@ -13,7 +13,7 @@
 #include <image.h>
 #include <tplink_image.h>
 #include <malloc.h>
-#include <LzmaWrapper.h>
+#include <unlzma_tiny.h>
 #include <environment.h>
 #include <asm/byteorder.h>
 #include <tinf.h>
@@ -393,7 +393,6 @@ int do_bootm(cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[])
 	u32 *len_ptr;
 	u32 addr, data, len;
 	int i, tpl_type, verify;
-	u32 unc_len = CFG_BOOTM_LEN;
 	image_header_t *hdr = &header;
 	tplink_image_header_t *tpl_hdr;
 
@@ -518,10 +517,10 @@ int do_bootm(cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[])
 
 		/* Try to extract LZMA data... */
 		i = lzma_inflate((u8 *)data, len,
-			(u8 *)ntohl(hdr->ih_load), (int *)&unc_len);
+			(u8 *)ntohl(hdr->ih_load), CFG_BOOTM_LEN);
 
 		/* TODO: more verbose LZMA errors */
-		if (i != LZMA_RESULT_OK) {
+		if (i == -1) {
 			puts("ERROR\n");
 			printf_err("LZMA error '%d'!\n", i);
 			return 1;

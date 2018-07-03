@@ -28,7 +28,7 @@
 #include <version.h>
 #include <net.h>
 #include <environment.h>
-#include "LzmaWrapper.h"
+#include <unlzma_tiny.h>
 
 /*#define DEBUG_ENABLE_BOOTSTRAP_PRINTF*/
 
@@ -222,7 +222,6 @@ void bootstrap_board_init_r(gd_t *id, ulong dest_addr)
 	ulong data, len;
 	image_header_t header;
 	image_header_t *hdr = &header;
-	unsigned int destLen;
 	void (*fn)(ulong);
 
 	/* Initialize malloc() area */
@@ -237,17 +236,10 @@ void bootstrap_board_init_r(gd_t *id, ulong dest_addr)
 	data = addr + sizeof(image_header_t);
 	len = ntohl(hdr->ih_size);
 
-	/*
-	 * If we've got less than 4 MB of malloc() space,
-	 * use slower decompression algorithm which requires
-	 * at most 2300 KB of memory.
-	 */
-	destLen = 0x0;
-
 #ifdef CONFIG_LZMA
-	i = lzma_inflate((unsigned char *)data, len, (unsigned char*)ntohl(hdr->ih_load), (int *)&destLen);
+	i = lzma_inflate((unsigned char *)data, len, (unsigned char*)ntohl(hdr->ih_load), CFG_BOOTM_LEN);
 
-	if (i != LZMA_RESULT_OK)
+	if (i == -1)
 		return;
 #endif
 
