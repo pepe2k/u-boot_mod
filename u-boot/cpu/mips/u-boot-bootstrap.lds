@@ -31,6 +31,7 @@ SECTIONS
 	. = ALIGN(4);
 	.text       :
 	{
+	  *(.start_bootstrap)
 	  *(.text*)
 	}
 

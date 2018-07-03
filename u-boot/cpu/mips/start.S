@@ -26,8 +26,8 @@
 #ifdef COMPRESSED_UBOOT
 	.align 4
 #endif
+	.section .start,"ax",@progbits
 	.globl _start
-	.text
 
 _start:
 #ifndef COMPRESSED_UBOOT

@@ -8,6 +8,7 @@ SECTIONS
 	. = ALIGN(4);
 	.text       :
 	{
+	  *(.start)
 	  *(.text*)
 	}
 
