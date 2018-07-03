@@ -101,11 +101,11 @@ typedef volatile unsigned char	vu_char;
 #include <image.h>
 
 #ifdef	DEBUG
-#define debug(fmt,args...)	printf (fmt ,##args)
-#define debugX(level,fmt,args...) if (DEBUG>=level) printf(fmt,##args);
+#define debug(fmt,args...)	printf(fmt ,##args)
+#define debugX(level,fmt,args...) do {if (DEBUG>=level) printf(fmt,##args);} while (0)
 #else
-#define debug(fmt,args...)
-#define debugX(level,fmt,args...)
+#define debug(fmt,args...)	do {} while (0)
+#define debugX(level,fmt,args...) do {} while (0)
 #endif /* DEBUG */
 
 typedef void (interrupt_handler_t)(void *);
