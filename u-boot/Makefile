@@ -282,13 +282,11 @@ u-boot.dis: u-boot
 	$(OBJDUMP) -d $< > $@
 
 u-boot: fsdata depend version $(SUBDIRS) $(OBJS) $(LIBS) $(LIBS_SHARED) $(LDSCRIPT)
-	UNDEF_SYM=`$(OBJDUMP) -x $(LIBS) $(LIBS_SHARED) | \
-	           sed -n -e 's/.*\(__u_boot_cmd_.*\)/-u\1/p' | \
-	           sort | uniq`; \
-	$(LD) $(LDFLAGS) $$UNDEF_SYM $(OBJS) \
+	$(LD) $(LDFLAGS) $(OBJS) \
 	      --start-group $(LIBS) $(LIBS_SHARED) \
 	      --end-group $(PLATFORM_LIBS) \
-	      -Map u-boot.map -o u-boot
+	      -Map u-boot.map -o u-boot \
+	      $(shell $(OBJDUMP) -t $(LIBS) $(LIBS_SHARED) | sed -ne "s,.*.\(_u_boot_list_2_cmd_2[^.]*\).*,-u \1,p")
 
 $(LIBS_SHARED):
 	$(MAKE) -C `dirname $@`
@@ -327,10 +325,7 @@ bootstrap.bin: bootstrap
 	$(OBJCOPY) ${OBJCFLAGS} -O binary $< $@
 
 bootstrap: depend version $(SUBDIRS) $(OBJS_BOOTSTRAP) $(LIBS_BOOTSTRAP) $(LIBS_SHARED) $(LDSCRIPT_BOOTSTRAP)
-	UNDEF_SYM=`$(OBJDUMP) -x $(LIBS_BOOTSTRAP) | \
-	           sed  -n -e 's/.*\(__u_boot_cmd_.*\)/-u\1/p' | \
-	           sort | uniq`; \
-	$(LD) $(LDFLAGS_BOOTSTRAP) $$UNDEF_SYM $(OBJS_BOOTSTRAP) \
+	$(LD) $(LDFLAGS_BOOTSTRAP) $(OBJS_BOOTSTRAP) \
 	      --start-group $(LIBS_BOOTSTRAP) $(LIBS_SHARED) \
 	      --end-group $(PLATFORM_LIBS) \
 	      -Map bootstrap.map -o bootstrap

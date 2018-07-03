@@ -76,7 +76,7 @@ static void switch_baudrate(int baudrate, int back)
 /* -------------------------------------------------------------------- */
 
 #if defined(CONFIG_CMD_LOADS)
-int do_load_serial(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
+int do_load_serial(cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[])
 {
 	ulong offset = 0;
 	ulong addr;
@@ -273,7 +273,7 @@ static int read_record(char *buf, ulong len)
 }
 
 #if defined(CONFIG_CMD_SAVES)
-int do_save_serial(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
+int do_save_serial(cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[])
 {
 	ulong offset = 0;
 	ulong size   = 0;
@@ -448,7 +448,7 @@ int  his_pad_count;	/* number of pad chars he needs */
 char his_pad_char;	/* pad chars he needs */
 char his_quote;		/* quote chars he'll use */
 
-int do_load_serial_bin(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
+int do_load_serial_bin(cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[])
 {
 	ulong address = 0;
 	int rcode = 0, size_dl = 0;
@@ -1072,9 +1072,9 @@ static ulong load_serial_ymodem(ulong address)
 
 #if defined(CONFIG_CMD_LOADS)
 U_BOOT_CMD(loads, 3, 0, do_load_serial,
-	   "load S-Record file over serial\n",
+	   "load S-Record file over serial",
 	   "[off] [baud]\n"
-	   "\t- load S-Record file over serial with offset 'off' and baudrate 'baud'\n"
+	   "\t- load S-Record file over serial with offset 'off' and baudrate 'baud'"
 );
 
 /*
@@ -1082,23 +1082,23 @@ U_BOOT_CMD(loads, 3, 0, do_load_serial,
  */
 #if defined(CONFIG_CMD_SAVES)
 U_BOOT_CMD(saves, 4, 0, do_save_serial,
-	   "save S-Record file over serial\n",
+	   "save S-Record file over serial",
 	   "[addr] [size] [baud]\n"
-	   "\t- upload S-Record file over serial from address 'addr', size 'size' with baudrate 'baud'\n"
+	   "\t- upload S-Record file over serial from address 'addr', size 'size' with baudrate 'baud'"
 );
 #endif /* CONFIG_CMD_SAVES */
 #endif /* CONFIG_CMD_LOADS */
 
 #if defined(CONFIG_CMD_LOADB)
 U_BOOT_CMD(loadb, 3, 0, do_load_serial_bin,
-	   "load binary file over serial (Kermit mode)\n",
+	   "load binary file over serial (Kermit mode)",
 	   "[addr] [baud]\n"
-	   "\t- load binary file over serial at address 'addr', with baudrate 'baud'\n"
+	   "\t- load binary file over serial at address 'addr', with baudrate 'baud'"
 );
 
 U_BOOT_CMD(loady, 3, 0, do_load_serial_bin,
-	   "load binary file over serial (Ymodem mode)\n",
+	   "load binary file over serial (Ymodem mode)",
 	   "[addr] [baud]\n"
-	   "\t- load binary file over serial at address 'addr', with baudrate 'baud'\n"
+	   "\t- load binary file over serial at address 'addr', with baudrate 'baud'"
 );
 #endif /* CONFIG_CMD_LOADB */

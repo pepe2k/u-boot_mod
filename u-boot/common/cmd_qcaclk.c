@@ -86,7 +86,7 @@ static u32 compare_pll_regs(const pll_regs *from_flash,
 }
 
 /* Set and store PLL configuration in FLASH */
-int do_set_clk(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
+int do_set_clk(cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[])
 {
 	u32 ahb_clk, cpu_clk, ddr_clk, ref_clk, reg, spi_clk;
 	clk_cfg_flash from_flash, to_flash;
@@ -282,7 +282,7 @@ int do_set_clk(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 }
 
 /* Remove clock configuration from FLASH */
-int do_clear_clk(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
+int do_clear_clk(cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[])
 {
 	char buf[128];
 	u32 reg;
@@ -333,13 +333,13 @@ int do_clear_clk(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 }
 
 U_BOOT_CMD(setclk, 2, 0, do_set_clk,
-		   "select clocks configuration from predefined list\n",
+		   "select clocks configuration from predefined list",
 		   "index\n"
 		   "\t- save 'index' configuration in FLASH\n"
 		   "setclk\n"
-		   "\t- prints available clocks configurations and current settings\n");
+		   "\t- prints available clocks configurations and current settings");
 
 U_BOOT_CMD(clearclk, 1, 0, do_clear_clk,
-		   "remove PLL and clocks configuration from FLASH\n", NULL);
+		   "remove PLL and clocks configuration from FLASH", NULL);
 
 #endif /* CONFIG_QCA_PLL_IN_FLASH_MAGIC_OFFSET */

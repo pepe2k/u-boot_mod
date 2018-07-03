@@ -32,7 +32,7 @@
 DECLARE_GLOBAL_DATA_PTR;
 #endif
 
-int do_go(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[]){
+int do_go(cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[]){
 	ulong addr, rc;
 	int rcode = 0;
 
@@ -49,7 +49,7 @@ int do_go(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[]){
 	 * Pass address parameter as argv[0] (aka command name),
 	 * and all remaining args
 	 */
-	rc = ((ulong (*)(int, char *[]))addr)(--argc, &argv[1]);
+	rc = ((ulong (*)(int, char * const []))addr)(--argc, &argv[1]);
 
 	if(rc != 0){
 		rcode = 1;
@@ -60,12 +60,12 @@ int do_go(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[]){
 	return(rcode);
 }
 
-U_BOOT_CMD(go, CONFIG_SYS_MAXARGS, 1, do_go, "start application at address 'addr'\n",
+U_BOOT_CMD(go, CONFIG_SYS_MAXARGS, 1, do_go, "start application at address 'addr'",
 		"addr [arg ...]\n"
 		"\t- start application at address 'addr'\n"
-		"\t  passing 'arg' as arguments\n");
+		"\t  passing 'arg' as arguments");
 
-extern int do_reset(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[]);
+extern int do_reset(cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[]);
 
-U_BOOT_CMD(reset, 1, 0, do_reset, "perform RESET of the CPU\n", NULL);
-U_BOOT_CMD(reboot, 1, 0, do_reset, "perform RESET of the CPU\n", NULL);
+U_BOOT_CMD(reset, 1, 0, do_reset, "perform RESET of the CPU", NULL);
+U_BOOT_CMD(reboot, 1, 0, do_reset, "perform RESET of the CPU", NULL);

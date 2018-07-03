@@ -478,6 +478,7 @@
 
 	#undef CONFIG_CMD_DHCP
 	#undef CONFIG_CMD_LOADB
+	#undef CONFIG_AUTO_COMPLETE
 
 #endif
 

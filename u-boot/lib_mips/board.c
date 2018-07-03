@@ -318,7 +318,6 @@ void board_init_r(gd_t *id, ulong dest_addr)
 #if !defined(CFG_ENV_IS_NOWHERE)
 	extern char *env_name_spec;
 #endif
-	cmd_tbl_t *cmdtp;
 	char buf[20];
 	bd_t *bd;
 	char *s;
@@ -344,30 +343,7 @@ void board_init_r(gd_t *id, ulong dest_addr)
 	monitor_flash_len = (ulong)&uboot_end_data - dest_addr;
 
 	/* We have to relocate the command table manually */
-	for (cmdtp  = &__u_boot_cmd_start;
-	     cmdtp != &__u_boot_cmd_end; cmdtp++) {
-		ulong addr;
-
-		addr = (ulong)(cmdtp->cmd) + gd->reloc_off;
-
-		cmdtp->cmd =
-			(int (*)(struct cmd_tbl_s *, int, int, char *[]))addr;
-
-		addr = (ulong)(cmdtp->name) + gd->reloc_off;
-		cmdtp->name = (char *)addr;
-
-		if (cmdtp->usage) {
-			addr = (ulong)(cmdtp->usage) + gd->reloc_off;
-			cmdtp->usage = (char *)addr;
-		}
-
-#if defined(CONFIG_SYS_LONGHELP)
-		if (cmdtp->help) {
-			addr = (ulong)(cmdtp->help) + gd->reloc_off;
-			cmdtp->help = (char *)addr;
-		}
-#endif
-	}
+	fixup_cmdtable(ll_entry_start(cmd_tbl_t, cmd), ll_entry_count(cmd_tbl_t, cmd));
 
 	/* There are some other pointer constants we must deal with */
 #if !defined(CFG_ENV_IS_NOWHERE)

@@ -28,8 +28,8 @@
 
 DECLARE_GLOBAL_DATA_PTR;
 
-extern void do_bootm_linux(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[]);
-extern int  do_reset(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[]);
+extern void do_bootm_linux(cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[]);
+extern int  do_reset(cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[]);
 extern void eth_halt(void);
 
 /* U-Boot type image header */
@@ -387,7 +387,7 @@ static void tpl_to_uboot_header(image_header_t *hdr,
 	hdr->ih_comp = IH_COMP_LZMA;
 }
 
-int do_bootm(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
+int do_bootm(cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[])
 {
 	char *s;
 	u32 *len_ptr;
@@ -546,11 +546,11 @@ int do_bootm(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 }
 
 U_BOOT_CMD(bootm, 2, 1, do_bootm,
-	"boot application image from memory\n", "[addr]\n"
-	"\t- boot application image stored in memory at address 'addr'\n");
+	"boot application image from memory", "[addr]"
+	"\t- boot application image stored in memory at address 'addr'");
 
 #if defined(CONFIG_CMD_BOOTD)
-int do_bootd(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
+int do_bootd(cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[])
 {
 #ifndef CONFIG_HUSH_PARSER
 	if (run_command(getenv("bootcmd"), flag) < 0)
@@ -564,11 +564,11 @@ int do_bootd(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 	return 0;
 }
 
-U_BOOT_CMD(boot, 1, 1, do_bootd, "boot default, run 'bootcmd'\n", NULL);
+U_BOOT_CMD(boot, 1, 1, do_bootd, "boot default, run 'bootcmd'", NULL);
 #endif /* CONFIG_CMD_BOOTD */
 
 #if defined(CONFIG_CMD_IMI)
-int do_iminfo(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
+int do_iminfo(cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[])
 {
 	int tpl_type;
 	u32 addr, data;
@@ -631,6 +631,6 @@ int do_iminfo(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 }
 
 U_BOOT_CMD(iminfo, 2, 1, do_iminfo,
-	"print firmware header\n", "address\n"
-	"\t- print header information for image at 'address'\n");
+	"print firmware header", "address\n"
+	"\t- print header information for image at 'address'");
 #endif /* CONFIG_CMD_IMI */

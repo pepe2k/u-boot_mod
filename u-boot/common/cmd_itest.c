@@ -61,7 +61,7 @@ static ulong evalexp(char *s, int w)
 #endif /* CONFIG_CMD_ITEST || CONFIG_CMD_SETEXPR */
 
 #if defined(CONFIG_CMD_SETEXPR)
-int do_setexpr(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
+int do_setexpr(cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[])
 {
 	ulong a, b, value;
 	char buf[16];
@@ -141,7 +141,7 @@ int do_setexpr(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 	return 0;
 }
 
-U_BOOT_CMD(setexpr, 6, 0, do_setexpr, "set env variable as the result of eval expr\n",
+U_BOOT_CMD(setexpr, 6, 0, do_setexpr, "set env variable as the result of eval expr",
 	"[.b, .w, .l] name [*]val1 <op> [*]val2\n"
 	"\t- set env variable 'name' to the result of the evaluated\n"
 	"\t  expr specified by <op> (can be &, |, ^, +, -, *, /, %)\n"
@@ -278,7 +278,7 @@ static int binary_test(char *op, char *arg1, char *arg2, int w)
 }
 
 /* Command line interface to the shell test */
-int do_itest(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
+int do_itest(cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[])
 {
 	int value, w;
 
@@ -312,6 +312,6 @@ int do_itest(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 	return !value;
 }
 
-U_BOOT_CMD(itest, 4, 0, do_itest, "return true/false on int compare\n",
-	"[.b, .w, .l, .s] [*]val1 <op> [*]val2\n");
+U_BOOT_CMD(itest, 4, 0, do_itest, "return true/false on int compare",
+	"[.b, .w, .l, .s] [*]val1 <op> [*]val2");
 #endif /* CONFIG_CMD_ITEST */

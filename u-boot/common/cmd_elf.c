@@ -142,7 +142,7 @@ static int valid_elf_image(unsigned long addr)
 }
 
 /* Interpreter command to boot an arbitrary ELF image from memory */
-static int do_bootelf(cmd_tbl_t *cmdtp, int flag, int argc, char * argv[])
+static int do_bootelf(cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[])
 {
 	unsigned long addr; /* Address of the ELF image */
 	unsigned long rc; /* Return value from user code */
@@ -196,7 +196,7 @@ static int do_bootelf(cmd_tbl_t *cmdtp, int flag, int argc, char * argv[])
 
 U_BOOT_CMD(
 	bootelf, 3, 0, do_bootelf,
-	"Boot from an ELF image in memory",
+	"boot from an ELF image in memory",
 	"[-p|-s] [address]\n"
 	"\t- load ELF image at [address] via program headers (-p)\n"
 	"\t  or via section headers (-s)"

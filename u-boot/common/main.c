@@ -404,6 +404,19 @@ int readline(const char * const prompt)
 		default:
 			if (n < CONFIG_SYS_CBSIZE - 2) {
 				if (c == '\t') {
+#ifdef CONFIG_AUTO_COMPLETE
+					/*
+					 * if auto completion triggered just
+					 * continue
+					 */
+					*p = '\0';
+					if (cmd_auto_complete(prompt,
+							      console_buffer,
+							      &n, &col)) {
+						p = console_buffer + n;	/* reset */
+						continue;
+					}
+#endif
 					/* Expand TABs */
 					puts(tab_seq + (col & 07));
 					col += 8 - (col & 07);
@@ -720,7 +733,7 @@ int run_command(const char *cmd, int flag){
 }
 
 #if defined(CONFIG_CMD_RUN)
-int do_run(cmd_tbl_t * cmdtp, int flag, int argc, char *argv[])
+int do_run(cmd_tbl_t * cmdtp, int flag, int argc, char * const argv[])
 {
 	int i;
 

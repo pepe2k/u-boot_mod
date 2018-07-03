@@ -43,34 +43,10 @@
 
 DECLARE_GLOBAL_DATA_PTR;
 
-/*
- * Check for a size specification .b, .w or .l.
- */
-int cmd_get_data_size(char* arg, int default_size)
-{
-	int len = strlen(arg);
-
-	if (len > 2 && arg[len - 2] == '.') {
-		switch (arg[len - 1]) {
-		case 'b':
-			return 1;
-		case 'w':
-			return 2;
-		case 'l':
-			return 4;
-		case 's':
-			return -2;
-		default:
-			return -1;
-		}
-	}
-
-	return default_size;
-}
 #endif
 
 #if defined(CONFIG_CMD_CRC32)
-int do_mem_crc32(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
+int do_mem_crc32(cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[])
 {
 	ulong addr, crc, length, vcrc;
 	int ac, verify;
@@ -123,17 +99,17 @@ int do_mem_crc32(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 	return 0;
 }
 
-U_BOOT_CMD(crc32, 5, 1, do_mem_crc32, "crc32 checksum calculation\n",
+U_BOOT_CMD(crc32, 5, 1, do_mem_crc32, "crc32 checksum calculation",
 	"address count [addr]\n"
 	"\t- compute CRC32 checksum [save at addr]\n"
 	"crc32 -v address count crc\n"
-	"\t- verify crc of memory area\n");
+	"\t- verify crc of memory area");
 
 #endif /* CONFIG_CMD_CRC32 */
 
 #if defined(CONFIG_CMD_MEMORY)
 
-static int mod_mem(cmd_tbl_t *, int, int, int, char *[]);
+static int mod_mem(cmd_tbl_t *, int, int, int, char * const []);
 
 /*
  * Display values from last command.
@@ -150,7 +126,7 @@ uint mm_last_addr, mm_last_size;
  *	md{.b, .w, .l} {addr} {len}
  */
 #define DISP_LINE_LEN	16
-int do_mem_md(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
+int do_mem_md(cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[])
 {
 	ulong addr, length;
 	ulong i, nbytes, linebytes;
@@ -249,17 +225,17 @@ int do_mem_md(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 	return rc;
 }
 
-int do_mem_mm(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
+int do_mem_mm(cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[])
 {
 	return mod_mem(cmdtp, 1, flag, argc, argv);
 }
 
-int do_mem_nm(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
+int do_mem_nm(cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[])
 {
 	return mod_mem(cmdtp, 0, flag, argc, argv);
 }
 
-int do_mem_mw(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
+int do_mem_mw(cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[])
 {
 	ulong addr, writeval, count;
 	int size;
@@ -300,7 +276,7 @@ int do_mem_mw(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 	return 0;
 }
 
-int do_mem_cp(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
+int do_mem_cp(cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[])
 {
 	ulong addr, dest, count;
 	int size;
@@ -364,7 +340,7 @@ int do_mem_cp(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
  * configured using CFG_ALT_MEMTEST. The complete test loops until
  * interrupted by ctrl-c or by a failure of one of the sub-tests.
  */
-int do_mem_mtest(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
+int do_mem_mtest(cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[])
 {
 	bd_t *bd = gd->bd;
 	vu_long *addr, *start, *end;
@@ -682,7 +658,7 @@ int do_mem_mtest(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
  *	mm{.b, .w, .l} {addr}
  *	nm{.b, .w, .l} {addr}
  */
-static int mod_mem(cmd_tbl_t *cmdtp, int incrflag, int flag, int argc, char *argv[])
+static int mod_mem(cmd_tbl_t *cmdtp, int incrflag, int flag, int argc, char * const argv[])
 {
 	ulong addr, i;
 	int nbytes, size;
@@ -761,34 +737,34 @@ static int mod_mem(cmd_tbl_t *cmdtp, int incrflag, int flag, int argc, char *arg
 }
 
 /**************************************************/
-U_BOOT_CMD(md, 3, 1, do_mem_md, "memory display\n",
+U_BOOT_CMD(md, 3, 1, do_mem_md, "memory display",
 	"[.b, .w, .l] address [# of objects]\n"
-	"\t- memory display\n");
+	"\t- memory display");
 
-U_BOOT_CMD(mm, 2, 1, do_mem_mm, "memory modify (auto-inc)\n",
+U_BOOT_CMD(mm, 2, 1, do_mem_mm, "memory modify (auto-inc)",
 	"[.b, .w, .l] address\n"
-	"\t- memory modify, auto increment address\n");
+	"\t- memory modify, auto increment address");
 
-U_BOOT_CMD(nm, 2, 1, do_mem_nm, "memory modify (const address)\n",
+U_BOOT_CMD(nm, 2, 1, do_mem_nm, "memory modify (const address)",
 	"[.b, .w, .l] address\n"
-	"\t- memory modify, read and keep address\n");
+	"\t- memory modify, read and keep address");
 
-U_BOOT_CMD(mw, 4, 1, do_mem_mw, "memory write (fill)\n",
+U_BOOT_CMD(mw, 4, 1, do_mem_mw, "memory write (fill)",
 	"[.b, .w, .l] address value [count]\n"
-	"\t- write memory\n");
+	"\t- write memory");
 
-U_BOOT_CMD(cp, 4, 1, do_mem_cp, "memory copy\n",
+U_BOOT_CMD(cp, 4, 1, do_mem_cp, "memory copy",
 	"[.b, .w, .l] source target count\n"
-	"\t- copy memory\n");
+	"\t- copy memory");
 
 #if defined(CFG_ALT_MEMTEST)
-U_BOOT_CMD(mtest, 3, 1, do_mem_mtest, "RAM test\n",
+U_BOOT_CMD(mtest, 3, 1, do_mem_mtest, "RAM test",
 	"[start [end]]\n"
-	"\t- complete, alternative RAM test\n");
+	"\t- complete, alternative RAM test");
 #else
-U_BOOT_CMD(mtest, 4, 1, do_mem_mtest, "simple RAM test\n",
+U_BOOT_CMD(mtest, 4, 1, do_mem_mtest, "simple RAM test",
 	"[start [end [pattern]]]\n"
-	"\t- simple RAM read/write test\n");
+	"\t- simple RAM read/write test");
 #endif
 
 #endif /* CONFIG_CMD_MEMORY */

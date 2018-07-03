@@ -41,6 +41,10 @@
 #define CFG_MALLOC_LEN		(512 * 1024)
 #define CFG_BOOTPARAMS_LEN	(512 * 1024)
 
+#define CONFIG_CMDLINE			1
+#define CONFIG_NEEDS_MANUAL_RELOC	1
+#define CONFIG_AUTO_COMPLETE		1
+
 /* RAM memory start address */
 #define CFG_SDRAM_BASE		0x80000000
 

@@ -22,7 +22,7 @@ extern void qca_sys_clocks(u32 *cpu_clk, u32 *ddr_clk, u32 *ahb_clk,
 /*
  * Show MAC address(es)
  */
-int do_print_mac(cmd_tbl_t * cmdtp, int flag, int argc, char *argv[]){
+int do_print_mac(cmd_tbl_t * cmdtp, int flag, int argc, char * const argv[]){
 	char buffer[6];
 #if defined(OFFSET_MAC_ADDRESS2)
 	char buffer2[6];
@@ -51,15 +51,15 @@ int do_print_mac(cmd_tbl_t * cmdtp, int flag, int argc, char *argv[]){
 }
 
 #if defined(OFFSET_MAC_ADDRESS2)
-U_BOOT_CMD(printmac, 1, 1, do_print_mac, "print MAC addresses stored in FLASH\n", NULL);
+U_BOOT_CMD(printmac, 1, 1, do_print_mac, "print MAC addresses stored in FLASH", NULL);
 #else
-U_BOOT_CMD(printmac, 1, 1, do_print_mac, "print MAC address stored in FLASH\n", NULL);
+U_BOOT_CMD(printmac, 1, 1, do_print_mac, "print MAC address stored in FLASH", NULL);
 #endif
 
 /*
  * Change MAC address(es)
  */
-int do_set_mac(cmd_tbl_t * cmdtp, int flag, int argc, char *argv[]){
+int do_set_mac(cmd_tbl_t * cmdtp, int flag, int argc, char * const argv[]){
 	unsigned char *data_pointer;
 	char buf[128];
 	int i = 0, j = 0;
@@ -113,7 +113,7 @@ int do_set_mac(cmd_tbl_t * cmdtp, int flag, int argc, char *argv[]){
 	return(run_command(buf, 0));
 }
 
-U_BOOT_CMD(setmac, 2, 0, do_set_mac, "save new MAC address in FLASH\n", "xx:xx:xx:xx:xx:xx\n\t- change MAC address stored in FLASH (xx - value in hex format)\n");
+U_BOOT_CMD(setmac, 2, 0, do_set_mac, "save new MAC address in FLASH", "xx:xx:xx:xx:xx:xx\n\t- change MAC address stored in FLASH (xx - value in hex format)");
 
 #endif /* if defined(CONFIG_CMD_MAC) && defined(OFFSET_MAC_ADDRESS) */
 
@@ -121,7 +121,7 @@ U_BOOT_CMD(setmac, 2, 0, do_set_mac, "save new MAC address in FLASH\n", "xx:xx:x
 /*
  * Show TP-Link router model
  */
-int do_print_model(cmd_tbl_t * cmdtp, int flag, int argc, char *argv[]){
+int do_print_model(cmd_tbl_t * cmdtp, int flag, int argc, char * const argv[]){
 	unsigned char buffer[8];
 
 	// get router model from flash and print it
@@ -133,7 +133,7 @@ int do_print_model(cmd_tbl_t * cmdtp, int flag, int argc, char *argv[]){
 	return(0);
 }
 
-U_BOOT_CMD(printmodel, 1, 1, do_print_model, "print router model stored in FLASH\n", NULL);
+U_BOOT_CMD(printmodel, 1, 1, do_print_model, "print router model stored in FLASH", NULL);
 
 #endif /* if defined(OFFSET_ROUTER_MODEL) */
 
@@ -141,7 +141,7 @@ U_BOOT_CMD(printmodel, 1, 1, do_print_model, "print router model stored in FLASH
 /*
  * Show pin number
  */
-int do_print_pin(cmd_tbl_t * cmdtp, int flag, int argc, char *argv[]){
+int do_print_pin(cmd_tbl_t * cmdtp, int flag, int argc, char * const argv[]){
 	unsigned char buffer[9];
 
 	// get pin number from flash and print it
@@ -154,7 +154,7 @@ int do_print_pin(cmd_tbl_t * cmdtp, int flag, int argc, char *argv[]){
 	return(0);
 }
 
-U_BOOT_CMD(printpin, 1, 1, do_print_pin, "print WPS pin stored in FLASH\n", NULL);
+U_BOOT_CMD(printpin, 1, 1, do_print_pin, "print WPS pin stored in FLASH", NULL);
 
 #endif /* if defined(OFFSET_PIN_NUMBER) */
 
@@ -162,20 +162,20 @@ U_BOOT_CMD(printpin, 1, 1, do_print_pin, "print WPS pin stored in FLASH\n", NULL
 /*
  * Start NetConsole
  */
-int do_start_nc(cmd_tbl_t * cmdtp, int flag, int argc, char *argv[]){
+int do_start_nc(cmd_tbl_t * cmdtp, int flag, int argc, char * const argv[]){
 	return(run_command("setenv stdin nc;setenv stdout nc;setenv stderr nc;version;", 0));
 }
 
-U_BOOT_CMD(startnc, 1, 0, do_start_nc, "start net console\n", NULL);
+U_BOOT_CMD(startnc, 1, 0, do_start_nc, "start net console", NULL);
 
 /*
  * Start Serial Console
  */
-int do_start_sc(cmd_tbl_t * cmdtp, int flag, int argc, char *argv[]){
+int do_start_sc(cmd_tbl_t * cmdtp, int flag, int argc, char * const argv[]){
 	return(run_command("setenv stdin serial;setenv stdout serial;setenv stderr serial;version;", 0));
 }
 
-U_BOOT_CMD(startsc, 1, 0, do_start_sc, "start serial console\n", NULL);
+U_BOOT_CMD(startsc, 1, 0, do_start_sc, "start serial console", NULL);
 
 #endif /* if defined(CONFIG_NETCONSOLE) */
 
@@ -183,7 +183,7 @@ U_BOOT_CMD(startsc, 1, 0, do_start_sc, "start serial console\n", NULL);
 /*
  * Erase environment sector
  */
-int do_default_env(cmd_tbl_t * cmdtp, int flag, int argc, char *argv[]){
+int do_default_env(cmd_tbl_t * cmdtp, int flag, int argc, char * const argv[]){
 	int rcode = 0;
 	int len;
 	ulong end_addr, flash_sect_addr;
@@ -229,7 +229,7 @@ int do_default_env(cmd_tbl_t * cmdtp, int flag, int argc, char *argv[]){
 	return(rcode);
 }
 
-U_BOOT_CMD(defenv, 1, 0, do_default_env, "reset environment variables to their default values\n", NULL);
+U_BOOT_CMD(defenv, 1, 0, do_default_env, "reset environment variables to their default values", NULL);
 #endif /* if CONFIG_CMD_ENV && CONFIG_CMD_FLASH */
 
 /*
@@ -249,7 +249,7 @@ U_BOOT_CMD(defenv, 1, 0, do_default_env, "reset environment variables to their d
  */
 #if defined(CONFIG_CMD_BUTTON) &&\
     defined(CONFIG_GPIO_RESET_BTN)
-int do_button(cmd_tbl_t * cmdtp, int flag, int argc, char *argv[])
+int do_button(cmd_tbl_t * cmdtp, int flag, int argc, char * const argv[])
 {
 #if defined(CONFIG_HUSH_PARSER)
 	return !reset_button_status();
@@ -266,7 +266,7 @@ int do_button(cmd_tbl_t * cmdtp, int flag, int argc, char *argv[])
 }
 
 U_BOOT_CMD(button, 1, 1, do_button,
-	"get reset button status\n", NULL);
+	"get reset button status", NULL);
 #endif /* CONFIG_CMD_BUTTON && CONFIG_GPIO_RESET_BTN */
 
 /*
@@ -274,7 +274,7 @@ U_BOOT_CMD(button, 1, 1, do_button,
  * for a given/specified time (in ms)
  */
 #if defined(CONFIG_CMD_SLEEP)
-int do_sleep(cmd_tbl_t * cmdtp, int flag, int argc, char *argv[])
+int do_sleep(cmd_tbl_t * cmdtp, int flag, int argc, char * const argv[])
 {
 	if (argc != 2) {
 		print_cmd_help(cmdtp);
@@ -287,7 +287,7 @@ int do_sleep(cmd_tbl_t * cmdtp, int flag, int argc, char *argv[])
 }
 
 U_BOOT_CMD(sleep, 2, 1, do_sleep,
-	"sleep for specified time\n", "ms\n"
+	"sleep for specified time", "ms\n"
 	"\t- sleep for 'ms' number of milliseconds\n");
 #endif /* CONFIG_CMD_SLEEP */
 
@@ -295,32 +295,32 @@ U_BOOT_CMD(sleep, 2, 1, do_sleep,
  * Turns on/off LED/s
  */
 #if defined(CONFIG_CMD_LED)
-int do_ledon(cmd_tbl_t * cmdtp, int flag, int argc, char *argv[])
+int do_ledon(cmd_tbl_t * cmdtp, int flag, int argc, char * const argv[])
 {
 	all_led_on();
 
 	return 0;
 }
 
-int do_ledoff(cmd_tbl_t * cmdtp, int flag, int argc, char *argv[])
+int do_ledoff(cmd_tbl_t * cmdtp, int flag, int argc, char * const argv[])
 {
 	all_led_off();
 
 	return 0;
 }
 
-U_BOOT_CMD(ledon,  1, 1, do_ledon,  "turn LED/s on\n", NULL);
-U_BOOT_CMD(ledoff, 1, 1, do_ledoff, "turn LED/s off\n", NULL);
+U_BOOT_CMD(ledon,  1, 1, do_ledon,  "turn LED/s on", NULL);
+U_BOOT_CMD(ledoff, 1, 1, do_ledoff, "turn LED/s off", NULL);
 #endif /* CONFIG_CMD_LED */
 
 /*
  * Checks if last reset was caused by watchdog
  */
 #if defined(CONFIG_CMD_RSTBYWDT)
-int do_rstbywdt(cmd_tbl_t * cmdtp, int flag, int argc, char *argv[])
+int do_rstbywdt(cmd_tbl_t * cmdtp, int flag, int argc, char * const argv[])
 {
 	return !last_reset_wdt();
 }
 
-U_BOOT_CMD(rstbywdt, 1, 1, do_rstbywdt, "check if last reset was caused by watchdog\n", NULL);
+U_BOOT_CMD(rstbywdt, 1, 1, do_rstbywdt, "check if last reset was caused by watchdog", NULL);
 #endif /* CONFIG_CMD_RSTBYWDT */

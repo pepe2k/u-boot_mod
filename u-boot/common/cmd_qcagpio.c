@@ -562,7 +562,7 @@ static void gpio_list_in_out_funcs(void)
 }
 #endif
 
-int do_gpio(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
+int do_gpio(cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[])
 {
 	u32 gpio_mask, gpio_num = 0;
 	u32 output = 1;
@@ -744,7 +744,7 @@ usage:
 }
 
 U_BOOT_CMD(gpio, 4, 0, do_gpio,
-	   "control GPIO\n",
+	   "control GPIO",
 	   "<c>lear|<i>nput|<s>et|<t>oggle <gpio>\n"
 	   "\t- setup <gpio> as in/out and change/get its value\n"
 #if (SOC_TYPE & QCA_AR933X_SOC)
@@ -762,7 +762,7 @@ U_BOOT_CMD(gpio, 4, 0, do_gpio,
 #if (SOC_TYPE & QCA_AR933X_SOC)
 	   "\t- show all GPIO functions\n"
 #else
-	   "\t- show all known GPIO in/out functions\n"
+	   "\t- show all known GPIO in/out functions"
 #endif
 );
 

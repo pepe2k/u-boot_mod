@@ -269,7 +269,7 @@ static int flash_fill_sect_ranges(ulong addr_first, ulong addr_last, int *s_firs
 	return(rcode);
 }
 
-int do_flerase(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[]){
+int do_flerase(cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[]){
 	flash_info_t *info;
 	ulong bank, addr_first, addr_last;
 	int n;
@@ -362,7 +362,7 @@ int flash_sect_erase(ulong addr_first, ulong addr_last){
 
 /**************************************************/
 
-U_BOOT_CMD(erase, 3, 1, do_flerase, "erase FLASH memory\n",
+U_BOOT_CMD(erase, 3, 1, do_flerase, "erase FLASH memory",
 		"start end\n"
 		"\t- erase FLASH from addr 'start' to addr 'end'\n"
 		"erase start +len\n"
@@ -372,6 +372,6 @@ U_BOOT_CMD(erase, 3, 1, do_flerase, "erase FLASH memory\n",
 		"erase bank N\n"
 		"\t- erase FLASH bank #N\n"
 		"erase all\n"
-		"\t- erase all FLASH banks\n");
+		"\t- erase all FLASH banks");
 
 #endif /* CONFIG_CMD_FLASH */

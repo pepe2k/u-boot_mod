@@ -114,7 +114,7 @@ int	webfailsafe_upgrade_type = WEBFAILSAFE_UPGRADE_TYPE_FIRMWARE;
 
 void NetReceiveHttpd(volatile uchar * inpkt, int len);
 
-extern int do_reset(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[]);
+extern int do_reset(cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[]);
 #endif
 
 /** BOOTP EXTENTIONS **/

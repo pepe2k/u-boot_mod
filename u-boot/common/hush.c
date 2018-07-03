@@ -94,7 +94,7 @@
 #include <hush.h>
 #include <command.h>        /* find_cmd */
 /*cmd_boot.c*/
-extern int do_bootd(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[]); /* do_bootd */
+extern int do_bootd(cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[]); /* do_bootd */
 
 #ifdef CONFIG_HUSH_PARSER
 #define SPECIAL_VAR_SYMBOL 03
@@ -364,7 +364,7 @@ static void get_user_input(struct in_str *i) {
 
 #ifdef CONFIG_BOOT_RETRY_TIME
 #  ifdef CONFIG_RESET_TO_RETRY
-	extern int do_reset (cmd_tbl_t *cmdtp, int flag, int argc, char *argv[]);
+	extern int do_reset (cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[]);
 #  else
 #	error "This currently only works with CONFIG_RESET_TO_RETRY enabled"
 #  endif
@@ -582,7 +582,7 @@ static int run_pipe_real(struct pipe *pi) {
 		} else {
 			int rcode;
 #if defined(CONFIG_CMD_BOOTD)
-			extern int do_bootd (cmd_tbl_t *cmdtp, int flag, int argc, char *argv[]);
+			extern int do_bootd (cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[]);
 
 			/* avoid "bootd" recursion */
 			if (cmdtp->cmd == do_bootd) {
@@ -1564,12 +1564,12 @@ static char * make_string(char ** inp) {
 	return str;
 }
 
-int do_true(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
+int do_true(cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[])
 {
 	return 0;
 }
 
-U_BOOT_CMD(true, 1, 1, do_true, "return true\n", NULL);
+U_BOOT_CMD(true, 1, 1, do_true, "return true", NULL);
 
 #endif /* CONFIG_HUSH_PARSER */
 /****************************************************************************/

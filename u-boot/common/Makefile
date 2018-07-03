@@ -30,8 +30,10 @@ AOBJS	=
 COBJS	= main.o \
 		  cmd_bootm.o \
 		  cmd_boot.o \
+		  cmd_echo.o \
 		  cmd_elf.o \
 		  cmd_flash.o \
+		  cmd_help.o \
 		  cmd_mem.o \
 		  cmd_custom.o \
 		  cmd_net.o \
