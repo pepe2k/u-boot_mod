@@ -575,14 +575,39 @@ static int envmatch(uchar *s1, int i2){
 	return(-1);
 }
 
-/**************************************************/
-U_BOOT_CMD(printenv, CONFIG_SYS_MAXARGS, 1, do_printenv, "print environment variables", "[name]\n\t- print values of all environment variables or of one with name 'name'");
+int env_match_r(const char *match, int first_idx, char ** retval)
+{
+	char *env, *nxt = NULL;
+	size_t key_len = strlen(match);
+	char *env_data = (char *)env_get_addr(0);
 
-U_BOOT_CMD(setenv, CONFIG_SYS_MAXARGS, 0, do_setenv, "set environment variables",
+	if(!env_data){
+		goto not_found;
+	}
+
+	for(env = env_data + first_idx; *env; env = nxt + 1){
+		for(nxt = env; *nxt; ++nxt);
+
+		if (!strncmp(match, env, key_len)) {
+			*retval = env;
+			return nxt - env_data + 1;
+		}
+	}
+
+not_found:
+	*retval = NULL;
+	return 0;
+}
+
+/**************************************************/
+U_BOOT_CMD_COMPLETE(printenv, CONFIG_SYS_MAXARGS, 1, do_printenv, "print environment variables", "[name]\n\t- print values of all environment variables or of one with name 'name'", var_complete);
+
+U_BOOT_CMD_COMPLETE(setenv, CONFIG_SYS_MAXARGS, 0, do_setenv, "set environment variables",
 	"name value ...\n"
 	"\t- set environment variable 'name' to 'value ...'\n"
 	"setenv name\n"
-	"\t- delete environment variable 'name'");
+	"\t- delete environment variable 'name'",
+	var_complete);
 
 #if defined(CFG_ENV_IS_IN_NVRAM)  ||\
     defined(CFG_ENV_IS_IN_EEPROM) ||\
@@ -609,5 +634,5 @@ U_BOOT_CMD(
 
 #if defined(CONFIG_CMD_RUN)
 int do_run(cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[]);
-U_BOOT_CMD(run, CONFIG_SYS_MAXARGS, 1, do_run, "run commands in an environment variable", "var [...]\n\t- run the commands in the environment variable(s) 'var'");
+U_BOOT_CMD_COMPLETE(run, CONFIG_SYS_MAXARGS, 1, do_run, "run commands in an environment variable", "var [...]\n\t- run the commands in the environment variable(s) 'var'", var_complete);
 #endif /* CONFIG_CMD_RUN */

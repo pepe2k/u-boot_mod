@@ -148,7 +148,7 @@ int cmd_usage(const cmd_tbl_t *cmdtp)
 
 int var_complete(int argc, char * const argv[], char last_char, int maxv, char *cmdv[])
 {
-/*	static char tmp_buf[512];
+	static char tmp_buf[512];
 	int space;
 
 	space = last_char == '\0' || isblank(last_char);
@@ -158,7 +158,7 @@ int var_complete(int argc, char * const argv[], char last_char, int maxv, char *
 
 	if (!space && argc == 2)
 		return env_complete(argv[1], maxv, cmdv, sizeof(tmp_buf), tmp_buf);
-*/
+
 	return 0;
 }
 

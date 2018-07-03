@@ -213,6 +213,8 @@ char	*getenv	     (char *);
 int		getenv_r     (char *name, char *buf, unsigned len);
 int		saveenv	     (void);
 int	setenv	     (char *, char *);
+int	env_match_r	(const char *match, int first_idx, char ** retval);
+int	env_complete	(char *var, int maxv, char *cmdv[], int bufsz, char *buf);
 
 
 #ifdef CONFIG_ARM
