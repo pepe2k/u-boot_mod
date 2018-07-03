@@ -23,7 +23,7 @@ DECLARE_GLOBAL_DATA_PTR;
 #define ag7240_unit2mac(_unit)	ag7240_macs[(_unit)]
 #define ag7240_name2mac(name)	strcmp(name,"eth0") ? ag7240_unit2mac(1) : ag7240_unit2mac(0)
 
-uint16_t ag7240_miiphy_read(char *devname, uint32_t phaddr, uint8_t reg);
+int ag7240_miiphy_read(char *devname, uint32_t phaddr, uint8_t reg);
 void ag7240_miiphy_write(char *devname, uint32_t phaddr, uint8_t reg, uint16_t data);
 ag7240_mac_t *ag7240_macs[CFG_AG7240_NMACS];
 
@@ -633,7 +633,7 @@ int ag7240_enet_initialize(bd_t * bis)
 }
 
 /* Modified by lsz for reduceing CMD_MII, but ag7240 need this 090306 */
-uint16_t ag7240_miiphy_read(char *devname, uint32_t phy_addr, uint8_t reg)
+int ag7240_miiphy_read(char *devname, uint32_t phy_addr, uint8_t reg)
 {
 	ag7240_mac_t *mac = ag7240_name2mac(devname);
 	uint16_t addr = (phy_addr << AG7240_ADDR_SHIFT) | reg, val;

@@ -442,10 +442,11 @@ int athrs27_phy_setup(int ethUnit){
 *    1 --> FULL
 *    0 --> HALF
 */
-int athrs27_phy_is_fdx(int ethUnit,int phyUnit){
+int athrs27_phy_is_fdx(int ethUnit){
 	uint32_t phyAddr;
 	uint16_t phyHwStatus;
 	int ii = 200;
+	int phyUnit;
 
 	if(ethUnit == ENET_UNIT_LAN){
 		return(TRUE);
@@ -486,11 +487,12 @@ int athrs27_phy_is_fdx(int ethUnit,int phyUnit){
 *               ATHR_PHY_SPEED_10T, AG7240_PHY_SPEED_100T;
 *               ATHR_PHY_SPEED_1000T;
 */
-int athrs27_phy_speed(int ethUnit, int phyUnit){
+int athrs27_phy_speed(int ethUnit){
 	uint16_t phyHwStatus;
 	uint32_t phyAddr;
 	int ii = 200;
 	int phySpeed = 0;
+	int phyUnit;
 
 	for(phyUnit = 0; phyUnit < ATHR_PHY_MAX; phyUnit++){
 		if(!ATHR_IS_ETHUNIT(phyUnit, ethUnit)){
