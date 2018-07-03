@@ -23,20 +23,25 @@
 
 include $(TOPDIR)/config.mk
 
-LIB	= libnet.a
+LIB	= $(obj)libnet.a
 
-OBJS = net.o tftp.o rarp.o eth.o bootp.o sntp.o httpd.o
+OBJS-y += net.o
+OBJS-y += tftp.o
+OBJS-y += bootp.o
+OBJS-y += rarp.o
+OBJS-y += eth.o
+OBJS-y += sntp.o
+OBJS-y += httpd.o
+
+OBJS	:= $(addprefix $(obj),$(OBJS-y))
 
 all:	$(LIB)
 
-$(LIB):	$(START) $(OBJS)
-	$(AR) crv $@ $(OBJS)
+$(LIB):	$(OBJS)
+	$(AR) $(ARFLAGS) $@ $(OBJS)
 
 #########################################################################
 
-.depend:	Makefile $(OBJS:.o=.c)
-		$(CC) -M $(CFLAGS) $(OBJS:.o=.c) > $@
-
-sinclude .depend
+-include $(OBJS:.o=.d)
 
 #########################################################################

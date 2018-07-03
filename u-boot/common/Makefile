@@ -23,68 +23,62 @@
 
 include $(TOPDIR)/config.mk
 
-LIB	= libcommon.a
+LIB	= $(obj)libcommon.a
 
 AOBJS	=
 
-COBJS	= main.o \
-		  cmd_bootm.o \
-		  cmd_boot.o \
-		  cmd_echo.o \
-		  cmd_elf.o \
-		  cmd_flash.o \
-		  cmd_help.o \
-		  cmd_mem.o \
-		  cmd_custom.o \
-		  cmd_net.o \
-		  cmd_nvedit.o \
-		  cmd_itest.o \
-		  cmd_load.o \
-		  cmd_qcaclk.o \
-		  cmd_qcagpio.o \
-		  command.o \
-		  console.o \
-		  devices.o \
-		  dlmalloc.o \
-		  environment.o \
-		  env_common.o \
-		  env_nowhere.o \
-		  exports.o \
-		  flash.o \
-		  lists.o \
-		  env_flash.o \
-		  hush.o \
-		  xyzModem.o \
-		  crc16.o \
-		  s_record.o
+COBJS-y += main.o
+COBJS-y += cmd_bootm.o
+COBJS-y += cmd_boot.o
+COBJS-y += cmd_echo.o
+COBJS-y += cmd_elf.o
+COBJS-y += cmd_flash.o
+COBJS-y += cmd_help.o
+COBJS-y += cmd_mem.o
+COBJS-y += cmd_custom.o
+COBJS-y += cmd_net.o
+COBJS-y += cmd_nvedit.o
+COBJS-y += cmd_itest.o
+COBJS-y += cmd_load.o
+COBJS-y += cmd_qcaclk.o
+COBJS-y += cmd_qcagpio.o
+COBJS-y += command.o
+COBJS-y += console.o
+COBJS-y += devices.o
+COBJS-y += dlmalloc.o
+COBJS-y += environment.o
+COBJS-y += env_common.o
+COBJS-y += env_nowhere.o
+COBJS-y += exports.o
+COBJS-y += flash.o
+COBJS-y += lists.o
+COBJS-y += env_flash.o
+COBJS-y += hush.o
+COBJS-y += xyzModem.o
+COBJS-y += crc16.o
+COBJS-y += s_record.o
 
-OBJS	= $(AOBJS) $(COBJS)
+COBJS	:= $(COBJS-y)
+SRCS	:= $(AOBJS:.o=.S) $(COBJS:.o=.c)
+OBJS	:= $(addprefix $(obj),$(AOBJS) $(COBJS))
 
 CPPFLAGS += -I..
 
-ifeq ($(DUAL_FIRMWAREIMAGE_SUPPORT),1)
-CFLAGS += -DCONFIG_DUALIMAGE_SUPPORT
-OBJS += cmd_bdr.o
-endif
-
 all:	$(LIB) $(AOBJS)
 
-$(LIB): .depend $(OBJS)
-	$(AR) crv $@ $(OBJS)
+$(LIB): $(OBJS)
+	$(AR) $(ARFLAGS) $@ $(OBJS)
 
-environment.o: environment.c ../tools/envcrc
+$(obj)environment.o: $(src)environment.c $(obj)../tools/envcrc
 	$(CC) $(AFLAGS) -Wa,--no-warn \
-		-DENV_CRC=$(shell ../tools/envcrc) \
-		-c -o $@ environment.c
+		-DENV_CRC=$(shell $(obj)../tools/envcrc) \
+		-c -o $@ $(src)environment.c
 
-../tools/envcrc:
+$(obj)../tools/envcrc:
 	$(MAKE) -C ../tools
 
 #########################################################################
 
-.depend:	Makefile $(AOBJS:.o=.S) $(COBJS:.o=.c)
-		$(CC) -M $(CFLAGS) $(AOBJS:.o=.S) $(COBJS:.o=.c) > $@
-
-sinclude .depend
+-include $(OBJS:.o=.d)  $(SOBJS:.o=.d)
 
 #########################################################################

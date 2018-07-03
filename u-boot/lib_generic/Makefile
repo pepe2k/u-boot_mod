@@ -23,25 +23,27 @@
 
 include $(TOPDIR)/config.mk
 
-LIB   = libgeneric.a
-OBJS  = crc32.o \
-	ctype.o \
-	display_options.o \
-	string.o \
-	LzmaDecode.o \
-	LzmaWrapper.o \
-	vsprintf.o
+LIB	= $(obj)libgeneric.a
+
+COBJS-y += crc32.o
+COBJS-y += ctype.o
+COBJS-y += display_options.o
+COBJS-y += string.o
+COBJS-y += LzmaDecode.o
+COBJS-y += LzmaWrapper.o
+COBJS-y += vsprintf.o
 
 CFLAGS += -DCONFIG_LZMA=1
 
-$(LIB): .depend $(OBJS)
-	$(AR) crv $@ $(OBJS)
+COBJS	:= $(COBJS-y)
+SRCS	:= $(COBJS:.o=.c)
+OBJS	:= $(addprefix $(obj),$(COBJS))
+
+$(LIB):	$(OBJS)
+	$(AR) $(ARFLAGS) $@ $(OBJS)
 
 #########################################################################
 
-.depend: Makefile $(OBJS:.o=.c)
-	$(CC) -M $(CFLAGS) $(OBJS:.o=.c) > $@
-
-sinclude .depend
+-include $(OBJS:.o=.d)  $(SOBJS:.o=.d)
 
 #########################################################################

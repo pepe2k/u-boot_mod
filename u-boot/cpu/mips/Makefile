@@ -23,27 +23,28 @@
 
 include $(TOPDIR)/config.mk
 
-LIB	= lib$(CPU).a
+LIB	= $(obj)lib$(CPU).a
+
+SOBJS-y	= cache.o
+COBJS-y	= cpu.o
 
 ifeq ($(COMRESSED_UBOOT),1)
-START	= start.o start_bootstrap.o
+START-y	= start.o start_bootstrap.o
 else
-START	= start.o
+START-y	= start.o
 endif
 
-OBJS	= cpu.o
-SOBJS	= cache.o
+#SRCS	:= $(START:.o=.S) $(SOBJS-y:.o=.S) $(COBJS-y:.o=.c)
+OBJS	:= $(addprefix $(obj),$(SOBJS-y) $(COBJS-y))
+START	:= $(addprefix $(obj),$(START-y))
 
-all:	.depend $(START) $(LIB)
+all:	$(START) $(LIB)
 
-$(LIB):	$(OBJS) $(SOBJS)
-	$(AR) crv $@ $(OBJS) $(SOBJS)
+$(LIB):	$(OBJS)
+	$(AR) $(ARFLAGS) $@ $(OBJS)
 
 #########################################################################
 
-.depend:	Makefile $(START:.o=.S) $(OBJS:.o=.c)
-		$(CC) -M $(CFLAGS) $(START:.o=.S) $(OBJS:.o=.c) > $@
-
-sinclude .depend
+-include $(OBJS:.o=.d)  $(SOBJS:.o=.d)
 
 #########################################################################

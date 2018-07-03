@@ -1,6 +1,6 @@
 include $(TOPDIR)/config.mk
 
-LIB	= lib$(BOARD).a
+LIB	= $(obj)lib$(BOARD).a
 
 OBJS	= $(BOARD).o ../common/spi_flash.o ../common/common.o
 
@@ -12,14 +12,11 @@ ifeq ($(ETH_CONFIG), _s27)
 OBJS	+= ../common/athrs27_phy.o
 endif
 
-$(LIB):	.depend $(OBJS) $(SOBJS)
-	$(AR) crv $@ $(OBJS) $(SOBJS)
+$(LIB):	$(OBJS) $(SOBJS)
+	$(AR) $(ARFLAGS) $@ $(OBJS) $(SOBJS)
 
 #########################################################################
 
-.depend:	Makefile $(SOBJS:.o=.S) $(OBJS:.o=.c)
-		$(CC) -M $(CFLAGS) $(SOBJS:.o=.S) $(OBJS:.o=.c) > $@
-
-sinclude .depend
+-include $(OBJS:.o=.d)  $(SOBJS:.o=.d)
 
 #########################################################################

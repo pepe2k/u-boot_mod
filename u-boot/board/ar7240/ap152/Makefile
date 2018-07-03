@@ -22,7 +22,7 @@
 
 include $(TOPDIR)/config.mk
 
-LIB	= lib$(BOARD).a
+LIB	= $(obj)lib$(BOARD).a
 
 OBJS = $(BOARD).o ../../ar7240/common/spi_flash.o ../common/common.o \
 	../common/miiphybb.o	\
@@ -99,15 +99,13 @@ ifeq ($(ETH_CONFIG), _ar8033)
 OBJS	+= ../common/athr_ar8033_phy.o
 endif
 
+OBJS	:= $(addprefix $(obj),$(OBJS))
 
-$(LIB):	.depend $(OBJS) $(SOBJS) $(EXTRA_OBJS)
-	$(AR) crv $@ $(OBJS) $(SOBJS) $(EXTRA_OBJS)
+$(LIB):	$(OBJS) $(SOBJS) $(EXTRA_OBJS)
+	$(AR) $(ARFLAGS) $@ $(OBJS) $(SOBJS) $(EXTRA_OBJS)
 
 #########################################################################
 
-.depend:	Makefile $(SOBJS:.o=.S) $(OBJS:.o=.c)
-		$(CC) -M $(CFLAGS) $(SOBJS:.o=.S) $(OBJS:.o=.c) > $@
-
-sinclude .depend
+-include $(OBJS:.o=.d)  $(SOBJS:.o=.d)
 
 #########################################################################

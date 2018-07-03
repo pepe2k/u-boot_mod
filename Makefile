@@ -29,8 +29,9 @@ export BUILD_TOPDIR = $(PWD)
 export STAGING_DIR  = $(BUILD_TOPDIR)/tmp
 export SOURCE_DIR   = $(BUILD_TOPDIR)/u-boot
 export BIN_DIR      = $(BUILD_TOPDIR)/bin
+export BUILD_DIR    = $(BUILD_TOPDIR)/build
 export SUB_MAKE_CMD = $(MAKE) --silent --no-print-directory \
-                      ARCH=mips V=1 SHELL=$(SHELL)
+                      ARCH=mips V=1 SHELL=$(SHELL) O=$(BUILD_DIR)
 
 # ==========================================================================
 # You can override some default configuration options below or pass them on
@@ -163,7 +164,7 @@ define copy_img
   echo;
   $(call echo_green,Copying compiled image...)
 
-  cp $(SOURCE_DIR)/$(strip $(1)).bin $(BIN_DIR)/temp.bin
+  cp "$(BUILD_DIR)/$(strip $(1)).bin" "$(BIN_DIR)/temp.bin"
   $(if $(2),$(call size_chk,$(BIN_DIR)/temp.bin,$(2)))
 endef
 
@@ -174,9 +175,9 @@ define build
   args="IMG_SIZE=$$((1024*$(call img_size,$(1)))) \
         IMG_LZMA=$(strip $(call is_lzma,$(2))) \
         $(strip $(3))"; \
-  cd $(SOURCE_DIR) && \
-     $(SUB_MAKE_CMD) $@ $$args && \
-     $(SUB_MAKE_CMD) all $$args
+  cd $(SOURCE_DIR) && $(SUB_MAKE_CMD) $@ $$args && \
+  $(call echo_green,Building...) && \
+  cd $(SOURCE_DIR) && $(SUB_MAKE_CMD) all $$args
 
   $(if $(filter $(IMG_RAM),1),\
     $(call copy_img,u-boot), \
@@ -320,7 +321,7 @@ lzma_host_clean:
 
 clean:
 	@cd $(SOURCE_DIR) && $(SUB_MAKE_CMD) distclean
-	@rm -f $(SOURCE_DIR)/httpd/fsdata.c
+	@rm -f $(BUILD_DIR)/httpd/fsdata.c
 
 clean_all: clean
 	@$(call echo_green,Removing all binary images...)

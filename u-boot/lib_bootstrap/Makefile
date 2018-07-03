@@ -23,23 +23,25 @@
 
 include $(TOPDIR)/config.mk
 
-LIB	= libbootstrap.a
+LIB	= $(obj)libbootstrap.a
 
-OBJS	= bootstrap_board.o LzmaDecode.o string.o LzmaWrapper.o ../lib_mips/time.o
+OBJS-y	:= bootstrap_board.o
+OBJS-y	+= LzmaDecode.o
+OBJS-y	+= string.o
+OBJS-y	+= LzmaWrapper.o
+OBJS-y	+= ../lib_mips/time.o
+
+OBJS	:= $(addprefix $(obj),$(OBJS-y))
 
 CFLAGS += -DCONFIG_LZMA=1
 
-all:	.depend $(LIB)
+all: $(LIB)
 
 $(LIB):	$(OBJS)
-	$(AR) crv $@ $(OBJS)
+	$(AR) $(ARFLAGS) $@ $(OBJS)
 
 #########################################################################
 
-.depend:	Makefile $(OBJS:.o=.c)
-		#echo "make libbootstrap.a with HEAD_SIZE $(HEAD_SIZE)"
-		$(CC) -M $(CFLAGS) $(OBJS:.o=.c) > $@
-
-sinclude .depend
+-include $(OBJS:.o=.d)  $(SOBJS:.o=.d)
 
 #########################################################################

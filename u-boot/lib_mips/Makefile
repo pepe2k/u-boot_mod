@@ -23,22 +23,22 @@
 
 include $(TOPDIR)/config.mk
 
-LIB	= lib$(ARCH).a
+LIB	= $(obj)lib$(ARCH).a
 
-AOBJS	=
+SOBJS-y	+=
 
-COBJS	= board.o time.o mips_linux.o
+COBJS-y	+= board.o
+COBJS-y	+= mips_linux.o
+COBJS-y	+= time.o
 
-OBJS	= $(AOBJS) $(COBJS)
+SRCS	:= $(SOBJS-y:.o=.S) $(COBJS-y:.o=.c)
+OBJS	:= $(addprefix $(obj),$(SOBJS-y) $(COBJS-y))
 
-$(LIB):	.depend $(OBJS)
-	$(AR) crv $@ $(OBJS)
+$(LIB):	$(OBJS)
+	$(AR) $(ARFLAGS) $@ $(OBJS)
 
 #########################################################################
 
-.depend:	Makefile $(AOBJS:.o=.S) $(COBJS:.o=.c)
-		$(CC) -M $(CFLAGS) $(AOBJS:.o=.S) $(COBJS:.o=.c) > $@
-
-sinclude .depend
+-include $(OBJS:.o=.d)  $(SOBJS:.o=.d)
 
 #########################################################################

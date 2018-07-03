@@ -21,8 +21,8 @@
 # MA 02111-1307 USA
 #
 
-BINS	= mkimage$(SFX) envcrc$(SFX)
-OBJS	= environment.o mkimage.o crc32.o envcrc.o
+BIN_FILES	= mkimage$(SFX) envcrc$(SFX)
+OBJ_LINKS	= environment.o mkimage.o crc32.o envcrc.o
 
 #-------------------------------------------------------------------------
 
@@ -55,7 +55,7 @@ TOOLSUBDIRS =
 ifeq ($(HOSTOS)-$(HOSTARCH),darwin-ppc)
 HOST_CFLAGS = -traditional-cpp -Wall
 HOST_LDFLAGS =-multiply_defined suppress
-HOST_ENVIRO_CFLAGS = -traditional-cpp
+HOST_ENVIRO_CFLAGS =
 
 else
 ifeq ($(HOSTOS)-$(HOSTARCH),netbsd-ppc)
@@ -78,6 +78,7 @@ endif
 #
 ifeq ($(HOSTOS),cygwin)
 SFX = .exe
+HOST_CFLAGS += -ansi
 else
 SFX =
 endif
@@ -88,64 +89,59 @@ endif
 #
 include $(TOPDIR)/config.mk
 
+# now $(obj) is defined
+SRCS	:= $(addprefix $(obj),$(OBJ_LINKS:.o=.c)) $(OBJ_FILES:.o=.c)
+BINS	:= $(addprefix $(obj),$(BIN_FILES))
+
 #
 # Use native tools and options
 #
-CPPFLAGS	= -I../include -DTEXT_BASE=$(TEXT_BASE) -DUSE_HOSTCC
-CFLAGS		= $(HOST_CFLAGS) $(CPPFLAGS) -O2
-AFLAGS		= -D__ASSEMBLY__ $(CPPFLAGS)
-CC			= $(HOSTCC)
-STRIP		= $(HOSTSTRIP)
-MAKEDEPEND	= makedepend
+CPPFLAGS   = -I$(TOPDIR)/include \
+		-I$(OBJTREE)/include2 \
+		-I$(OBJTREE)/include \
+		-DTEXT_BASE=$(TEXT_BASE) -DUSE_HOSTCC
+CFLAGS     = $(HOST_CFLAGS) $(CPPFLAGS) -O2
 
-all:	.depend $(BINS) subdirs
+# No -pedantic switch to avoid libfdt compilation warnings
+FIT_CFLAGS = -Wall $(CPPFLAGS) -O
 
-envcrc$(SFX):	envcrc.o crc32.o environment.o
-		$(CC) $(CFLAGS) -o $@ $^
+AFLAGS	   = -D__ASSEMBLY__ $(CPPFLAGS)
+CC	   = $(HOSTCC)
+STRIP	   = $(HOSTSTRIP)
+MAKEDEPEND = makedepend
 
-mkimage$(SFX):	mkimage.o crc32.o
+all:	$(BINS)
+
+$(obj)envcrc$(SFX):	$(obj)envcrc.o $(obj)crc32.o $(obj)environment.o
+		$(CC) -MMD $(CFLAGS) -o $@ $^
+
+$(obj)mkimage$(SFX):	$(obj)mkimage.o $(obj)crc32.o
 		$(CC) $(CFLAGS) $(HOST_LDFLAGS) -o $@ $^
 		$(STRIP) $@
 
-envcrc.o:	envcrc.c
-		$(CC) -g $(CFLAGS) -c $<
+$(obj)envcrc.o:	$(src)envcrc.c
+		$(CC) -MMD -g $(CFLAGS) -c -o $@ $<
 
-crc32.o:	crc32.c
-		$(CC) -g $(CFLAGS) -c $<
+$(obj)crc32.o:	$(obj)crc32.c
+		$(CC) -MMD -g $(CFLAGS) -c -o $@ $<
 
-mkimage.o:	mkimage.c
-		$(CC) -g $(CFLAGS) -c $<
+$(obj)mkimage.o:	$(src)mkimage.c
+		$(CC) -MMD -g $(FIT_CFLAGS) -c -o $@ $<
 
-subdirs:
-ifeq ($(TOOLSUBDIRS),)
-		@:
-else
-		@for dir in $(TOOLSUBDIRS) ; do \
-		    $(MAKE) \
-			HOSTOS=$(HOSTOS) \
-			HOSTARCH=$(HOSTARCH) \
-			HOST_CFLAGS="$(HOST_CFLAGS)" \
-		   	HOST_LDFLAGS="$(HOST_LDFLAGS)" \
-			-C $$dir || exit 1 ; \
-		done
-endif
 
-environment.c:
-		@rm -f environment.c
-		ln -s ../common/environment.c environment.c
+$(obj)environment.c:
+		@rm -f $(obj)environment.c
+		ln -s $(src)../common/environment.c $(obj)environment.c
 
-environment.o: environment.c
-		$(CC) -g $(HOST_ENVIRO_CFLAGS) $(CPPFLAGS) -c $<
+$(obj)environment.o:	$(obj)environment.c
+		$(CC) -MMD -g $(HOST_ENVIRO_CFLAGS) $(CPPFLAGS) -c -o $@ $<
 
-crc32.c:
-		@rm -f crc32.c
-		ln -s ../lib_generic/crc32.c crc32.c
+$(obj)crc32.c:
+		@rm -f $(obj)crc32.c
+		ln -s $(src)../lib_generic/crc32.c $(obj)crc32.c
 
 #########################################################################
 
-.depend:	Makefile $(OBJS:.o=.c)
-		$(CC) -M $(HOST_CFLAGS) $(CPPFLAGS) $(OBJS:.o=.c) > $@
-
-sinclude .depend
+-include $(OBJS:.o=.d)  $(SOBJS:.o=.d)
 
 #########################################################################

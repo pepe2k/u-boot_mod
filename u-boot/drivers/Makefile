@@ -23,9 +23,11 @@
 
 include $(TOPDIR)/config.mk
 
-LIB	= libdrivers.a
+LIB	= $(obj)libdrivers.a
 
-OBJS	= netconsole.o
+OBJS-y	= netconsole.o
+
+OBJS	:= $(addprefix $(obj),$(OBJS-y))
 
 all:	$(LIB)
 
@@ -33,13 +35,10 @@ clean:
 	@-rm -f $(OBJS) $(OBJS:.o=.d)  $(SOBJS:.o=.d)
 
 $(LIB): $(OBJS)
-	$(AR) crv $@ $(OBJS)
+	$(AR) $(ARFLAGS) $@ $(OBJS)
 
 #########################################################################
 
-.depend:	Makefile $(OBJS:.o=.c)
-		$(CC) -M $(CFLAGS) $(OBJS:.o=.c) > $@
-
-sinclude .depend
+-include $(OBJS:.o=.d)  $(SOBJS:.o=.d)
 
 #########################################################################
