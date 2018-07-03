@@ -2617,7 +2617,7 @@ static const clk_profile clk_profiles[] = {
 };
 
 /* Number of all profiles */
-static u32 clk_profiles_cnt = sizeof(clk_profiles) / sizeof(clk_profile);
+static size_t clk_profiles_cnt = sizeof(clk_profiles) / sizeof(clk_profile);
 
 #endif /* CONFIG_QCA_PLL_IN_FLASH_MAGIC_OFFSET */
 

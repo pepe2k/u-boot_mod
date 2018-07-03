@@ -18,7 +18,7 @@ DECLARE_GLOBAL_DATA_PTR;
 
 #define SNTP_TIMEOUT	10
 
-static int SntpOurPort;
+static unsigned SntpOurPort;
 
 static void SntpSend(void){
 	struct sntp_pkt_t pkt;

@@ -91,7 +91,7 @@ cmd_tbl_t *find_cmd_tbl(const char *cmd, cmd_tbl_t *table, int table_len)
 	cmd_tbl_t *cmdtp;
 	cmd_tbl_t *cmdtp_temp = table;	/* Init value */
 	const char *p;
-	int len;
+	size_t len;
 	int n_found = 0;
 
 	if (!cmd)
@@ -100,7 +100,7 @@ cmd_tbl_t *find_cmd_tbl(const char *cmd, cmd_tbl_t *table, int table_len)
 	 * Some commands allow length modifiers (like "cp.b");
 	 * compare command name only until first dot.
 	 */
-	len = ((p = strchr(cmd, '.')) == NULL) ? strlen (cmd) : (p - cmd);
+	len = ((p = strchr(cmd, '.')) == NULL) ? strlen (cmd) : (size_t)(p - cmd);
 
 	for (cmdtp = table; cmdtp != table + table_len; cmdtp++) {
 		if (strncmp(cmd, cmdtp->name, len) == 0) {

@@ -360,7 +360,7 @@ int do_mem_mtest(cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[])
 #else
 	vu_long *dummy = NULL;
 #endif
-	int j;
+	size_t j;
 	int iterations = 1;
 
 	static const ulong bitpattern[] = {

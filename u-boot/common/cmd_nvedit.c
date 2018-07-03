@@ -222,8 +222,8 @@ int _do_setenv(int flag, int argc, char * const argv[]){
 		 * Switch to new baudrate if new baudrate is supported
 		 */
 		if(strcmp(argv[1], "baudrate") == 0){
-			int baudrate = simple_strtoul(argv[2], NULL, 10);
-			int i;
+			unsigned long baudrate = simple_strtoul(argv[2], NULL, 10);
+			size_t i;
 
 			for(i = 0; i < N_BAUDRATES; ++i){
 				if(baudrate == baudrate_table[i]){

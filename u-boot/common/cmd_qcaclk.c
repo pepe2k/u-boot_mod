@@ -92,7 +92,7 @@ int do_set_clk(cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[])
 	clk_cfg_flash from_flash, to_flash;
 	const pll_regs *pll_registers;
 	char buf[128];
-	int i;
+	size_t i;
 	u8 *c;
 
 	/* Read current clocks and make MHz from Hz */

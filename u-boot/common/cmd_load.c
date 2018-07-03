@@ -80,10 +80,10 @@ int do_load_serial(cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[])
 {
 	ulong offset = 0;
 	ulong addr;
-	int i;
+	size_t i;
 	char *env_echo;
 	int rcode = 0;
-	int load_baudrate, current_baudrate;
+	unsigned long load_baudrate, current_baudrate;
 
 	load_baudrate = current_baudrate = gd->baudrate;
 
@@ -452,9 +452,9 @@ int do_load_serial_bin(cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[]
 {
 	ulong address = 0;
 	int rcode = 0, size_dl = 0;
-	int i;
+	size_t i;
 	char *s, buf[32];;
-	int load_baudrate, current_baudrate;
+	unsigned long load_baudrate, current_baudrate;
 
 	load_baudrate = current_baudrate = gd->baudrate;
 

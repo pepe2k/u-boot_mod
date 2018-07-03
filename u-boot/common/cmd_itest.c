@@ -255,7 +255,7 @@ static int arithcomp(char *s, char *t, int op, int w)
 
 static int binary_test(char *op, char *arg1, char *arg2, int w)
 {
-	int len, i;
+	size_t len, i;
 	op_tbl_t *optp;
 
 	len = strlen(op);
