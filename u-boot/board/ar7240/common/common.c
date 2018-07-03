@@ -173,7 +173,7 @@ void print_board_info(void)
 		(SOC_TYPE & QCA_QCA955X_SOC)
 	if (!qca_pcie0_in_ep_mode()) {
 		if (qca_pcie_dev_info(0, &vid, &did))
-			printf("%04X:%04X", vid, did);
+			puts(qca_pcie_dev_name(vid, did));
 		else
 			puts("no device");
 	} else {
@@ -181,24 +181,25 @@ void print_board_info(void)
 	}
 	#elif (SOC_TYPE & QCA_QCA953X_SOC)
 	if (qca_pcie_dev_info(0, &vid, &did))
-		printf("%04X:%04X", vid, did);
+		puts(qca_pcie_dev_name(vid, did));
 	else
 		puts("no device");
 	#endif
 
 	#if (SOC_TYPE & QCA_QCA956X_SOC)
 	if (qca_pcie_dev_info(1, &vid, &did))
-		printf("%04X:%04X", vid, did);
+		puts(qca_pcie_dev_name(vid, did));
 	else
 		puts("no device");
 	#elif (SOC_TYPE & QCA_QCA955X_SOC)
+	puts(", ");
 	if (qca_pcie_dev_info(1, &vid, &did))
-		printf(", %04X:%04X", vid, did);
+		puts(qca_pcie_dev_name(vid, did));
 	else
-		puts(", no device");
+		puts("no device");
 	#endif
 
-	puts("\n");
+	putc('\n');
 #endif
 
 	/* MAC address */

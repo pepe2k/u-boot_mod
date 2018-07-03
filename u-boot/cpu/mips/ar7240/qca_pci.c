@@ -18,6 +18,61 @@
 
 #if defined(CONFIG_PCI)
 
+#define ATHEROS_VENDOR_ID    0x168c
+
+static const struct {
+	const char name[10];
+	u16 id;
+} qca_pci_names[] = {
+#if !defined(CONFIG_DISABLE_PCI_NAME)
+	//sorted for better compression
+	{"AR5416", 0x0024},
+	{"AR9160", 0x0027},
+	{"AR9280", 0x0029},
+	{"AR9280", 0x002a},
+	{"AR9285", 0x002b},
+	{"AR2427", 0x002c},
+	{"AR9287", 0x002d},
+	{"AR9287", 0x002e},
+	{"AR9300", 0x0030},
+	{"AR9300", 0x0031},
+	{"AR9300", 0x0032},
+	{"AR9300", 0x0033},
+	{"AR9300", 0x0034},
+	{"AR9300", 0x0035},
+	{"AR9300", 0x0036},
+	{"AR9300", 0x0038},
+	{"AR9300", 0x003d},
+	{"AR9300", 0x003f},
+	{"AR9485", 0x0037},
+	{"QCA6164", 0x0041},	//ath10k
+	{"QCA6174", 0x003e},	//ath10k
+	{"QCA9377", 0x0042},	//ath10k
+	{"QCA988X", 0x003c},	//ath10k
+	{"QCA9887", 0x0050},	//ath10k
+	{"QCA9888", 0x0056},	//ath10k
+	{"QCA99X0", 0x0040},	//ath10k
+	{"QCA9984", 0x0046},	//ath10k
+#endif
+};
+
+const char *qca_pcie_dev_name(u32 vid, u32 did) {
+	static char qca_pci_txt_num[4+1+4+1];
+	int i;
+
+	if( vid != ATHEROS_VENDOR_ID)
+		goto fallback;
+
+	for(i = 0; i < (sizeof(qca_pci_names)/sizeof(*qca_pci_names)); i++) {
+		if(qca_pci_names[i].id == did)
+			return qca_pci_names[i].name;
+	}
+
+fallback:
+	sprintf(qca_pci_txt_num, "%04X:%04X", vid, did);
+	return qca_pci_txt_num;
+}
+
 /*
  * Returns 1 if PCIE0 is in EP mode
  */

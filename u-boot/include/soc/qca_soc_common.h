@@ -2039,6 +2039,7 @@ u32  qca_dram_trcd_lat(void);
 u32  qca_dram_trp_lat(void);
 u32  qca_dram_type(void);
 void qca_full_chip_reset(void);
+const char *qca_pcie_dev_name(u32 vid, u32 did);
 u32  qca_pcie_dev_info(u32 rc_num, u32 *vid, u32 *did);
 u32  qca_pcie0_in_ep_mode(void);
 void qca_sf_bulk_erase(u32 bank);
