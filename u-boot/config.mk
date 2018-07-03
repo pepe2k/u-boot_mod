@@ -141,13 +141,13 @@ ifndef LDSCRIPT
 ifeq ($(CONFIG_NAND_U_BOOT),y)
 LDSCRIPT := $(TOPDIR)/board/$(BOARDDIR)/u-boot-nand.lds
 else
-LDSCRIPT := $(TOPDIR)/board/$(BOARDDIR)/u-boot.lds
+LDSCRIPT := $(TOPDIR)/cpu/$(CPU)/u-boot.lds
 endif
 endif
 
 ifdef COMPRESSED_UBOOT
 	ifndef LDSCRIPT_BOOTSTRAP
-		LDSCRIPT_BOOTSTRAP := $(TOPDIR)/board/$(BOARDDIR)/u-boot-bootstrap.lds
+		LDSCRIPT_BOOTSTRAP := $(TOPDIR)/cpu/$(CPU)/u-boot-bootstrap.lds
 	endif
 	LDFLAGS_BOOTSTRAP := -Bstatic -T $(LDSCRIPT_BOOTSTRAP)
 	LDFLAGS_BOOTSTRAP += -Ttext $(BOOTSTRAP_TEXT_BASE) $(PLATFORM_LDFLAGS)
