@@ -753,6 +753,14 @@ tp-link_tl-wr841n_v8: ar934x_common lsdk_kernel
 	@$(call define_add,CFG_AG7240_NMACS,2)
 	@$(MKCONFIG) -a db12x mips mips db12x ar7240 ar7240
 
+tp-link_tl-wr842n_v2: ar934x_common lsdk_kernel
+	@$(call config_init,TP-Link TL-WR842N/D v2,tl-wr842nd-v2,8,17,1,QCA_AR9341_SOC)
+	@$(call define_add,CONFIG_FOR_TPLINK_WR842N_V2,1)
+	@$(call define_add,CONFIG_USB,1)
+	@$(call define_add,CFG_ATHRS27_PHY,1)
+	@$(call define_add,CFG_AG7240_NMACS,2)
+	@$(MKCONFIG) -a db12x mips mips db12x ar7240 ar7240
+
 tp-link_tl-wr841n_v9: qca953x_common lsdk_kernel
 	@$(call config_init,TP-Link TL-WR841N/D v9,tl-wr841nd-v9,4,12,1,QCA_QCA9533_SOC)
 	@$(call define_add,CONFIG_FOR_TPLINK_WR841N_V9,1)

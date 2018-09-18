@@ -96,6 +96,7 @@ Currently supported devices:
   - TP-Link TL-WA801ND v2
   - TP-Link TL-WA830RE v2
   - TP-Link TL-WR841N/D v8
+  - TP-Link TL-WR842N/D v2
   - YunCore CPE870
 
 - **Atheros AR9342**:
@@ -194,6 +195,7 @@ More information about supported devices:
 | [TP-Link TL-WR820N](https://wiki.openwrt.org/toh/tp-link/tl-wr820n) | QCA9531 | 4 MiB | 64 MiB DDR2 | 64 KiB, LZMA | RO |
 | [TP-Link TL-WR841N/D v8](http://wiki.openwrt.org/toh/tp-link/tl-wr841nd) | AR9341 | 4 MiB | 32 MiB DDR1 | 64 KiB, LZMA | RO |
 | [TP-Link TL-WR841N/D v9/10/11](https://wiki.openwrt.org/toh/tp-link/tl-wr841nd) | QCA9533 | 4 MiB | 32 MiB DDR1 | 64 KiB, LZMA | RO |
+| [TP-Link TL-WR842N/D v2](https://openwrt.org/toh/hwdata/tp-link/tp-link_tl-wr842nd_v2) | AR9341 | 8 MiB | 32 MiB DDR1 | 64 KiB, LZMA | RO |
 | TP-Link TL-WR842N/D v3 | QCA9531 | 16 MiB | 64 MiB DDR2 | 64 KiB, LZMA | RO |
 | TP-Link TL-WR902AC v1 | QCA9531 | 8 MiB | 64 MiB DDR2 | 128 KiB, LZMA | RO |
 | Village Telco Mesh Potato 2 | AR9331 | 16 MiB | 64 MiB DDR1 | 192 KiB | R/W |
