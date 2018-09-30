@@ -31,8 +31,8 @@ void usb_init(void)
 	udelay(1000);
 
 	/* Take out USB PHY/HOST/PLL out of reset */
-	qca_soc_reg_read_set(QCA_RST_RESET_REG,
-			     QCA_RST_RESET_USB_PHY_SUSPEND_ORIDE_MASK);
+	qca_soc_reg_read_clear(QCA_RST_RESET_REG,
+			       QCA_RST_RESET_USB_PHY_SUSPEND_ORIDE_MASK);
 	udelay(1000);
 
 	qca_soc_reg_read_clear(QCA_RST_RESET_REG,
