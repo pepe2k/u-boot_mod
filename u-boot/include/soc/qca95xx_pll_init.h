@@ -1537,7 +1537,7 @@
 
 /* Maximum clock for SPI NOR FLASH */
 #ifndef CONFIG_QCA_SPI_NOR_FLASH_MAX_CLK_MHZ
-	#define CONFIG_QCA_SPI_NOR_FLASH_MAX_CLK_MHZ	30
+	#define CONFIG_QCA_SPI_NOR_FLASH_MAX_CLK_MHZ	50
 #endif
 
 /* SPI_CONTROL_ADDR register value */
