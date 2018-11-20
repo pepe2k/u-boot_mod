@@ -2510,7 +2510,7 @@ static const clk_profile clk_profiles[] = {
 	}, {
 		/* Tested! QCA9531 booting to u-boot only */
 		1100, 400, 200, 25,
-		_qca95xx_spi_ctrl_addr_reg_val(12, 1, 0, 2),
+		_qca95xx_spi_ctrl_addr_reg_val(8, 1, 0, 2),
 		{
 			_qca95xx_cpu_pll_cfg_reg_val(44, 1, 1, 0, 0),
 			_qca95xx_ddr_pll_cfg_reg_val(16, 1, 1, 0, 0),
