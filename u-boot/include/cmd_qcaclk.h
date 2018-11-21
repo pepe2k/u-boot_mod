@@ -2417,6 +2417,20 @@ static const clk_profile clk_profiles[] = {
 		}
 	}, {
 		/* Tested! */
+		900, 600, 300, 37,
+		_qca95xx_spi_ctrl_addr_reg_val(8, 1, 0, 2),
+		{
+			_qca95xx_cpu_pll_cfg_reg_val(36, 1, 1, 0, 0),
+			_qca95xx_ddr_pll_cfg_reg_val(24, 1, 1, 0, 0),
+			_qca95xx_cpu_ddr_clk_ctrl_reg_val(1, 1, 2, 1, 1, 1)
+		}, {
+			_qca95xx_cpu_pll_cfg_reg_val(22, 1, 1, 0, 0),
+			_qca95xx_ddr_pll_cfg_reg_val(15, 1, 1, 0, 0),
+			_qca95xx_cpu_ddr_clk_ctrl_reg_val(1, 1, 2, 1, 1, 1),
+			_qca95xx_cpu_pll_dither_reg_val(32)
+		}
+	}, {
+		/* Tested! */
 		900, 600, 400, 25,
 		_qca95xx_spi_ctrl_addr_reg_val(16, 1, 0, 2),
 		{
@@ -2496,8 +2510,47 @@ static const clk_profile clk_profiles[] = {
 		}
 	}, {
 		/* Tested! */
+		1000, 600, 300, 37,
+		_qca95xx_spi_ctrl_addr_reg_val(12, 1, 0, 2),
+		{
+			_qca95xx_cpu_pll_cfg_reg_val(40, 1, 1, 0, 0),
+			_qca95xx_ddr_pll_cfg_reg_val(24, 1, 1, 0, 0),
+			_qca95xx_cpu_ddr_clk_ctrl_reg_val(1, 1, 2, 1, 1, 1)
+		}, {
+			_qca95xx_cpu_pll_cfg_reg_val(25, 1, 1, 0, 0),
+			_qca95xx_ddr_pll_cfg_reg_val(15, 1, 1, 0, 0),
+			_qca95xx_cpu_ddr_clk_ctrl_reg_val(1, 1, 2, 1, 1, 1)
+		}
+	}, {
+		/* Tested! */
 		1000, 600, 400, 25,
 		_qca95xx_spi_ctrl_addr_reg_val(16, 1, 0, 2),
+		{
+			_qca95xx_cpu_pll_cfg_reg_val(40, 1, 1, 0, 0),
+			_qca95xx_ddr_pll_cfg_reg_val(48, 1, 1, 0, 0),
+			_qca95xx_cpu_ddr_clk_ctrl_reg_val(1, 2, 3, 1, 1, 1)
+		}, {
+			_qca95xx_cpu_pll_cfg_reg_val(25, 1, 1, 0, 0),
+			_qca95xx_ddr_pll_cfg_reg_val(30, 1, 1, 0, 0),
+			_qca95xx_cpu_ddr_clk_ctrl_reg_val(1, 2, 3, 1, 1, 1)
+		}
+	}, {
+		/* Tested! */
+		1000, 600, 400, 40,
+		_qca95xx_spi_ctrl_addr_reg_val(10, 1, 0, 2),
+		{
+			_qca95xx_cpu_pll_cfg_reg_val(40, 1, 1, 0, 0),
+			_qca95xx_ddr_pll_cfg_reg_val(48, 1, 1, 0, 0),
+			_qca95xx_cpu_ddr_clk_ctrl_reg_val(1, 2, 3, 1, 1, 1)
+		}, {
+			_qca95xx_cpu_pll_cfg_reg_val(25, 1, 1, 0, 0),
+			_qca95xx_ddr_pll_cfg_reg_val(30, 1, 1, 0, 0),
+			_qca95xx_cpu_ddr_clk_ctrl_reg_val(1, 2, 3, 1, 1, 1)
+		}
+	}, {
+		/* Tested! */
+		1000, 600, 400, 50,
+		_qca95xx_spi_ctrl_addr_reg_val(8, 1, 0, 2),
 		{
 			_qca95xx_cpu_pll_cfg_reg_val(40, 1, 1, 0, 0),
 			_qca95xx_ddr_pll_cfg_reg_val(48, 1, 1, 0, 0),
