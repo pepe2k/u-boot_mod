@@ -665,6 +665,15 @@ tp-link_tl-wdr3600_v1: ar934x_common lsdk_kernel
 	@$(call define_add,CFG_DUAL_PHY_SUPPORT,1)
 	@$(MKCONFIG) -a db12x mips mips db12x ar7240 ar7240
 
+tp-link_tl-wdr3600_16m: ar934x_common lsdk_kernel
+	@$(call config_init,TP-Link TL-WDR3600 16M,tl-wdr3600-16m,16,16,1,QCA_AR9344_SOC)
+	@$(call define_add,CONFIG_FOR_TPLINK_WDR3600_V1,1)
+	@$(call define_add,CFG_ATHRS17_PHY,1)
+	@$(call define_add,CFG_AG7240_NMACS,1)
+	@$(call define_add,CONFIG_PCI,1)
+	@$(call define_add,CFG_DUAL_PHY_SUPPORT,1)
+	@$(MKCONFIG) -a db12x mips mips db12x ar7240 ar7240
+
 tp-link_tl-wdr43x0_v1: ar934x_common lsdk_kernel
 	@$(call config_init,TP-Link TL-WDR43x0 v1,tl-wdr43x0-v1,8,16,1,QCA_AR9344_SOC)
 	@$(call define_add,CONFIG_FOR_TPLINK_WDR43X0_V1,1)
