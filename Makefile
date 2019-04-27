@@ -213,6 +213,7 @@ COMMON_AR933X_TARGETS = \
 	hak5_lan-turtle \
 	hak5_packet-squirrel \
 	hak5_wifi-pineapple-nano \
+	pisen_cloud_easy_power \
 	tp-link_tl-mr10u_v1 \
 	tp-link_tl-mr13u_v1 \
 	tp-link_tl-mr3020_v1 \

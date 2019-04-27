@@ -76,6 +76,7 @@ Currently supported devices:
   - Hak5 LAN Turtle
   - Hak5 Packet Squirrel
   - Hak5 WiFi Pineapple NANO
+  - Pisen Cloud Easy Power
   - TP-Link TL-MR10U v1 ([photos in my gallery](http://galeria.tech-blog.pl/TP-Link_TL-MR10U/))
   - TP-Link TL-MR13U v1
   - TP-Link TL-MR3020 v1 ([photos in my gallery](http://galeria.tech-blog.pl/TPLINK_TL-MR3020/))
