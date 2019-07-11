@@ -341,7 +341,7 @@ mips_cache_flush:
     li      t2, KSEG0
     addu    t3, t0, t2
     mtc0    zero, CP0_TAGLO
-#ifdef CONFIG_WASP_SUPPORT
+#if defined(CONFIG_WASP_SUPPORT) || defined(CONFIG_MACH_QCA956x)
 	mtc0	zero, $29	# C0_TagHi
 	mtc0	zero, $28, 2	# C0_DTagLo
 	mtc0	zero, $29, 2	# C0_DTagHi
