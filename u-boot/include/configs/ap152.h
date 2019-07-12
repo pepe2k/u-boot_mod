@@ -128,9 +128,9 @@
 //	#define WEBFAILSAFE_UPLOAD_ART_ADDRESS	(CFG_FLASH_BASE + 0x10000)
 
 
-/* Firmware size limit */
+/* Firmware size limit (FLASH_SIZE - WEBFAILSAFE_UPLOAD_LIMITED_AREA_IN_BYTES) */
 #if defined(CONFIG_FOR_TPLINK_EAP245_V1)
-	#define WEBFAILSAFE_UPLOAD_LIMITED_AREA_IN_BYTES	(192 * 1024)
+	#define WEBFAILSAFE_UPLOAD_LIMITED_AREA_IN_BYTES	(0x40000 + 0x30000 + 0x10000) /* kernel_off + config_sz + art_sz */
 #endif
 
 /*
