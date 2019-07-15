@@ -32,7 +32,7 @@
 #include <atheros.h>
 #include "qca-eth-953x.h"
 #include "qca-eth-953x_phy.h"
-#define SGMII_LINK_WAR_MAX_TRY 10
+#define SGMII_LINK_WAR_MAX_TRY	10
 
 #if defined(CONFIG_CMD_MII)
 #include <miiphy.h>
@@ -54,16 +54,7 @@ extern int athrs27_reg_init_lan(void);
 
 ath_gmac_mac_t *ath_gmac_macs[CFG_ATH_GMAC_NMACS];
 
-
-
-#ifdef  CFG_ATHRS27_PHY
-#define is_s27() 1
-
-#else 
-#define is_s27() 0
-
-#endif 
-#ifdef  CFG_ATHRS27_PHY
+#ifdef CONFIG_ATHRS27_PHY
 extern void athrs27_reg_init(void);
 extern void athrs27_reg_init_wan(void);
 #endif
@@ -222,30 +213,19 @@ void ath_gmac_mii_setup(ath_gmac_mac_t *mac)
 		ath_gmac_reg_wr(mac, ATH_MAC_MII_MGMT_CFG, mgmt_cfg_val);
 
 	}
-
-
-
-
 }
-
 
 static void ath_gmac_hw_start(ath_gmac_mac_t *mac)
 {
-
-
 	if(mac->mac_unit)
 	{
 		ath_gmac_reg_rmw_set(mac, ATH_MAC_CFG2, (ATH_MAC_CFG2_PAD_CRC_EN |
 					ATH_MAC_CFG2_LEN_CHECK | ATH_MAC_CFG2_IF_1000));
 	} else {
-
-
 		ath_gmac_reg_rmw_set(mac, ATH_MAC_CFG2, (ATH_MAC_CFG2_PAD_CRC_EN |
 					ATH_MAC_CFG2_LEN_CHECK | ATH_MAC_CFG2_IF_10_100));
 	}
 	ath_gmac_reg_wr(mac, ATH_MAC_FIFO_CFG_0, 0x1f00);
-
-
 	ath_gmac_reg_wr(mac, ATH_MAC_FIFO_CFG_1, 0x10ffff);
 	ath_gmac_reg_wr(mac, ATH_MAC_FIFO_CFG_2, 0xAAA0555);
 
@@ -256,7 +236,6 @@ static void ath_gmac_hw_start(ath_gmac_mac_t *mac)
 	 */
 
 	ath_gmac_reg_wr(mac, ATH_MAC_FIFO_CFG_5, 0x7ffff);
-
 	ath_gmac_reg_wr(mac, ATH_MAC_FIFO_CFG_3, 0x1f00140);
 }
 
@@ -281,19 +260,16 @@ static int ath_gmac_check_link(ath_gmac_mac_t *mac)
 			ath_gmac_set_mac_if(mac, 1);
 			ath_gmac_reg_rmw_set(mac, ATH_MAC_FIFO_CFG_5, (1 << 19));
 			break;
-
 		case _100BASET:
 			ath_gmac_set_mac_if(mac, 0);
 			ath_gmac_set_mac_speed(mac, 1);
 			ath_gmac_reg_rmw_clear(mac, ATH_MAC_FIFO_CFG_5, (1 << 19));
 			break;
-
 		case _10BASET:
 			ath_gmac_set_mac_if(mac, 0);
 			ath_gmac_set_mac_speed(mac, 0);
 			ath_gmac_reg_rmw_clear(mac, ATH_MAC_FIFO_CFG_5, (1 << 19));
 			break;
-
 		default:
 			return 0;
 	}
@@ -314,7 +290,6 @@ static int ath_gmac_check_link(ath_gmac_mac_t *mac)
  */
 static int ath_gmac_clean_rx(struct eth_device *dev, bd_t * bd)
 {
-
 	int i;
 	ath_gmac_desc_t *fr;
 	ath_gmac_mac_t *mac = (ath_gmac_mac_t*)dev->priv;
@@ -338,9 +313,7 @@ static int ath_gmac_clean_rx(struct eth_device *dev, bd_t * bd)
 	ath_gmac_reg_wr(mac, ATH_DMA_RX_CTRL, ATH_RXE);	/* rx start */
 	udelay(1000 * 1000);
 
-
 	return 1;
-
 }
 
 static int ath_gmac_alloc_fifo(int ndesc, ath_gmac_desc_t ** fifo)
@@ -410,7 +383,6 @@ static void ath_gmac_get_ethaddr(struct eth_device *dev)
 void
 athr_mgmt_init(void)
 {
-
 #ifdef CONFIG_MGMT_INIT
 	uint32_t rddata;
 
@@ -456,7 +428,6 @@ int ath_gmac_enet_initialize(bd_t * bis)
 
 
 	for (i = 0;i < CFG_ATH_GMAC_NMACS;i++) {
-
 		if ((dev[i] = (struct eth_device *) malloc(sizeof (struct eth_device))) == NULL) {
 			puts("malloc failed\n");
 			return 0;
@@ -516,7 +487,7 @@ int ath_gmac_enet_initialize(bd_t * bis)
 		/* configure s26 register after frame transmission is enabled */
 
 		if (ath_gmac_macs[i]->mac_unit == 0) { /* WAN Phy */
-#ifdef  CFG_ATHRS27_PHY
+#ifdef CONFIG_ATHRS27_PHY
 			athrs27_reg_init();
 			mask = ATH_RESET_GE0_MAC;
                         ath_reg_rmw_clear(RST_RESET_ADDRESS, mask);
@@ -526,17 +497,15 @@ int ath_gmac_enet_initialize(bd_t * bis)
 			athr_vir_reg_init();
 #endif
 		} else {
-#ifdef  CFG_ATHRS27_PHY
+#ifdef CONFIG_ATHRS27_PHY
 			athrs27_reg_init_lan();
 			mask = ATH_RESET_GE1_MAC;
                         ath_reg_rmw_clear(RST_RESET_ADDRESS, mask);
 #endif
-
 		}
 
 	 	ath_gmac_reg_rmw_set(ath_gmac_macs[i], ATH_MAC_CFG1, ATH_MAC_CFG1_SOFT_RST
                                 | ATH_MAC_CFG1_RX_RST | ATH_MAC_CFG1_TX_RST);
-
 
 		ath_gmac_hw_start(ath_gmac_macs[i]);
 		ath_gmac_setup_fifos(ath_gmac_macs[i]);
@@ -550,15 +519,12 @@ int ath_gmac_enet_initialize(bd_t * bis)
 		ath_gmac_reg_wr(ath_gmac_macs[i], ATH_GE_MAC_ADDR1, mac_l);
 		ath_gmac_reg_wr(ath_gmac_macs[i], ATH_GE_MAC_ADDR2, mac_h);
 
-
 	ath_gmac_phy_setup(ath_gmac_macs[i]->mac_unit);
 	}
-
 
 	return 1;
 }
 
-//#if defined(CONFIG_CMD_MII)
 int
 ath_gmac_miiphy_read(char *devname, uint32_t phy_addr, uint8_t reg, uint16_t *data)
 {
@@ -566,7 +532,6 @@ ath_gmac_miiphy_read(char *devname, uint32_t phy_addr, uint8_t reg, uint16_t *da
 	uint16_t      addr  = (phy_addr << ATH_ADDR_SHIFT) | reg, val;
 	volatile int           rddata;
 	uint16_t      ii = 0xFFFF;
-
 
 	/*
 	 * Check for previous transactions are complete. Added to avoid
@@ -577,7 +542,6 @@ ath_gmac_miiphy_read(char *devname, uint32_t phy_addr, uint8_t reg, uint16_t *da
 		udelay(5);
 		rddata = ath_gmac_reg_rd(mac, ATH_MII_MGMT_IND) & 0x1;
 	}while(rddata && --ii);
-
 
 	ath_gmac_reg_wr(mac, ATH_MII_MGMT_CMD, 0x0);
 	ath_gmac_reg_wr(mac, ATH_MII_MGMT_ADDRESS, addr);
@@ -606,7 +570,6 @@ ath_gmac_miiphy_write(char *devname, uint32_t phy_addr, uint8_t reg, uint16_t da
 	volatile int rddata;
 	uint16_t      ii = 0xFFFF;
 
-
 	/*
 	 * Check for previous transactions are complete. Added to avoid
 	 * race condition while running at higher frequencies.
@@ -625,4 +588,3 @@ ath_gmac_miiphy_write(char *devname, uint32_t phy_addr, uint8_t reg, uint16_t da
 
 	return 0; 
 }
-//#endif /* CONFIG_CMD_MII */

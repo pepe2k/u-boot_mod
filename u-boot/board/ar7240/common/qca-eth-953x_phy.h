@@ -34,7 +34,7 @@ extern int athrs_ar8033_phy_is_up(int ethUnit);
 extern int athrs_ar8033_phy_speed(int ethUnit,int phyUnit);
 #endif
 
-#ifdef CFG_ATHRS27_PHY
+#ifdef CONFIG_ATHRS27_PHY
 extern int athrs27_phy_setup(int ethUnit);
 extern int athrs27_phy_is_up(int ethUnit);
 extern int athrs27_phy_is_fdx(int ethUnit);
@@ -50,7 +50,7 @@ extern int athrs17_phy_speed(int ethUnit);
 
 static inline void ath_gmac_phy_setup(int unit)
 {
-#ifdef CFG_ATHRS27_PHY
+#ifdef CONFIG_ATHRS27_PHY
                         athrs27_phy_setup(unit);
 #endif
 #ifdef CONFIG_VIR_PHY
@@ -61,7 +61,7 @@ static inline void ath_gmac_phy_setup(int unit)
 static inline void ath_gmac_phy_link(int unit, int *link)
 {
 
-#ifdef CFG_ATHRS27_PHY
+#ifdef CONFIG_ATHRS27_PHY
                         *link = athrs27_phy_is_up(unit);
 #endif
 
@@ -72,7 +72,7 @@ static inline void ath_gmac_phy_link(int unit, int *link)
 
 static inline void ath_gmac_phy_duplex(int unit, int *duplex)
 {
-#ifdef CFG_ATHRS27_PHY
+#ifdef CONFIG_ATHRS27_PHY
                         *duplex = athrs27_phy_is_fdx(unit);
 #endif
 #ifdef CONFIG_VIR_PHY
@@ -82,7 +82,7 @@ static inline void ath_gmac_phy_duplex(int unit, int *duplex)
 
 static inline void ath_gmac_phy_speed(int unit, int *speed)
 {
-#ifdef CFG_ATHRS27_PHY
+#ifdef CONFIG_ATHRS27_PHY
 			 *speed = athrs27_phy_speed(unit);
 #endif
 
