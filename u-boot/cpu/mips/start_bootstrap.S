@@ -200,9 +200,9 @@ reset:
 	mtc0 zero, $27
 	mtc0 zero, $28
 
-#if (SOC_TYPE & QCA_AR934X_SOC)  | \
-	(SOC_TYPE & QCA_QCA953X_SOC) | \
-	(SOC_TYPE & QCA_QCA955X_SOC) | \
+#if (SOC_TYPE & QCA_AR934X_SOC)  || \
+	(SOC_TYPE & QCA_QCA953X_SOC) || \
+	(SOC_TYPE & QCA_QCA955X_SOC) || \
 	(SOC_TYPE & QCA_QCA956X_SOC)
 	mtc0	zero, $29		# C0_TagHi
 	mtc0	zero, $28, 2	# C0_DTagLo
@@ -286,7 +286,8 @@ rel_start:
 #endif
 
 #if (SOC_TYPE & QCA_AR934X_SOC) || \
-	(SOC_TYPE & QCA_QCA953X_SOC)
+	(SOC_TYPE & QCA_QCA953X_SOC) ||\
+	(SOC_TYPE & QCA_QCA955X_SOC)
 	/* Setup stack in SRAM */
 	li t0, CONFIG_INIT_SRAM_SP_OFFSET
 #else
