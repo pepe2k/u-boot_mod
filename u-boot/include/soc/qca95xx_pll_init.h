@@ -1278,8 +1278,6 @@
 	#define QCA_PLL_DDR_PLL_CFG_REG_VAL_XTAL40		_qca95xx_ddr_pll_cfg_reg_val(10, 1, 1, 0, 0)
 	#define QCA_PLL_CPU_DDR_CLK_CTRL_REG_VAL_XTAL40		_qca95xx_cpu_ddr_clk_ctrl_reg_val(1, 1, 2, 1, 1, 1)
 
-	#define QCA_SPI_CTRL_REG_VAL				_qca95xx_spi_ctrl_addr_reg_val(8, 1, 0, 2)
-
 #elif (CONFIG_QCA_PLL == QCA_PLL_PRESET_800_400_300)	/* Tested! */
 
 	#define QCA_PLL_CPU_PLL_CFG_REG_VAL_XTAL25		_qca95xx_cpu_pll_cfg_reg_val(32, 1, 1, 0, 0)
@@ -1313,8 +1311,6 @@
 	#define QCA_PLL_CPU_PLL_CFG_REG_VAL_XTAL40		_qca95xx_cpu_pll_cfg_reg_val(20, 1, 1, 0, 0)
 	#define QCA_PLL_DDR_PLL_CFG_REG_VAL_XTAL40		_qca95xx_ddr_pll_cfg_reg_val(15, 1, 1, 0, 0)
 	#define QCA_PLL_CPU_DDR_CLK_CTRL_REG_VAL_XTAL40		_qca95xx_cpu_ddr_clk_ctrl_reg_val(1, 1, 3, 1, 1, 1)
-
-	#define QCA_SPI_CTRL_REG_VAL				_qca95xx_spi_ctrl_addr_reg_val(8, 1, 0, 2)
 
 #elif (CONFIG_QCA_PLL == QCA_PLL_PRESET_800_600_300)	/* Tested! */
 
@@ -1350,8 +1346,6 @@
 	#define QCA_PLL_DDR_PLL_CFG_REG_VAL_XTAL40		_qca95xx_ddr_pll_cfg_reg_val(10, 1, 1, 0, 0)
 	#define QCA_PLL_CPU_DDR_CLK_CTRL_REG_VAL_XTAL40		_qca95xx_cpu_ddr_clk_ctrl_reg_val(1, 1, 2, 1, 1, 1)
 	#define QCA_PLL_CPU_PLL_DITHER_REG_VAL_XTAL40		_qca95xx_cpu_pll_dither_reg_val(32)
-
-	#define QCA_SPI_CTRL_REG_VAL				_qca95xx_spi_ctrl_addr_reg_val(8, 1, 0, 2)
 
 #elif (CONFIG_QCA_PLL == QCA_PLL_PRESET_900_400_300)	/* Tested! */
 
@@ -1390,8 +1384,6 @@
 	#define QCA_PLL_CPU_DDR_CLK_CTRL_REG_VAL_XTAL40		_qca95xx_cpu_ddr_clk_ctrl_reg_val(1, 1, 3, 1, 1, 1)
 	#define QCA_PLL_CPU_PLL_DITHER_REG_VAL_XTAL40		_qca95xx_cpu_pll_dither_reg_val(32)
 
-	#define QCA_SPI_CTRL_REG_VAL				_qca95xx_spi_ctrl_addr_reg_val(8, 1, 0, 2)
-
 #elif (CONFIG_QCA_PLL == QCA_PLL_PRESET_900_600_300)	/* Tested! */
 
 	#define QCA_PLL_CPU_PLL_CFG_REG_VAL_XTAL25		_qca95xx_cpu_pll_cfg_reg_val(36, 1, 1, 0, 0)
@@ -1428,8 +1420,6 @@
 	#define QCA_PLL_DDR_PLL_CFG_REG_VAL_XTAL40		_qca95xx_ddr_pll_cfg_reg_val(10, 1, 1, 0, 0)
 	#define QCA_PLL_CPU_DDR_CLK_CTRL_REG_VAL_XTAL40		_qca95xx_cpu_ddr_clk_ctrl_reg_val(1, 1, 2, 1, 1, 1)
 
-	#define QCA_SPI_CTRL_REG_VAL				_qca95xx_spi_ctrl_addr_reg_val(8, 1, 0, 2)
-
 #elif (CONFIG_QCA_PLL == QCA_PLL_PRESET_1000_400_300)	/* Tested! */
 
 	#define QCA_PLL_CPU_PLL_CFG_REG_VAL_XTAL25		_qca95xx_cpu_pll_cfg_reg_val(40, 1, 1, 0, 0)
@@ -1463,8 +1453,6 @@
 	#define QCA_PLL_CPU_PLL_CFG_REG_VAL_XTAL40		_qca95xx_cpu_pll_cfg_reg_val(25, 1, 1, 0, 0)
 	#define QCA_PLL_DDR_PLL_CFG_REG_VAL_XTAL40		_qca95xx_ddr_pll_cfg_reg_val(15, 1, 1, 0, 0)
 	#define QCA_PLL_CPU_DDR_CLK_CTRL_REG_VAL_XTAL40		_qca95xx_cpu_ddr_clk_ctrl_reg_val(1, 1, 3, 1, 1, 1)
-
-	#define QCA_SPI_CTRL_REG_VAL				_qca95xx_spi_ctrl_addr_reg_val(8, 1, 0, 2)
 
 #elif (CONFIG_QCA_PLL == QCA_PLL_PRESET_1000_600_300)	/* Tested! */
 
@@ -1500,8 +1488,6 @@
 	#define QCA_PLL_DDR_PLL_CFG_REG_VAL_XTAL40		_qca95xx_ddr_pll_cfg_reg_val(10, 1, 1, 0, 0)
 	#define QCA_PLL_CPU_DDR_CLK_CTRL_REG_VAL_XTAL40		_qca95xx_cpu_ddr_clk_ctrl_reg_val(1, 1, 2, 1, 1, 1)
 	#define QCA_PLL_CPU_PLL_DITHER_REG_VAL_XTAL40		_qca95xx_cpu_pll_dither_reg_val(32)
-
-	#define QCA_SPI_CTRL_REG_VAL				_qca95xx_spi_ctrl_addr_reg_val(8, 1, 0, 2)
 
 #else
 	#error "QCA PLL configuration not supported or not selected!"
