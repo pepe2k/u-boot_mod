@@ -70,7 +70,7 @@ void qca_soc_name_rev(char *buf)
 #endif
 #if (SOC_TYPE & QCA_QCA955X_SOC)
 	case QCA_RST_REVISION_ID_MAJOR_QCA9558_VAL:
-		sprintf(buf, "QCA9558 rev. %d", rev);
+		sprintf(buf, "QCA9558 ver. 1 rev. %d", rev);
 		break;
 #endif
 	default:
