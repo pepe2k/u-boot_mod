@@ -312,30 +312,14 @@ lowlevel_gpio_init:
 	li  t8, QCA_GPIO_OE_REG
 	lw  t9, 0(t8)
 	#if defined(__GPIO_MASK_OUT)
-		#if (SOC_TYPE & QCA_QCA955X_SOC)
-	or  t9, t9, (__GPIO_MASK_OUT | CONFIG_QCA_GPIO_MASK_LSUART_TX)
-		#else
 	and t9, t9, ~(__GPIO_MASK_OUT | CONFIG_QCA_GPIO_MASK_LSUART_TX)
-		#endif
 	#else
-		#if (SOC_TYPE & QCA_QCA955X_SOC)
-	or  t9, t9, CONFIG_QCA_GPIO_MASK_LSUART_TX
-		#else
 	and t9, t9, ~CONFIG_QCA_GPIO_MASK_LSUART_TX
-		#endif
 	#endif
 	#if defined(__GPIO_MASK_IN)
-		#if (SOC_TYPE & QCA_QCA955X_SOC)
-	and t9, t9, ~(__GPIO_MASK_IN | CONFIG_QCA_GPIO_MASK_LSUART_RX)
-		#else
 	or  t9, t9, (__GPIO_MASK_IN | CONFIG_QCA_GPIO_MASK_LSUART_RX)
-		#endif
 	#else
-		#if (SOC_TYPE & QCA_QCA955X_SOC)
-	and t9, t9, ~CONFIG_QCA_GPIO_MASK_LSUART_RX
-		#else
 	or  t9, t9, CONFIG_QCA_GPIO_MASK_LSUART_RX
-		#endif
 	#endif
 	sw  t9, 0(t8)
 
