@@ -2269,6 +2269,23 @@ static const clk_profile clk_profiles[] = {
 		},
 	}, {
 		/* Tested! */
+		720, 600, 200, 25,
+		_qca95xx_spi_ctrl_addr_reg_val(8, 1, 0, 2),
+                {
+			_qca95xx_cpu_pll_cfg_reg_val(28, 1, 0, 0, 0),
+			_qca95xx_ddr_pll_cfg_reg_val(24, 1, 1, 0, 0),
+			_qca95xx_cpu_ddr_clk_ctrl_reg_val(1, 1, 3, 1, 1, 1),
+			_qca95xx_cpu_pll_dither_reg_val(52),
+			_qca95xx_ddr_pll_dither_reg_val(0)
+		}, {
+			_qca95xx_cpu_pll_cfg_reg_val(18, 1, 0, 0, 0),
+			_qca95xx_ddr_pll_cfg_reg_val(15, 1, 1, 0, 0),
+			_qca95xx_cpu_ddr_clk_ctrl_reg_val(1, 1, 3, 1, 1, 1),
+			_qca95xx_cpu_pll_dither_reg_val(0),
+			_qca95xx_ddr_pll_dither_reg_val(0)
+		},
+	}, {
+		/* Tested! */
 		800, 400, 200, 25,
 		_qca95xx_spi_ctrl_addr_reg_val(8, 1, 0, 2),
 		{
