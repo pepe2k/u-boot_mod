@@ -13,7 +13,8 @@
 
 void usb_init(void)
 {
-#if (SOC_TYPE & QCA_QCA953X_SOC)
+#if (SOC_TYPE & QCA_QCA953X_SOC) ||\
+    (SOC_TYPE & QCA_QCA955X_SOC)
 	u32 val;
 
 	/* Select REFCLK USB PLL input */
@@ -49,6 +50,40 @@ void usb_init(void)
 
 	qca_soc_reg_read_clear(QCA_RST_RESET_REG,
 			       QCA_RST_RESET_USB_PHY_PLLPWD_EXT_MASK);
+	udelay(10);
+#endif
+
+#if (SOC_TYPE & QCA_QCA953X_SOC)
+	qca_soc_reg_read_set(QCA_RST_RESET2_REG,
+			     QCA_RST_RESET2_USB_EXT_PWR_SHIFT);
+	udelay(10);
+
+	qca_soc_reg_read_set(QCA_RST_RESET2_REG,
+			     QCA_RST_RESET2_USB2_MODE_DEV_MASK);
+	udelay(10);
+
+	qca_soc_reg_read_set(QCA_RST_RESET2_REG,
+			     QCA_RST_RESET2_USB2_PHY_SUSPEND_ORIDE_MASK);
+	udelay(1000);
+
+	qca_soc_reg_read_clear(QCA_RST_RESET2_REG,
+			       QCA_RST_RESET2_USB2_PHY_ARST_MASK);
+	udelay(1000);
+
+	qca_soc_reg_read_clear(QCA_RST_RESET2_REG,
+			       QCA_RST_RESET2_USB2_PHY_RST_MASK);
+	udelay(1000);
+
+	qca_soc_reg_read_clear(QCA_RST_RESET2_REG,
+			       QCA_RST_RESET2_USB2_HOST_RST_MASK);
+	udelay(1000);
+
+	qca_soc_reg_read_clear(QCA_RST_RESET2_REG,
+			       QCA_RST_RESET2_USB2_PHY_PLLPWD_EXT_MASK);
+	udelay(10);
+
+	qca_soc_reg_read_set(QCA_RST_RESET2_REG,
+			     QCA_RST_RESET2_USB2_EXT_PWR_MASK);
 	udelay(10);
 #endif
 }
