@@ -40,25 +40,47 @@
 	((_dis    << QCA_PLL_DDR_PLL_CFG_PLLPWD_SHIFT) & QCA_PLL_DDR_PLL_CFG_PLLPWD_MASK)
 
 /* CPU_DDR_CLOCK_CONTROL */
-#define _qca95xx_cpu_ddr_clk_ctrl_reg_val(_cpudiv,          \
-					  _ddrdiv,          \
-					  _ahbdiv,          \
-					  _cpu_from_cpupll, \
-					  _ddr_from_ddrpll, \
-					  _ahb_from_ddrpll) \
-							    \
-	(((_cpudiv - 1) << QCA_PLL_CPU_DDR_CLK_CTRL_CPU_POST_DIV_SHIFT) &\
-	 QCA_PLL_CPU_DDR_CLK_CTRL_CPU_POST_DIV_MASK) |\
-	(((_ddrdiv - 1) << QCA_PLL_CPU_DDR_CLK_CTRL_DDR_POST_DIV_SHIFT) &\
-	 QCA_PLL_CPU_DDR_CLK_CTRL_DDR_POST_DIV_MASK) |\
-	(((_ahbdiv - 1) << QCA_PLL_CPU_DDR_CLK_CTRL_AHB_POST_DIV_SHIFT) &\
-	 QCA_PLL_CPU_DDR_CLK_CTRL_AHB_POST_DIV_MASK) |\
-	((_cpu_from_cpupll << QCA_PLL_CPU_DDR_CLK_CTRL_CPUCLK_FROM_CPUPLL_SHIFT) &\
-	 QCA_PLL_CPU_DDR_CLK_CTRL_CPUCLK_FROM_CPUPLL_MASK) |\
-	((_ddr_from_ddrpll << QCA_PLL_CPU_DDR_CLK_CTRL_DDRCLK_FROM_DDRPLL_SHIFT) &\
-	 QCA_PLL_CPU_DDR_CLK_CTRL_DDRCLK_FROM_DDRPLL_MASK) |\
-	((_ahb_from_ddrpll << QCA_PLL_CPU_DDR_CLK_CTRL_AHBCLK_FROM_DDRPLL_SHIFT) &\
-	 QCA_PLL_CPU_DDR_CLK_CTRL_AHBCLK_FROM_DDRPLL_MASK)
+#if (SOC_TYPE & QCA_QCA955X_SOC)
+	#define _qca95xx_cpu_ddr_clk_ctrl_reg_val(_cpudiv,          \
+						  _ddrdiv,          \
+						  _ahbdiv,          \
+						  _cpu_from_ddrpll, \
+						  _ddr_from_cpupll, \
+						  _ahb_from_ddrpll) \
+								    \
+		(((_cpudiv - 1) << QCA_PLL_CPU_DDR_CLK_CTRL_CPU_POST_DIV_SHIFT) &\
+		 QCA_PLL_CPU_DDR_CLK_CTRL_CPU_POST_DIV_MASK) |\
+		(((_ddrdiv - 1) << QCA_PLL_CPU_DDR_CLK_CTRL_DDR_POST_DIV_SHIFT) &\
+		 QCA_PLL_CPU_DDR_CLK_CTRL_DDR_POST_DIV_MASK) |\
+		(((_ahbdiv - 1) << QCA_PLL_CPU_DDR_CLK_CTRL_AHB_POST_DIV_SHIFT) &\
+		 QCA_PLL_CPU_DDR_CLK_CTRL_AHB_POST_DIV_MASK) |\
+		((_cpu_from_ddrpll << QCA_PLL_CPU_DDR_CLK_CTRL_CPUCLK_FROM_DDRPLL_SHIFT) &\
+		 ~QCA_PLL_CPU_DDR_CLK_CTRL_CPUCLK_FROM_DDRPLL_MASK) |\
+		((_ddr_from_cpupll << QCA_PLL_CPU_DDR_CLK_CTRL_DDRCLK_FROM_CPUPLL_SHIFT) &\
+		 ~QCA_PLL_CPU_DDR_CLK_CTRL_DDRCLK_FROM_CPUPLL_MASK) |\
+		((_ahb_from_ddrpll << QCA_PLL_CPU_DDR_CLK_CTRL_AHBCLK_FROM_DDRPLL_SHIFT) &\
+		 QCA_PLL_CPU_DDR_CLK_CTRL_AHBCLK_FROM_DDRPLL_MASK)
+#else
+	#define _qca95xx_cpu_ddr_clk_ctrl_reg_val(_cpudiv,          \
+						  _ddrdiv,          \
+						  _ahbdiv,          \
+						  _cpu_from_cpupll, \
+						  _ddr_from_ddrpll, \
+						  _ahb_from_ddrpll) \
+								    \
+		(((_cpudiv - 1) << QCA_PLL_CPU_DDR_CLK_CTRL_CPU_POST_DIV_SHIFT) &\
+		 QCA_PLL_CPU_DDR_CLK_CTRL_CPU_POST_DIV_MASK) |\
+		(((_ddrdiv - 1) << QCA_PLL_CPU_DDR_CLK_CTRL_DDR_POST_DIV_SHIFT) &\
+		 QCA_PLL_CPU_DDR_CLK_CTRL_DDR_POST_DIV_MASK) |\
+		(((_ahbdiv - 1) << QCA_PLL_CPU_DDR_CLK_CTRL_AHB_POST_DIV_SHIFT) &\
+		 QCA_PLL_CPU_DDR_CLK_CTRL_AHB_POST_DIV_MASK) |\
+		((_cpu_from_cpupll << QCA_PLL_CPU_DDR_CLK_CTRL_CPUCLK_FROM_CPUPLL_SHIFT) &\
+		 QCA_PLL_CPU_DDR_CLK_CTRL_CPUCLK_FROM_CPUPLL_MASK) |\
+		((_ddr_from_ddrpll << QCA_PLL_CPU_DDR_CLK_CTRL_DDRCLK_FROM_DDRPLL_SHIFT) &\
+		 QCA_PLL_CPU_DDR_CLK_CTRL_DDRCLK_FROM_DDRPLL_MASK) |\
+		((_ahb_from_ddrpll << QCA_PLL_CPU_DDR_CLK_CTRL_AHBCLK_FROM_DDRPLL_SHIFT) &\
+		 QCA_PLL_CPU_DDR_CLK_CTRL_AHBCLK_FROM_DDRPLL_MASK)
+#endif
 
 /* CPU/DDR_PLL_DITHER */
 #define _qca95xx_cpu_pll_dither_reg_val(_nfracmin)	\
