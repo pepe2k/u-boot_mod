@@ -387,6 +387,10 @@ qca953x_common: unconfig config_common
 	@$(call define_add,CONFIG_ATHEROS,1)
 	@$(call define_add,CONFIG_MACH_QCA953x,1)
 
+qca955x_common: unconfig config_common
+	@$(call define_add,CONFIG_ATHEROS,1)
+	@$(call define_add,CONFIG_MACH_QCA955x,1)
+
 lsdk_kernel:
 	@$(call define_add,CONFIG_LSDK_KERNEL,1)
 
