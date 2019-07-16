@@ -490,7 +490,7 @@ static const gpio_out_func gpio_out_funcs[] = {
 		.value = 12,
 		.name  = "spi_mosi"
 	}, {
-		.value = 22,
+		.value = QCA_GPIO_OUT_MUX_LSUART_TXD_VAL,		/* 22 */
 		.name  = "uart0_tx"
 	}, {
 		.value = QCA_GPIO_OUT_MUX_SRIF_OUT_VAL,			/* 23 */
@@ -663,7 +663,7 @@ static const gpio_out_func gpio_out_funcs[] = {
 		.value = 19,
 		.name  = "uart1_rts"
 	}, {
-		.value = 22,
+		.value = QCA_GPIO_OUT_MUX_LSUART_TXD_VAL,		/* 22 */
 		.name  = "uart0_tx"
 	}, {
 		.value = QCA_GPIO_OUT_MUX_SRIF_OUT_VAL,			/* 23 */
@@ -836,7 +836,7 @@ static const gpio_out_func gpio_out_funcs[] = {
 		.value = 19,
 		.name  = "uart1_rts"
 	}, {
-		.value = 22,
+		.value = QCA_GPIO_OUT_MUX_LSUART_TXD_VAL,		/* 22 */
 		.name  = "uart0_tx"
 	}, {
 		.value = 23,
