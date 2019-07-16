@@ -574,6 +574,17 @@ p2w_r602n: qca953x_common
 	@$(call define_add,CFG_ATH_GMAC_NMACS,2)
 	@$(MKCONFIG) -a ap143 mips mips ap143 ar7240 ar7240
 
+tp-link_archer-c7_v1: qca955x_common lsdk_kernel
+	@$(call config_init,TP-Link Archer C7 v1,archer-c7-v1,8,16,1,QCA_QCA9558_SOC)
+	@$(call define_add,CONFIG_FOR_TPLINK_ARCHER_C7_V1,1)
+	@$(call define_add,CONFIG_PCI,1)
+	@$(call define_add,CONFIG_USB,1)
+	@$(call define_add,CONFIG_ATHRS17_PHY,1)
+	@$(call define_add,CONFIG_ATHRS_GMAC_SGMII,1)
+	@$(call define_add,ATH_SGMII_FORCED_MODE,1)
+	@$(call define_add,CFG_ATH_GMAC_NMACS,2)
+	@$(MKCONFIG) -a ap135 mips mips ap135 ar7240 ar7240
+
 tp-link_tl-mr10u_v1: ar933x_common lsdk_kernel
 	@$(call config_init,TP-Link TL-MR10U v1,tl-mr10u-v1,4,11,,QCA_AR9331_SOC)
 	@$(call define_add,CONFIG_FOR_TPLINK_MR10U_V1,1)

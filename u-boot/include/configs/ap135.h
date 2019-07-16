@@ -22,11 +22,28 @@
  * ==================
  */
 
+#if defined(CONFIG_FOR_TPLINK_ARCHER_C7_V1)
+
+	#define CONFIG_QCA_GPIO_MASK_LED_ACT_L	GPIO12 | GPIO14 | GPIO15 |\
+						GPIO17 | GPIO18 | GPIO19
+	#define CONFIG_QCA_GPIO_MASK_IN		GPIO13
+	#define CONFIG_QCA_GPIO_MASK_OUT_INIT_H	GPIO21 | GPIO22
+
+#endif
+
 /*
  * ================
  * Default bootargs
  * ================
  */
+
+#if defined(CONFIG_FOR_TPLINK_ARCHER_C7_V1)
+
+	#define CONFIG_BOOTARGS	"console=ttyS0,115200 root=31:02 "\
+				"rootfstype=jffs2,squashfs init=/sbin/init "\
+				"mtdparts=ath-nor0:128k(u-boot),1024k(kernel),6912k(rootfs),64k(config),64k(art)"
+
+#endif
 
 /*
  * =============================
@@ -34,13 +51,27 @@
  * =============================
  */
 
-#define CONFIG_BOOTCOMMAND	"bootm " MK_STR(CFG_LOAD_ADDR)
+#if defined(CONFIG_FOR_TPLINK_ARCHER_C7_V1)
+
+	#define CFG_LOAD_ADDR	0x9F020000
+
+#endif
+
+	#define CONFIG_BOOTCOMMAND	"bootm " MK_STR(CFG_LOAD_ADDR)
 
 /*
  * =========================
  * Environment configuration
  * =========================
  */
+
+#if defined(CONFIG_FOR_TPLINK_ARCHER_C7_V1)
+
+	#define CFG_ENV_ADDR		0x9F01EC00
+	#define CFG_ENV_SIZE		0x1000
+	#define CFG_ENV_SECT_SIZE	0x10000
+
+#endif
 
 /*
  * ===========================
@@ -58,6 +89,16 @@
  * ==================================================
  */
 
+#if defined(CONFIG_FOR_TPLINK_ARCHER_C7_V1)
+
+	#define OFFSET_MAC_DATA_BLOCK		0x010000
+	#define OFFSET_MAC_DATA_BLOCK_LENGTH	0x010000
+	#define OFFSET_MAC_ADDRESS		0x00FC00
+	#define OFFSET_ROUTER_MODEL		0x00FD00
+	#define OFFSET_PIN_NUMBER		0x00FE00
+
+#endif
+
 /*
  * =========================
  * Custom changes per device
@@ -74,11 +115,29 @@
 
 /* Firmware size limit */
 
+#if defined(CONFIG_FOR_TPLINK_ARCHER_C7_V1)
+
+	#define WEBFAILSAFE_UPLOAD_LIMITED_AREA_IN_BYTES	(256 * 1024)
+
+#endif
+
 /*
  * ========================
  * PLL/Clocks configuration
  * ========================
  */
+
+#if defined(CONFIG_FOR_TPLINK_ARCHER_C7_V1)
+
+	#define CONFIG_QCA_PLL	QCA_PLL_PRESET_720_600_200
+
+#endif
+
+#if defined(CONFIG_FOR_TPLINK_ARCHER_C7_V1)
+
+	#define CONFIG_QCA_PLL_IN_FLASH_BLOCK_OFFSET	0x10000
+
+#endif
 
 /*
  * ==================================
