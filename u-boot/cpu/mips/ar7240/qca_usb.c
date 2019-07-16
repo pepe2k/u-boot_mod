@@ -58,7 +58,7 @@ void usb_init(void)
 	udelay(10);
 #endif
 
-#if (SOC_TYPE & QCA_QCA953X_SOC)
+#if (SOC_TYPE & QCA_QCA955X_SOC)
 	qca_soc_reg_read_set(QCA_RST_RESET2_REG,
 			     QCA_RST_RESET2_USB_EXT_PWR_SHIFT);
 	udelay(10);
