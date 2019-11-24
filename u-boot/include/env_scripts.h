@@ -140,7 +140,8 @@
 		"elif itest $cnt < 5; then "
 	#endif
 
-	#define CONFIG_ENV_BTN_RECOVERY_SCRIPT	\
+	#if !defined(CONFIG_ENV_BTN_RECOVERY_SCRIPT)
+		#define CONFIG_ENV_BTN_RECOVERY_SCRIPT	\
 		"recovery=" \
 		"if button; then " \
 			"sleep 600;" \
@@ -182,6 +183,7 @@
 			"fi;" \
 			"setenv cnt;" \
 		"fi\0"
+	#endif
 
 #endif /* CONFIG_BTN_RECOVERY_SCRIPT && CONFIG_GPIO_RESET_BTN */
 

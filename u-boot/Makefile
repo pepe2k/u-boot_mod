@@ -852,6 +852,11 @@ zbtlink_zbt-we1526: qca953x_common
 	@$(call define_add,CFG_ATH_GMAC_NMACS,2)
 	@$(MKCONFIG) -a ap143 mips mips ap143 ar7240 ar7240
 
+zsun_sd100: ar933x_common
+	@$(call config_init,Zsun SD100,sd100,16,22,0,QCA_AR9331_SOC)
+	@$(call define_add,CONFIG_FOR_ZSUN_SD100,1)
+	@$(MKCONFIG) -a ap121 mips mips ap121 ar7240 ar7240
+
 # =============
 # CLEAN TARGETS
 # =============

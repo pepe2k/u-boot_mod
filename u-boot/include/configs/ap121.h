@@ -156,6 +156,11 @@
 
 	#define CONFIG_QCA_GPIO_MASK_LED_ACT_L	GPIO27
 
+#elif defined(CONFIG_FOR_ZSUN_SD100)
+	#define CONFIG_QCA_GPIO_MASK_LED_ACT_H	GPIO0
+	#define CONFIG_QCA_GPIO_MASK_OUT_INIT_H	GPIO18
+	#define CONFIG_QCA_GPIO_MASK_OUT_INIT_L	GPIO21
+
 #endif
 
 /*
@@ -242,6 +247,12 @@
 	#define CONFIG_BOOTARGS	"console=ttyS0,115200 root=31:02 "\
 				"rootfstype=squashfs init=/sbin/init "\
 				"mtdparts=ar7240-nor0:128k(u-boot),64k(u-boot-env),16128k(firmware),64k(art)"
+
+#elif defined(CONFIG_FOR_ZSUN_SD100)
+
+	#define CONFIG_BOOTARGS	"console=ttyATH0,115200 root=31:04 "\
+				"rootfstype=squashfs,jffs2 noinitrd "\
+				"mtdparts=spi0.0:64k(u-boot)ro,64k(u-boot-env)ro,12032k(firmware),4096k(recovery)ro,64k(nvram)ro,64k(art)ro"
 
 #endif
 
@@ -330,6 +341,11 @@
 	#define CFG_ENV_SIZE		0x8000
 	#define CFG_ENV_SECT_SIZE	0x10000
 
+#elif defined(CONFIG_FOR_ZSUN_SD100)
+
+	#define CFG_ENV_ADDR		0x9F010000
+	#define CFG_ENV_SIZE		0x10000
+
 #else
 
 	#define CFG_ENV_ADDR		0x9F01EC00
@@ -359,7 +375,8 @@
     defined(CONFIG_FOR_ALFA_NETWORK_TUBE2H)    ||\
     defined(CONFIG_FOR_CREATCOMM_D3321)        ||\
     defined(CONFIG_FOR_DRAGINO_MS14)           ||\
-    defined(CONFIG_FOR_VILLAGE_TELCO_MP2)
+    defined(CONFIG_FOR_VILLAGE_TELCO_MP2)      ||\
+    defined(CONFIG_FOR_ZSUN_SD100)
 
 	#define OFFSET_MAC_DATA_BLOCK		0xFF0000
 	#define OFFSET_MAC_DATA_BLOCK_LENGTH	0x010000
@@ -427,7 +444,8 @@
     !defined(CONFIG_FOR_HAK5_PACKET_SQUIRREL)        &&\
     !defined(CONFIG_FOR_HAK5_WIFI_PINEAPPLE_NANO)    &&\
     !defined(CONFIG_FOR_UNWIRED_DEVICES_UNWIRED_ONE) &&\
-    !defined(CONFIG_FOR_VILLAGE_TELCO_MP2)
+    !defined(CONFIG_FOR_VILLAGE_TELCO_MP2)           &&\
+    !defined(CONFIG_FOR_ZSUN_SD100)
 
 	#define OFFSET_ROUTER_MODEL	0xFD00
 
@@ -481,6 +499,35 @@
 
 #endif
 
+/* Zsun SD100 is limited to 64 KB only and has a custom recovery script */
+#if defined(CONFIG_FOR_ZSUN_SD100)
+
+	#undef CONFIG_CMD_HTTPD
+
+	#define CFG_LOAD_ADDR_RECOVERY		0x9FBE0000
+	#define CONFIG_BOOTCOMMAND_RECOVERY	"bootm " MK_STR(CFG_LOAD_ADDR_RECOVERY) ";"
+	#define CONFIG_ENV_BTN_RECOVERY_SCRIPT	\
+		"recovery=" \
+		"echo [RECOVERY] Insert SD Card in the next 3sec to boot recovery firmware...;" \
+		"setenv cnt 0;" \
+		"while button && itest $cnt < 4; do " \
+			"ledon;" \
+			"sleep 375;" \
+			"ledoff;" \
+			"sleep 375;" \
+			"setexpr cnt $cnt + 1;" \
+		"done;" \
+		"if button; then " \
+			"echo [RECOVERY] SD Card not inserted: Booting main firmware!;" \
+			"echo;" \
+		"else;" \
+			"echo [RECOVERY] SD Card inserted: Booting recovery firmware!;" \
+			"echo;" \
+			CONFIG_BOOTCOMMAND_RECOVERY \
+		"fi;\0"
+
+#endif
+
 /*
  * ===========================
  * HTTP recovery configuration
@@ -527,6 +574,10 @@
 #elif defined(CONFIG_FOR_UNWIRED_DEVICES_UNWIRED_ONE)
 
 	#define WEBFAILSAFE_UPLOAD_LIMITED_AREA_IN_BYTES	(256 * 1024)
+
+#elif defined(CONFIG_FOR_ZSUN_SD100)
+
+	#define WEBFAILSAFE_UPLOAD_LIMITED_AREA_IN_BYTES	(4352 * 1024)
 
 #else
 
@@ -587,7 +638,8 @@
     !defined(CONFIG_FOR_GLINET_GL_USB150)            &&\
     !defined(CONFIG_FOR_HAK5_WIFI_PINEAPPLE_NANO)    &&\
     !defined(CONFIG_FOR_UNWIRED_DEVICES_UNWIRED_ONE) &&\
-    !defined(CONFIG_FOR_VILLAGE_TELCO_MP2)
+    !defined(CONFIG_FOR_VILLAGE_TELCO_MP2)           &&\
+    !defined(CONFIG_FOR_ZSUN_SD100)
 
 	#define CONFIG_UPG_SCRIPTS_UBOOT_SIZE_BCKP_HEX	0x20000
 

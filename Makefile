@@ -272,7 +272,8 @@ comfast_cf-e520n \
 comfast_cf-e530n:
 	@$(call build,64,1,ETH_CONFIG=_s27)
 
-d-link_dir-505_a1:
+d-link_dir-505_a1 \
+zsun_sd100:
 	@$(call build,64,1)
 
 dragino_ms14:
