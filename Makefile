@@ -284,6 +284,8 @@ gl-inet_gl-ar300m-lite \
 gl-inet_gl-ar750 \
 p2w_cpe505n \
 p2w_r602n \
+qca_ap143_8m \
+qca_ap143_16m \
 yuncore_ap90q \
 yuncore_cpe830 \
 yuncore_t830 \

@@ -118,6 +118,7 @@ Currently supported devices:
   - GL.iNet GL-AR750
   - P&W CPE505N
   - P&W R602N
+  - Qualcomm Atheros AP143 reference board
   - TP-Link TL-MR22U v1
   - TP-Link TL-MR3420 v3
   - TP-Link TL-MR6400 v1, v2
@@ -168,6 +169,7 @@ More information about supported devices:
 | Hak5 WiFi Pineapple NANO | AR9331 | 16 MiB | 64 MiB DDR2 | 128 KiB | R/W |
 | P&W CPE505N | QCA9531 | 16 MiB | 64 MiB DDR2 | 256 KiB | R/W |
 | P&W R602N | QCA9531 | 16 MiB | 64 MiB DDR2 | 256 KiB | R/W |
+| Qualcomm Atheros AP143 | AR9531 | 8/16 MiB | 32 MiB DDR2 | 256 KiB | R/W |
 | [TP-Link TL-MR10U v1](http://wiki.openwrt.org/toh/tp-link/tl-mr10u) | AR9331 | 4 MiB | 32 MiB DDR1 | 64 KiB, LZMA | RO |
 | [TP-Link TL-MR13U v1](http://wiki.openwrt.org/toh/tp-link/tl-mr13u) | AR9331 | 4 MiB | 32 MiB DDR1 | 64 KiB, LZMA | RO |
 | [TP-Link TL-MR22U v1](https://wiki.openwrt.org/toh/tp-link/tp-link_tl-mr22u_v1) | QCA9531 | 8 MiB | 32 MiB DDR1 | 64 KiB, LZMA | RO |
