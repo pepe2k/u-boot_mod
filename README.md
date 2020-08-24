@@ -103,6 +103,7 @@ Currently supported devices:
 
 - **Atheros AR9344**:
   - ALFA Network N5Q
+  - Atheros DB120 reference board
   - GL.iNet GL-AR300
   - TP-Link TL-WDR3500 v1
   - TP-Link TL-WDR3600 v1
@@ -147,6 +148,7 @@ More information about supported devices:
 | ALFA Network N5Q | AR9344 | 16 MiB | 64 MiB DDR2 | 384 KiB, LZMA | R/W |
 | ALFA Network R36A | QCA9531 | 16 MiB | 64 MiB DDR2 | 384 KiB, LZMA | R/W |
 | ALFA Network Tube2H | AR9331 | 8/16 MiB | 32/64 MiB DDR1 | 256 KiB | R/W |
+| Atheros DB120 reference board | AR9344 | 8/16 MiB | 128 MiB DDR2 | 256 KiB | R/W |
 | [Black Swift](http://www.black-swift.com) | AR9331 | 16 MiB | 64 MiB DDR2 | 128 KiB, LZMA | R/W |
 | Comfast CF-E314N | QCA9531 | 16 MiB | 64 MiB DDR2 | 64 KiB, LZMA | RO |
 | Comfast CF-E320N v2 | QCA9531 | 16 MiB | 64 MiB DDR2 | 64 KiB, LZMA | RO |

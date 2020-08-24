@@ -428,6 +428,17 @@ alfa-network_tube2h: ar933x_common
 	@$(call define_add,CONFIG_FOR_ALFA_NETWORK_TUBE2H,1)
 	@$(MKCONFIG) -a ap121 mips mips ap121 ar7240 ar7240
 
+atheros_db120: ar934x_common
+	@$(call config_init,Atheros DB120,db120,8,16,1,QCA_AR9344_SOC)
+	@$(call define_add,CONFIG_FOR_ATHEROS_DB120,1)
+	@$(call define_add,CFG_ATHRS17_PHY,1)
+	@$(call define_add,CFG_AG7240_NMACS,1)
+	@$(call define_add,CONFIG_PCI,1)
+	@$(call define_add,CFG_DUAL_PHY_SUPPORT,1)
+	@$(call define_add,CONFIG_BOARD_DRAM_TYPE_DDR2,1)
+	@$(call define_add,CONFIG_BOARD_DRAM_DDR_WIDTH,32)
+	@$(MKCONFIG) -a db12x mips mips db12x ar7240 ar7240
+
 comfast_cf-e314n: qca953x_common
 	@$(call config_init,Comfast CF-E314N,cf-e314n,16,17,1,QCA_QCA9531_SOC)
 	@$(call define_add,CONFIG_FOR_COMFAST_CF_E314N,1)

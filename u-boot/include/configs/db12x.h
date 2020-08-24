@@ -28,6 +28,12 @@
 						GPIO19
 	#define CONFIG_QCA_GPIO_MASK_OUT_INIT_L	GPIO16 | GPIO17
 
+#elif defined(CONFIG_FOR_ATHEROS_DB120)
+
+	#define CONFIG_QCA_GPIO_MASK_LED_ACT_L	GPIO11 | GPIO12 | GPIO13 |\
+						GPIO14 | GPIO15
+	#define CONFIG_QCA_GPIO_MASK_IN		GPIO16
+
 #elif defined(CONFIG_FOR_ENGENIUS_ENS202EXT)
 
 	#define CONFIG_QCA_GPIO_MASK_LED_ACT_L	GPIO0  | GPIO14 | GPIO16 |\
@@ -98,6 +104,12 @@
 				"rootfstype=jffs2,squashfs init=/sbin/init "\
 				"mtdparts=ath-nor0:448k(u-boot),64k(art),1280k(kernel),14528k(rootfs),64k(config)"
 
+#elif defined(CONFIG_FOR_ATHEROS_DB120)
+
+	#define CONFIG_BOOTARGS	"console=ttyS0,115200 root=31:03 "\
+				"rootfstype=squashfs init=/sbin/init "\
+				"mtdparts=spi0.0:256k(u-boot)ro,64k(u-boot-env)ro,6336k(rootfs),1408k(kernel),64k(nvram),64k(art)ro,7744k@0x50000(firmware)"
+
 #elif defined(CONFIG_FOR_ENGENIUS_ENS202EXT)
 
 	#define CONFIG_BOOTARGS	"console=ttyS0,115200 root=31:04 "\
@@ -150,7 +162,8 @@
 
 	#define CFG_LOAD_ADDR		0x9F050000
 
-#elif defined(CONFIG_FOR_YUNCORE_CPE870)
+#elif defined(CONFIG_FOR_ATHEROS_DB120)  ||\
+      defined(CONFIG_FOR_YUNCORE_CPE870)
 
 	#define CFG_LOAD_ADDR		0x9F680000
 
@@ -160,7 +173,7 @@
 
 #endif
 
-#define CONFIG_BOOTCOMMAND	"bootm " MK_STR(CFG_LOAD_ADDR)
+#define CONFIG_BOOTCOMMAND     "bootm " MK_STR(CFG_LOAD_ADDR)
 
 /*
  * =========================
@@ -172,7 +185,8 @@
 	#define CFG_ENV_ADDR		0x9F060000
 	#define CFG_ENV_SIZE		0x10000
 
-#elif defined(CONFIG_FOR_ENGENIUS_ENS202EXT)
+#elif defined(CONFIG_FOR_ENGENIUS_ENS202EXT) ||\
+      defined(CONFIG_FOR_ATHEROS_DB120)
 
 	#define CFG_ENV_ADDR		0x9F040000
 	#define CFG_ENV_SIZE		0x10000
@@ -222,6 +236,12 @@
       defined(CONFIG_FOR_YUNCORE_CPE870)
 
 	#define OFFSET_MAC_DATA_BLOCK		0xFF0000
+	#define OFFSET_MAC_DATA_BLOCK_LENGTH	0x010000
+	#define OFFSET_MAC_ADDRESS		0x000000
+
+#elif defined(CONFIG_FOR_ATHEROS_DB120)
+
+	#define OFFSET_MAC_DATA_BLOCK		0x7F0000
 	#define OFFSET_MAC_DATA_BLOCK_LENGTH	0x010000
 	#define OFFSET_MAC_ADDRESS		0x000000
 
@@ -306,8 +326,6 @@
  * PLL/Clocks configuration
  * ========================
  */
-#define CONFIG_QCA_PLL	QCA_PLL_PRESET_550_400_200
-
 #if defined(CONFIG_FOR_ALFA_NETWORK_N5Q)
 
 	#define CONFIG_QCA_PLL_IN_FLASH_BLOCK_OFFSET	0x70000
@@ -333,6 +351,16 @@
 
 #endif
 
+#if defined(CONFIG_FOR_ATHEROS_DB120)
+
+	#define CONFIG_QCA_PLL QCA_PLL_PRESET_560_450_225
+
+#else
+
+	#define CONFIG_QCA_PLL	QCA_PLL_PRESET_550_400_200
+
+#endif
+
 /*
  * ==================================
  * For upgrade scripts in environment
@@ -347,7 +375,11 @@
 
 #endif
 
-#if defined(CONFIG_FOR_YUNCORE_CPE870)
+#if defined(CONFIG_FOR_ATHEROS_DB120)
+
+        #define CONFIG_UPG_SCRIPTS_FW_ADDR_HEX  0x9F050000
+
+#elif defined(CONFIG_FOR_YUNCORE_CPE870)
 
 	#define CONFIG_UPG_SCRIPTS_FW_ADDR_HEX	0x9F020000
 

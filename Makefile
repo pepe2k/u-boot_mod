@@ -251,6 +251,9 @@ COMMON_ETHS27_TARGETS = \
 $(COMMON_ETHS27_TARGETS):
 	@$(call build,123,1,ETH_CONFIG=_s27)
 
+atheros_db120:
+	@$(call build,256,1,ETH_CONFIG=_s17)
+
 8devices_carambola2 \
 alfa-network_hornet-ub \
 alfa-network_tube2h \
