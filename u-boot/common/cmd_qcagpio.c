@@ -84,6 +84,9 @@ static void gpio_func_gate(u8 disable, u8 enable)
 #if (SOC_TYPE & QCA_QCA953X_SOC) ||\
     (SOC_TYPE & QCA_QCA955X_SOC) ||\
     (SOC_TYPE & QCA_QCA956X_SOC)
+	case QCA_GPIO_OUT_MUX_LSUART_TXD_VAL:
+		val = QCA_GPIO_OUT_FUNCX_GPIO10_EN_MASK;
+		break;
 	case QCA_GPIO_OUT_MUX_SRIF_OUT_VAL:
 		val = QCA_GPIO_FUNC_GPIO_SRIF_EN_MASK;
 		break;
@@ -130,6 +133,9 @@ static void gpio_func_gate(u8 disable, u8 enable)
 #if (SOC_TYPE & QCA_QCA953X_SOC) ||\
     (SOC_TYPE & QCA_QCA955X_SOC) ||\
     (SOC_TYPE & QCA_QCA956X_SOC)
+	case QCA_GPIO_OUT_MUX_LSUART_TXD_VAL:
+		val = QCA_GPIO_OUT_FUNCX_GPIO10_EN_MASK;
+		break;
 	case QCA_GPIO_OUT_MUX_SRIF_OUT_VAL:
 		val = QCA_GPIO_FUNC_GPIO_SRIF_EN_MASK;
 		break;

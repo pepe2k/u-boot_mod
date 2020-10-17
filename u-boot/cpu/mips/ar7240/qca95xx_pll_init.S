@@ -222,11 +222,10 @@ xtal_is_40mhz:
 	li reg_cpu_ddr_clk,  QCA_PLL_CPU_DDR_CLK_CTRL_REG_VAL_XTAL40
 	li reg_cpu_pll_dit,  QCA_PLL_CPU_PLL_DITHER_REG_VAL_XTAL40
 	li reg_ddr_pll_dit,  QCA_PLL_DDR_PLL_DITHER_REG_VAL_XTAL40
-
-#ifdef CONFIG_QCA_GPIO_OC_RECOVERY_BTN
 	b  cpu_ddr_clock_control
 	nop
 
+#ifdef CONFIG_QCA_GPIO_OC_RECOVERY_BTN
 xtal_is_40mhz_recovery:
 	li reg_spi_ctrl_cfg, QCA_SPI_CTRL_REG_VAL_SAFE
 	li reg_cpu_pll_cfg,  QCA_PLL_CPU_PLL_CFG_REG_VAL_SAFE_XTAL40
@@ -234,6 +233,8 @@ xtal_is_40mhz_recovery:
 	li reg_cpu_ddr_clk,  QCA_PLL_CPU_DDR_CLK_CTRL_REG_VAL_SAFE_XTAL40
 	li reg_cpu_pll_dit,  QCA_PLL_CPU_PLL_DITHER_REG_VAL_SAFE_XTAL40
 	li reg_ddr_pll_dit,  QCA_PLL_DDR_PLL_DITHER_REG_VAL_SAFE_XTAL40
+	b  cpu_ddr_clock_control
+	nop
 #endif
 
 /*

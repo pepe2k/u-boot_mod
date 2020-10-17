@@ -261,6 +261,15 @@ void qca_sys_clocks(u32 *cpu_clk,
 	temp = ((reg_val & QCA_PLL_CPU_DDR_CLK_CTRL_CPU_POST_DIV_MASK)
 			>> QCA_PLL_CPU_DDR_CLK_CTRL_CPU_POST_DIV_SHIFT) + 1;
 
+#if (SOC_TYPE & QCA_QCA955X_SOC)
+	if (reg_val & QCA_PLL_CPU_DDR_CLK_CTRL_CPU_PLL_BYPASS_MASK) {
+		qca_cpu_clk = qca_ref_clk;
+	} else if (reg_val & QCA_PLL_CPU_DDR_CLK_CTRL_CPUCLK_FROM_DDRPLL_MASK) {
+		qca_cpu_clk = ddr_pll / temp;
+	} else {
+		qca_cpu_clk = cpu_pll / temp;
+	}
+#else
 	if (reg_val & QCA_PLL_CPU_DDR_CLK_CTRL_CPU_PLL_BYPASS_MASK) {
 		qca_cpu_clk = qca_ref_clk;
 	} else if (reg_val & QCA_PLL_CPU_DDR_CLK_CTRL_CPUCLK_FROM_CPUPLL_MASK) {
@@ -268,11 +277,21 @@ void qca_sys_clocks(u32 *cpu_clk,
 	} else {
 		qca_cpu_clk = ddr_pll / temp;
 	}
+#endif
 
 	/* DDR clock divider */
 	temp = ((reg_val & QCA_PLL_CPU_DDR_CLK_CTRL_DDR_POST_DIV_MASK)
 			>> QCA_PLL_CPU_DDR_CLK_CTRL_DDR_POST_DIV_SHIFT) + 1;
 
+#if (SOC_TYPE & QCA_QCA955X_SOC)
+	if (reg_val & QCA_PLL_CPU_DDR_CLK_CTRL_DDR_PLL_BYPASS_MASK) {
+		qca_ddr_clk = qca_ref_clk;
+	} else if (reg_val & QCA_PLL_CPU_DDR_CLK_CTRL_DDRCLK_FROM_CPUPLL_MASK) {
+		qca_ddr_clk = cpu_pll / temp;
+	} else {
+		qca_ddr_clk = ddr_pll / temp;
+	}
+#else
 	if (reg_val & QCA_PLL_CPU_DDR_CLK_CTRL_DDR_PLL_BYPASS_MASK) {
 		qca_ddr_clk = qca_ref_clk;
 	} else if (reg_val & QCA_PLL_CPU_DDR_CLK_CTRL_DDRCLK_FROM_DDRPLL_MASK) {
@@ -280,6 +299,7 @@ void qca_sys_clocks(u32 *cpu_clk,
 	} else {
 		qca_ddr_clk = cpu_pll / temp;
 	}
+#endif
 
 	/* AHB clock divider */
 	temp = ((reg_val & QCA_PLL_CPU_DDR_CLK_CTRL_AHB_POST_DIV_MASK)

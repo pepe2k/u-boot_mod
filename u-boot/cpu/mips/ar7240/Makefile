@@ -27,6 +27,10 @@ ifeq ($(BOARD), db12x)
 	SOBJS	+= qca95xx_pll_init.o
 endif
 
+ifeq ($(BOARD), ap135)
+	SOBJS	+= qca95xx_pll_init.o
+endif
+
 ifeq ($(BOARD), ap143)
 	SOBJS	+= qca95xx_pll_init.o
 endif

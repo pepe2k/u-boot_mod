@@ -27,7 +27,6 @@
  */
 #define is_ar7100()	(0)
 
-
 #define is_ar7240()	(0)
 #define is_ar7241()	(0)
 #define is_ar7242()	(0)
@@ -91,7 +90,7 @@
 #define is_vir_phy() 	0
 #endif
 
-#ifdef CFG_ATHRS27_PHY
+#ifdef CONFIG_ATHRS27_PHY
 #define is_s27()        1
 #else
 #define is_s27()        0

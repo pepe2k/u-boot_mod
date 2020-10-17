@@ -460,16 +460,17 @@
 
 #define is_ar933x_11()  (((ar7240_reg_rd(AR7240_REV_ID) & AR7240_REV_ID_MASK) == AR9330_REV_1_1) || \
                             ((ar7240_reg_rd(AR7240_REV_ID) & AR7240_REV_ID_MASK) == AR9331_REV_1_1))
-   
+
 #define is_ar933x_12()  (((ar7240_reg_rd(AR7240_REV_ID) & AR7240_REV_ID_MASK) == AR9330_REV_1_2) || \
                             ((ar7240_reg_rd(AR7240_REV_ID) & AR7240_REV_ID_MASK) == AR9331_REV_1_2))
-       
 
 #define is_ar933x() (is_ar9330() || is_ar9331())
 
 #define is_ar9344()	((ar7240_reg_rd(AR7240_REV_ID) & AR9344_REV_ID_MASK) == AR9344_REV_1_x)
 #define is_ar9342()	((ar7240_reg_rd(AR7240_REV_ID) & AR9344_REV_ID_MASK) == AR9342_REV_1_x)
 #define is_ar9341()	((ar7240_reg_rd(AR7240_REV_ID) & AR9344_REV_ID_MASK) == AR9341_REV_1_x)
+
+#define is_drqfn()	(!(ar7240_reg_rd(0x18060090) & 0x1000))
 
 #ifdef CONFIG_WASP_SUPPORT
 	#define is_wasp()	1

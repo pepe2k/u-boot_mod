@@ -18,15 +18,31 @@
 #include <miiphy.h>
 #include "phy.h"
 #include <asm/addrspace.h>
-#include "ar7240_soc.h"
 #include "athrs17_phy.h"
+#if (SOC_TYPE & QCA_QCA955X_SOC)
+	#include "atheros.h"
+#else
+	#include "ar7240_soc.h"
+#endif
+
+/* PHY selections and access functions */
+typedef enum {
+	PHY_SRCPORT_INFO,
+	PHY_PORTINFO_SIZE,
+} PHY_CAP_TYPE;
+
+typedef enum {
+	PHY_SRCPORT_NONE,
+	PHY_SRCPORT_VLANTAG,
+	PHY_SRCPORT_TRAILER,
+} PHY_SRCPORT_TYPE;
 
 #define ATHR_LAN_PORT_VLAN	1
 #define ATHR_WAN_PORT_VLAN	2
 #define ENET_UNIT_GE0		0
 #define ENET_UNIT_GE1		1
-#define TRUE				1
-#define FALSE				0
+#define TRUE			1
+#define FALSE			0
 
 #define ATHR_PHY0_ADDR		0x0
 #define ATHR_PHY1_ADDR		0x1
@@ -35,44 +51,95 @@
 #define ATHR_PHY4_ADDR		0x4
 #define ATHR_IND_PHY		4
 
-#define MODULE_NAME			"ATHRS17"
+#define MODULE_NAME		"ATHRS17"
 #define S17_PHY_DEBUG		1
+extern int xmii_val;
 
 /*
  * Track per-PHY port information.
  */
 typedef struct {
-	int			isEnetPort;       /* normal enet port */
-	int			isPhyAlive;       /* last known state of link */
-    int			ethUnit;          /* MAC associated with this phy port */
-    uint32_t	phyBase;
-    uint32_t	phyAddr;          /* PHY registers associated with this phy port */
-    uint32_t	VLANTableSetting; /* Value to be written to VLAN table */
+	int		isEnetPort;       /* normal enet port */
+	int		isPhyAlive;       /* last known state of link */
+	int		ethUnit;          /* MAC associated with this phy port */
+	uint32_t	phyBase;
+	uint32_t	phyAddr;          /* PHY registers associated with this phy port */
+	uint32_t	VLANTableSetting; /* Value to be written to VLAN table */
 } athrPhyInfo_t;
+
+#if defined(CONFIG_ATHRS_GMAC_SGMII)
+#if (CFG_ATH_GMAC_NMACS == 1) /* QCA9563 only have 1 GMAC working */
+#define ENET_UNIT            ENET_UNIT_GE0
+#define ENET_UNIT_WAN        ENET_UNIT_GE0
+#else
+#define ENET_UNIT            ENET_UNIT_GE1
+#define ENET_UNIT_WAN        ENET_UNIT_GE0
+#endif
+#else
+#define ENET_UNIT            ENET_UNIT_GE0
+#define ENET_UNIT_WAN        ENET_UNIT_GE1
+#endif
 
 /*
  * Per-PHY information, indexed by PHY unit number.
  */
 static athrPhyInfo_t athrPhyInfo[] = {
-	/* phy port 0 -- LAN port 0 */
-	{TRUE, FALSE, ENET_UNIT_GE0, 0, ATHR_PHY0_ADDR, ATHR_LAN_PORT_VLAN},
-	
-	/* phy port 1 -- LAN port 1 */
-	{TRUE, FALSE, ENET_UNIT_GE0, 0, ATHR_PHY1_ADDR, ATHR_LAN_PORT_VLAN},
-
-	/* phy port 2 -- LAN port 2 */
-	{TRUE, FALSE, ENET_UNIT_GE0, 0, ATHR_PHY2_ADDR, ATHR_LAN_PORT_VLAN},
-
-	/* phy port 3 -- LAN port 3 */
-	{TRUE, FALSE, ENET_UNIT_GE0, 0, ATHR_PHY3_ADDR, ATHR_LAN_PORT_VLAN},
-
-	/* phy port 4 -- WAN port or LAN port 4 */
-	/* Send to all ports */
-	{TRUE, FALSE, ENET_UNIT_GE0, 0, ATHR_PHY4_ADDR, ATHR_LAN_PORT_VLAN},
-
-	/* phy port 5 -- CPU port (no RJ45 connector) */
-	/* Send to all ports */
-	{FALSE, TRUE, ENET_UNIT_GE0, 0, 0x00, ATHR_LAN_PORT_VLAN},
+	{
+		TRUE,   /* phy port 0 -- LAN port 0 */
+		FALSE,
+#ifdef CONFIG_QCA_ETH_PHY_SWAP
+		ENET_UNIT_WAN,
+#else
+		ENET_UNIT,
+#endif
+		0,
+		ATHR_PHY0_ADDR,
+		ATHR_LAN_PORT_VLAN
+	},
+	{
+		TRUE,   /* phy port 1 -- LAN port 1 */
+		FALSE,
+		ENET_UNIT,
+		0,
+		ATHR_PHY1_ADDR,
+		ATHR_LAN_PORT_VLAN
+	},
+	{
+		TRUE,   /* phy port 2 -- LAN port 2 */
+		FALSE,
+		ENET_UNIT,
+		0,
+		ATHR_PHY2_ADDR,
+		ATHR_LAN_PORT_VLAN
+	},
+	{
+		TRUE,   /* phy port 3 -- LAN port 3 */
+		FALSE,
+		ENET_UNIT,
+		0,
+		ATHR_PHY3_ADDR,
+		ATHR_LAN_PORT_VLAN
+	},
+	{
+		TRUE,   /* phy port 4 -- WAN port or LAN port 4 */
+		FALSE,
+#if defined(CONFIG_QCA_ETH_PHY_SWAP)
+		ENET_UNIT,
+#else
+		ENET_UNIT_WAN,
+#endif
+		0,
+		ATHR_PHY4_ADDR,
+		ATHR_LAN_PORT_VLAN   /* Send to all ports */
+	},
+	{
+		FALSE,  /* phy port 5 -- CPU port (no RJ45 connector) */
+		TRUE,
+		ENET_UNIT,
+		0,
+		0x00,
+		ATHR_LAN_PORT_VLAN    /* Send to all ports */
+	},
 };
 
 static uint8_t athr17_init_flag = 0;
@@ -96,48 +163,184 @@ static uint8_t athr17_init_flag = 0;
             ATHR_ETHUNIT(phyUnit) == (ethUnit))
 
 #define ATHR_IS_WAN_PORT(phyUnit) (!(ATHR_ETHUNIT(phyUnit)==ENET_UNIT_GE0))
-            
+
 /* Forward references */
 int athrs17_phy_is_link_alive(int phyUnit);
 uint32_t athrs17_reg_read(uint32_t reg_addr);
 void athrs17_reg_write(uint32_t reg_addr, uint32_t reg_val);
+static void phy_mode_setup(void);
+unsigned int s17_rd_phy(unsigned int phy_addr, unsigned int reg_addr);
+void s17_wr_phy(unsigned int phy_addr, unsigned int reg_addr, unsigned int write_data);
 
 #define sysMsDelay(_x) udelay((_x) * 1000)
 
-void athrs17_reg_init(){
+static void phy_mode_setup(void)
+{
+#ifdef ATHRS17_VER_1_0
+	/*work around for phy4 rgmii mode*/
+	phy_reg_write(ATHR_PHYBASE(ATHR_IND_PHY), ATHR_PHYADDR(ATHR_IND_PHY), 29, 18);
+	phy_reg_write(ATHR_PHYBASE(ATHR_IND_PHY), ATHR_PHYADDR(ATHR_IND_PHY), 30, 0x480c);
+
+	/*rx delay*/
+	phy_reg_write(ATHR_PHYBASE(ATHR_IND_PHY), ATHR_PHYADDR(ATHR_IND_PHY), 29, 0);
+	phy_reg_write(ATHR_PHYBASE(ATHR_IND_PHY), ATHR_PHYADDR(ATHR_IND_PHY), 30, 0x824e);
+
+	/*tx delay*/
+	phy_reg_write(ATHR_PHYBASE(ATHR_IND_PHY), ATHR_PHYADDR(ATHR_IND_PHY), 29, 5);
+	phy_reg_write(ATHR_PHYBASE(ATHR_IND_PHY), ATHR_PHYADDR(ATHR_IND_PHY), 30, 0x3d47);
+#endif
+}
+/*
+ * V-lan configuration given by Switch team
+ * Vlan 1:PHY0,1,2,3 and Mac 0 of s17
+ * Vlam 2:PHY4 and Mac 6 of s17
+ */
+
+void athrs17_vlan_config(void)
+{
+#ifdef ATH_S17_WAN_PORT1
+	athrs17_reg_write(S17_P0LOOKUP_CTRL_REG, 0x0014003c);
+	athrs17_reg_write(S17_P0VLAN_CTRL0_REG, 0x10001);
+
+	athrs17_reg_write(S17_P1LOOKUP_CTRL_REG, 0x00140040);
+	athrs17_reg_write(S17_P1VLAN_CTRL0_REG, 0x20001);
+
+	athrs17_reg_write(S17_P2LOOKUP_CTRL_REG, 0x00140039);
+	athrs17_reg_write(S17_P2VLAN_CTRL0_REG, 0x10001);
+
+	athrs17_reg_write(S17_P3LOOKUP_CTRL_REG, 0x00140035);
+	athrs17_reg_write(S17_P3VLAN_CTRL0_REG, 0x10001);
+
+	athrs17_reg_write(S17_P4LOOKUP_CTRL_REG, 0x0014002d);
+	athrs17_reg_write(S17_P4VLAN_CTRL0_REG, 0x10001);
+
+	athrs17_reg_write(S17_P5LOOKUP_CTRL_REG, 0x0014001d);
+	athrs17_reg_write(S17_P5VLAN_CTRL0_REG, 0x10001);
+
+	athrs17_reg_write(S17_P6LOOKUP_CTRL_REG, 0x00140020);
+	athrs17_reg_write(S17_P6VLAN_CTRL0_REG, 0x20001);
+#else
+	athrs17_reg_write(S17_P0LOOKUP_CTRL_REG, 0x0014001e);
+	athrs17_reg_write(S17_P0VLAN_CTRL0_REG, 0x10001);
+
+	athrs17_reg_write(S17_P1LOOKUP_CTRL_REG, 0x0014001d);
+	athrs17_reg_write(S17_P1VLAN_CTRL0_REG, 0x10001);
+
+	athrs17_reg_write(S17_P2LOOKUP_CTRL_REG, 0x0014001b);
+	athrs17_reg_write(S17_P2VLAN_CTRL0_REG, 0x10001);
+
+	athrs17_reg_write(S17_P3LOOKUP_CTRL_REG, 0x00140017);
+	athrs17_reg_write(S17_P3VLAN_CTRL0_REG, 0x10001);
+
+	athrs17_reg_write(S17_P4LOOKUP_CTRL_REG, 0x0014000f);
+	athrs17_reg_write(S17_P4VLAN_CTRL0_REG, 0x10001);
+
+	athrs17_reg_write(S17_P5LOOKUP_CTRL_REG, 0x00140040);
+	athrs17_reg_write(S17_P5VLAN_CTRL0_REG, 0x20001);
+
+	athrs17_reg_write(S17_P6LOOKUP_CTRL_REG, 0x00140020);
+	athrs17_reg_write(S17_P6VLAN_CTRL0_REG, 0x20001);
+#endif
+}
+
+void athrs17_reg_init_wan(void)
+{
+
+#ifdef CONFIG_ATHRS_GMAC_SGMII
+	athrs17_reg_write(S17_P6PAD_MODE_REG, 0x07600000);
+
+#else
+	athrs17_reg_write(S17_P6PAD_MODE_REG,
+		athrs17_reg_read(S17_P6PAD_MODE_REG) | S17_MAC6_SGMII_EN);
+#endif
+	athrs17_reg_write(S17_P6STATUS_REG, S17_PORT_STATUS_AZ_DEFAULT);
+	athrs17_reg_write(S17_SGMII_CTRL_REG, 0xc74164d0); /* SGMII control */
+
+        athrs17_vlan_config();
+	printf("%s done\n",__func__);
+
+}
+
+void athrs17_reg_init(void) {
 	int phy_addr = 0;
+	uint32_t sgmii_ctrl_value;
 
 	/* if using header for register configuration, we have to     */
 	/* configure s17 register after frame transmission is enabled */
-	if(athr17_init_flag){
+
+	if ((athrs17_reg_read(S17_MASK_CTRL_REG) & 0xFFFF) == S17C_DEVICEID) {
+		sgmii_ctrl_value = 0xc74164de;
+	} else {
+		sgmii_ctrl_value = 0xc74164d0;
+	}
+
+	if (athr17_init_flag) {
 		return;
 	}
 
-	/* configure the RGMII */
-	athrs17_reg_write(0x624 , 0x7f7f7f7f);
-	athrs17_reg_write(0x10  , 0x40000000);
-	athrs17_reg_write(0x4   , 0x07600000);
-	athrs17_reg_write(0xc   , 0x01000000);
-	athrs17_reg_write(0x7c  , 0x0000007e);
+#if (CFG_ATH_GMAC_NMACS == 1)
+		athrs17_reg_write(S17_P0PAD_MODE_REG, S17_MAC0_SGMII_EN);
+		athrs17_reg_write(S17_SGMII_CTRL_REG, sgmii_ctrl_value); /* SGMII control  */
+		athrs17_reg_write(S17_GLOFW_CTRL1_REG, 0x7f7f7f7f);
+#else
+	if (is_drqfn()) {
+		athrs17_reg_write(S17_P0PAD_MODE_REG, S17_MAC0_SGMII_EN);
+		athrs17_reg_write(S17_SGMII_CTRL_REG, sgmii_ctrl_value); /* SGMII control  */
+	} else {
+		athrs17_reg_write(S17_GLOFW_CTRL1_REG, 0x7f7f7f7f);
+		/*
+                 * If defined S17 Mac0 sgmii val of 0x4(S17_P0PAD_MODE_REG)
+                 * should be configured as 0x80
+                 */
+#ifdef CONFIG_ATHRS_GMAC_SGMII
+		athrs17_reg_write(S17_P0PAD_MODE_REG, 0x80080);
+#else
+		athrs17_reg_write(S17_P0PAD_MODE_REG, 0x07680000);
+#endif
+		athrs17_reg_write(S17_P6PAD_MODE_REG, 0x01000000);
+#endif	/* CFG_ATH_GMAC_NMACS == 1 */
+	}
+
+/*
+ * Values suggested by the swich team when s17 in sgmii configuration
+ * operates in forced mode.
+ * 0x10(S17_PWS_REG)=0x602613a0
+ */
+#ifdef ATH_SGMII_FORCED_MODE
+	athrs17_reg_write(S17_PWS_REG, 0x602613a0);
+#else
+	athrs17_reg_write(S17_PWS_REG, 0x40000000);
+#endif
+	athrs17_reg_write(S17_P0STATUS_REG, 0x0000007e);
 
 	/* AR8327/AR8328 v1.0 fixup */
-	if((athrs17_reg_read(0x0) & 0xffff) == 0x1201){
-		for(phy_addr = 0x0; phy_addr <= ATHR_PHY_MAX; phy_addr++){
+	if ((athrs17_reg_read(0x0) & 0xffff) == 0x1201) {
+		for (phy_addr = 0x0; phy_addr <= ATHR_PHY_MAX; phy_addr++) {
 			/* For 100M waveform */
 			phy_reg_write(0, phy_addr, 0x1d, 0x0);
 			phy_reg_write(0, phy_addr, 0x1e, 0x02ea);
-			
+
 			/* Turn On Gigabit Clock */
 			phy_reg_write(0, phy_addr, 0x1d, 0x3d);
 			phy_reg_write(0, phy_addr, 0x1e, 0x68a0);
 		}
 	}
 
+#if CONFIG_S17_SWMAC6_CONNECTED
+        printf ("Configuring Mac6 of s17 to slave scorpion\n");
+	athrs17_reg_write(S17_P6PAD_MODE_REG, S17_MAC6_RGMII_EN | S17_MAC6_RGMII_TXCLK_DELAY | \
+                              S17_MAC6_RGMII_RXCLK_DELAY | (1 << S17_MAC6_RGMII_TXCLK_SHIFT) | \
+                              (2 << S17_MAC6_RGMII_RXCLK_SHIFT));
+	athrs17_reg_write(S17_P6STATUS_REG, 0x7e);
+        athrs17_vlan_config();
+#endif
+
 	/* set the WAN Port(Port1) Disable Mode(can not receive or transmit any frames) */
 	// TODO: why WAN should be disabled?
 	//athrs17_reg_write(0x066c, athrs17_reg_read(0x066c) & 0xfff8ffff);
 
 	athr17_init_flag = 1;
+	printf("%s: complete\n",__func__);
 }
 
 /******************************************************************************
@@ -148,21 +351,20 @@ void athrs17_reg_init(){
 *    TRUE  --> link is alive
 *    FALSE --> link is down
 */
-int athrs17_phy_is_link_alive(int phyUnit){
-	uint16_t phyHwStatus;
-	//uint32_t phyBase;
-	//uint32_t phyAddr;
+int athrs17_phy_is_link_alive(int phyUnit) {
+	uint16_t	phyHwStatus;
+	uint32_t	phyBase;
+	uint32_t	phyAddr;
 
-	//phyBase = ATHR_PHYBASE(phyUnit);
-	//phyAddr = ATHR_PHYADDR(phyUnit);
+	phyBase = ATHR_PHYBASE(phyUnit);
+	phyAddr = ATHR_PHYADDR(phyUnit);
 
-	phyHwStatus = phy_reg_read(ATHR_PHYBASE(phyUnit), ATHR_PHYADDR(phyUnit), ATHR_PHY_SPEC_STATUS);
+	phyHwStatus = phy_reg_read(phyBase, phyAddr, ATHR_PHY_SPEC_STATUS);
 
-	if(phyHwStatus & ATHR_STATUS_LINK_PASS){
-		return(TRUE);
-	}
+	if (phyHwStatus & ATHR_STATUS_LINK_PASS)
+		return TRUE;
 
-	return(FALSE);
+	return FALSE;
 }
 
 /******************************************************************************
@@ -176,19 +378,19 @@ int athrs17_phy_is_link_alive(int phyUnit){
 *    TRUE  --> associated PHY is alive
 *    FALSE --> no LINKs on this ethernet unit
 */
-int athrs17_phy_setup(int ethUnit){
-	int			phyUnit;
+int athrs17_phy_setup(int ethUnit) {
+	int		phyUnit;
 	uint16_t	phyHwStatus;
 	uint16_t	timeout;
-	int			liveLinks = 0;
+	int		liveLinks = 0;
 	uint32_t	phyBase = 0;
-	int			foundPhy = FALSE;
+	int		foundPhy = FALSE;
 	uint32_t	phyAddr = 0;
 
 	/* See if there's any configuration data for this enet */
 	/* start auto negogiation on each phy */
-	for(phyUnit=0; phyUnit < ATHR_PHY_MAX; phyUnit++){
-		if(!ATHR_IS_ETHUNIT(phyUnit, ethUnit)){
+	for (phyUnit=0; phyUnit < ATHR_PHY_MAX; phyUnit++) {
+		if (!ATHR_IS_ETHUNIT(phyUnit, ethUnit)) {
 			continue;
 		}
 
@@ -196,16 +398,25 @@ int athrs17_phy_setup(int ethUnit){
 		phyBase = ATHR_PHYBASE(phyUnit);
 		phyAddr = ATHR_PHYADDR(phyUnit);
 
-		phy_reg_write(phyBase, phyAddr, ATHR_AUTONEG_ADVERT, ATHR_ADVERTISE_ALL);
-		phy_reg_write(phyBase, phyAddr, ATHR_1000BASET_CONTROL, ATHR_ADVERTISE_1000FULL);
-		
+		phy_reg_write(phyBase, phyAddr, ATHR_AUTONEG_ADVERT,
+				ATHR_ADVERTISE_ALL);
+
+		phy_reg_write(phyBase, phyAddr, ATHR_1000BASET_CONTROL,
+				ATHR_ADVERTISE_1000FULL);
+
 		/* Reset PHYs*/
-		phy_reg_write(phyBase, phyAddr, ATHR_PHY_CONTROL, ATHR_CTRL_AUTONEGOTIATION_ENABLE | ATHR_CTRL_SOFTWARE_RESET);
+		phy_reg_write(phyBase, phyAddr, ATHR_PHY_CONTROL,
+				ATHR_CTRL_AUTONEGOTIATION_ENABLE
+				| ATHR_CTRL_SOFTWARE_RESET);
 	}
 
-	if(!foundPhy){
+
+	/* close wan phy in case of data interation. */
+//	phy_reg_write(ATHR_PHYBASE(WAN_PHY), ATHR_PHYADDR(WAN_PHY), ATHR_PHY_CONTROL, 0x0800);
+
+	if (!foundPhy) {
 		/* No PHY's configured for this ethUnit */
-		return(FALSE);
+		return FALSE;
 	}
 
 	/*
@@ -219,27 +430,27 @@ int athrs17_phy_setup(int ethUnit){
 	* autonegotiation.  The only way we get out of here sooner is
 	* if ALL PHYs are connected AND finish autonegotiation.
 	*/
-	for(phyUnit = 0; (phyUnit < ATHR_PHY_MAX); phyUnit++){
-		if(!ATHR_IS_ETHUNIT(phyUnit, ethUnit)){
+	for (phyUnit = 0; (phyUnit < ATHR_PHY_MAX); phyUnit++) {
+		if (!ATHR_IS_ETHUNIT(phyUnit, ethUnit)) {
 			continue;
 		}
 
 		// TODO: maybe we can lower this value
 		timeout = 10;
 
-		for(;;){
+		for (;;) {
 			phyHwStatus = phy_reg_read(phyBase, phyAddr, ATHR_PHY_CONTROL);
 
-			if(ATHR_RESET_DONE(phyHwStatus)){
+			if (ATHR_RESET_DONE(phyHwStatus)) {
 				//printf("Port %d, Neg Success\n", phyUnit);
 				break;
 			}
-			
+
 			sysMsDelay(20);
 
 			timeout--;
-			
-			if(timeout <= 0){
+
+			if (timeout <= 0) {
 				break;
 			}
 		}
@@ -254,12 +465,12 @@ int athrs17_phy_setup(int ethUnit){
 	* get noticed by mv_phyCheckStatusChange during regular
 	* polling activities.
 	*/
-	for(phyUnit=0; phyUnit < ATHR_PHY_MAX; phyUnit++){
-		if(!ATHR_IS_ETHUNIT(phyUnit, ethUnit)){
+	for (phyUnit=0; phyUnit < ATHR_PHY_MAX; phyUnit++) {
+		if (!ATHR_IS_ETHUNIT(phyUnit, ethUnit)) {
 			continue;
 		}
 
-		if(athrs17_phy_is_link_alive(phyUnit)){
+		if (athrs17_phy_is_link_alive(phyUnit)) {
 			liveLinks++;
 			ATHR_IS_PHY_ALIVE(phyUnit) = TRUE;
 		} else {
@@ -268,8 +479,8 @@ int athrs17_phy_setup(int ethUnit){
 
 		//printf("eth%d: Phy Specific Status=%4.4x\n", ethUnit, phy_reg_read(ATHR_PHYBASE(phyUnit), ATHR_PHYADDR(phyUnit), ATHR_PHY_SPEC_STATUS));
 	}
-
-	return(liveLinks > 0);
+	phy_mode_setup();
+	return (liveLinks > 0);
 }
 
 /******************************************************************************
@@ -281,44 +492,41 @@ int athrs17_phy_setup(int ethUnit){
 *    1 --> FULL
 *    0 --> HALF
 */
-int athrs17_phy_is_fdx(int ethUnit){
-	int			phyUnit;
+int athrs17_phy_is_fdx(int ethUnit) {
+	int		phyUnit;
 	uint32_t	phyBase;
 	uint32_t	phyAddr;
 	uint16_t	phyHwStatus;
-	int			ii = 200;
+	int		ii = 200;
 
-	if(ethUnit == ENET_UNIT_GE0){
-		return(TRUE);
-	}
+	if (ethUnit == ENET_UNIT_GE0 || ethUnit == ENET_UNIT_GE1)
+		return TRUE;
 
-	for(phyUnit=0; phyUnit < ATHR_PHY_MAX; phyUnit++){
-		if(!ATHR_IS_ETHUNIT(phyUnit, ethUnit)){
+	for (phyUnit=0; phyUnit < ATHR_PHY_MAX; phyUnit++) {
+		if (!ATHR_IS_ETHUNIT(phyUnit, ethUnit)) {
 			continue;
 		}
 
-		if(athrs17_phy_is_link_alive(phyUnit)){
+		if (athrs17_phy_is_link_alive(phyUnit)) {
 			phyBase = ATHR_PHYBASE(phyUnit);
 			phyAddr = ATHR_PHYADDR(phyUnit);
 
 			do {
-				phyHwStatus = phy_reg_read(phyBase, phyAddr,
-				ATHR_PHY_SPEC_STATUS);
-				
-				if(phyHwStatus & ATHR_STATUS_RESOVLED){
+				phyHwStatus = phy_reg_read (phyBase, phyAddr,
+						ATHR_PHY_SPEC_STATUS);
+
+				if (phyHwStatus & ATHR_STATUS_RESOVLED)
 					break;
-				}
-				
+
 				sysMsDelay(10);
 			} while(--ii);
 
-			if(phyHwStatus & ATHER_STATUS_FULL_DEPLEX){
-				return(TRUE);
-			}
+			if (phyHwStatus & ATHER_STATUS_FULL_DEPLEX)
+				return TRUE;
 		}
 	}
 
-	return(FALSE);
+	return FALSE;
 }
 
 /******************************************************************************
@@ -330,56 +538,51 @@ int athrs17_phy_is_fdx(int ethUnit){
 *               AG7240_PHY_SPEED_10T, AG7240_PHY_SPEED_100TX;
 *               AG7240_PHY_SPEED_1000T;
 */
-int athrs17_phy_speed(int ethUnit){
-	int			phyUnit;
+int athrs17_phy_speed(int ethUnit) {
+	int		phyUnit;
 	uint16_t	phyHwStatus;
 	uint32_t	phyBase;
 	uint32_t	phyAddr;
-	int			ii = 200;
+	int		ii = 200;
 
-	if(ethUnit == ENET_UNIT_GE0){
-		return(_1000BASET);
-	}
+	if ((ethUnit == ENET_UNIT_GE0) || (ethUnit == ENET_UNIT_GE1))
+		return _1000BASET;
 
-	for(phyUnit=0; phyUnit < ATHR_PHY_MAX; phyUnit++){
-		if(!ATHR_IS_ETHUNIT(phyUnit, ethUnit)){
+	for (phyUnit=0; phyUnit < ATHR_PHY_MAX; phyUnit++) {
+		if (!ATHR_IS_ETHUNIT(phyUnit, ethUnit)) {
 			continue;
 		}
 
-		if(athrs17_phy_is_link_alive(phyUnit)){
+		if (athrs17_phy_is_link_alive(phyUnit)) {
 			phyBase = ATHR_PHYBASE(phyUnit);
 			phyAddr = ATHR_PHYADDR(phyUnit);
 
 			do {
-				phyHwStatus = phy_reg_read(phyBase, phyAddr, ATHR_PHY_SPEC_STATUS);
-				
-				if(phyHwStatus & ATHR_STATUS_RESOVLED){
+				phyHwStatus = phy_reg_read(phyBase, phyAddr,
+						ATHR_PHY_SPEC_STATUS);
+
+				if (phyHwStatus & ATHR_STATUS_RESOVLED)
 					break;
-				}
-				
+
 				sysMsDelay(10);
-			} while((!(phyHwStatus & ATHR_STATUS_RESOVLED)) && --ii);
+			} while ((!(phyHwStatus & ATHR_STATUS_RESOVLED)) && --ii);
 
 			phyHwStatus = ((phyHwStatus & ATHER_STATUS_LINK_MASK) >> ATHER_STATUS_LINK_SHIFT);
 
-			switch(phyHwStatus){
+			switch(phyHwStatus) {
 				case 0:
-					return(_10BASET);
-					break;
+					return _10BASET;
 				case 1:
-					return(_100BASET);
-					break;
+					return _100BASET;
 				case 2:
-					return(_1000BASET);
-					break;
+					return _1000BASET;
 				default:
-					//printf("## Error: unkown speed read!\n");
-					break;
+					printf("Unknown speed read!\n");
 			}
 		}
 	}
 
-	return(_10BASET);
+	return _10BASET;
 }
 
 /*****************************************************************************
@@ -393,18 +596,18 @@ int athrs17_phy_speed(int ethUnit){
 * When a PHY is plugged in, phyLinkGained is called.
 * When a PHY is unplugged, phyLinkLost is called.
 */
-int athrs17_phy_is_up(int ethUnit){
-	int				phyUnit;
-	uint16_t		phyHwStatus, phyHwControl;
+int athrs17_phy_is_up(int ethUnit) {
+	int		phyUnit;
+	uint16_t	phyHwStatus, phyHwControl;
 	athrPhyInfo_t	*lastStatus;
-	int				linkCount   = 0;
-	int				lostLinks   = 0;
-	int				gainedLinks = 0;
-	uint32_t		phyBase;
-	uint32_t		phyAddr;
+	int		linkCount   = 0;
+	int		lostLinks   = 0;
+	int		gainedLinks = 0;
+	uint32_t	phyBase;
+	uint32_t	phyAddr;
 
-	for(phyUnit=0; phyUnit < ATHR_PHY_MAX; phyUnit++){
-		if(!ATHR_IS_ETHUNIT(phyUnit, ethUnit)){
+	for (phyUnit=0; phyUnit < ATHR_PHY_MAX; phyUnit++) {
+		if (!ATHR_IS_ETHUNIT(phyUnit, ethUnit)) {
 			continue;
 		}
 
@@ -413,11 +616,11 @@ int athrs17_phy_is_up(int ethUnit){
 
 		lastStatus = &athrPhyInfo[phyUnit];
 
-		if(lastStatus->isPhyAlive){ /* last known link status was ALIVE */
+		if (lastStatus->isPhyAlive) { /* last known link status was ALIVE */
 			phyHwStatus = phy_reg_read(phyBase, phyAddr, ATHR_PHY_SPEC_STATUS);
 
 			/* See if we've lost link */
-			if(phyHwStatus & ATHR_STATUS_LINK_PASS){
+			if (phyHwStatus & ATHR_STATUS_LINK_PASS) {
 				linkCount++;
 			} else {
 				lostLinks++;
@@ -427,18 +630,18 @@ int athrs17_phy_is_up(int ethUnit){
 		} else { /* last known link status was DEAD */
 		/* Check for reset complete */
 			phyHwStatus = phy_reg_read(phyBase, phyAddr, ATHR_PHY_STATUS);
-			if(!ATHR_RESET_DONE(phyHwStatus)){
+			if (!ATHR_RESET_DONE(phyHwStatus)) {
 				continue;
 			}
 
 			phyHwControl = phy_reg_read(phyBase, phyAddr, ATHR_PHY_CONTROL);
-			
-			/* Check for AutoNegotiation complete */            
-			if((!(phyHwControl & ATHR_CTRL_AUTONEGOTIATION_ENABLE)) || ATHR_AUTONEG_DONE(phyHwStatus)){
-				phyHwStatus = phy_reg_read(phyBase, phyAddr, 
-				ATHR_PHY_SPEC_STATUS);
 
-				if(phyHwStatus & ATHR_STATUS_LINK_PASS){
+			/* Check for AutoNegotiation complete */
+			if ((!(phyHwControl & ATHR_CTRL_AUTONEGOTIATION_ENABLE)) || ATHR_AUTONEG_DONE(phyHwStatus)) {
+				phyHwStatus = phy_reg_read(phyBase, phyAddr,
+						ATHR_PHY_SPEC_STATUS);
+
+				if (phyHwStatus & ATHR_STATUS_LINK_PASS) {
 					gainedLinks++;
 					linkCount++;
 					//printf("\nenet%d port%d up\n", ethUnit, phyUnit);
@@ -451,7 +654,7 @@ int athrs17_phy_is_up(int ethUnit){
 	return(linkCount);
 }
 
-uint32_t athrs17_reg_read(uint32_t reg_addr){
+uint32_t athrs17_reg_read(uint32_t reg_addr) {
 	uint32_t reg_word_addr;
 	uint32_t phy_addr, tmp_val, reg_val;
 	uint16_t phy_val;
@@ -481,10 +684,10 @@ uint32_t athrs17_reg_read(uint32_t reg_addr){
 	tmp_val = (uint32_t)phy_reg_read(0, phy_addr, phy_reg);
 	reg_val |= (tmp_val << 16);
 
-	return(reg_val);
+	return reg_val;
 }
 
-void athrs17_reg_write(uint32_t reg_addr, uint32_t reg_val){
+void athrs17_reg_write(uint32_t reg_addr, uint32_t reg_val) {
 	uint32_t reg_word_addr;
 	uint32_t phy_addr;
 	uint16_t phy_val;
@@ -516,4 +719,14 @@ void athrs17_reg_write(uint32_t reg_addr, uint32_t reg_val){
 	phy_reg = (uint8_t)(reg_word_addr & 0x1f);   /* bit4-0 of reg address */
 	phy_val = (uint16_t)(reg_val & 0xffff);
 	phy_reg_write(0, phy_addr, phy_reg, phy_val);
+}
+
+unsigned int s17_rd_phy(unsigned int phy_addr, unsigned int reg_addr)
+{
+	return ((uint32_t) phy_reg_read(0, phy_addr, reg_addr));
+}
+
+void s17_wr_phy(unsigned int phy_addr, unsigned int reg_addr, unsigned int write_data)
+{
+	phy_reg_write(0, phy_addr, reg_addr, write_data);
 }

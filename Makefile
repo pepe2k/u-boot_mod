@@ -292,6 +292,7 @@ whqx_e600gac_v2 \
 zbtlink_zbt-we1526:
 	@$(call build,256,1,ETH_CONFIG=_s27)
 
+tp-link_archer-c7_v1 \
 tp-link_tl-wdr3600_v1 \
 tp-link_tl-wdr43x0_v1 \
 tp-link_tl-wr1041n_v2:

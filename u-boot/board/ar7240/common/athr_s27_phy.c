@@ -30,33 +30,16 @@
 #include <linux/types.h>
 #include <common.h>
 #include <miiphy.h>
-
 #include <asm/addrspace.h>
 #include <atheros.h>
 #include "athr_s27_phy.h"
-
-
-//#include "phy.h" !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-#define ath_gmac_unit2name(_unit) (_unit ?  "eth1" : "eth0")
-
-extern int ath_gmac_miiphy_read(char *devname, uint32_t phaddr, uint8_t reg, uint16_t *data);
-extern int ath_gmac_miiphy_write(char *devname, uint32_t phaddr, uint8_t reg, uint16_t data);
+#include "phy.h"
 
 void athrs27_reg_rmw(unsigned int s27_addr, unsigned int s27_write_data);
-
-#define phy_reg_read(base, addr, reg)	\
-	ath_gmac_miiphy_read(ath_gmac_unit2name(base), addr, reg, NULL)
-
-#define phy_reg_write(base, addr, reg, data)	\
-	ath_gmac_miiphy_write(ath_gmac_unit2name(base), addr, reg, data)
-
 
 #ifdef S27_PHY_DEBUG
 	#undef S27_PHY_DEBUG
 #endif
-
-
-
 
 /* PHY selections and access functions */
 
