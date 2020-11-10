@@ -1,29 +1,23 @@
 #
-# Makefile for http stuff
+# Copyright (C) 2000-2006 Wolfgang Denk, DENX Software Engineering, wd@denx.de
+#
+# SPDX-License-Identifier: GPL-2.0
 #
 
 include $(TOPDIR)/config.mk
 
+OBJS-y += uip.o
+OBJS-y += uip_arch.o
+OBJS-y += uip_arp.o
+OBJS-y += httpd.o
+OBJS-y += fs.o
+
 # Suppress warnings when building with size optimization
 CFLAGS += -fno-strict-aliasing
 
-LIB   = libhttpd.a
-OBJS += uip.o \
-	uip_arch.o \
-	uip_arp.o \
-	httpd.o \
-	fs.o
+fs.c:	$(obj)fsdata.c
 
-all: $(LIB)
+$(obj)fsdata.c:
+	./vendors/makefsdatac $(obj)fsdata.c $(DEVICE_VENDOR)
 
-$(LIB): $(OBJS)
-	$(AR) crv $@ $(OBJS)
-
-#########################################################################
-
-.depend: Makefile fsdata.c $(OBJS:.o=.c)
-	$(CC) -M $(CFLAGS) $(OBJS:.o=.c) > $@
-
-sinclude .depend
-
-#########################################################################
+include $(TOPDIR)/end.mk

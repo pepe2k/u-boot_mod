@@ -54,7 +54,7 @@ struct sntp_pkt_t {
 	unsigned long long originate_timestamp;
 	unsigned long long receive_timestamp;
 	unsigned long long transmit_timestamp;
-};
+} __attribute__((__packed__));
 
 extern void	SntpStart (void);	/* Begin SNTP */
 

@@ -125,20 +125,20 @@ void athrs27_force_100M(int phyAddr, int duplex){
 	s27_wr_phy(phyAddr, 0x1d, 0x29);
 	s27_wr_phy(phyAddr, 0x1e, 0x0);
 	s27_wr_phy(phyAddr, 0x10, 0xc60);
-	s27_wr_phy(phyAddr, ATHR_PHY_CONTROL, (0xa000 | (duplex << 8)));
+	s27_wr_phy(phyAddr, ATHR_PHY_CONTROL, (0xa000UL | ((u32)duplex << 8)));
 }
 
 void athrs27_force_10M(int phyAddr, int duplex){
 	athrs27_powersave_off(phyAddr);
 	athrs27_sleep_off(phyAddr);
 
-	s27_wr_phy(phyAddr, ATHR_PHY_CONTROL, (0x8000 | (duplex << 8)));
+	s27_wr_phy(phyAddr, ATHR_PHY_CONTROL, (0x8000UL | ((u32)duplex << 8)));
 }
 
 int athrs27_reg_init(void){
 	/* if using header for register configuration, we have to     */
 	/* configure s27 register after frame transmission is enabled */
-	athrs27_reg_rmw(0x8, (1 << 28));  /* Set WAN port is connected to GE0 */
+	athrs27_reg_rmw(0x8, BIT(28));  /* Set WAN port is connected to GE0 */
 
 #if defined(S27_FORCE_100M)
 	athrs27_force_100M(ATHR_PHY4_ADDR, 1);
@@ -187,10 +187,10 @@ int athrs27_reg_init_lan(void){
 
 	athrs27_reg_write(PORT_STATUS_REGISTER0, 0x4e);
 
-	athrs27_reg_rmw(OPERATIONAL_MODE_REG0, (1 << 6));  /* Set GMII mode */
+	athrs27_reg_rmw(OPERATIONAL_MODE_REG0, BIT(6));  /* Set GMII mode */
 
 	if(is_emu() || is_wasp()){
-		athrs27_reg_rmw(0x2c, ((1 << 26) | (1 << 16) | 0x1)); /* FiX ME: EBU debug */
+		athrs27_reg_rmw(0x2c, (BIT(26) | BIT(16) | 0x1)); /* FiX ME: EBU debug */
 	}
 
 	for(phyUnit = 0; phyUnit < ATHR_PHY_MAX; phyUnit++){
@@ -442,10 +442,11 @@ int athrs27_phy_setup(int ethUnit){
 *    1 --> FULL
 *    0 --> HALF
 */
-int athrs27_phy_is_fdx(int ethUnit,int phyUnit){
+int athrs27_phy_is_fdx(int ethUnit){
 	uint32_t phyAddr;
 	uint16_t phyHwStatus;
 	int ii = 200;
+	int phyUnit;
 
 	if(ethUnit == ENET_UNIT_LAN){
 		return(TRUE);
@@ -486,11 +487,12 @@ int athrs27_phy_is_fdx(int ethUnit,int phyUnit){
 *               ATHR_PHY_SPEED_10T, AG7240_PHY_SPEED_100T;
 *               ATHR_PHY_SPEED_1000T;
 */
-int athrs27_phy_speed(int ethUnit, int phyUnit){
+int athrs27_phy_speed(int ethUnit){
 	uint16_t phyHwStatus;
 	uint32_t phyAddr;
 	int ii = 200;
 	int phySpeed = 0;
+	int phyUnit;
 
 	for(phyUnit = 0; phyUnit < ATHR_PHY_MAX; phyUnit++){
 		if(!ATHR_IS_ETHUNIT(phyUnit, ethUnit)){
@@ -705,11 +707,11 @@ unsigned int s27_rd_phy(unsigned int phy_addr, unsigned int reg_addr){
 
 	/* MDIO_CMD is set for read */
 	rddata = athrs27_reg_read(0x98);
-	rddata = (rddata & 0x0) | (reg_addr << 16) | (phy_addr << 21) | (1 << 27) | (1 << 30) | (1 << 31);
+	rddata = (rddata & 0x0) | (reg_addr << 16) | (phy_addr << 21) | BIT(27) | BIT(30) | BIT(31);
 	athrs27_reg_write(0x98, rddata);
 
 	rddata = athrs27_reg_read(0x98);
-	rddata = rddata & (1 << 31);
+	rddata = rddata & BIT(31);
 
 	// Check MDIO_BUSY status
 	while(rddata){
@@ -722,7 +724,7 @@ unsigned int s27_rd_phy(unsigned int phy_addr, unsigned int reg_addr){
 		}
 
 		rddata = athrs27_reg_read(0x98);
-		rddata = rddata & (1 << 31);
+		rddata = rddata & BIT(31);
 	}
 
 	/* Read the data from phy */
@@ -737,11 +739,11 @@ void s27_wr_phy(unsigned int phy_addr, unsigned int reg_addr, unsigned int write
 
 	/* MDIO_CMD is set for read */
 	rddata = athrs27_reg_read(0x98);
-	rddata = (rddata & 0x0) | (write_data & 0xffff) | (reg_addr << 16) | (phy_addr << 21) | (0 << 27) | (1 << 30) | (1 << 31);
+	rddata = (rddata & 0x0) | (write_data & 0xffff) | (reg_addr << 16) | (phy_addr << 21) | (0UL << 27) | BIT(30) | BIT(31);
 	athrs27_reg_write(0x98, rddata);
 
 	rddata = athrs27_reg_read(0x98);
-	rddata = rddata & (1 << 31);
+	rddata = rddata & BIT(31);
 
 	// Check MDIO_BUSY status
 	while(rddata){
@@ -754,7 +756,7 @@ void s27_wr_phy(unsigned int phy_addr, unsigned int reg_addr, unsigned int write
 		}
 
 		rddata = athrs27_reg_read(0x98);
-		rddata = rddata & (1 << 31);
+		rddata = rddata & BIT(31);
 	}
 
 }

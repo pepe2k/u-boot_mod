@@ -672,7 +672,7 @@ void BootpRequest(void)
 	printf("\nRandom delay: %ld ms...\n", sum);
 
 	/* Wait 1ms */
-	for (reg = 0; reg < sum; reg++)
+	for (reg = 0; reg < (int)sum; reg++)
 		udelay(1000);
 #endif /* CONFIG_BOOTP_RANDOM_DELAY */
 

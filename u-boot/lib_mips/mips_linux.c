@@ -26,7 +26,9 @@
 #include <image.h>
 #include <asm/byteorder.h>
 #include <asm/addrspace.h>
+#if defined(CONFIG_FOR_DRAGINO_MS14) || defined(CONFIG_FOR_VILLAGE_TELCO_MP2)
 #include <ar7240_soc.h>
+#endif
 
 /* #define DEBUG */
 
@@ -144,7 +146,7 @@ static void linux_env_set(char *env_name, char *env_val)
 	}
 }
 
-void do_bootm_linux(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
+void do_bootm_linux(cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[])
 {
 	int lsdk_kernel;
 	char *cmdline, *s, buf[16];

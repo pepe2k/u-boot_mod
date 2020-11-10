@@ -1,6 +1,7 @@
 #ifndef _LINUX_BITOPS_H
 #define _LINUX_BITOPS_H
 
+#ifdef __ASSEMBLY__
 /*
  * Helper macros
  */
@@ -8,7 +9,15 @@
 #define BITS(_start, _bits)		(((1 << (_bits)) - 1) << _start)
 #define CHECK_BIT(_var, _pos)	((_var) & (1 << (_pos)))
 
-#ifndef __ASSEMBLY__
+#else
+
+/*
+ * Helper macros
+ */
+#define BIT(_x)					(1U << (_x))
+#define BITS(_start, _bits)		(((1U << (_bits)) - 1U) << _start)
+#define CHECK_BIT(_var, _pos)	((_var) & (1U << (_pos)))
+
 /*
  * ffs: find first bit set. This is defined the same way as
  * the libc and compiler builtin ffs routines, therefore

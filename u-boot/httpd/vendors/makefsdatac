@@ -2,7 +2,7 @@
 
 # Copyright (C) 2016 Piotr Dymacz <piotr@dymacz.pl>
 
-# This script generates "fsdata.c" file for uIP 0.9 stack.
+# This script generates "${OUTPUT_FILE_TMP}" file for uIP 0.9 stack.
 # It takes one argument - name of vendor directory,
 # which should contains all www files, at least:
 # - index.html (with: <input type="file" name="firmware">)
@@ -17,7 +17,7 @@
 # - uboot.html (<input type="file" name="uboot">)
 #
 # HTML and CSS files are compressed before placing them
-# inside "fsdata.c" if JAVA is installed.
+# inside "${OUTPUT_FILE_TMP}" if JAVA is installed.
 #
 # You SHOULDN'T embed addresses of any external
 # files in "flashing.html" file, because web server,
@@ -27,13 +27,17 @@
 # Global variables
 # ================
 
+
+OUTPUT_FILE=${1:-fsdata.c}
+OUTPUT_FILE_TMP="${OUTPUT_FILE}.tmp"
+
 # Vendor specific directory
 # (default: "general")
-VENDOR_DIR=${1:-general}
+VENDOR_DIR=${2:-general}
 
 # Temporary files
-FILES_CONTENT_TMP="vendors/.files_content"
-   FILES_LIST_TMP="vendors/.files_list"
+FILES_CONTENT_TMP="$(dirname "${OUTPUT_FILE}")/vendors/.files_content"
+   FILES_LIST_TMP="$(dirname "${OUTPUT_FILE}")/vendors/.files_list"
 
 # YUI Compressor path
 # (should be in the same dir)
@@ -155,9 +159,12 @@ main() {
 			HAVE_JAVA=1
 		fi
 
-		# Remove old fsdata.c
-		if [ -e fsdata.c ]; then
-			rm -f fsdata.c 2> /dev/null
+		# Create output directory
+		mkdir -p $(dirname ${FILES_CONTENT_TMP})
+
+		# Remove old ${OUTPUT_FILE_TMP}
+		if [ -e "${OUTPUT_FILE_TMP}" ]; then
+			rm -f "${OUTPUT_FILE_TMP}" 2> /dev/null
 		fi
 
 		# Temporary files
@@ -175,9 +182,12 @@ main() {
 		echo -e "#define FS_ROOT\t\t${PREV_FSDATA_STRUCT}" >> "$FILES_LIST_TMP"
 		echo -e "#define FS_NUMFILES\t${FS_CNT}"  >> "$FILES_LIST_TMP"
 
-		# Generate new fsdata.c
-		cat "$FILES_CONTENT_TMP" > fsdata.c
-		cat "$FILES_LIST_TMP"   >> fsdata.c
+		# Generate new ${OUTPUT_FILE_TMP}
+		cat "$FILES_CONTENT_TMP" > "${OUTPUT_FILE_TMP}"
+		cat "$FILES_LIST_TMP"   >> "${OUTPUT_FILE_TMP}"
+
+		# Update output only if different
+		([ -f "${OUTPUT_FILE}" ] && diff -q "${OUTPUT_FILE}" "${OUTPUT_FILE_TMP}") || mv "${OUTPUT_FILE_TMP}" "${OUTPUT_FILE}"
 
 		rm -f "$FILES_CONTENT_TMP" \
 		      "$FILES_LIST_TMP" 2> /dev/null

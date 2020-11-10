@@ -65,7 +65,7 @@ struct rpc_t {
 			uint32_t data[19];
 		} reply;
 	} u;
-};
+} __attribute__((__packed__));
 extern void	NfsStart (void);	/* Begin NFS */
 
 

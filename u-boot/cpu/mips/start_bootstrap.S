@@ -23,9 +23,8 @@
 	li k0, bev
 
 	.set noreorder
-
+	.section .start_bootstrap,"ax",@progbits
 	.globl _start_bootstrap
-	.text
 
 _start_bootstrap:
 	RVECENT(reset,0)			/* U-boot entry point */

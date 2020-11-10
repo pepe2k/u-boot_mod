@@ -57,7 +57,7 @@ static ulong TftpBlockWrapOffset;	/* Memory offset due to wrapping */
 #define STATE_WRQ	7
 
 #define TFTP_BLOCK_SIZE		512			/* Default TFTP block size */
-#define TFTP_SEQUENCE_SIZE	((ulong)(1<<16))	/* Sequence number is 16 bit */
+#define TFTP_SEQUENCE_SIZE	(1UL<<16)		/* Sequence number is 16 bit */
 
 #define DEFAULT_NAME_LEN	(8 + 4 + 1)
 

@@ -11,7 +11,7 @@
 
 extern void dcache_flush_range(u32 a, u32 end);
 
-int do_reset(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
+int do_reset(cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[])
 {
 	printf("Resetting the board...");
 	milisecdelay(500);

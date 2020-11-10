@@ -1,46 +1,34 @@
 include $(TOPDIR)/config.mk
 
-LIB	= lib$(SOC).a
-
-START	=
-OBJS	=
-SOBJS	=
-
-OBJS	+= qca_common.o
-OBJS	+= qca_clocks.o
-OBJS	+= qca_sf.o
-OBJS	+= qca_dram.o
-OBJS	+= qca_pci.o
-OBJS	+= qca_usb.o
-SOBJS	+= qca_gpio_init.o
+OBJS-y +=  qca_common.o
+OBJS-y += qca_clocks.o
+OBJS-y += qca_sf.o
+OBJS-y += qca_dram.o
+OBJS-y += qca_pci.o
+OBJS-y += qca_usb.o
+OBJS-y += qca_gpio_init.o
 
 ifeq ($(BOARD), ap121)
-	OBJS	+= qca_hs_uart.o
-	OBJS	+= ag7240.o
-	SOBJS	+= ar933x_pll_init.o
+	OBJS-y += qca_hs_uart.o
+	OBJS-y += ag7240.o
+	OBJS-y += ar933x_pll_init.o
 else
-	OBJS	+= qca_ls_uart.o
+	OBJS-y += qca_ls_uart.o
 endif
 
 ifeq ($(BOARD), db12x)
-	OBJS	+= ag934x.o
-	SOBJS	+= qca95xx_pll_init.o
+	OBJS-y += ag934x.o
+	OBJS-y += qca95xx_pll_init.o
 endif
 
 ifeq ($(BOARD), ap143)
-	SOBJS	+= qca95xx_pll_init.o
+	OBJS-y += qca95xx_pll_init.o
 endif
 
-all:	.depend $(START) $(LIB)
+ifeq ($(BOARD), ap152)
+	OBJS-y += qca956x_pll_init.o
+else
 
-$(LIB):	$(OBJS) $(SOBJS) $(OBJS-0)
-	$(AR) crv $@ $(OBJS) $(SOBJS)
+endif
 
-#########################################################################
-
-.depend:	Makefile $(START:.o=.S) $(OBJS:.o=.c)
-		$(CC) -M $(CFLAGS) $(START:.o=.S) $(OBJS:.o=.c) > $@
-
-sinclude .depend
-
-#########################################################################
+include $(TOPDIR)/end.mk

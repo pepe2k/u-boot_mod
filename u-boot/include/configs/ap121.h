@@ -462,14 +462,14 @@
 /* Dragino MS14 and Unwired One boards use different prompts */
 #if defined(CONFIG_FOR_UNWIRED_DEVICES_UNWIRED_ONE)
 
-	#undef  CFG_PROMPT
-	#define CFG_PROMPT	"BSB> "
+	#undef  CONFIG_SYS_PROMPT
+	#define CONFIG_SYS_PROMPT	"BSB> "
 
 #elif defined(CONFIG_FOR_DRAGINO_MS14) ||\
       defined(CONFIG_FOR_VILLAGE_TELCO_MP2)
 
-	#undef  CFG_PROMPT
-	#define CFG_PROMPT	"dr_boot> "
+	#undef  CONFIG_SYS_PROMPT
+	#define CONFIG_SYS_PROMPT	"dr_boot> "
 
 #endif
 
@@ -478,6 +478,7 @@
 
 	#undef CONFIG_CMD_DHCP
 	#undef CONFIG_CMD_LOADB
+	#undef CONFIG_AUTO_COMPLETE
 
 #endif
 

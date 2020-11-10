@@ -1,87 +1,34 @@
-#
-# (C) Copyright 2004
-# Wolfgang Denk, DENX Software Engineering, wd@denx.de.
-#
-# See file CREDITS for list of people who contributed to this
-# project.
-#
-# This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License as
-# published by the Free Software Foundation; either version 2 of
-# the License, or (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston,
-# MA 02111-1307 USA
-#
-
 include $(TOPDIR)/config.mk
 
-LIB	= libcommon.a
+OBJS-y += main.o
+OBJS-y += cmd_bootm.o
+OBJS-y += cmd_boot.o
+OBJS-y += cmd_echo.o
+OBJS-y += cmd_elf.o
+OBJS-y += cmd_flash.o
+OBJS-y += cmd_help.o
+OBJS-y += cmd_mem.o
+OBJS-y += cmd_custom.o
+OBJS-y += cmd_net.o
+OBJS-y += cmd_nvedit.o
+OBJS-y += cmd_itest.o
+OBJS-y += cmd_load.o
+OBJS-y += cmd_qcaclk.o
+OBJS-y += cmd_qcagpio.o
+OBJS-y += command.o
+OBJS-y += console.o
+OBJS-y += devices.o
+OBJS-y += dlmalloc.o
+OBJS-y += environment.o
+OBJS-y += env_common.o
+OBJS-y += env_nowhere.o
+OBJS-y += exports.o
+OBJS-y += flash.o
+OBJS-y += lists.o
+OBJS-y += env_flash.o
+OBJS-y += hush.o
+OBJS-y += xyzModem.o
+OBJS-y += crc16.o
+OBJS-y += s_record.o
 
-AOBJS	=
-
-COBJS	= main.o \
-		  cmd_bootm.o \
-		  cmd_boot.o \
-		  cmd_flash.o \
-		  cmd_mem.o \
-		  cmd_custom.o \
-		  cmd_net.o \
-		  cmd_nvedit.o \
-		  cmd_itest.o \
-		  cmd_load.o \
-		  cmd_qcaclk.o \
-		  cmd_qcagpio.o \
-		  command.o \
-		  console.o \
-		  devices.o \
-		  dlmalloc.o \
-		  environment.o \
-		  env_common.o \
-		  env_nowhere.o \
-		  exports.o \
-		  flash.o \
-		  lists.o \
-		  env_flash.o \
-		  hush.o \
-		  xyzModem.o \
-		  crc16.o \
-		  s_record.o
-
-OBJS	= $(AOBJS) $(COBJS)
-
-CPPFLAGS += -I..
-
-ifeq ($(DUAL_FIRMWAREIMAGE_SUPPORT),1)
-CFLAGS += -DCONFIG_DUALIMAGE_SUPPORT
-OBJS += cmd_bdr.o
-endif
-
-all:	$(LIB) $(AOBJS)
-
-$(LIB): .depend $(OBJS)
-	$(AR) crv $@ $(OBJS)
-
-environment.o: environment.c ../tools/envcrc
-	$(CC) $(AFLAGS) -Wa,--no-warn \
-		-DENV_CRC=$(shell ../tools/envcrc) \
-		-c -o $@ environment.c
-
-../tools/envcrc:
-	$(MAKE) -C ../tools
-
-#########################################################################
-
-.depend:	Makefile $(AOBJS:.o=.S) $(COBJS:.o=.c)
-		$(CC) -M $(CFLAGS) $(AOBJS:.o=.S) $(COBJS:.o=.c) > $@
-
-sinclude .depend
-
-#########################################################################
+include $(TOPDIR)/end.mk

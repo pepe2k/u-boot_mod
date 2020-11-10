@@ -33,44 +33,44 @@
 u32 save_addr;	/* Default save address for TFTPPUT */
 u32 save_size;	/* Default save size (in bytes) for TFTPPUT */
 
-extern int do_bootm(cmd_tbl_t *, int, int, char *[]);
-static int netboot_common(proto_t, cmd_tbl_t *, int, char *[]);
+extern int do_bootm(cmd_tbl_t *, int, int, char * const []);
+static int netboot_common(proto_t, cmd_tbl_t *, int, char * const []);
 
 #if defined(CONFIG_CMD_HTTPD)
-int do_httpd(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
+int do_httpd(cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[])
 {
 	return NetLoopHttpd();
 }
 
 U_BOOT_CMD(httpd, 1, 1, do_httpd,
-	   "start web server for firmware recovery\n",
+	   "start web server for firmware recovery",
 	   NULL);
 #endif /* CONFIG_CMD_HTTPD */
 
 #if defined(CONFIG_CMD_DHCP)
-int do_dhcp(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
+int do_dhcp(cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[])
 {
 	return netboot_common(DHCP, cmdtp, argc, argv);
 }
 
 U_BOOT_CMD(dhcp, 3, 1, do_dhcp,
-	   "invoke DHCP client to obtain IP/boot params\n",
+	   "invoke DHCP client to obtain IP/boot params",
 	   NULL);
 #endif /* CONFIG_CMD_DHCP */
 
 #if defined(CONFIG_CMD_NFS)
-int do_nfs(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
+int do_nfs(cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[])
 {
 	return netboot_common(NFS, cmdtp, argc, argv);
 }
 U_BOOT_CMD(nfs, 3, 1, do_nfs,
-	   "boot image via network using NFS protocol\n",
+	   "boot image via network using NFS protocol",
 	   "[address] [host ip addr:filename]\n"
 	   "\t- loads 'filename' at 'address' using NFS protocol");
 #endif /* CONFIG_CMD_NFS */
 
 #if defined(CONFIG_CMD_PING)
-int do_ping(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
+int do_ping(cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[])
 {
 	if (argc < 2) {
 		print_cmd_help(cmdtp);
@@ -96,13 +96,13 @@ int do_ping(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 }
 
 U_BOOT_CMD(ping, 2, 1, do_ping,
-	   "send ICMP ECHO_REQUEST to network host\n",
+	   "send ICMP ECHO_REQUEST to network host",
 	   "host IP\n"
-	   "\t- sends ping to IP 'host IP'\n");
+	   "\t- sends ping to IP 'host IP'");
 #endif /* CONFIG_CMD_PING */
 
 #if defined(CONFIG_CMD_SNTP)
-int do_sntp(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
+int do_sntp(cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[])
 {
 	char *toff;
 
@@ -134,22 +134,22 @@ int do_sntp(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 }
 
 U_BOOT_CMD(sntp, 2, 1, do_sntp,
-	   "send NTP request to NTP server\n",
+	   "send NTP request to NTP server",
 	   "ntpserverip\n"
-	   "\t- sends NTP request to NTP server 'ntpserverip'\n");
+	   "\t- sends NTP request to NTP server 'ntpserverip'");
 #endif /* CONFIG_CMD_SNTP */
 
-int do_tftpb(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
+int do_tftpb(cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[])
 {
 	return netboot_common(TFTPGET, cmdtp, argc, argv);
 }
 
 U_BOOT_CMD(tftpboot, 3, 1, do_tftpb,
-	   "boot image via network using TFTP protocol\n",
+	   "boot image via network using TFTP protocol",
 	   "[address] [filename]\n"
 	   "\t- loads 'filename' at 'address' from TFTP server");
 
-int do_tftpput(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
+int do_tftpput(cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[])
 {
 	if (argc < 4) {
 		print_cmd_help(cmdtp);
@@ -160,7 +160,7 @@ int do_tftpput(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 }
 
 U_BOOT_CMD(tftpput, 4, 1, do_tftpput,
-	   "send file to TFTP server\n",
+	   "send file to TFTP server",
 	   "address size filename\n"
 	   "\t- sends 'size' of data from 'address' as 'filename' to TFTP server");
 
@@ -229,7 +229,7 @@ static void netboot_update_env(void)
 static int netboot_common(proto_t proto,
 			  cmd_tbl_t *cmdtp,
 			  int argc,
-			  char *argv[])
+			  char * const argv[])
 {
 	char *s;
 	int size;

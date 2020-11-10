@@ -26,8 +26,10 @@ void serial_setbrg(void)
 	/* Round to closest, final baudrate = ref_clk / (16 * div) */
 	if (qca_xtal_is_40mhz() == 1) {
 		div = (VAL_40MHz + (8 * gd->baudrate)) / (16 * gd->baudrate);
+		gd->baudrate = VAL_40MHz  / (16 * div);
 	} else {
 		div = (VAL_25MHz + (8 * gd->baudrate)) / (16 * gd->baudrate);
+		gd->baudrate = VAL_25MHz  / (16 * div);
 	}
 
 	/* Set DLAB bit in LCR register unlocks DLL/DLH registers */
@@ -58,7 +60,7 @@ int serial_init(void)
 	 * - parity: no
 	 */
 	qca_soc_reg_write(QCA_LSUART_LCR_REG,
-					  QCA_LSUART_LCR_CLS_8BIT_VAL << QCA_LSUART_LCR_CLS_SHIFT);
+					  (u32)QCA_LSUART_LCR_CLS_8BIT_VAL << QCA_LSUART_LCR_CLS_SHIFT);
 
 	return 0;
 }

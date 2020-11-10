@@ -1279,6 +1279,10 @@
 
 #define QCA_SPI_CTRL_REG_VAL_SAFE			_qca95xx_spi_ctrl_addr_reg_val(10, 1, 0, 2)
 
+
+#ifndef QCA_DDR_FSM_WAIT_CTRL_VAL
+	#define QCA_DDR_FSM_WAIT_CTRL_VAL				0xa24
+#endif
 /*
  * Default values (if not defined above)
  */

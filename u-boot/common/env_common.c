@@ -233,3 +233,36 @@ void env_relocate(void)
 
 	gd->env_addr = (ulong)&(env_ptr->data);
 }
+
+#if defined(CONFIG_AUTO_COMPLETE)
+int env_complete(char *var, int maxv, char *cmdv[], int bufsz, char *buf)
+{
+	char *match;
+	int found, idx;
+
+	idx = 0;
+	found = 0;
+	cmdv[0] = NULL;
+
+	while ((idx = env_match_r(var, idx, &match))) {
+		char * pos = strchr(match, '=');
+		int vallen = pos ? pos - match : (int) strlen(match);
+		if (found >= maxv - 2 || bufsz < vallen + 1)
+			break;
+
+		cmdv[found++] = buf;
+		memcpy(buf, match, vallen);
+		buf += vallen;
+		*(buf++) = 0;
+		bufsz -= vallen;
+	}
+
+	//qsort(cmdv, found, sizeof(cmdv[0]), strcmp_compar);
+
+	if (idx)
+		cmdv[found++] = "...";
+
+	cmdv[found] = NULL;
+	return found;
+}
+#endif

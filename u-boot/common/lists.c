@@ -4,7 +4,7 @@
 
 #define MAX(a,b) 	(((a)>(b)) ? (a) : (b))
 #define MIN(a,b) 	(((a)<(b)) ? (a) : (b))
-#define CAT4CHARS(a,b,c,d)	((a<<24) | (b<<16) | (c<<8) | d)
+#define CAT4CHARS(a,b,c,d)	(((u32)a<<24) | ((u32)b<<16) | ((u32)c<<8) | (u32)d)
 
 /* increase list size by 10% every time it is full */
 #define kDefaultAllocationPercentIncrease	10

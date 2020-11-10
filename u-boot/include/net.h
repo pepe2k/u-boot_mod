@@ -153,7 +153,7 @@ typedef struct {
 	uchar		et_snap2;
 	uchar		et_snap3;
 	ushort		et_prot;	/* 802 protocol			*/
-} Ethernet_t;
+} __attribute__((__packed__)) Ethernet_t;
 
 #define ETHER_HDR_SIZE	14		/* Ethernet header size		*/
 #define E802_HDR_SIZE	22		/* 802 ethernet header size	*/
@@ -167,7 +167,7 @@ typedef struct {
 	ushort		vet_vlan_type;	/* PROT_VLAN			*/
 	ushort		vet_tag;	/* TAG of VLAN			*/
 	ushort		vet_type;	/* protocol type		*/
-} VLAN_Ethernet_t;
+} __attribute__((__packed__)) VLAN_Ethernet_t;
 
 #define VLAN_ETHER_HDR_SIZE	18	/* VLAN Ethernet header size	*/
 
@@ -197,7 +197,7 @@ typedef struct {
 	ushort		udp_dst;	/* UDP destination port		*/
 	ushort		udp_len;	/* Length of UDP packet		*/
 	ushort		udp_xsum;	/* Checksum			*/
-} IP_t;
+} __attribute__((__packed__)) IP_t;
 
 #define IP_HDR_SIZE_NO_UDP	(sizeof (IP_t) - 8)
 #define IP_HDR_SIZE		(sizeof (IP_t))
@@ -226,7 +226,7 @@ typedef struct
 	 * specific hardware/protocol combinations.
 	 */
 	uchar		ar_data[0];
-} ARP_t;
+} __attribute__((__packed__)) ARP_t;
 
 #define ARP_HDR_SIZE	(8+20)		/* Size assuming ethernet	*/
 
@@ -256,7 +256,7 @@ typedef struct icmphdr {
 			ushort	mtu;
 		} frag;
 	} un;
-} ICMP_t;
+} __attribute__((__packed__)) ICMP_t;
 
 
 /*

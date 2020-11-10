@@ -94,9 +94,9 @@
 #include <hush.h>
 #include <command.h>        /* find_cmd */
 /*cmd_boot.c*/
-extern int do_bootd(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[]); /* do_bootd */
+extern int do_bootd(cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[]); /* do_bootd */
 
-#ifdef CFG_HUSH_PARSER
+#ifdef CONFIG_HUSH_PARSER
 #define SPECIAL_VAR_SYMBOL 03
 
 DECLARE_GLOBAL_DATA_PTR;
@@ -128,19 +128,19 @@ typedef enum {
 	RES_IN = 12,
 	RES_SNTX = 13
 } reserved_style;
-#define FLAG_END   (1<<RES_NONE)
-#define FLAG_IF    (1<<RES_IF)
-#define FLAG_THEN  (1<<RES_THEN)
-#define FLAG_ELIF  (1<<RES_ELIF)
-#define FLAG_ELSE  (1<<RES_ELSE)
-#define FLAG_FI    (1<<RES_FI)
-#define FLAG_FOR   (1<<RES_FOR)
-#define FLAG_WHILE (1<<RES_WHILE)
-#define FLAG_UNTIL (1<<RES_UNTIL)
-#define FLAG_DO    (1<<RES_DO)
-#define FLAG_DONE  (1<<RES_DONE)
-#define FLAG_IN    (1<<RES_IN)
-#define FLAG_START (1<<RES_XXXX)
+#define FLAG_END   (1UL<<RES_NONE)
+#define FLAG_IF    (1UL<<RES_IF)
+#define FLAG_THEN  (1UL<<RES_THEN)
+#define FLAG_ELIF  (1UL<<RES_ELIF)
+#define FLAG_ELSE  (1UL<<RES_ELSE)
+#define FLAG_FI    (1UL<<RES_FI)
+#define FLAG_FOR   (1UL<<RES_FOR)
+#define FLAG_WHILE (1UL<<RES_WHILE)
+#define FLAG_UNTIL (1UL<<RES_UNTIL)
+#define FLAG_DO    (1UL<<RES_DO)
+#define FLAG_DONE  (1UL<<RES_DONE)
+#define FLAG_IN    (1UL<<RES_IN)
+#define FLAG_START (1UL<<RES_XXXX)
 
 /* This holds pointers to the various results of parsing */
 struct p_context {
@@ -358,13 +358,13 @@ static int static_peek(struct in_str *i) {
 }
 
 static void get_user_input(struct in_str *i) {
-	extern char console_buffer[CFG_CBSIZE];
+	extern char console_buffer[CONFIG_SYS_CBSIZE];
 	int n;
-	static char the_command[CFG_CBSIZE];
+	static char the_command[CONFIG_SYS_CBSIZE];
 
 #ifdef CONFIG_BOOT_RETRY_TIME
 #  ifdef CONFIG_RESET_TO_RETRY
-	extern int do_reset (cmd_tbl_t *cmdtp, int flag, int argc, char *argv[]);
+	extern int do_reset (cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[]);
 #  else
 #	error "This currently only works with CONFIG_RESET_TO_RETRY enabled"
 #  endif
@@ -372,9 +372,9 @@ static void get_user_input(struct in_str *i) {
 #endif
 	i->__promptme = 1;
 	if (i->promptmode == 1) {
-		n = readline(CFG_PROMPT);
+		n = readline(CONFIG_SYS_PROMPT);
 	} else {
-		n = readline(CFG_PROMPT_HUSH_PS2);
+		n = readline(CONFIG_SYS_PROMPT_HUSH_PS2);
 	}
 #ifdef CONFIG_BOOT_RETRY_TIME
 	if (n == -2) {
@@ -411,7 +411,7 @@ static void get_user_input(struct in_str *i) {
 		i->p = the_command;
 	} else {
 		if (console_buffer[0] != '\n') {
-			if (strlen(the_command) + strlen(console_buffer) < CFG_CBSIZE) {
+			if (strlen(the_command) + strlen(console_buffer) < CONFIG_SYS_CBSIZE) {
 				n = strlen(the_command);
 				the_command[n - 1] = ' ';
 				strcpy(&the_command[n], console_buffer);
@@ -582,7 +582,7 @@ static int run_pipe_real(struct pipe *pi) {
 		} else {
 			int rcode;
 #if defined(CONFIG_CMD_BOOTD)
-			extern int do_bootd (cmd_tbl_t *cmdtp, int flag, int argc, char *argv[]);
+			extern int do_bootd (cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[]);
 
 			/* avoid "bootd" recursion */
 			if (cmdtp->cmd == do_bootd) {
@@ -1564,12 +1564,12 @@ static char * make_string(char ** inp) {
 	return str;
 }
 
-int do_true(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
+int do_true(cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[])
 {
 	return 0;
 }
 
-U_BOOT_CMD(true, 1, 1, do_true, "return true\n", NULL);
+U_BOOT_CMD(true, 1, 1, do_true, "return true", NULL);
 
-#endif /* CFG_HUSH_PARSER */
+#endif /* CONFIG_HUSH_PARSER */
 /****************************************************************************/

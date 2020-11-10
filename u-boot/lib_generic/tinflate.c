@@ -93,7 +93,7 @@ static void tinf_build_bits_base(unsigned char *bits, unsigned short *base, int 
    for (sum = first, i = 0; i < 30; ++i)
    {
       base[i] = sum;
-      sum += 1 << bits[i];
+      sum += 1UL << bits[i];
    }
 }
 
@@ -182,7 +182,7 @@ static unsigned int tinf_read_bits(TINF_DATA *d, int num, int base)
    /* read num bits */
    if (num)
    {
-      unsigned int limit = 1 << (num);
+      unsigned int limit = 1UL << (num);
       unsigned int mask;
 
       for (mask = 1; mask < limit; mask *= 2)

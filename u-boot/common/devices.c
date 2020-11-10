@@ -115,7 +115,7 @@ int device_deregister(char *devname){
 
 int devices_init(void){
 	ulong relocation_offset = gd->reloc_off;
-	int i;
+	size_t i;
 
 	/* relocate device name pointers */
 	for(i = 0; i < (sizeof(stdio_names) / sizeof(char *)); ++i){

@@ -208,5 +208,5 @@ static int hex2_bin(char *s)
 	if((j = hex1_bin(*s)) < 0)
 		return(-1);
 
-	return((i<<4) + j);
+	return(((u32)i<<4) + j);
 }

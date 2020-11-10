@@ -232,7 +232,7 @@ void athrs27_force_100M(int phyAddr,int duplex)
     s27_wr_phy(phyAddr,0x1d,0x29);
     s27_wr_phy(phyAddr,0x1e,0x0);
     s27_wr_phy(phyAddr,0x10,0xc60);
-    s27_wr_phy(phyAddr,ATHR_PHY_CONTROL,(0xa000|(duplex << 8)));
+    s27_wr_phy(phyAddr,ATHR_PHY_CONTROL,(0xa000|((u32)duplex << 8)));
 }
 
 void athrs27_force_10M(int phyAddr,int duplex)
@@ -241,7 +241,7 @@ void athrs27_force_10M(int phyAddr,int duplex)
     athrs27_powersave_off(phyAddr);
     athrs27_sleep_off(phyAddr);
 
-    s27_wr_phy(phyAddr,ATHR_PHY_CONTROL,(0x8000 |(duplex << 8)));
+    s27_wr_phy(phyAddr,ATHR_PHY_CONTROL,(0x8000 |((u32)duplex << 8)));
 }
 
 int athrs27_reg_init(void)
@@ -258,7 +258,7 @@ int athrs27_reg_init(void)
 
     /* if using header for register configuration, we have to     */
     /* configure s27 register after frame transmission is enabled */
-    athrs27_reg_rmw(0x8,(1<<28));  /* Set WAN port is connected to GE0 */
+    athrs27_reg_rmw(0x8,BIT(28));  /* Set WAN port is connected to GE0 */
 
 #if defined(S27_FORCE_100M)
     athrs27_force_100M(phyWanAddr,1);
@@ -300,10 +300,10 @@ int athrs27_reg_init_lan(void)
     //printf(MODULE_NAME ": s27 reset done\n");
     athrs27_reg_write(PORT_STATUS_REGISTER0,0x4e);
 
-    athrs27_reg_rmw(OPERATIONAL_MODE_REG0,(1<<6));  /* Set GMII mode */
+    athrs27_reg_rmw(OPERATIONAL_MODE_REG0, BIT(6));  /* Set GMII mode */
 
     if (is_emu() || is_wasp()) {
-       athrs27_reg_rmw(0x2c,((1<<26)| (1<<16) | 0x1)); /* FiX ME: EBU debug */
+       athrs27_reg_rmw(0x2c, (BIT(26) | BIT(16) | 0x1UL)); /* FiX ME: EBU debug */
     }
 
     for (phyUnit=0; phyUnit < ATHR_PHY_MAX; phyUnit++) {
@@ -569,11 +569,12 @@ athrs27_phy_setup(int ethUnit)
 *    0 --> HALF
 */
 int
-athrs27_phy_is_fdx(int ethUnit,int phyUnit)
+athrs27_phy_is_fdx(int ethUnit)
 {
     uint32_t  phyAddr;
     uint16_t  phyHwStatus;
     int       ii = 200;
+    int phyUnit;
 
     if (ethUnit == ENET_UNIT_LAN)
         return TRUE;
@@ -612,12 +613,14 @@ athrs27_phy_is_fdx(int ethUnit,int phyUnit)
 */
 
 int
-athrs27_phy_speed(int ethUnit,int phyUnit)
+athrs27_phy_speed(int ethUnit)
 {
     uint16_t  phyHwStatus;
     uint32_t  phyAddr;
     int       ii = 200;
     int       phySpeed = _100BASET;
+    int phyUnit;
+
     for (phyUnit=0; phyUnit < ATHR_PHY_MAX; phyUnit++) {
         if (!ATHR_IS_ETHUNIT(phyUnit, ethUnit)) {
             continue;

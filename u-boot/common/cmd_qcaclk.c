@@ -30,6 +30,17 @@ static void print_reg_values(const clk_cfg_flash *cfg)
 		>> QCA_PLL_CPU_PLL_DITHER_FRAC_NFRAC_MIN_SHIFT,
 		(QCA_PLL_CPU_PLL_DITHER_FRAC_NFRAC_MIN_MASK
 		 >> QCA_PLL_CPU_PLL_DITHER_FRAC_NFRAC_MIN_SHIFT) + 1);
+#elif (SOC_TYPE & QCA_QCA956X_SOC)
+	printf("        SPI_CTRL: 0x%08lX\n", cfg->spi_ctrl);
+	printf("    CPU_PLL_CFG1: 0x%08lX\n", cfg->regs.cpu_pll_cfg1);
+	printf("    DDR_PLL_CFG1: 0x%08lX\n", cfg->regs.ddr_pll_cfg1);
+	printf("     CPU_PLL_CFG: 0x%08lX\n", cfg->regs.cpu_pll_cfg);
+	printf("     DDR_PLL_CFG: 0x%08lX\n", cfg->regs.ddr_pll_cfg);
+	printf("CPU_DDR_CLK_CTRL: 0x%08lX\n", cfg->regs.cpu_ddr_clk_ctrl);
+	printf("  CPU_PLL_DITHER: 0x%08lX\n", cfg->regs.cpu_pll_dit);
+	printf("  DDR_PLL_DITHER: 0x%08lX\n", cfg->regs.ddr_pll_dit);
+	printf(" CPU_PLL_DITHER2: 0x%08lX\n", cfg->regs.cpu_pll_dit2);
+	printf(" CPU_PLL_DITHER2: 0x%08lX\n", cfg->regs.cpu_pll_dit2);
 #else
 	printf("        SPI_CTRL: 0x%08lX\n", cfg->spi_ctrl);
 	printf("     CPU_PLL_CFG: 0x%08lX\n", cfg->regs.cpu_pll_cfg);
@@ -60,6 +71,8 @@ static u32 compare_pll_regs(const pll_regs *from_flash,
 		from_flash->cpu_pll_dit == to_compare->cpu_pll_dit &&
 		from_flash->cpu_clk_ctrl == to_compare->cpu_clk_ctrl)
 		return 1;
+#elif (SOC_TYPE & QCA_QCA956X_SOC)
+	return memcmp(from_flash, to_compare, sizeof(pll_regs)) == 0;
 #else
 	if (from_flash->cpu_pll_cfg == to_compare->cpu_pll_cfg &&
 		from_flash->ddr_pll_cfg == to_compare->ddr_pll_cfg &&
@@ -73,13 +86,13 @@ static u32 compare_pll_regs(const pll_regs *from_flash,
 }
 
 /* Set and store PLL configuration in FLASH */
-int do_set_clk(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
+int do_set_clk(cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[])
 {
 	u32 ahb_clk, cpu_clk, ddr_clk, ref_clk, reg, spi_clk;
 	clk_cfg_flash from_flash, to_flash;
 	const pll_regs *pll_registers;
 	char buf[128];
-	int i;
+	size_t i;
 	u8 *c;
 
 	/* Read current clocks and make MHz from Hz */
@@ -119,12 +132,15 @@ int do_set_clk(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 			printf("%5d", i + 1);
 
 			if (reg == QCA_PLL_IN_FLASH_MAGIC) {
+#if (SOC_TYPE & QCA_QCA956X_SOC)
+				pll_registers = &(clk_profiles[i].xtal_25mhz);
+#else
 				if (ref_clk == 25) {
 					pll_registers = &(clk_profiles[i].xtal_25mhz);
 				} else {
 					pll_registers = &(clk_profiles[i].xtal_40mhz);
 				}
-
+#endif
 				if (from_flash.spi_ctrl == clk_profiles[i].spi_ctrl &&
 					compare_pll_regs(&(from_flash.regs), pll_registers)) {
 					puts(" [*] |");
@@ -181,12 +197,15 @@ int do_set_clk(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 		/* Copy target values */
 		to_flash.spi_ctrl = clk_profiles[i].spi_ctrl;
 
+#if (SOC_TYPE & QCA_QCA956X_SOC)
+		to_flash.regs = clk_profiles[i].xtal_25mhz;
+#else
 		if (ref_clk == 25) {
 			to_flash.regs = clk_profiles[i].xtal_25mhz;
 		} else {
 			to_flash.regs = clk_profiles[i].xtal_40mhz;
 		}
-
+#endif
 		printf("- CPU: %3d MHz\n", clk_profiles[i].cpu_clk);
 		printf("- RAM: %3d MHz\n", clk_profiles[i].ddr_clk);
 		printf("- AHB: %3d MHz\n", clk_profiles[i].ahb_clk);
@@ -263,7 +282,7 @@ int do_set_clk(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 }
 
 /* Remove clock configuration from FLASH */
-int do_clear_clk(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
+int do_clear_clk(cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[])
 {
 	char buf[128];
 	u32 reg;
@@ -314,13 +333,13 @@ int do_clear_clk(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 }
 
 U_BOOT_CMD(setclk, 2, 0, do_set_clk,
-		   "select clocks configuration from predefined list\n",
+		   "select clocks configuration from predefined list",
 		   "index\n"
 		   "\t- save 'index' configuration in FLASH\n"
 		   "setclk\n"
-		   "\t- prints available clocks configurations and current settings\n");
+		   "\t- prints available clocks configurations and current settings");
 
 U_BOOT_CMD(clearclk, 1, 0, do_clear_clk,
-		   "remove PLL and clocks configuration from FLASH\n", NULL);
+		   "remove PLL and clocks configuration from FLASH", NULL);
 
 #endif /* CONFIG_QCA_PLL_IN_FLASH_MAGIC_OFFSET */

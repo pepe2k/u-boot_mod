@@ -12,7 +12,6 @@ unsigned long get_timer(unsigned long);
 unsigned long get_version(void);
 
 void app_startup(char **);
-void do_reset(void);
 void free(void*);
 void free_hdlr(int);
 void install_hdlr(int, interrupt_handler_t*, void*);

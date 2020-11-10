@@ -101,11 +101,11 @@ typedef volatile unsigned char	vu_char;
 #include <image.h>
 
 #ifdef	DEBUG
-#define debug(fmt,args...)	printf (fmt ,##args)
-#define debugX(level,fmt,args...) if (DEBUG>=level) printf(fmt,##args);
+#define debug(fmt,args...)	printf(fmt ,##args)
+#define debugX(level,fmt,args...) do {if (DEBUG>=level) printf(fmt,##args);} while (0)
 #else
-#define debug(fmt,args...)
-#define debugX(level,fmt,args...)
+#define debug(fmt,args...)	do {} while (0)
+#define debugX(level,fmt,args...) do {} while (0)
 #endif /* DEBUG */
 
 typedef void (interrupt_handler_t)(void *);
@@ -185,8 +185,8 @@ void	init_cmd_timeout(void);
 void	reset_cmd_timeout(void);
 
 /* lib_$(ARCH)/board.c */
-void board_init_f(ulong);
-void board_init_r(gd_t *, ulong);
+void board_init_f(ulong) __attribute__ ((used));
+void board_init_r(gd_t *, ulong)  __attribute__ ((used));
 char *strmhz(char *buf, long hz);
 int  checkboard(void);
 int  checkflash(void);
@@ -213,6 +213,8 @@ char	*getenv	     (char *);
 int		getenv_r     (char *name, char *buf, unsigned len);
 int		saveenv	     (void);
 int	setenv	     (char *, char *);
+int	env_match_r	(const char *match, int first_idx, char ** retval);
+int	env_complete	(char *var, int maxv, char *cmdv[], int bufsz, char *buf);
 
 
 #ifdef CONFIG_ARM
