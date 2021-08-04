@@ -869,7 +869,7 @@
 #define PMU1_SWREG_LSB                                               0
 #define PMU1_SWREG_MASK                                              0xffffffff
 #define PMU1_SWREG_GET(x)                                            (((x) & PMU1_SWREG_MASK) >> PMU1_SWREG_LSB)
-#define PMU1_SWREG_SET(x)                                            (((0 | (x)) << PMU1_SWREG_LSB) & PMU1_SWREG_MASK)
+#define PMU1_SWREG_SET(x)                                            (((x) << PMU1_SWREG_LSB) & PMU1_SWREG_MASK)
 #define PMU1_SWREG_RESET                                             805951696
 #define PMU1_HW_MASK                                                 0xffffffff
 #define PMU1_SW_MASK                                                 0xffffffff
