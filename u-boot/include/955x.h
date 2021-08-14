@@ -876,7 +876,7 @@
 #define PMU1_HW_WRITE_MASK                                           0x00000000
 #define PMU1_SW_WRITE_MASK                                           0xffffffff
 #define PMU1_RSTMASK                                                 0xffffffff
-#define PMU1_RESET                                                   0x3009d8d0
+#define PMU1_RESET                                                   0x3009d8d0 /* some versions set 0x633c8176, C7 u-boot sets 0x633c8178, it can affect PMU2 controls */
 #define PMU1_ADDRESS                                                 0x18116cc0
 
 #define PMU2_SWREGMSB_MSB                                            31
@@ -916,11 +916,6 @@
 #define PMU2_SPARE_SET(x)                                            (((x) << PMU2_SPARE_LSB) & PMU2_SPARE_MASK)
 #define PMU2_SPARE_RESET                                             0x0 // 0
 #define PMU2_ADDRESS                                                 0x18116cc4
-
-
-
-
-
 
 #define CPU_DDR_CLOCK_CONTROL_SPARE_MSB                              31
 #define CPU_DDR_CLOCK_CONTROL_SPARE_LSB                              25
