@@ -2307,8 +2307,8 @@ static const clk_profile clk_profiles[] = {
 			_qca95xx_cpu_ddr_clk_ctrl_reg_val(1, 2, 1, 1, 0, 1)
 		}, {
 			_qca95xx_cpu_pll_cfg_reg_val(20, 1, 1, 0, 0),
-			_qca95xx_ddr_pll_cfg_reg_val(15, 1, 1, 0, 0),
-			_qca95xx_cpu_ddr_clk_ctrl_reg_val(1, 2, 2, 1, 0, 1)
+			_qca95xx_ddr_pll_cfg_reg_val(30, 1, 0, 0, 0),
+			_qca95xx_cpu_ddr_clk_ctrl_reg_val(1, 3, 4, 1, 1, 1)
 		}
 	}, {
 		/* Tested! */
@@ -2456,7 +2456,7 @@ static const clk_profile clk_profiles[] = {
 			_qca95xx_cpu_ddr_clk_ctrl_reg_val(1, 2, 3, 1, 1, 1)
 		}, {
 			_qca95xx_cpu_pll_cfg_reg_val(22, 1, 1, 0, 0),
-			_qca95xx_ddr_pll_cfg_reg_val(30, 1, 1, 0, 0),
+			_qca95xx_ddr_pll_cfg_reg_val(30, 1, 0, 0, 0),
 			_qca95xx_cpu_ddr_clk_ctrl_reg_val(1, 2, 3, 1, 1, 1),
 			_qca95xx_cpu_pll_dither_reg_val(32)
 		}
