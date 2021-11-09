@@ -21,6 +21,10 @@
 #include <soc/qca_soc_common.h>
 #include <soc/qca_dram.h>
 
+#if (SOC_TYPE & QCA_QCA955X_SOC)
+#include <955x.h>
+#endif
+
 #define QCA_DDR_SIZE_INCREMENT	(8 * 1024 * 1024)
 
 /*
@@ -926,7 +930,16 @@ void qca_dram_init(void)
 	if (mem_type == RAM_MEMORY_TYPE_DDR2) {
 		qca_soc_reg_read_set(QCA_DDR_CTRL_CFG_REG,
 				     QCA_DDR_CTRL_CFG_PAD_DDR2_SEL_MASK);
-
+#if (SOC_TYPE & QCA_QCA955X_SOC)
+		/*
+		 * Load power control values into PMU registers, setting bit 3
+		 * while clearing bits 1 and 2 in PMU1 register fixes ethernet
+		 * EMI issue according to sources
+		 */
+		qca_soc_reg_write(PMU1_ADDRESS, 0x633C8178);
+		qca_soc_reg_read_set(PMU2_ADDRESS, PMU2_LDO_TUNE_SET(3));
+		qca_soc_reg_read_set(PMU2_ADDRESS, PMU2_PGM_SET(1));
+#endif
 		qca_dram_set_ddr2_cfg(cas_lat, tmp_clk);
 	} else {
 		qca_soc_reg_read_clear(QCA_DDR_CTRL_CFG_REG,
